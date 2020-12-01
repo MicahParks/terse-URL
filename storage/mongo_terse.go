@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"gitlab.com/MicahParks/ctxerrgroup"
+	"github.com/MicahParks/ctxerrgroup"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"

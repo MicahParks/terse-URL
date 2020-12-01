@@ -3,8 +3,8 @@ package configure
 import (
 	"context"
 
+	"github.com/MicahParks/ctxerrgroup"
 	"github.com/teris-io/shortid"
-	"gitlab.com/MicahParks/ctxerrgroup"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.uber.org/zap"
 

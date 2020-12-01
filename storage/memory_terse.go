@@ -5,7 +5,7 @@ import (
 	"sync"
 	"time"
 
-	"gitlab.com/MicahParks/ctxerrgroup"
+	"github.com/MicahParks/ctxerrgroup"
 
 	"github.com/MicahParks/terse-URL/models"
 )

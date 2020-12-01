@@ -3,6 +3,7 @@ module github.com/MicahParks/terse-URL
 go 1.15
 
 require (
+	github.com/MicahParks/ctxerrgroup v0.0.6
 	github.com/Nerzal/gocloak/v7 v7.6.0
 	github.com/didip/tollbooth v4.0.2+incompatible
 	github.com/go-openapi/errors v0.19.8
@@ -15,7 +16,6 @@ require (
 	github.com/jessevdk/go-flags v1.4.0
 	github.com/patrickmn/go-cache v2.1.0+incompatible // indirect
 	github.com/teris-io/shortid v0.0.0-20201117134242-e59966efd125
-	gitlab.com/MicahParks/ctxerrgroup v0.0.4
 	go.mongodb.org/mongo-driver v1.4.3
 	go.uber.org/zap v1.16.0
 	golang.org/x/net v0.0.0-20201110031124-69a78807bb2b
