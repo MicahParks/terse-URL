@@ -1,0 +1,46 @@
+<html lang="en-US">
+<head>
+    <title>Side Navigation Menu</title>
+    <meta charset="utf-8">
+    <meta name="Author" content="https://github.com/pablorgarcia"/>
+    <meta name="description" content="Table Responsive"/>
+    <meta name="keywords" content="table, responsive"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    <link href="table.css" media="screen" type="text/css" rel="stylesheet"/>
+    <link href="search.css" type="text/css" rel="stylesheet"/>
+    <script src="table.js"></script>
+</head>
+<body>
+
+<div class="searchContainer">
+    <input type="text" placeholder="Search...">
+    <div class="search"></div>
+</div>
+
+{{/*<h1><span class="blue">&lt;</span>Table<span class="blue">&gt;</span> <span class="yellow">Responsive</span></h1>*/}}
+{{/*<h2>Created with love by <a href="http://pablogarcia.dev" target="_blank">Pablo García</a></h2>*/}}
+
+<table class="container" id="tta">
+    <thead>
+    <tr>
+        <th><h1 onclick="sortTable(0)">Shortened</h1></th>
+        <th><h1 onclick="sortTable(1)">Original</h1></th>
+        <th><h1 onclick="sortTable(2)">Visits</h1></th>
+        <th><h1 onclick="sortTable(3)">Edit</h1></th>
+    </tr>
+    </thead>
+    <tbody>
+    {{range .}}
+        <tr>
+            <td>{{.Shortened}}</td>
+            <td>{{.Original}}</td>
+            <td>{{.Visits}}</td>
+            <td>Fake</td>
+        </tr>
+    {{end}}
+    </tbody>
+</table>
+
+</body>
+</html>

@@ -1,0 +1,209 @@
+swagger: "2.0"
+
+basePath: "/"
+
+host: "shorten.micahparks.com" # TODO Change if you found this off the internet and want to run it yourself.
+
+info:
+  version: "0.0.1"
+  title: "Terse URL"
+
+#schemes:
+#  - "https"
+
+securityDefinitions:
+  JWT:
+    in: "header"
+    name: "Authorization"
+    type: "apiKey"
+
+paths:
+  /api/alive:
+    get:
+      description: "For Caddy to determine if the upstream provider (this executable) is alive."
+      operationId: "alive"
+      responses:
+        200:
+          description: "Service is alive."
+
+  /api/custom:
+    post:
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      summary: 'Give a full URL and a custom shortened URL, create the redirection to it. Custom URLs cannot be "api".'
+      operationId: "urlCustom"
+      parameters:
+        - in: "body"
+          name: "tersePair"
+          required: true
+          schema:
+            properties:
+              deleteAt:
+                format: "date-time"
+                type: "string"
+              originalURL:
+                type: "string"
+              shortenedURL:
+                type: "string"
+            type: "object"
+            required:
+              - "original"
+              - "shortened"
+      responses:
+        200:
+          description: "The shortened URL to visit that will redirect to the given full URL."
+          schema:
+            type: "string"
+        default:
+          description: "Unexpected error."
+          schema:
+            $ref: "#/definitions/Error"
+      security:
+        - JWT: [ ]
+
+  /api/delete:
+    delete:
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      summary: "Delete the given shortened URL from the backend storage, cause the shortened URL to immediately expire."
+      operationId: "urlDelete"
+      parameters:
+        - in: "body"
+          name: "shortened"
+          required: true
+          schema:
+            type: "string"
+      responses:
+        200:
+          description: "The shortened URL was successfully deleted from the backend storage."
+        default:
+          description: "Unexpected error."
+          schema:
+            $ref: "#/definitions/Error"
+      security:
+        - JWT: [ ]
+
+  /api/random:
+    post:
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      description: "Give a full URL and get a shortened URL that will redirect to it."
+      operationId: "urlRandom"
+      parameters:
+        - in: "body"
+          name: "original"
+          required: true
+          schema:
+            properties:
+              deleteAt:
+                format: "date-time"
+                type: "string"
+              URL:
+                type: "string"
+            type: "object"
+            required:
+              - "original"
+      responses:
+        200:
+          description: "The shortened URL to visit that will redirect to the given full URL."
+          schema:
+            type: "string"
+        default:
+          description: "Unexpected error."
+          schema:
+            $ref: "#/definitions/Error"
+      security:
+        - JWT: [ ]
+
+  /api/track/{shortened}:
+    get:
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      description: "Get the tracking info for the shortened URL."
+      operationId: "urlTrack"
+      parameters:
+        - in: "path"
+          name: "shortened"
+          required: true
+          type: "string"
+      responses:
+        200:
+          description: "An array of visit info for the given shortened URL."
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Visit"
+        default:
+          description: "Unexpected error."
+          schema:
+            $ref: "#/definitions/Error"
+      security:
+        - JWT: [ ]
+
+  # IDs are always 9 characters or greater, so they can be put at the base path as long as all other paths are 8
+  # characters or less.
+  /{shortened}:
+    get:
+      description: "Use the shortened URL. It will redirect to the full URL if it has not expired."
+      operationId: "urlGet"
+      parameters:
+        - in: "path"
+          name: "shortened"
+          required: true
+          type: "string"
+      responses:
+        302:
+          description: "The shortened URL to visit that will redirect to the given full URL."
+          headers:
+            Location:
+              description: "The full URL that the redirect leads to."
+              type: "string"
+        404:
+          description: "The shortened URL expired or never existed."
+
+
+definitions:
+
+  # Schema for error response body.
+  Error:
+    properties:
+      code:
+        type: "integer"
+      message:
+        type: "string"
+    required:
+      - "code"
+      - "message"
+    type: "object"
+
+  # Schema for passing JWT information around.
+  JWTInfo:
+    properties:
+      email:
+        type: "string"
+      groups:
+        type: "array"
+        items:
+          type: "string"
+
+  # Schema for tracking visits to shortened links.
+  Visit:
+    properties:
+      accessed:
+        type: "string"
+        format: "date-time"
+      ip:
+        type: "string"
+      userAgent:
+        type: "string"
+    required:
+      - "accessed"
+      - "ip"
