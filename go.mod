@@ -3,7 +3,7 @@ module github.com/MicahParks/terse-URL
 go 1.15
 
 require (
-	github.com/MicahParks/ctxerrgroup v0.0.6
+	github.com/MicahParks/ctxerrgroup v0.0.8
 	github.com/Nerzal/gocloak/v7 v7.6.0
 	github.com/didip/tollbooth v4.0.2+incompatible
 	github.com/go-openapi/errors v0.19.8

@@ -1,7 +1,7 @@
 github.com/BurntSushi/toml v0.3.1 h1:WXkYYl6Yr3qBf1K79EBnL4mak0OimBfB0XUf9Vl28OQ=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
-github.com/MicahParks/ctxerrgroup v0.0.6 h1:kxLH1SudCvOjMsPb7oMKMxoxSBfiGv8aST5ZkD2qE1o=
-github.com/MicahParks/ctxerrgroup v0.0.6/go.mod h1:fC5YFxVIDIStkUQVvR/azB+q+So0BbSQLlFWmPYUYqo=
+github.com/MicahParks/ctxerrgroup v0.0.8 h1:S+ZN9lbpTWOba6d4QornidMNYILGmhXMt2auB82/YlU=
+github.com/MicahParks/ctxerrgroup v0.0.8/go.mod h1:fC5YFxVIDIStkUQVvR/azB+q+So0BbSQLlFWmPYUYqo=
 github.com/Nerzal/gocloak/v7 v7.6.0 h1:4IJ0ocjIjrU5LfVAwmDJmcXx/42B8v50SnwOcjSSVIc=
 github.com/Nerzal/gocloak/v7 v7.6.0/go.mod h1:tJ0yV6jds2dm1a5eYW7km/bt+2F3mqlU0e8Xis+diDQ=
 github.com/PuerkitoBio/purell v1.1.0/go.mod h1:c11w/QuzBsJSee3cPx9rAFu61PvFxuPbtSwDGJws/X0=
@@ -227,8 +227,6 @@ github.com/xdg/scram v0.0.0-20180814205039-7eeb5667e42c h1:u40Z8hqBAAQyv+vATcGgV
 github.com/xdg/scram v0.0.0-20180814205039-7eeb5667e42c/go.mod h1:lB8K/P019DLNhemzwFU4jHLhdvlE6uDZjXFejJXr49I=
 github.com/xdg/stringprep v0.0.0-20180714160509-73f8eece6fdc h1:n+nNi93yXLkJvKwXNP9d55HC7lGK4H/SRcwB5IaUZLo=
 github.com/xdg/stringprep v0.0.0-20180714160509-73f8eece6fdc/go.mod h1:Jhud4/sHMO4oL310DaZAKk9ZaJ08SJfe+sJh0HrGL1Y=
-gitlab.com/MicahParks/ctxerrgroup v0.0.4 h1:JqCFNSVXIn4RNXXuwUBX3k8B+Ndy+tFiTIJxeKxevvQ=
-gitlab.com/MicahParks/ctxerrgroup v0.0.4/go.mod h1:tM4TemR967oTmSDT7daZoWER2ZzGM5vz3nWE738W7mU=
 go.mongodb.org/mongo-driver v1.0.3/go.mod h1:u7ryQJ+DOzQmeO7zB6MHyr8jkEQvC8vH7qLUO4lqsUM=
 go.mongodb.org/mongo-driver v1.1.1/go.mod h1:u7ryQJ+DOzQmeO7zB6MHyr8jkEQvC8vH7qLUO4lqsUM=
 go.mongodb.org/mongo-driver v1.3.0/go.mod h1:MSWZXKOynuguX+JSvwP8i+58jYCXxbia8HS3gZBapIE=
