@@ -5,24 +5,16 @@
     <link href="button.css" rel="stylesheet" type="text/css"/>
     <link href="form.css" type="text/css" rel="stylesheet"/>
     <link href="shared.css" type="text/css" rel="stylesheet"/>
-    <script src="form.js"></script>
 </head>
 <body>
 <div id="form-main">
     <div id="form-div">
         <form class="form" id="form1">
             <p class="name">
-                <input name="name" type="text"
-                       class="validate[required,custom[onlyLetter],length[0,100]] feedback-input" placeholder="Name"
-                       id="name"/>
+                <input name="original" type="text" class="feedback-input" placeholder="Original" id="original"/>
             </p>
             <p class="email">
-                <input name="email" type="text" class="validate[required,custom[email]] feedback-input" id="email"
-                       placeholder="Email"/>
-            </p>
-            <p class="text">
-                <textarea name="text" class="validate[required,length[6,300]] feedback-input" id="comment"
-                          placeholder="Comment"></textarea>
+                <input name="shortened" type="text" class="feedback-input" id="shortened" placeholder="Shortened"/>
             </p>
             <div class="buttons">
                 <button class="raise">Raise</button>

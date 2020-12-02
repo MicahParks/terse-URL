@@ -59,26 +59,26 @@
 }
 
 /* Icons ---------------------------------- */
-#name {
+#original {
     background-size: 30px 30px;
     background-position: 11px 8px;
     background-repeat: no-repeat;
 }
 
-#name:focus {
+#original:focus {
     background-size: 30px 30px;
     background-position: 8px 5px;
     background-position: 11px 8px;
     background-repeat: no-repeat;
 }
 
-#email {
+#shortened {
     background-size: 30px 30px;
     background-position: 11px 8px;
     background-repeat: no-repeat;
 }
 
-#email:focus {
+#shortened:focus {
     background-size: 30px 30px;
     background-position: 11px 8px;
     background-repeat: no-repeat;
