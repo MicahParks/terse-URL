@@ -17,6 +17,15 @@ import (
 func HandleFrontend(frontendDir string, logger *zap.SugaredLogger) operations.FrontendHandlerFunc {
 	return func(params operations.FrontendParams) middleware.Responder {
 
+		// Do not have debug level logging on in production, as it will log clog up the logs.
+		logger.Debugw("Parameters",
+			"path", params.Path,
+			"original", params.Original,
+			"shortened", params.Shortened,
+			"sortDecending", params.SortDescending,
+			"sortThis", params.SortThis,
+		)
+
 		// Create the file path.
 		filePath := path.Join(frontendDir, params.Path)
 
@@ -26,7 +35,7 @@ func HandleFrontend(frontendDir string, logger *zap.SugaredLogger) operations.Fr
 
 			// Log with the appropriate level.
 			if os.IsNotExist(err) {
-				logger.Infow("Failed to find requested file.",
+				logger.Warnw("Failed to find requested file.",
 					"filePath", filePath,
 				)
 			} else {

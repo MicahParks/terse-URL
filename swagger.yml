@@ -157,16 +157,16 @@ paths:
           name: "path"
           required: true
           type: "string"
-        - description: "The pre-populated shortened URL (form) or the case insensitive substring to search for a
-                        shortened URL (table). Only applied when applicable."
-          in: "query"
-          name: "shortened"
-          required: false
-          type: "string"
         - description: "The pre-populated original URL (form) or the case insensitive substring to search for a
-                        original URL (table). Only applied when applicable."
+                         original URL (table). Only applied when applicable."
           in: "query"
           name: "original"
+          required: false
+          type: "string"
+        - description: "The pre-populated shortened URL (form) or the case insensitive substring to search for a
+                  shortened URL (table). Only applied when applicable."
+          in: "query"
+          name: "shortened"
           required: false
           type: "string"
         - description: 'If true, sort the "sortThis" query enum in descending lexicographical order (table).'
