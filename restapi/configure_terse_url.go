@@ -29,7 +29,7 @@ func configureAPI(api *operations.TerseURLAPI) http.Handler {
 	api.ServeError = errors.ServeError
 
 	// Configure the service.
-	logger, invalidPaths, keycloakInfo, shortID, terseStore, visitsStore, err := configure.Configure()
+	frontendDir, logger, invalidPaths, keycloakInfo, shortID, terseStore, visitsStore, err := configure.Configure()
 	if err != nil {
 		log.Fatalf("Failed to configure the service.\nError: %s\n", err.Error())
 	}
@@ -55,6 +55,7 @@ func configureAPI(api *operations.TerseURLAPI) http.Handler {
 
 	// Assign the endpoint handlers.
 	api.AliveHandler = endpoints.HandleAlive()
+	api.FrontendHandler = endpoints.HandleFrontend(frontendDir, logger)
 	api.URLCustomHandler = endpoints.HandleCustom(invalidPaths, logger.Named("/api/custom"), terseStore)
 	api.URLDeleteHandler = endpoints.HandleDelete(logger.Named("/api/delete"), terseStore)
 	api.URLGetHandler = endpoints.HandleGet(logger.Named("/{shortened}"), terseStore)

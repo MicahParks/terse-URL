@@ -47,6 +47,9 @@ func NewTerseURLAPI(spec *loads.Document) *TerseURLAPI {
 		AliveHandler: AliveHandlerFunc(func(params AliveParams) middleware.Responder {
 			return middleware.NotImplemented("operation Alive has not yet been implemented")
 		}),
+		FrontendHandler: FrontendHandlerFunc(func(params FrontendParams) middleware.Responder {
+			return middleware.NotImplemented("operation Frontend has not yet been implemented")
+		}),
 		URLCustomHandler: URLCustomHandlerFunc(func(params URLCustomParams, principal *models.JWTInfo) middleware.Responder {
 			return middleware.NotImplemented("operation URLCustom has not yet been implemented")
 		}),
@@ -112,6 +115,8 @@ type TerseURLAPI struct {
 
 	// AliveHandler sets the operation handler for the alive operation
 	AliveHandler AliveHandler
+	// FrontendHandler sets the operation handler for the frontend operation
+	FrontendHandler FrontendHandler
 	// URLCustomHandler sets the operation handler for the url custom operation
 	URLCustomHandler URLCustomHandler
 	// URLDeleteHandler sets the operation handler for the url delete operation
@@ -204,6 +209,9 @@ func (o *TerseURLAPI) Validate() error {
 
 	if o.AliveHandler == nil {
 		unregistered = append(unregistered, "AliveHandler")
+	}
+	if o.FrontendHandler == nil {
+		unregistered = append(unregistered, "FrontendHandler")
 	}
 	if o.URLCustomHandler == nil {
 		unregistered = append(unregistered, "URLCustomHandler")
@@ -323,6 +331,10 @@ func (o *TerseURLAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/api/alive"] = NewAlive(o.context, o.AliveHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/frontend/{path}"] = NewFrontend(o.context, o.FrontendHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}

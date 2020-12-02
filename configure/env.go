@@ -11,6 +11,9 @@ import (
 
 const (
 
+	// defaultFrontendDirectory is the default frontend directory to look for frontend assets.
+	defaultFrontendDirectory = "/frontend"
+
 	// defaultMongoDatabase is the default MongoDB database to use.
 	defaultMongoDatabase = "terseURL"
 
@@ -43,7 +46,7 @@ var (
 	ErrMissingRequiredConfig = errors.New("required configuration missing")
 
 	// alwaysInvalidPaths
-	alwaysInvalidPaths = []string{"api", "docs", "swagger.json"}
+	alwaysInvalidPaths = []string{"api", "docs", "frontend", "swagger.json"}
 
 	// defaultTimeout is the default timeout for any incoming (from clients) and outgoing (to databases) requests.
 	defaultTimeout = time.Minute
@@ -52,6 +55,7 @@ var (
 // Configuration holds all the necessary information for
 type Configuration struct {
 	DefaultTimeout        time.Duration
+	FrontendDirectory     string
 	KeycloakBaseURL       string
 	KeycloakID            string
 	KeycloakRealm         string
@@ -126,6 +130,7 @@ func readEnvVars() (config *Configuration, err error) {
 	config.InvalidPaths = invalidPathsParse(os.Getenv("INVALID_PATHS"))
 
 	// Assign the string value configurations.
+	config.FrontendDirectory = os.Getenv("FRONTEND_DIRECTORY")
 	config.KeycloakBaseURL = os.Getenv("KEYCLOAK_BASE_URL")
 	config.KeycloakID = os.Getenv("KEYCLOAK_ID")
 	config.KeycloakRealm = os.Getenv("KEYCLOAK_REALM")
@@ -142,6 +147,16 @@ func readEnvVars() (config *Configuration, err error) {
 	// Confirm none of the Keycloak environment variables are empty.
 	if config.KeycloakBaseURL == "" || config.KeycloakID == "" || config.KeycloakRealm == "" || config.KeycloakSecret == "" {
 		return nil, fmt.Errorf("%w: All Keycloak enviornment variables must be populated", ErrMissingRequiredConfig)
+	}
+
+	// Assign the default value to the frontend directory if it does none was given.
+	if config.FrontendDirectory == "" {
+		config.FrontendDirectory = defaultFrontendDirectory
+	}
+
+	// Confirm the frontend directory exists.
+	if _, err = os.Stat(config.FrontendDirectory); err != nil {
+		return nil, fmt.Errorf("%w: Could not stat frontend directory", err)
 	}
 
 	// If using MongoDB for Terse storage, check for defaults to use.

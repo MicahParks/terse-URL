@@ -227,6 +227,34 @@ func init() {
         }
       }
     },
+    "/frontend/{path}": {
+      "get": {
+        "description": "Get a frontend asset to interact with the application via a web browser.",
+        "operationId": "frontend",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "path",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The frontend asset.",
+            "schema": {
+              "type": "file"
+            }
+          },
+          "404": {
+            "description": "The requested asset was not found.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
     "/{shortened}": {
       "get": {
         "description": "Use the shortened URL. It will redirect to the full URL if it has not expired.",
@@ -517,6 +545,34 @@ func init() {
             "description": "Unexpected error.",
             "schema": {
               "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/frontend/{path}": {
+      "get": {
+        "description": "Get a frontend asset to interact with the application via a web browser.",
+        "operationId": "frontend",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "path",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The frontend asset.",
+            "schema": {
+              "type": "file"
+            }
+          },
+          "404": {
+            "description": "The requested asset was not found.",
+            "schema": {
+              "type": "string"
             }
           }
         }

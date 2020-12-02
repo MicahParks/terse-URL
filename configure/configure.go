@@ -11,12 +11,12 @@ import (
 	"github.com/MicahParks/terse-URL/storage"
 )
 
-func Configure() (logger *zap.SugaredLogger, invalidPaths []string, keycloakInfo *KeycloakInfo, shortID *shortid.Shortid, terseStore storage.TerseStore, visitsStore storage.VisitsStore, err error) {
+func Configure() (frontendDir string, logger *zap.SugaredLogger, invalidPaths []string, keycloakInfo *KeycloakInfo, shortID *shortid.Shortid, terseStore storage.TerseStore, visitsStore storage.VisitsStore, err error) {
 
 	// Create a logger.
 	var zapLogger *zap.Logger
 	if zapLogger, err = zap.NewDevelopment(); err != nil { // TODO Make NewProduction
-		return nil, nil, nil, nil, nil, nil, err
+		return "", nil, nil, nil, nil, nil, nil, err
 	}
 	logger = zapLogger.Sugar()
 	logger.Info("Logger created. Starting configuration.")
@@ -27,7 +27,7 @@ func Configure() (logger *zap.SugaredLogger, invalidPaths []string, keycloakInfo
 		logger.Fatalw("Failed to read configuration from environment variables.",
 			"error", err.Error(),
 		)
-		return nil, nil, nil, nil, nil, nil, err // Should be unreachable.
+		return "", nil, nil, nil, nil, nil, nil, err // Should be unreachable.
 	}
 
 	// Create the Keycloak information data structure.
@@ -76,7 +76,7 @@ func Configure() (logger *zap.SugaredLogger, invalidPaths []string, keycloakInfo
 				"store", "VisitsStore",
 				"error", err.Error(),
 			)
-			return nil, nil, nil, nil, nil, nil, err // Should be unreachable.
+			return "", nil, nil, nil, nil, nil, nil, err // Should be unreachable.
 		}
 
 	// If no known Visits storage was specified, don't store visits.
@@ -105,7 +105,7 @@ func Configure() (logger *zap.SugaredLogger, invalidPaths []string, keycloakInfo
 				"store", "VisitsStore",
 				"error", err.Error(),
 			)
-			return nil, nil, nil, nil, nil, nil, err // Should be unreachable.
+			return "", nil, nil, nil, nil, nil, nil, err // Should be unreachable.
 		}
 
 	// If no known Terse storage was specified in the configuration use an in memory implementation.
@@ -121,10 +121,10 @@ func Configure() (logger *zap.SugaredLogger, invalidPaths []string, keycloakInfo
 		logger.Fatalw("Failed to schedule deletions",
 			"error", err.Error(),
 		)
-		return nil, nil, nil, nil, nil, nil, err
+		return "", nil, nil, nil, nil, nil, nil, err
 	}
 
-	return logger, invalidPaths, keycloakInfo, shortID, terseStore, visitsStore, nil
+	return frontendDir, logger, invalidPaths, keycloakInfo, shortID, terseStore, visitsStore, nil
 }
 
 // DefaultCtx creates a context and its cancel function using the default timeout or one provided during configuration.

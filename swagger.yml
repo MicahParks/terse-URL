@@ -148,6 +148,25 @@ paths:
       security:
         - JWT: [ ]
 
+  /frontend/{path}:
+    get:
+      description: "Get a frontend asset to interact with the application via a web browser."
+      operationId: "frontend"
+      parameters:
+        - in: "path"
+          name: "path"
+          required: true
+          type: "string"
+      responses:
+        200:
+          description: "The frontend asset."
+          schema:
+            type: "file"
+        404:
+          description: "The requested asset was not found."
+          schema:
+            type: "string"
+
   # IDs are always 9 characters or greater, so they can be put at the base path as long as all other paths are 8
   # characters or less.
   /{shortened}:
