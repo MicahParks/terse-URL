@@ -5,11 +5,12 @@
     <link href="search.css" type="text/css" rel="stylesheet"/>
     <link href="shared.css" type="text/css" rel="stylesheet"/>
     <link href="table.css" media="screen" type="text/css" rel="stylesheet"/>
+    <link href="button.css" media="screen" type="text/css" rel="stylesheet"/>
     <script src="table.js"></script>
 </head>
 <body>
 <div class="searchContainer">
-    <input type="text" placeholder="Search...">
+    <input type="text" placeholder="Filter...">
     <div class="search"></div>
 </div>
 <table class="container" id="tta">
@@ -18,7 +19,7 @@
         <th><h1 onclick="sortTable(0)">Shortened</h1></th>
         <th><h1 onclick="sortTable(1)">Original</h1></th>
         <th><h1 onclick="sortTable(2)">Visits</h1></th>
-        <th><h1 onclick="sortTable(3)">Edit</h1></th>
+        <th><h1>Edit</h1></th>
     </tr>
     </thead>
     <tbody>
@@ -27,7 +28,9 @@
             <td>{{.Shortened}}</td>
             <td>{{.Original}}</td>
             <td>{{.Visits}}</td>
-            <td>Fake</td>
+            <td>
+                <button class="raise">Submit</button>
+            </td>
         </tr>
     {{end}}
     </tbody>

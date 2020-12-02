@@ -16,7 +16,7 @@ type TableData struct {
 }
 
 func main() {
-	fileData, err := ioutil.ReadFile("table.gohtml")
+	fileData, err := ioutil.ReadFile("table.html")
 	if err != nil {
 		log.Fatalf("Can't read file.\nError: %s", err.Error())
 	}
@@ -82,6 +82,24 @@ func main() {
 	})
 	http.HandleFunc("/form.js", func(writer http.ResponseWriter, request *http.Request) {
 		fileData, err := ioutil.ReadFile("form.js")
+		if err != nil {
+			log.Fatalf("css failed\nError: %s", err.Error())
+		}
+		if _, err = io.Copy(writer, bytes.NewReader(fileData)); err != nil {
+			log.Fatalf("lol%s", err.Error())
+		}
+	})
+	http.HandleFunc("/button.css", func(writer http.ResponseWriter, request *http.Request) {
+		fileData, err := ioutil.ReadFile("button.css")
+		if err != nil {
+			log.Fatalf("css failed\nError: %s", err.Error())
+		}
+		if _, err = io.Copy(writer, bytes.NewReader(fileData)); err != nil {
+			log.Fatalf("lol%s", err.Error())
+		}
+	})
+	http.HandleFunc("/shared.css", func(writer http.ResponseWriter, request *http.Request) {
+		fileData, err := ioutil.ReadFile("shared.css")
 		if err != nil {
 			log.Fatalf("css failed\nError: %s", err.Error())
 		}
