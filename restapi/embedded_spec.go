@@ -347,10 +347,13 @@ func init() {
           "type": "string",
           "format": "date-time"
         },
-        "ip": {
-          "type": "string"
+        "headers": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         },
-        "userAgent": {
+        "ip": {
           "type": "string"
         }
       }
@@ -694,10 +697,13 @@ func init() {
           "type": "string",
           "format": "date-time"
         },
-        "ip": {
-          "type": "string"
+        "headers": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         },
-        "userAgent": {
+        "ip": {
           "type": "string"
         }
       }

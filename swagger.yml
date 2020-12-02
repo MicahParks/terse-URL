@@ -239,8 +239,10 @@ definitions:
         format: "date-time"
       ip:
         type: "string"
-      userAgent:
-        type: "string"
+      headers:
+        type: "array"
+        items:
+          type: "string"
     required:
       - "accessed"
       - "ip"

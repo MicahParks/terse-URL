@@ -22,12 +22,12 @@ type Visit struct {
 	// Format: date-time
 	Accessed *strfmt.DateTime `json:"accessed"`
 
+	// headers
+	Headers []string `json:"headers"`
+
 	// ip
 	// Required: true
 	IP *string `json:"ip"`
-
-	// user agent
-	UserAgent string `json:"userAgent,omitempty"`
 }
 
 // Validate validates this visit
