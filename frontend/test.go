@@ -71,5 +71,23 @@ func main() {
 			log.Fatalf("lol%s", err.Error())
 		}
 	})
+	http.HandleFunc("/form.html", func(writer http.ResponseWriter, request *http.Request) {
+		fileData, err := ioutil.ReadFile("form.html")
+		if err != nil {
+			log.Fatalf("css failed\nError: %s", err.Error())
+		}
+		if _, err = io.Copy(writer, bytes.NewReader(fileData)); err != nil {
+			log.Fatalf("lol%s", err.Error())
+		}
+	})
+	http.HandleFunc("/form.js", func(writer http.ResponseWriter, request *http.Request) {
+		fileData, err := ioutil.ReadFile("form.js")
+		if err != nil {
+			log.Fatalf("css failed\nError: %s", err.Error())
+		}
+		if _, err = io.Copy(writer, bytes.NewReader(fileData)); err != nil {
+			log.Fatalf("lol%s", err.Error())
+		}
+	})
 	http.ListenAndServe(":9000", nil)
 }
