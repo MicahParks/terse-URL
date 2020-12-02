@@ -1,7 +1,9 @@
 package endpoints
 
 import (
+	"bytes"
 	"fmt"
+	"io/ioutil"
 	"os"
 	"path"
 
@@ -36,8 +38,8 @@ func HandleFrontend(frontendDir string, logger *zap.SugaredLogger) operations.Fr
 		}
 
 		// Open the file for reading.
-		var file *os.File
-		if file, err = os.Open(filePath); err != nil {
+		var fileData []byte
+		if fileData, err = ioutil.ReadFile(filePath); err != nil {
 			logger.Errorw("Failed to open requested file.",
 				"filePath", filePath,
 				"error", err.Error(),
@@ -47,7 +49,7 @@ func HandleFrontend(frontendDir string, logger *zap.SugaredLogger) operations.Fr
 		// TODO Handle templating.
 
 		return &operations.FrontendOK{
-			Payload: file,
+			Payload: ioutil.NopCloser(bytes.NewReader(fileData)),
 		}
 	}
 }
