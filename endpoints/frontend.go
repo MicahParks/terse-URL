@@ -10,6 +10,7 @@ import (
 	"github.com/go-openapi/runtime/middleware"
 	"go.uber.org/zap"
 
+	"github.com/MicahParks/terse-URL/models"
 	"github.com/MicahParks/terse-URL/restapi/operations"
 )
 
@@ -49,10 +50,27 @@ func HandleFrontend(frontendDir string, logger *zap.SugaredLogger) operations.Fr
 			)
 		}
 
-		// TODO Handle templating.
+		// Template the values of the frontend HTML asset, if required.
+		if err = buildHTML(fileData, params); err != nil {
+
+			// Log with the appropriate level.
+			logger.Errorw("Failed to build templated HTML.",
+				"error", err.Error(),
+			)
+
+			// Report the error to the client.
+			code := int64(500)
+			message := fmt.Sprintf(`Failed to template values for frontend asset: "%s".`, params.Path)
+			return &operations.FrontendDefault{
+				Payload: &models.Error{
+					Code:    &code,
+					Message: &message,
+				},
+			}
+		}
 
 		return &operations.FrontendOK{
-			Payload: ioutil.NopCloser(bytes.NewReader(fileData)),
+			Payload: ioutil.NopCloser(bytes.NewReader(fileData)), // File is already closed.
 		}
 	}
 }

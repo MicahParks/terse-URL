@@ -237,6 +237,37 @@ func init() {
             "name": "path",
             "in": "path",
             "required": true
+          },
+          {
+            "type": "string",
+            "description": "The case insensitive substring to search for a shortened URL. (Only applied when applicable.)",
+            "name": "shortened",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "The case insensitive substring to search for a original URL. (Only applied when applicable.)",
+            "name": "original",
+            "in": "query"
+          },
+          {
+            "type": "boolean",
+            "default": true,
+            "description": "If true, sort the \"sortThis\" query enum in descending lexicographical order.",
+            "name": "sortDescending",
+            "in": "query"
+          },
+          {
+            "enum": [
+              "original",
+              "shortened",
+              "visits"
+            ],
+            "type": "string",
+            "default": "visits",
+            "description": "The enum to sort the table results by. (Only applied when applicable.)",
+            "name": "sortThis",
+            "in": "query"
           }
         ],
         "responses": {
@@ -250,6 +281,12 @@ func init() {
             "description": "The requested asset was not found.",
             "schema": {
               "type": "string"
+            }
+          },
+          "default": {
+            "description": "Unexpected error.",
+            "schema": {
+              "$ref": "#/definitions/Error"
             }
           }
         }
@@ -560,6 +597,37 @@ func init() {
             "name": "path",
             "in": "path",
             "required": true
+          },
+          {
+            "type": "string",
+            "description": "The case insensitive substring to search for a shortened URL. (Only applied when applicable.)",
+            "name": "shortened",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "The case insensitive substring to search for a original URL. (Only applied when applicable.)",
+            "name": "original",
+            "in": "query"
+          },
+          {
+            "type": "boolean",
+            "default": true,
+            "description": "If true, sort the \"sortThis\" query enum in descending lexicographical order.",
+            "name": "sortDescending",
+            "in": "query"
+          },
+          {
+            "enum": [
+              "original",
+              "shortened",
+              "visits"
+            ],
+            "type": "string",
+            "default": "visits",
+            "description": "The enum to sort the table results by. (Only applied when applicable.)",
+            "name": "sortThis",
+            "in": "query"
           }
         ],
         "responses": {
@@ -573,6 +641,12 @@ func init() {
             "description": "The requested asset was not found.",
             "schema": {
               "type": "string"
+            }
+          },
+          "default": {
+            "description": "Unexpected error.",
+            "schema": {
+              "$ref": "#/definitions/Error"
             }
           }
         }
