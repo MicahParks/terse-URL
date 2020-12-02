@@ -22,6 +22,8 @@ func HandleFrontend(frontendDir string, logger *zap.SugaredLogger) operations.Fr
 		// Stat the file real quick to make sure it exists.
 		var err error
 		if _, err = os.Stat(filePath); err != nil {
+
+			// Log with the appropriate level.
 			if os.IsNotExist(err) {
 				logger.Infow("Failed to find requested file.",
 					"filePath", filePath,
@@ -32,6 +34,7 @@ func HandleFrontend(frontendDir string, logger *zap.SugaredLogger) operations.Fr
 					"error", err.Error(),
 				)
 			}
+
 			return &operations.FrontendNotFound{
 				Payload: fmt.Sprintf(`File not found: "%s".`, params.Path),
 			}
