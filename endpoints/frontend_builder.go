@@ -60,6 +60,7 @@ func buildHTML(fileData []byte, params operations.FrontendParams) (err error) {
 		return nil
 	}
 
+	// Build from the appropriate template builder.
 	return builder(fileData, params)
 }
 
