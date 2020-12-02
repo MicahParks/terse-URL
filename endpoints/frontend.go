@@ -22,8 +22,6 @@ func HandleFrontend(frontendDir string, logger *zap.SugaredLogger) operations.Fr
 			"path", params.Path,
 			"original", params.Original,
 			"shortened", params.Shortened,
-			"sortDecending", params.SortDescending,
-			"sortThis", params.SortThis,
 		)
 
 		// Create the file path.
