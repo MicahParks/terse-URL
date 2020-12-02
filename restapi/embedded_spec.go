@@ -324,6 +324,19 @@ func init() {
         }
       }
     },
+    "Header": {
+      "properties": {
+        "key": {
+          "type": "string"
+        },
+        "values": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
     "JWTInfo": {
       "properties": {
         "email": {
@@ -350,7 +363,7 @@ func init() {
         "headers": {
           "type": "array",
           "items": {
-            "type": "string"
+            "$ref": "#/definitions/Header"
           }
         },
         "ip": {
@@ -674,6 +687,19 @@ func init() {
         }
       }
     },
+    "Header": {
+      "properties": {
+        "key": {
+          "type": "string"
+        },
+        "values": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
     "JWTInfo": {
       "properties": {
         "email": {
@@ -700,7 +726,7 @@ func init() {
         "headers": {
           "type": "array",
           "items": {
-            "type": "string"
+            "$ref": "#/definitions/Header"
           }
         },
         "ip": {

@@ -221,6 +221,16 @@ definitions:
       - "message"
     type: "object"
 
+  # Schema for describing a single HTTP header.
+  Header:
+    properties:
+      key:
+        type: "string"
+      values:
+        type: "array"
+        items:
+          type: "string"
+
   # Schema for passing JWT information around.
   JWTInfo:
     properties:
@@ -242,7 +252,7 @@ definitions:
       headers:
         type: "array"
         items:
-          type: "string"
+          $ref: "#/definitions/Header"
     required:
       - "accessed"
       - "ip"
