@@ -20,10 +20,22 @@ func buildHTML(fileData []byte, params operations.FrontendParams) (err error) {
 	//
 	switch params.Path {
 	case "table.html":
-		buildTable(fileData, params)
+		if err = buildTable(fileData, params); err != nil {
+			return err
+		}
 	case "form.html":
-		buildForm(fileData, params)
+		if err = buildForm(fileData, params); err != nil {
+			return err
+		}
 	}
 
 	return nil
+}
+
+func buildForm(fileData []byte, params operations.FrontendParams) (err error) {
+
+}
+
+func buildTable(fileData []byte, params operations.FrontendParams) (err error) {
+
 }

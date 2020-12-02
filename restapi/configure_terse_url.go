@@ -29,7 +29,7 @@ func configureAPI(api *operations.TerseURLAPI) http.Handler {
 	api.ServeError = errors.ServeError
 
 	// Configure the service.
-	frontendDir, logger, invalidPaths, keycloakInfo, shortID, terseStore, visitsStore, err := configure.Configure()
+	frontendDir, logger, invalidPaths, keycloakInfo, shortID, terseStore, visitsStore, err := configure.Configure() // TODO Return configuration structure.
 	if err != nil {
 		log.Fatalf("Failed to configure the service.\nError: %s\n", err.Error())
 	}

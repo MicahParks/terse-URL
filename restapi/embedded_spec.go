@@ -240,20 +240,20 @@ func init() {
           },
           {
             "type": "string",
-            "description": "The case insensitive substring to search for a shortened URL. (Only applied when applicable.)",
+            "description": "The pre-populated shortened URL (form) or the case insensitive substring to search for a shortened URL (table). Only applied when applicable.",
             "name": "shortened",
             "in": "query"
           },
           {
             "type": "string",
-            "description": "The case insensitive substring to search for a original URL. (Only applied when applicable.)",
+            "description": "The pre-populated original URL (form) or the case insensitive substring to search for a original URL (table). Only applied when applicable.",
             "name": "original",
             "in": "query"
           },
           {
             "type": "boolean",
             "default": true,
-            "description": "If true, sort the \"sortThis\" query enum in descending lexicographical order.",
+            "description": "If true, sort the \"sortThis\" query enum in descending lexicographical order (table).",
             "name": "sortDescending",
             "in": "query"
           },
@@ -265,7 +265,7 @@ func init() {
             ],
             "type": "string",
             "default": "visits",
-            "description": "The enum to sort the table results by. (Only applied when applicable.)",
+            "description": "The enum to sort the results by (table). Only applied when applicable.",
             "name": "sortThis",
             "in": "query"
           }
@@ -600,20 +600,20 @@ func init() {
           },
           {
             "type": "string",
-            "description": "The case insensitive substring to search for a shortened URL. (Only applied when applicable.)",
+            "description": "The pre-populated shortened URL (form) or the case insensitive substring to search for a shortened URL (table). Only applied when applicable.",
             "name": "shortened",
             "in": "query"
           },
           {
             "type": "string",
-            "description": "The case insensitive substring to search for a original URL. (Only applied when applicable.)",
+            "description": "The pre-populated original URL (form) or the case insensitive substring to search for a original URL (table). Only applied when applicable.",
             "name": "original",
             "in": "query"
           },
           {
             "type": "boolean",
             "default": true,
-            "description": "If true, sort the \"sortThis\" query enum in descending lexicographical order.",
+            "description": "If true, sort the \"sortThis\" query enum in descending lexicographical order (table).",
             "name": "sortDescending",
             "in": "query"
           },
@@ -625,7 +625,7 @@ func init() {
             ],
             "type": "string",
             "default": "visits",
-            "description": "The enum to sort the table results by. (Only applied when applicable.)",
+            "description": "The enum to sort the results by (table). Only applied when applicable.",
             "name": "sortThis",
             "in": "query"
           }
