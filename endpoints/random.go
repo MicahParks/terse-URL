@@ -80,6 +80,8 @@ func HandleRandom(invalidPaths []string, logger *zap.SugaredLogger, shortID *sho
 			}
 
 			// Confirm the randomly generated URL is not already in use.
+			//
+			// This may be unnecessary. Maybe add a config to turn this off.
 			if _, err = terseStore.GetTerse(ctx, shortened, nil, nil, context.Background()); err != nil {
 
 				// If the shortened URL was not found, good.
