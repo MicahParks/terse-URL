@@ -1,6 +1,6 @@
 <html lang="en-US">
 <head>
-    <title>Side Navigation Menu</title>
+    <title>terse-URL</title>
     <meta charset="utf-8">
     <link href="search.css" type="text/css" rel="stylesheet"/>
     <link href="shared.css" type="text/css" rel="stylesheet"/>
@@ -9,10 +9,11 @@
     <script src="table.js"></script>
 </head>
 <body>
-<div class="searchContainer">
-    <input type="text" placeholder="Filter...">
-    <div class="search"></div>
-</div>
+<!--<div class="searchContainer">-->
+<!--    <input type="text" placeholder="Filter...">-->
+<!--    <div class="search"></div>-->
+<!--</div>-->
+<button class="raise" onclick="window.location.href='/form.html'">New</button>
 <table class="container" id="tta">
     <thead>
     <tr>
@@ -29,7 +30,7 @@
             <td>{{.Original}}</td>
             <td>{{.Visits}}</td>
             <td>
-                <button class="raise">Submit</button>
+                <button class="raise" onclick="window.location.href='/form.html{{.Redirect}}'">Edit</button>
             </td>
         </tr>
     {{end}}
