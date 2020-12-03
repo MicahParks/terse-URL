@@ -29,5 +29,4 @@ Environment variable table:
 ## TODO
 - [ ] Write tests
 - [ ] Frontend...
-- [ ] Check random shortened vs invalid.
 - [ ] A good README.md.

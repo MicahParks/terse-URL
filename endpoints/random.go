@@ -16,7 +16,7 @@ import (
 	"github.com/teris-io/shortid"
 )
 
-func HandleRandom(logger *zap.SugaredLogger, shortID *shortid.Shortid, terseStore storage.TerseStore) operations.URLRandomHandlerFunc {
+func HandleRandom(invalidPaths []string, logger *zap.SugaredLogger, shortID *shortid.Shortid, terseStore storage.TerseStore) operations.URLRandomHandlerFunc {
 	return func(params operations.URLRandomParams, _ *models.JWTInfo) middleware.Responder {
 
 		// Do not have debug level logging on in production, as it will log clog up the logs.
@@ -47,24 +47,37 @@ func HandleRandom(logger *zap.SugaredLogger, shortID *shortid.Shortid, terseStor
 			}}
 		}
 
-		// Generate a shortened URL that will redirect to the original.
+		// Enter a loop to create a valid random shortened URL.
 		var shortened string
-		if shortened, err = shortID.Generate(); err != nil {
+		for {
 
-			// Log with the appropriate level.
-			logger.Errorw("Failed to generate shortened URL.",
-				"deleteAt", params.Original.DeleteAt,
-				"original", params.Original.URL,
-				"error", err.Error(),
-			)
+			// Generate a shortened URL that will redirect to the original.
+			if shortened, err = shortID.Generate(); err != nil {
 
-			// Report the error to the client.
-			code := int64(500)
-			message := "Failed to generate random shortened URL."
-			return &operations.URLRandomDefault{Payload: &models.Error{
-				Code:    &code,
-				Message: &message,
-			}}
+				// Log with the appropriate level.
+				logger.Errorw("Failed to generate shortened URL.",
+					"deleteAt", params.Original.DeleteAt,
+					"original", params.Original.URL,
+					"error", err.Error(),
+				)
+
+				// Report the error to the client.
+				code := int64(500)
+				message := "Failed to generate random shortened URL."
+				return &operations.URLRandomDefault{Payload: &models.Error{
+					Code:    &code,
+					Message: &message,
+				}}
+			}
+
+			// Confirm the randomly generated URL is not invalid.
+			for _, invalid := range invalidPaths {
+				if invalid == shortened {
+					continue
+				}
+			}
+
+			break
 		}
 
 		// Change the deletion time to the desired format.
