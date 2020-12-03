@@ -1,6 +1,6 @@
 # terse
 
-A URL shortener as a coding sample.
+A URL shortener with a web GUI and multiple storage backends.
 
 ## Configuration
 Environment variable table:
@@ -27,7 +27,7 @@ Environment variable table:
 |`WORKER_COUNT`           |The quantity of workers to use for incoming request async tasks like performing async database calls. Not the number of incoming requests that can be handled at one time.|`4`          |`10`                                  |
 
 ## TODO
-- [ ] Write tests
+- [ ] Change user created warnings to info?
 - [ ] Frontend...
 - [ ] A good README.md.
-- [ ] Change user created warnings to info?
+- [ ] Write tests
