@@ -10,13 +10,13 @@
 <div id="form-main">
     <div id="form-div">
         <form class="form" id="form1">
-            <p class="name">
-                <input name="original" type="text" class="feedback-input" placeholder="Original" id="original"/>
+            <p>
+                <input name="original" type="text" class="feedback-input" placeholder="Original" id="original" value="{{.Original}}"/>
             </p>
-            <p class="email">
-                <input name="shortened" type="text" class="feedback-input" id="shortened" placeholder="Shortened"/>
+            <p>
+                <input name="shortened" type="text" class="feedback-input" id="shortened" placeholder="Shortened" value="{{.Shortened}}"/>
             </p>
-            <div class="buttons">
+            <div>
                 <button class="raise">Submit</button>
             </div>
         </form>
