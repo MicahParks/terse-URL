@@ -29,10 +29,11 @@ func configureAPI(api *operations.TerseURLAPI) http.Handler {
 	api.ServeError = errors.ServeError
 
 	// Configure the service.
-	frontendDir, logger, invalidPaths, keycloakInfo, shortID, terseStore, visitsStore, err := configure.Configure() // TODO Return configuration structure.
+	config, err := configure.Configure() // TODO Return configuration structure.
 	if err != nil {
 		log.Fatalf("Failed to configure the service.\nError: %s\n", err.Error())
 	}
+	logger := config.Logger
 	logger.Infow("Logger is configured and deletions (if any) have been scheduled.")
 
 	// Assign the generated code's logger to Zap.
@@ -46,7 +47,7 @@ func configureAPI(api *operations.TerseURLAPI) http.Handler {
 
 	// Set up the authentication handler.
 	logger.Infow("Configuring authentication with Keycloak.")
-	if api.JWTAuth, err = configure.HandleAuth(keycloakInfo, logger); err != nil {
+	if api.JWTAuth, err = configure.HandleAuth(&config.KeycloakInfo, logger); err != nil {
 		logger.Fatalw("Failed to configure Keycloak.",
 			"error", err.Error(),
 		)
@@ -55,12 +56,12 @@ func configureAPI(api *operations.TerseURLAPI) http.Handler {
 
 	// Assign the endpoint handlers.
 	api.AliveHandler = endpoints.HandleAlive()
-	api.FrontendHandler = endpoints.HandleFrontend(frontendDir, logger)
-	api.URLCustomHandler = endpoints.HandleCustom(invalidPaths, logger.Named("/api/custom"), terseStore)
-	api.URLDeleteHandler = endpoints.HandleDelete(logger.Named("/api/delete"), terseStore)
-	api.URLGetHandler = endpoints.HandleGet(logger.Named("/{shortened}"), terseStore)
-	api.URLRandomHandler = endpoints.HandleRandom(logger.Named("/api/random"), shortID, terseStore)
-	api.URLTrackHandler = endpoints.HandleTrack(logger.Named("/api/tracked/{shortened}"), visitsStore)
+	api.FrontendHandler = endpoints.HandleFrontend(config.FrontendDir, logger.Named("/frontend/{path}"))
+	api.URLCustomHandler = endpoints.HandleCustom(config.InvalidPaths, logger.Named("/api/custom"), config.TerseStore)
+	api.URLDeleteHandler = endpoints.HandleDelete(logger.Named("/api/delete"), config.TerseStore)
+	api.URLGetHandler = endpoints.HandleGet(logger.Named("/{shortened}"), config.TerseStore)
+	api.URLRandomHandler = endpoints.HandleRandom(logger.Named("/api/random"), config.ShortID, config.TerseStore)
+	api.URLTrackHandler = endpoints.HandleTrack(logger.Named("/api/tracked/{shortened}"), config.VisitsStore)
 
 	api.PreServerShutdown = func() {}
 

@@ -52,15 +52,16 @@ var (
 	defaultTimeout = time.Minute
 )
 
-// Configuration holds all the necessary information for
-type Configuration struct {
+// configuration holds all the necessary information for
+type configuration struct {
 	DefaultTimeout        time.Duration
-	FrontendDirectory     string
+	FrontendDir           string
 	KeycloakBaseURL       string
 	KeycloakID            string
 	KeycloakRealm         string
 	KeycloakSecret        string
 	InvalidPaths          []string
+	ShortIDSeed           uint64
 	TerseMongoCollection  string
 	TerseMongoDatabase    string
 	TerseMongoURI         string
@@ -105,10 +106,10 @@ func invalidPathsParse(s string) (invalidPaths []string) {
 }
 
 // readEnvVars reads in the environment variables and handles defaults for everything except storage types.
-func readEnvVars() (config *Configuration, err error) {
+func readEnvVars() (config *configuration, err error) {
 
 	// Create the configuration structure.
-	config = &Configuration{}
+	config = &configuration{}
 
 	// Transform the required environment variables to seconds.
 	incomingRequestTimeout := os.Getenv("DEFAULT_TIMEOUT")
@@ -126,11 +127,19 @@ func readEnvVars() (config *Configuration, err error) {
 		return nil, fmt.Errorf("%w: %s", err, workersBuffer)
 	}
 
+	// Transform the short ID seed into a uint64, if given.
+	shortIDSeed := os.Getenv("SHORTID_SEED")
+	if shortIDSeed == "" {
+		config.ShortIDSeed = uint64(time.Now().UnixNano())
+	} else if config.ShortIDSeed, err = strconv.ParseUint(shortIDSeed, 10, 64); err != nil {
+		return nil, fmt.Errorf("could not parse shortid seed: %w", err)
+	}
+
 	// Transform the required environment variables to slices.
 	config.InvalidPaths = invalidPathsParse(os.Getenv("INVALID_PATHS"))
 
 	// Assign the string value configurations.
-	config.FrontendDirectory = os.Getenv("FRONTEND_DIRECTORY")
+	config.FrontendDir = os.Getenv("FRONTEND_DIRECTORY")
 	config.KeycloakBaseURL = os.Getenv("KEYCLOAK_BASE_URL")
 	config.KeycloakID = os.Getenv("KEYCLOAK_ID")
 	config.KeycloakRealm = os.Getenv("KEYCLOAK_REALM")
@@ -150,12 +159,12 @@ func readEnvVars() (config *Configuration, err error) {
 	}
 
 	// Assign the default value to the frontend directory if it does none was given.
-	if config.FrontendDirectory == "" {
-		config.FrontendDirectory = defaultFrontendDirectory
+	if config.FrontendDir == "" {
+		config.FrontendDir = defaultFrontendDirectory
 	}
 
 	// Confirm the frontend directory exists.
-	if _, err = os.Stat(config.FrontendDirectory); err != nil {
+	if _, err = os.Stat(config.FrontendDir); err != nil {
 		return nil, fmt.Errorf("%w: Could not stat frontend directory", err)
 	}
 

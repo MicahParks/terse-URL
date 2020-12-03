@@ -11,35 +11,46 @@ import (
 	"github.com/MicahParks/terse-URL/storage"
 )
 
-func Configure() (frontendDir string, logger *zap.SugaredLogger, invalidPaths []string, keycloakInfo *KeycloakInfo, shortID *shortid.Shortid, terseStore storage.TerseStore, visitsStore storage.VisitsStore, err error) {
+type Configuration struct {
+	FrontendDir  string
+	Logger       *zap.SugaredLogger
+	InvalidPaths []string
+	KeycloakInfo KeycloakInfo
+	ShortID      *shortid.Shortid
+	TerseStore   storage.TerseStore
+	VisitsStore  storage.VisitsStore
+}
+
+func Configure() (config Configuration, err error) {
 
 	// Create a logger.
 	var zapLogger *zap.Logger
 	if zapLogger, err = zap.NewDevelopment(); err != nil { // TODO Make NewProduction
-		return "", nil, nil, nil, nil, nil, nil, err
+		return Configuration{}, err
 	}
-	logger = zapLogger.Sugar()
+	logger := zapLogger.Sugar()
 	logger.Info("Logger created. Starting configuration.")
+	config.Logger = logger
 
 	// Read the configuration from the environment.
-	var config *Configuration
-	if config, err = readEnvVars(); err != nil {
+	var rawConfig *configuration
+	if rawConfig, err = readEnvVars(); err != nil {
 		logger.Fatalw("Failed to read configuration from environment variables.",
 			"error", err.Error(),
 		)
-		return "", nil, nil, nil, nil, nil, nil, err // Should be unreachable.
+		return Configuration{}, err // Should be unreachable.
 	}
 
 	// Create the Keycloak information data structure.
-	keycloakInfo = &KeycloakInfo{
-		BaseURL:      config.KeycloakBaseURL,
-		ClientID:     config.KeycloakID,
-		ClientSecret: config.KeycloakSecret,
-		Realm:        config.KeycloakRealm,
+	config.KeycloakInfo = KeycloakInfo{
+		BaseURL:      rawConfig.KeycloakBaseURL,
+		ClientID:     rawConfig.KeycloakID,
+		ClientSecret: rawConfig.KeycloakSecret,
+		Realm:        rawConfig.KeycloakRealm,
 	}
 
 	// Set the database timeout.
-	defaultTimeout = config.DefaultTimeout
+	defaultTimeout = rawConfig.DefaultTimeout
 
 	// Create a channel to report errors asynchronously.
 	errChan := make(chan error)
@@ -49,18 +60,18 @@ func Configure() (frontendDir string, logger *zap.SugaredLogger, invalidPaths []
 
 	// Create a ctxerrgroup for misc asynchronous items needed for requests.
 	// TODO Make sure this is used properly.
-	group := ctxerrgroup.New(config.WorkerCount, config.WorkersBuffer, true, func(_ ctxerrgroup.Group, err error) {
+	group := ctxerrgroup.New(rawConfig.WorkerCount, rawConfig.WorkersBuffer, true, func(_ ctxerrgroup.Group, err error) {
 		logger.Errorw("An error occurred with a ctxerrgroup worker.",
 			"error", err.Error(),
 		)
 	})
 
 	// Create the correct VisitsStore.
-	switch config.VisitsStoreType {
+	switch rawConfig.VisitsStoreType {
 
 	// Use an in memory implementation for Visits storage.
 	case memoryStorage:
-		visitsStore = storage.NewMemVisits()
+		config.VisitsStore = storage.NewMemVisits()
 
 	// Use MongoDB for Visits storage.
 	case mongoStorage:
@@ -70,26 +81,26 @@ func Configure() (frontendDir string, logger *zap.SugaredLogger, invalidPaths []
 		defer cancel()
 
 		// Create the Visits storage with MongoDB.
-		opts := options.Client().ApplyURI(config.VisitsMongoURI)
-		if visitsStore, err = storage.NewMongoDBVisits(ctx, config.VisitsMongoDatabase, config.VisitsMongoCollection, opts); err != nil {
+		opts := options.Client().ApplyURI(rawConfig.VisitsMongoURI)
+		if config.VisitsStore, err = storage.NewMongoDBVisits(ctx, rawConfig.VisitsMongoDatabase, rawConfig.VisitsMongoCollection, opts); err != nil {
 			logger.Fatalw("Failed to reach MongoDB.",
 				"store", "VisitsStore",
 				"error", err.Error(),
 			)
-			return "", nil, nil, nil, nil, nil, nil, err // Should be unreachable.
+			return Configuration{}, err // Should be unreachable.
 		}
 
 	// If no known Visits storage was specified, don't store visits.
 	default:
-		visitsStore = nil // Ineffectual assignment, but more clearly shows visits will not be tracked by default.
+		config.VisitsStore = nil // Ineffectual assignment, but more clearly shows visits will not be tracked by default.
 	}
 
 	// Create the correct TerseStore.
-	switch config.TerseStoreType {
+	switch rawConfig.TerseStoreType {
 
 	// Use an in memory implementation for Terse storage.
 	case memoryStorage:
-		storage.NewMemTerse(DefaultCtx, errChan, &group, visitsStore)
+		config.TerseStore = storage.NewMemTerse(DefaultCtx, errChan, &group, config.VisitsStore)
 
 	// Set up MongoDB for the Terse storage.
 	case mongoStorage:
@@ -99,32 +110,41 @@ func Configure() (frontendDir string, logger *zap.SugaredLogger, invalidPaths []
 		defer cancel()
 
 		// Create the Terse storage with MongoDB.
-		opts := options.Client().ApplyURI(config.TerseMongoURI)
-		if terseStore, err = storage.NewMongoDBTerse(ctx, DefaultCtx, config.TerseMongoDatabase, config.TerseMongoCollection, errChan, &group, visitsStore, opts); err != nil {
+		opts := options.Client().ApplyURI(rawConfig.TerseMongoURI)
+		if config.TerseStore, err = storage.NewMongoDBTerse(ctx, DefaultCtx, rawConfig.TerseMongoDatabase, rawConfig.TerseMongoCollection, errChan, &group, config.VisitsStore, opts); err != nil {
 			logger.Fatalw("Failed to reach MongoDB.",
 				"store", "VisitsStore",
 				"error", err.Error(),
 			)
-			return "", nil, nil, nil, nil, nil, nil, err // Should be unreachable.
+			return Configuration{}, err // Should be unreachable.
 		}
 
 	// If no known Terse storage was specified in the configuration use an in memory implementation.
 	// TODO Change to bbolt when implemented.
 	default:
-		terseStore = storage.NewMemTerse(DefaultCtx, errChan, &group, visitsStore)
+		config.TerseStore = storage.NewMemTerse(DefaultCtx, errChan, &group, config.VisitsStore)
 	}
 
 	// Schedule any existing deletions for the Terse pairs.
 	ctx, cancel := DefaultCtx()
 	defer cancel()
-	if err = terseStore.ScheduleDeletions(ctx); err != nil {
+	if err = config.TerseStore.ScheduleDeletions(ctx); err != nil {
 		logger.Fatalw("Failed to schedule deletions",
 			"error", err.Error(),
 		)
-		return "", nil, nil, nil, nil, nil, nil, err
+		return Configuration{}, err
 	}
 
-	return frontendDir, logger, invalidPaths, keycloakInfo, shortID, terseStore, visitsStore, nil
+	// Create the short ID generator.
+	if config.ShortID, err = shortid.New(1, shortid.DefaultABC, rawConfig.ShortIDSeed); err != nil {
+		return Configuration{}, err
+	}
+
+	// Copy over any other needed raw config info.
+	config.FrontendDir = rawConfig.FrontendDir
+	config.InvalidPaths = rawConfig.InvalidPaths
+
+	return config, nil
 }
 
 // DefaultCtx creates a context and its cancel function using the default timeout or one provided during configuration.

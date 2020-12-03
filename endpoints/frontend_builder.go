@@ -54,7 +54,7 @@ func buildHTML(fileData []byte, params operations.FrontendParams) (err error) {
 
 	// If the file is recognized, send it to the appropriate templateBuilder.
 	//
-	// Find a better way to do this?
+	// Is there a better way to do this?
 	builder, ok := templateMap[params.Path]
 	if !ok {
 		return nil
