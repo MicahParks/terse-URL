@@ -116,7 +116,7 @@ func (m *MongoDBTerse) GetTerse(ctx context.Context, shortened string, visit *mo
 
 		// Transform the not found error, if needed.
 		if errors.Is(err, mongo.ErrNoDocuments) {
-			return "", ErrShortenedNotFound
+			err = ErrShortenedNotFound
 		}
 
 		return "", err
