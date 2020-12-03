@@ -30,3 +30,4 @@ Environment variable table:
 - [ ] Write tests
 - [ ] Frontend...
 - [ ] A good README.md.
+- [ ] Change user created warnings to info?

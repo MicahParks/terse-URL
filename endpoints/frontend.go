@@ -61,13 +61,13 @@ func HandleFrontend(frontendDir string, logger *zap.SugaredLogger) operations.Fr
 		if err = buildHTML(fileData, params); err != nil {
 
 			// Log with the appropriate level.
-			logger.Errorw("Failed to build templated HTML.",
+			message := "Failed to build HTML template."
+			logger.Errorw(message,
 				"error", err.Error(),
 			)
 
 			// Report the error to the client.
 			code := int64(500)
-			message := fmt.Sprintf(`Failed to template values for frontend asset: "%s".`, params.Path)
 			return &operations.FrontendDefault{
 				Payload: &models.Error{
 					Code:    &code,

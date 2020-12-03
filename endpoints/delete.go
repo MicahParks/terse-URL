@@ -29,14 +29,14 @@ func HandleDelete(logger *zap.SugaredLogger, terseStore storage.TerseStore) oper
 		if err = terseStore.DeleteTerse(ctx, params.Shortened); err != nil {
 
 			// Log with the appropriate level.
-			logger.Warnw("Failed to deleted the requested shortened URL.",
+			message := "Failed to delete Terse pair."
+			logger.Warnw(message,
 				"shortened", params.Shortened,
 				"error", err.Error(),
 			)
 
 			// Report the error to the client.
 			code := int64(500)
-			message := "Failed to delete Terse pair."
 			return &operations.URLDeleteDefault{Payload: &models.Error{
 				Code:    &code,
 				Message: &message,
@@ -47,14 +47,14 @@ func HandleDelete(logger *zap.SugaredLogger, terseStore storage.TerseStore) oper
 		if err = terseStore.VisitsStore().DeleteVisits(ctx, params.Shortened); err != nil {
 
 			// Log with the appropriate level.
-			logger.Warnw("Failed to deleted the visits for requested shortened URL.",
+			message := "Failed to delete the visits for this shortened URL. Terse pair deleted."
+			logger.Warnw(message,
 				"shortened", params.Shortened,
 				"error", err.Error(),
 			)
 
 			// Report the error to the client.
 			code := int64(500)
-			message := "Failed to delete the visits for this shortened URL. Terse pair deleted."
 			return &operations.URLDeleteDefault{Payload: &models.Error{
 				Code:    &code,
 				Message: &message,

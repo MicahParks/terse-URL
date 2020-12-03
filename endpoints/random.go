@@ -1,6 +1,8 @@
 package endpoints
 
 import (
+	"context"
+	"errors"
 	"fmt"
 	"net/url"
 	"time"
@@ -33,14 +35,14 @@ func HandleRandom(invalidPaths []string, logger *zap.SugaredLogger, shortID *sho
 		if _, err = url.Parse(params.Original.URL); err != nil {
 
 			// Log with the appropriate level.
-			logger.Infow("Client submitted original URL did not validate.",
+			message := `Parameter "original" is not a properly formatted URL.`
+			logger.Infow(message,
 				"original", params.Original.URL,
 				"error", err.Error(),
 			)
 
 			// Report the error to the client.
 			code := int64(400)
-			message := `Parameter "original" is not a properly formatted URL.`
 			return &operations.URLRandomDefault{Payload: &models.Error{
 				Code:    &code,
 				Message: &message,
@@ -55,7 +57,8 @@ func HandleRandom(invalidPaths []string, logger *zap.SugaredLogger, shortID *sho
 			if shortened, err = shortID.Generate(); err != nil {
 
 				// Log with the appropriate level.
-				logger.Errorw("Failed to generate shortened URL.",
+				message := "Failed to generate random shortened URL."
+				logger.Errorw(message,
 					"deleteAt", params.Original.DeleteAt,
 					"original", params.Original.URL,
 					"error", err.Error(),
@@ -63,7 +66,6 @@ func HandleRandom(invalidPaths []string, logger *zap.SugaredLogger, shortID *sho
 
 				// Report the error to the client.
 				code := int64(500)
-				message := "Failed to generate random shortened URL."
 				return &operations.URLRandomDefault{Payload: &models.Error{
 					Code:    &code,
 					Message: &message,
@@ -77,6 +79,30 @@ func HandleRandom(invalidPaths []string, logger *zap.SugaredLogger, shortID *sho
 				}
 			}
 
+			// Confirm the randomly generated URL is not already in use.
+			if _, err = terseStore.GetTerse(ctx, shortened, nil, nil, context.Background()); err != nil {
+
+				// If the shortened URL was not found, good.
+				if errors.Is(err, storage.ErrShortenedNotFound) {
+					err = nil
+				} else {
+
+					// Log with the appropriate level.
+					message := "Failed to check if randomly generated URL is already in use."
+					logger.Errorw(message,
+						"error", err.Error(),
+					)
+
+					// Report the error to the client.
+					code := int64(500)
+					return &operations.URLRandomDefault{Payload: &models.Error{
+						Code:    &code,
+						Message: &message,
+					}}
+				}
+			}
+
+			// The URL is valid and not in use.
 			break
 		}
 
@@ -91,7 +117,8 @@ func HandleRandom(invalidPaths []string, logger *zap.SugaredLogger, shortID *sho
 		if err = terseStore.UpsertTerse(ctx, deletionTime, params.Original.URL, shortened); err != nil {
 
 			// Log with the appropriate level.
-			logger.Errorw("Failed to upsert Terse pair.",
+			message := "Failed to upsert Terse pair into storage."
+			logger.Errorw(message,
 				"deleteAt", params.Original.DeleteAt,
 				"original", params.Original.URL,
 				"shortened", shortened,
@@ -100,7 +127,6 @@ func HandleRandom(invalidPaths []string, logger *zap.SugaredLogger, shortID *sho
 
 			// Report the error to the client.
 			code := int64(500)
-			message := "Failed to upsert Terse pair into storage."
 			return &operations.URLRandomDefault{Payload: &models.Error{
 				Code:    &code,
 				Message: &message,

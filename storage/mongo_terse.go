@@ -2,6 +2,7 @@ package storage
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"github.com/MicahParks/ctxerrgroup"
@@ -112,6 +113,12 @@ func (m *MongoDBTerse) GetTerse(ctx context.Context, shortened string, visit *mo
 
 	// Find the shortened link's terse and decode the returned Terse.
 	if err = m.coll.FindOne(ctx, filter).Decode(terse); err != nil {
+
+		// Transform the not found error, if needed.
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			return "", ErrShortenedNotFound
+		}
+
 		return "", err
 	}
 

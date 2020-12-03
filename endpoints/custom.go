@@ -32,13 +32,13 @@ func HandleCustom(invalidPaths []string, logger *zap.SugaredLogger, terseStore s
 		if _, err = url.Parse(params.TersePair.OriginalURL); err != nil {
 
 			// Log with the appropriate level.
-			logger.Infow("Client submitted original URL did not validate.",
+			message := `Parameter "originalURL" is not a properly formatted URL.`
+			logger.Infow(message,
 				"original", params.TersePair.OriginalURL,
 				"error", err.Error())
 
 			// Report the error to the client.
 			code := int64(400)
-			message := `Parameter "originalURL" is not a properly formatted URL.`
 			return &operations.URLCustomDefault{Payload: &models.Error{
 				Code:    &code,
 				Message: &message,
@@ -49,14 +49,14 @@ func HandleCustom(invalidPaths []string, logger *zap.SugaredLogger, terseStore s
 		if _, err = url.Parse(params.TersePair.ShortenedURL); err != nil {
 
 			// Log with the appropriate level.
-			logger.Infow("Client submitted custom URL did not parse.",
+			message := `Parameter "shortenedURL" is not a URL safe.`
+			logger.Infow(message,
 				"shortened", params.TersePair.ShortenedURL,
 				"error", err.Error(),
 			)
 
 			// Report the error to the client.
 			code := int64(400)
-			message := `Parameter "shortenedURL" is not a URL safe.`
 			return &operations.URLCustomDefault{Payload: &models.Error{
 				Code:    &code,
 				Message: &message,
@@ -70,13 +70,13 @@ func HandleCustom(invalidPaths []string, logger *zap.SugaredLogger, terseStore s
 			if u == params.TersePair.ShortenedURL || strings.HasPrefix(params.TersePair.ShortenedURL, u+"/") { // TODO Need or condition?
 
 				// Log with the appropriate level.
-				logger.Infow("Client submitted invalid custom URL.",
+				message := "Invalid shortened URL"
+				logger.Infow(message,
 					"URL", params.TersePair.ShortenedURL,
 				)
 
 				// Report the error to the client.
 				code := int64(400)
-				message := fmt.Sprintf("Invalid shortened URL: %s", u)
 				return &operations.URLCustomDefault{Payload: &models.Error{
 					Code:    &code,
 					Message: &message,
@@ -95,7 +95,8 @@ func HandleCustom(invalidPaths []string, logger *zap.SugaredLogger, terseStore s
 		if err = terseStore.UpsertTerse(ctx, deletionTime, params.TersePair.OriginalURL, params.TersePair.ShortenedURL); err != nil {
 
 			// Log the server side failure.
-			logger.Errorw("Failed to upsert Terse pair.",
+			message := "Failed to upsert Terse pair into storage."
+			logger.Errorw(message,
 				"deleteAt", params.TersePair.DeleteAt,
 				"original", params.TersePair.OriginalURL,
 				"shortened", params.TersePair.ShortenedURL,
@@ -104,7 +105,6 @@ func HandleCustom(invalidPaths []string, logger *zap.SugaredLogger, terseStore s
 
 			// Report the error to the client.
 			code := int64(500)
-			message := "Failed to upsert Terse pair into storage."
 			return &operations.URLCustomDefault{Payload: &models.Error{
 				Code:    &code,
 				Message: &message,

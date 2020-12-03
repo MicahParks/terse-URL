@@ -21,8 +21,9 @@ type TerseStore interface { // TODO Add a method that removes all redirections b
 	// DeleteLink deletes the given shortened URL.
 	DeleteTerse(ctx context.Context, shortened string) (err error)
 
-	// GetLink retrieves an original URL given it's shortened URL. The visit will be stored in the VisitsStore, unless it
-	// is nil. visitCancel and visitCtx are the context.CancelFunc and context.Context for the VisitsStore interactions.
+	// GetLink retrieves an original URL given it's shortened URL. The visit will be stored in the VisitsStore, unless
+	// it is nil. visitCancel and visitCtx are the context.CancelFunc and context.Context for the VisitsStore
+	// interactions. The error must be storage.ErrShortenedNotFound if the shortened URL is not found.
 	GetTerse(ctx context.Context, shortened string, visit *models.Visit, visitCancel context.CancelFunc, visitCtx context.Context) (original string, err error)
 
 	// PutLink inserts the original and shortened URL key value pair to the underlying storage. The shortened link is
