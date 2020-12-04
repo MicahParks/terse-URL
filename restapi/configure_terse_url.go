@@ -56,7 +56,6 @@ func configureAPI(api *operations.TerseURLAPI) http.Handler {
 
 	// Assign the endpoint handlers.
 	api.AliveHandler = endpoints.HandleAlive()
-	api.FrontendHandler = endpoints.HandleFrontend(config.FrontendDir, logger.Named("/frontend/{path}"))
 	api.URLCustomHandler = endpoints.HandleCustom(config.InvalidPaths, logger.Named("/api/custom"), config.TerseStore)
 	api.URLDeleteHandler = endpoints.HandleDelete(logger.Named("/api/delete"), config.TerseStore)
 	api.URLGetHandler = endpoints.HandleGet(logger.Named("/{shortened}"), config.TerseStore)

@@ -11,9 +11,6 @@ import (
 
 const (
 
-	// defaultFrontendDirectory is the default frontend directory to look for frontend assets.
-	defaultFrontendDirectory = "/frontend"
-
 	// defaultMongoDatabase is the default MongoDB database to use.
 	defaultMongoDatabase = "terseURL"
 
@@ -55,7 +52,6 @@ var (
 // configuration holds all the necessary information for
 type configuration struct {
 	DefaultTimeout        time.Duration
-	FrontendDir           string
 	KeycloakBaseURL       string
 	KeycloakID            string
 	KeycloakRealm         string
@@ -139,7 +135,6 @@ func readEnvVars() (config *configuration, err error) {
 	config.InvalidPaths = invalidPathsParse(os.Getenv("INVALID_PATHS"))
 
 	// Assign the string value configurations.
-	config.FrontendDir = os.Getenv("FRONTEND_DIRECTORY")
 	config.KeycloakBaseURL = os.Getenv("KEYCLOAK_BASE_URL")
 	config.KeycloakID = os.Getenv("KEYCLOAK_ID")
 	config.KeycloakRealm = os.Getenv("KEYCLOAK_REALM")
@@ -156,16 +151,6 @@ func readEnvVars() (config *configuration, err error) {
 	// Confirm none of the Keycloak environment variables are empty.
 	if config.KeycloakBaseURL == "" || config.KeycloakID == "" || config.KeycloakRealm == "" || config.KeycloakSecret == "" {
 		return nil, fmt.Errorf("%w: All Keycloak enviornment variables must be populated", ErrMissingRequiredConfig)
-	}
-
-	// Assign the default value to the frontend directory if it does none was given.
-	if config.FrontendDir == "" {
-		config.FrontendDir = defaultFrontendDirectory
-	}
-
-	// Confirm the frontend directory exists.
-	if _, err = os.Stat(config.FrontendDir); err != nil {
-		return nil, fmt.Errorf("%w: Could not stat frontend directory", err)
 	}
 
 	// If using MongoDB for Terse storage, check for defaults to use.

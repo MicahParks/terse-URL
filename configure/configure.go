@@ -12,7 +12,6 @@ import (
 )
 
 type Configuration struct {
-	FrontendDir  string
 	Logger       *zap.SugaredLogger
 	InvalidPaths []string
 	KeycloakInfo KeycloakInfo
@@ -141,7 +140,6 @@ func Configure() (config Configuration, err error) {
 	}
 
 	// Copy over any other needed raw config info.
-	config.FrontendDir = rawConfig.FrontendDir
 	config.InvalidPaths = rawConfig.InvalidPaths
 
 	return config, nil

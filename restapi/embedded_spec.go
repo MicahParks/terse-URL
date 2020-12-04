@@ -227,58 +227,6 @@ func init() {
         }
       }
     },
-    "/frontend/{path}": {
-      "get": {
-        "description": "Get a frontend asset to interact with the application via a web browser.",
-        "operationId": "frontend",
-        "parameters": [
-          {
-            "type": "string",
-            "name": "path",
-            "in": "path",
-            "required": true
-          },
-          {
-            "type": "string",
-            "description": "The pre-populated original URL (for the form).",
-            "name": "original",
-            "in": "query"
-          },
-          {
-            "type": "string",
-            "description": "The pre-populated shortened URL (for the form).",
-            "name": "shortened",
-            "in": "query"
-          },
-          {
-            "type": "string",
-            "description": "The case insensitive substring to search for a shortened URL (for the table).",
-            "name": "substring",
-            "in": "query"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "The frontend asset.",
-            "schema": {
-              "type": "file"
-            }
-          },
-          "404": {
-            "description": "The requested asset was not found.",
-            "schema": {
-              "type": "string"
-            }
-          },
-          "default": {
-            "description": "Unexpected error.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          }
-        }
-      }
-    },
     "/{shortened}": {
       "get": {
         "description": "Use the shortened URL. It will redirect to the full URL if it has not expired.",
@@ -579,58 +527,6 @@ func init() {
               "items": {
                 "$ref": "#/definitions/Visit"
               }
-            }
-          },
-          "default": {
-            "description": "Unexpected error.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          }
-        }
-      }
-    },
-    "/frontend/{path}": {
-      "get": {
-        "description": "Get a frontend asset to interact with the application via a web browser.",
-        "operationId": "frontend",
-        "parameters": [
-          {
-            "type": "string",
-            "name": "path",
-            "in": "path",
-            "required": true
-          },
-          {
-            "type": "string",
-            "description": "The pre-populated original URL (for the form).",
-            "name": "original",
-            "in": "query"
-          },
-          {
-            "type": "string",
-            "description": "The pre-populated shortened URL (for the form).",
-            "name": "shortened",
-            "in": "query"
-          },
-          {
-            "type": "string",
-            "description": "The case insensitive substring to search for a shortened URL (for the table).",
-            "name": "substring",
-            "in": "query"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "The frontend asset.",
-            "schema": {
-              "type": "file"
-            }
-          },
-          "404": {
-            "description": "The requested asset was not found.",
-            "schema": {
-              "type": "string"
             }
           },
           "default": {

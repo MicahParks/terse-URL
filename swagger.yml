@@ -148,43 +148,6 @@ paths:
       security:
         - JWT: [ ]
 
-  /frontend/{path}:
-    get:
-      description: "Get a frontend asset to interact with the application via a web browser."
-      operationId: "frontend"
-      parameters:
-        - in: "path"
-          name: "path"
-          required: true
-          type: "string"
-        - description: "The pre-populated original URL (for the form)."
-          in: "query"
-          name: "original"
-          required: false
-          type: "string"
-        - description: "The pre-populated shortened URL (for the form)."
-          in: "query"
-          name: "shortened"
-          required: false
-          type: "string"
-        - description: "The case insensitive substring to search for a shortened URL (for the table)."
-          in: "query"
-          name: "substring"
-          type: "string"
-      responses:
-        200:
-          description: "The frontend asset."
-          schema:
-            type: "file"
-        404:
-          description: "The requested asset was not found."
-          schema:
-            type: "string"
-        default:
-          description: "Unexpected error."
-          schema:
-            $ref: "#/definitions/Error"
-
   # IDs are always 9 characters or greater, so they can be put at the base path as long as all other paths are 8
   # characters or less.
   /{shortened}:

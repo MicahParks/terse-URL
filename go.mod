@@ -5,7 +5,7 @@ go 1.15
 require (
 	github.com/MicahParks/ctxerrgroup v0.0.8
 	github.com/Nerzal/gocloak/v7 v7.8.0
-	github.com/aws/aws-sdk-go v1.36.0 // indirect
+	github.com/aws/aws-sdk-go v1.36.1 // indirect
 	github.com/didip/tollbooth v4.0.2+incompatible
 	github.com/go-openapi/errors v0.19.9
 	github.com/go-openapi/loads v0.19.7
@@ -22,7 +22,7 @@ require (
 	go.mongodb.org/mongo-driver v1.4.4
 	go.uber.org/multierr v1.6.0 // indirect
 	go.uber.org/zap v1.16.0
-	golang.org/x/crypto v0.0.0-20201124201722-c8d3bf9c5392 // indirect
+	golang.org/x/crypto v0.0.0-20201203163018-be400aefbc4c // indirect
 	golang.org/x/net v0.0.0-20201202161906-c7110b5ffcbb
 	golang.org/x/sync v0.0.0-20201020160332-67f06af15bc9 // indirect
 	golang.org/x/time v0.0.0-20200630173020-3af7569d3a1e // indirect
