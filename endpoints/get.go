@@ -2,7 +2,6 @@ package endpoints
 
 import (
 	"fmt"
-	"net/http"
 	"time"
 
 	"github.com/go-openapi/runtime/middleware"
@@ -34,7 +33,7 @@ func HandleGet(logger *zap.SugaredLogger, terseStore storage.TerseStore) operati
 		visit := &models.Visit{
 			Accessed: &visitTime,
 			IP:       &params.HTTPRequest.RemoteAddr,
-			Headers:  makeHeaders(params.HTTPRequest.Header),
+			Headers:  params.HTTPRequest.Header,
 		}
 
 		// Create another context for the VisitStore interactions.
@@ -59,21 +58,4 @@ func HandleGet(logger *zap.SugaredLogger, terseStore storage.TerseStore) operati
 			Location: original, // TODO Verify.
 		}
 	}
-}
-
-// makeHeaders transforms an http.Header into a []*models.Header.
-func makeHeaders(header http.Header) (headers []*models.Header) {
-
-	// Create the slice.
-	headers = make([]*models.Header, 0, len(header)) // TODO Verify.
-
-	// Copy the map data into the slice.
-	for key, values := range header {
-		headers = append(headers, &models.Header{
-			Key:    key,
-			Values: values,
-		})
-	}
-
-	return headers
 }
