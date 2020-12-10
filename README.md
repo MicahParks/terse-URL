@@ -1,9 +1,12 @@
 # terse URL
+
 Currently under development.
 
-A URL shortener with a web GUI and multiple storage backends. Login & session management is handled by [Keycloak](https://www.keycloak.org/).
+A URL shortener with a web GUI and multiple storage backends. Login & session management is handled
+by [Keycloak](https://www.keycloak.org/).
 
 ## Configuration
+
 Environment variable table:
 
 |Name                     |Description                                                                                                                                                               |Default Value|Example Value                         |
@@ -27,7 +30,14 @@ Environment variable table:
 |`WORKER_COUNT`           |The quantity of workers to use for incoming request async tasks like performing async database calls. Not the number of incoming requests that can be handled at one time.|`4`          |`10`                                  |
 
 ## TODO
+
+- [ ] Address TODOs.
+- [ ] Move things to `/api`?
+- [ ] Add an `/randomUltraSafe` endpoint?
+- [ ] Add an `/upsert` endpoint?
+- [ ] Move frontend to another repo.
+- [ ] Change storage configs to files?
+- [ ] Take away auth?
 - [ ] Change user created warnings to info?
-- [ ] Frontend...
 - [ ] A good README.md.
-- [ ] Write tests
+- [ ] Write tests.
