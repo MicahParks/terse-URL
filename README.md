@@ -2,9 +2,6 @@
 
 Currently under development.
 
-A URL shortener with a web GUI and multiple storage backends. Login & session management is handled
-by [Keycloak](https://www.keycloak.org/).
-
 ## Configuration
 
 Environment variable table:
