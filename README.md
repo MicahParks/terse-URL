@@ -35,6 +35,7 @@ Environment variable table:
 - [ ] Move things to `/api`?
 - [ ] Add an `/randomUltraSafe` endpoint?
 - [ ] Add an `/upsert` endpoint?
+- [ ] Social media link preview.
 - [ ] Move frontend to another repo.
 - [ ] Change storage configs to files?
 - [ ] Take away auth?
