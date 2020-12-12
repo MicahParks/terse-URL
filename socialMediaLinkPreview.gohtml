@@ -1,0 +1,35 @@
+<html lang="en">
+<head>
+    <title>{{.Title}}</title>
+    <!--Insert OG Markup-->
+    {{/* TODO Add templated checks to omit empty tags.*/}}
+    {{/* TODO Extra metadata stuff like structured properties and arrays?*/}}
+    <meta prefix="og: http://ogp.me/ns#" property="og:image" content="{{.Image}}"/>
+    <meta prefix="og: http://ogp.me/ns#" property="og:title" content="{{.Title}}"/>
+    <meta prefix="og: http://ogp.me/ns#" property="og:type" content="{{.Type}}"/>
+    <meta prefix="og: http://ogp.me/ns#" property="og:url" content="{{.URL}}"/>
+    <!--Insert Optional OG Markup-->
+    <meta prefix="og: http://ogp.me/ns#" property="og:audio" content="{{.Audio}}"/>
+    <meta prefix="og: http://ogp.me/ns#" property="og:description" content="{{.Description}}"/>
+    <meta prefix="og: http://ogp.me/ns#" property="og:determiner" content="{{.Determiner}}"/>
+    <meta prefix="og: http://ogp.me/ns#" property="og:locale" content="{{.Locale}}"/>
+    <meta prefix="og: http://ogp.me/ns#" property="og:locale:alternate" content="{{.LocaleAlt}}"/>
+    <meta prefix="og: http://ogp.me/ns#" property="og:site_name" content="{{.SiteName}}"/>
+    <meta prefix="og: http://ogp.me/ns#" property="og:video" content="{{.Video}}"/>
+    <!--Insert Twitter Card Markup-->
+    <meta name="twitter:card" content="summary_large_image"/>
+    <meta name="twitter:site" content="@YourTwitterUsername"/>
+    <meta name="twitter:domain" content="The url of your web page"/>
+    <meta name="twitter:title" content="The Title of Your Page"/>
+    <meta name="twitter:description" content="The description of your page."/>
+    <meta name="twitter:image" content="The image url"/>
+</head>
+<body>
+{{/*TODO Add link button.*/}}
+<script type="text/javascript">
+
+    // Immediate redirect.
+    window.location.replace('http://somewhereelse.com');
+</script>
+</body>
+</html>
