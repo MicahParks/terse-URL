@@ -62,9 +62,6 @@ func NewTerseURLAPI(spec *loads.Document) *TerseURLAPI {
 		URLNewHandler: URLNewHandlerFunc(func(params URLNewParams, principal *models.JWTInfo) middleware.Responder {
 			return middleware.NotImplemented("operation URLNew has not yet been implemented")
 		}),
-		URLTrackHandler: URLTrackHandlerFunc(func(params URLTrackParams, principal *models.JWTInfo) middleware.Responder {
-			return middleware.NotImplemented("operation URLTrack has not yet been implemented")
-		}),
 
 		// Applies when the "Authorization" header is set
 		JWTAuth: func(token string) (*models.JWTInfo, error) {
@@ -125,8 +122,6 @@ type TerseURLAPI struct {
 	URLGetHandler URLGetHandler
 	// URLNewHandler sets the operation handler for the url new operation
 	URLNewHandler URLNewHandler
-	// URLTrackHandler sets the operation handler for the url track operation
-	URLTrackHandler URLTrackHandler
 	// ServeError is called when an error is received, there is a default handler
 	// but you can set your own with this
 	ServeError func(http.ResponseWriter, *http.Request, error)
@@ -224,9 +219,6 @@ func (o *TerseURLAPI) Validate() error {
 	}
 	if o.URLNewHandler == nil {
 		unregistered = append(unregistered, "URLNewHandler")
-	}
-	if o.URLTrackHandler == nil {
-		unregistered = append(unregistered, "URLTrackHandler")
 	}
 
 	if len(unregistered) > 0 {
@@ -351,10 +343,6 @@ func (o *TerseURLAPI) initHandlerCache() {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
 	o.handlers["POST"]["/api/new"] = NewURLNew(o.context, o.URLNewHandler)
-	if o.handlers["GET"] == nil {
-		o.handlers["GET"] = make(map[string]http.Handler)
-	}
-	o.handlers["GET"]["/api/track/{shortened}"] = NewURLTrack(o.context, o.URLTrackHandler)
 }
 
 // Serve creates a http handler to serve the API over HTTP

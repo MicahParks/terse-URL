@@ -178,48 +178,6 @@ func init() {
         }
       }
     },
-    "/api/track/{shortened}": {
-      "get": {
-        "security": [
-          {
-            "JWT": []
-          }
-        ],
-        "description": "Get the tracking info for the shortened URL.",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "operationId": "urlTrack",
-        "parameters": [
-          {
-            "type": "string",
-            "name": "shortened",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "An array of visit info for the given shortened URL.",
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/Visit"
-              }
-            }
-          },
-          "default": {
-            "description": "Unexpected error.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          }
-        }
-      }
-    },
     "/{shortened}": {
       "get": {
         "description": "Use the shortened URL. It will redirect to the full URL if it has not expired.",
@@ -597,48 +555,6 @@ func init() {
             "description": "The shortened URL to visit that will redirect to the given full URL.",
             "schema": {
               "type": "string"
-            }
-          },
-          "default": {
-            "description": "Unexpected error.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          }
-        }
-      }
-    },
-    "/api/track/{shortened}": {
-      "get": {
-        "security": [
-          {
-            "JWT": []
-          }
-        ],
-        "description": "Get the tracking info for the shortened URL.",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "operationId": "urlTrack",
-        "parameters": [
-          {
-            "type": "string",
-            "name": "shortened",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "An array of visit info for the given shortened URL.",
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/Visit"
-              }
             }
           },
           "default": {
