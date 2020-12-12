@@ -203,9 +203,9 @@ definitions:
         type: "string"
       type:
         type: "string"
-      url:
+      canonicalURL:
         type: "string"
-      audio:
+      audioURL:
         type: "string"
       description:
         type: "string"
@@ -217,13 +217,41 @@ definitions:
         type: "string"
       siteName:
         type: "string"
-      video:
+      videoURL:
         type: "string"
+      twitter:
+        type: "object"
+        $ref: "#/definitions/Twitter"
     required:
       - "imageURL"
       - "title"
       - "type"
-      - "url"
+      - "canonicalURL"
+
+  # Schema for Twitter OG meta tags.
+  Twitter:
+    properties:
+      card:
+        enum:
+          - "app"
+          - "player"
+          - "summary"
+          - "summary_large_image"
+        type: "string"
+      creator:
+        type: "string"
+      description:
+        type: "string"
+      imageURL:
+        type: "string"
+      site:
+        type: "string"
+      siteID:
+        type: "string"
+      streamURL:
+        type: "string"
+      title:
+        type: "string"
 
   # Schema for tracking visits to shortened links.
   Visit:

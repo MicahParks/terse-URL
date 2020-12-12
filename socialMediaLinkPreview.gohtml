@@ -8,10 +8,10 @@
     <!--https://ogp.me/-->
     {{/* TODO Add templated checks to omit empty tags.*/}}
     {{/* TODO Extra metadata stuff like structured properties and arrays?*/}}
-    <meta prefix="og: http://ogp.me/ns#" property="og:image" content="{{.Image}}"/>
+    <meta prefix="og: http://ogp.me/ns#" property="og:image" content="{{.ImageURL}}"/>
     <meta prefix="og: http://ogp.me/ns#" property="og:title" content="{{.Title}}"/>
     <meta prefix="og: http://ogp.me/ns#" property="og:type" content="{{.Type}}"/>
-    <meta prefix="og: http://ogp.me/ns#" property="og:url" content="{{.URL}}"/>
+    <meta prefix="og: http://ogp.me/ns#" property="og:url" content="{{.CanonicalURL}}"/>
     <!--Insert Optional OG Markup-->
     <meta prefix="og: http://ogp.me/ns#" property="og:audio" content="{{.Audio}}"/>
     <meta prefix="og: http://ogp.me/ns#" property="og:description" content="{{.Description}}"/>
