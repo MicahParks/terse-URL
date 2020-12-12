@@ -194,6 +194,37 @@ definitions:
         items:
           type: "string"
 
+  # Schema for
+  Preview:
+    properties:
+      imageURL:
+        type: "string"
+      title:
+        type: "string"
+      type:
+        type: "string"
+      url:
+        type: "string"
+      audio:
+        type: "string"
+      description:
+        type: "string"
+      determiner:
+        type: "string"
+      locale:
+        type: "string"
+      localeAlt:
+        type: "string"
+      siteName:
+        type: "string"
+      video:
+        type: "string"
+    required:
+      - "imageURL"
+      - "title"
+      - "type"
+      - "url"
+
   # Schema for tracking visits to shortened links.
   Visit:
     properties:

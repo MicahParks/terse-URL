@@ -1,7 +1,11 @@
 <html lang="en">
 <head>
     <title>{{.Title}}</title>
+    <!--Insert traditional meta tags-->
+    <link href="{{.Favicon}}" rel="shortcut icon">
+    <meta name="description" content="{{.Description}}"/>
     <!--Insert OG Markup-->
+    <!--https://ogp.me/-->
     {{/* TODO Add templated checks to omit empty tags.*/}}
     {{/* TODO Extra metadata stuff like structured properties and arrays?*/}}
     <meta prefix="og: http://ogp.me/ns#" property="og:image" content="{{.Image}}"/>
@@ -17,19 +21,21 @@
     <meta prefix="og: http://ogp.me/ns#" property="og:site_name" content="{{.SiteName}}"/>
     <meta prefix="og: http://ogp.me/ns#" property="og:video" content="{{.Video}}"/>
     <!--Insert Twitter Card Markup-->
-    <meta name="twitter:card" content="summary_large_image"/>
-    <meta name="twitter:site" content="@YourTwitterUsername"/>
-    <meta name="twitter:domain" content="The url of your web page"/>
-    <meta name="twitter:title" content="The Title of Your Page"/>
-    <meta name="twitter:description" content="The description of your page."/>
-    <meta name="twitter:image" content="The image url"/>
+    <!--https://developer.twitter.com/en/docs/twitter-for-websites/cards/overview/markup-->
+    <meta name="twitter:card" content="{{.TwitterCard}}"/>
+    <meta name="twitter:creator" content="{{.TwitterCreator}}"/>
+    <meta name="twitter:description" content="{{.TwitterDescription}}"/>
+    <meta name="twitter:image" content="{{.TwitterImage}}"/>
+    <meta name="twitter:site" content="{{.TwitterSite}}"/>
+    <meta name="twitter:stream" content="{{.TwitterStream}}"/>
+    <meta name="twitter:title" content="{{.TwitterTitle}}"/>
 </head>
 <body>
 {{/*TODO Add link button.*/}}
 <script type="text/javascript">
 
     // Immediate redirect.
-    window.location.replace('http://somewhereelse.com');
+    window.location.replace('{{.Redirect}}');
 </script>
 </body>
 </html>
