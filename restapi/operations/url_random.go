@@ -87,6 +87,9 @@ type URLRandomBody struct {
 	// delete at
 	// Format: date-time
 	DeleteAt strfmt.DateTime `json:"deleteAt,omitempty"`
+
+	// media preview
+	MediaPreview *models.MediaPreview `json:"mediaPreview,omitempty"`
 }
 
 // Validate validates this URL random body
@@ -94,6 +97,10 @@ func (o *URLRandomBody) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := o.validateDeleteAt(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateMediaPreview(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -111,6 +118,24 @@ func (o *URLRandomBody) validateDeleteAt(formats strfmt.Registry) error {
 
 	if err := validate.FormatOf("original"+"."+"deleteAt", "body", "date-time", o.DeleteAt.String(), formats); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+func (o *URLRandomBody) validateMediaPreview(formats strfmt.Registry) error {
+
+	if swag.IsZero(o.MediaPreview) { // not required
+		return nil
+	}
+
+	if o.MediaPreview != nil {
+		if err := o.MediaPreview.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("original" + "." + "mediaPreview")
+			}
+			return err
+		}
 	}
 
 	return nil

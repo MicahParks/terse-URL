@@ -68,6 +68,9 @@ func init() {
                   "type": "string",
                   "format": "date-time"
                 },
+                "mediaPreview": {
+                  "$ref": "#/definitions/MediaPreview"
+                },
                 "originalURL": {
                   "type": "string"
                 },
@@ -164,6 +167,9 @@ func init() {
                 "deleteAt": {
                   "type": "string",
                   "format": "date-time"
+                },
+                "mediaPreview": {
+                  "$ref": "#/definitions/MediaPreview"
                 }
               }
             }
@@ -285,7 +291,7 @@ func init() {
         }
       }
     },
-    "Preview": {
+    "MediaPreview": {
       "required": [
         "imageURL",
         "title",
@@ -450,6 +456,9 @@ func init() {
                   "type": "string",
                   "format": "date-time"
                 },
+                "mediaPreview": {
+                  "$ref": "#/definitions/MediaPreview"
+                },
                 "originalURL": {
                   "type": "string"
                 },
@@ -546,6 +555,9 @@ func init() {
                 "deleteAt": {
                   "type": "string",
                   "format": "date-time"
+                },
+                "mediaPreview": {
+                  "$ref": "#/definitions/MediaPreview"
                 }
               }
             }
@@ -667,7 +679,7 @@ func init() {
         }
       }
     },
-    "Preview": {
+    "MediaPreview": {
       "required": [
         "imageURL",
         "title",

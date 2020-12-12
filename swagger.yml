@@ -45,6 +45,8 @@ paths:
                 type: "string"
               originalURL:
                 type: "string"
+              mediaPreview:
+                $ref: "#/definitions/MediaPreview"
               shortenedURL:
                 type: "string"
             type: "object"
@@ -104,6 +106,8 @@ paths:
               deleteAt:
                 format: "date-time"
                 type: "string"
+              mediaPreview:
+                $ref: "#/definitions/MediaPreview"
               URL:
                 type: "string"
             type: "object"
@@ -195,7 +199,7 @@ definitions:
           type: "string"
 
   # Schema for
-  Preview:
+  MediaPreview:
     properties:
       imageURL:
         type: "string"

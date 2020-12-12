@@ -85,6 +85,9 @@ type URLCustomBody struct {
 	// Format: date-time
 	DeleteAt strfmt.DateTime `json:"deleteAt,omitempty"`
 
+	// media preview
+	MediaPreview *models.MediaPreview `json:"mediaPreview,omitempty"`
+
 	// original URL
 	OriginalURL string `json:"originalURL,omitempty"`
 
@@ -97,6 +100,10 @@ func (o *URLCustomBody) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := o.validateDeleteAt(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateMediaPreview(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -114,6 +121,24 @@ func (o *URLCustomBody) validateDeleteAt(formats strfmt.Registry) error {
 
 	if err := validate.FormatOf("tersePair"+"."+"deleteAt", "body", "date-time", o.DeleteAt.String(), formats); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+func (o *URLCustomBody) validateMediaPreview(formats strfmt.Registry) error {
+
+	if swag.IsZero(o.MediaPreview) { // not required
+		return nil
+	}
+
+	if o.MediaPreview != nil {
+		if err := o.MediaPreview.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("tersePair" + "." + "mediaPreview")
+			}
+			return err
+		}
 	}
 
 	return nil
