@@ -13,40 +13,40 @@ import (
 	"github.com/MicahParks/terse-URL/models"
 )
 
-// URLCustomHandlerFunc turns a function with the right signature into a url custom handler
-type URLCustomHandlerFunc func(URLCustomParams, *models.JWTInfo) middleware.Responder
+// URLDumpShortenedHandlerFunc turns a function with the right signature into a url dump shortened handler
+type URLDumpShortenedHandlerFunc func(URLDumpShortenedParams, *models.JWTInfo) middleware.Responder
 
 // Handle executing the request and returning a response
-func (fn URLCustomHandlerFunc) Handle(params URLCustomParams, principal *models.JWTInfo) middleware.Responder {
+func (fn URLDumpShortenedHandlerFunc) Handle(params URLDumpShortenedParams, principal *models.JWTInfo) middleware.Responder {
 	return fn(params, principal)
 }
 
-// URLCustomHandler interface for that can handle valid url custom params
-type URLCustomHandler interface {
-	Handle(URLCustomParams, *models.JWTInfo) middleware.Responder
+// URLDumpShortenedHandler interface for that can handle valid url dump shortened params
+type URLDumpShortenedHandler interface {
+	Handle(URLDumpShortenedParams, *models.JWTInfo) middleware.Responder
 }
 
-// NewURLCustom creates a new http.Handler for the url custom operation
-func NewURLCustom(ctx *middleware.Context, handler URLCustomHandler) *URLCustom {
-	return &URLCustom{Context: ctx, Handler: handler}
+// NewURLDumpShortened creates a new http.Handler for the url dump shortened operation
+func NewURLDumpShortened(ctx *middleware.Context, handler URLDumpShortenedHandler) *URLDumpShortened {
+	return &URLDumpShortened{Context: ctx, Handler: handler}
 }
 
-/*URLCustom swagger:route POST /api/new urlCustom
+/*URLDumpShortened swagger:route GET /api/dump/{shortened} urlDumpShortened
 
-URLCustom url custom API
+URLDumpShortened url dump shortened API
 
 */
-type URLCustom struct {
+type URLDumpShortened struct {
 	Context *middleware.Context
-	Handler URLCustomHandler
+	Handler URLDumpShortenedHandler
 }
 
-func (o *URLCustom) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
+func (o *URLDumpShortened) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	route, rCtx, _ := o.Context.RouteInfo(r)
 	if rCtx != nil {
 		r = rCtx
 	}
-	var Params = NewURLCustomParams()
+	var Params = NewURLDumpShortenedParams()
 
 	uprinc, aCtx, err := o.Context.Authorize(r, route)
 	if err != nil {

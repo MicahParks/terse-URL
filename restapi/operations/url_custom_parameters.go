@@ -12,6 +12,8 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
+
+	"github.com/MicahParks/terse-URL/models"
 )
 
 // NewURLCustomParams creates a new URLCustomParams object
@@ -34,7 +36,7 @@ type URLCustomParams struct {
 	  Required: true
 	  In: body
 	*/
-	TersePair URLCustomBody
+	Terse *models.TerseOptionalShortened
 }
 
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
@@ -48,12 +50,12 @@ func (o *URLCustomParams) BindRequest(r *http.Request, route *middleware.Matched
 
 	if runtime.HasBody(r) {
 		defer r.Body.Close()
-		var body URLCustomBody
+		var body models.TerseOptionalShortened
 		if err := route.Consumer.Consume(r.Body, &body); err != nil {
 			if err == io.EOF {
-				res = append(res, errors.Required("tersePair", "body", ""))
+				res = append(res, errors.Required("terse", "body", ""))
 			} else {
-				res = append(res, errors.NewParseError("tersePair", "body", "", err))
+				res = append(res, errors.NewParseError("terse", "body", "", err))
 			}
 		} else {
 			// validate body object
@@ -62,11 +64,11 @@ func (o *URLCustomParams) BindRequest(r *http.Request, route *middleware.Matched
 			}
 
 			if len(res) == 0 {
-				o.TersePair = body
+				o.Terse = &body
 			}
 		}
 	} else {
-		res = append(res, errors.Required("tersePair", "body", ""))
+		res = append(res, errors.Required("terse", "body", ""))
 	}
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)

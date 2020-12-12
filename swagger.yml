@@ -17,7 +17,7 @@ securityDefinitions:
     name: "Authorization"
     type: "apiKey"
 
-paths:
+paths: # TODO Add summary to all endpoints.
   /api/alive:
     get:
       description: "For Caddy to determine if the upstream provider (this executable) is alive."
@@ -25,45 +25,6 @@ paths:
       responses:
         200:
           description: "Service is alive."
-
-  /api/custom:
-    post:
-      consumes:
-        - "application/json"
-      produces:
-        - "application/json"
-      summary: 'Give a full URL and a custom shortened URL, create the redirection to it. Custom URLs cannot be "api".'
-      operationId: "urlCustom"
-      parameters:
-        - in: "body"
-          name: "tersePair"
-          required: true
-          schema:
-            properties:
-              deleteAt:
-                format: "date-time"
-                type: "string"
-              originalURL:
-                type: "string"
-              mediaPreview:
-                $ref: "#/definitions/MediaPreview"
-              shortenedURL:
-                type: "string"
-            type: "object"
-            required:
-              - "original"
-              - "shortened"
-      responses:
-        200:
-          description: "The shortened URL to visit that will redirect to the given full URL."
-          schema:
-            type: "string"
-        default:
-          description: "Unexpected error."
-          schema:
-            $ref: "#/definitions/Error"
-      security:
-        - JWT: [ ]
 
   /api/delete:
     delete:
@@ -89,30 +50,63 @@ paths:
       security:
         - JWT: [ ]
 
-  /api/random:
+  /api/dump:
+    get:
+      produces:
+        - "application/json"
+      description: ""
+      operationId: "urlDump"
+      responses:
+        200:
+          description: ""
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Dump"
+        default:
+          description: "Unexpected error."
+          schema:
+            $ref: "#/definitions/Error"
+      security:
+        - JWT: [ ]
+
+  /api/dump/{shortened}:
+    get:
+      produces:
+        - "application/json"
+      description: ""
+      operationId: "urlDumpShortened"
+      parameters:
+        - in: "path"
+          name: "shortened"
+          required: true
+          type: "string"
+      responses:
+        200:
+          description: ""
+          schema:
+            $ref: "#/definitions/Dump"
+        default:
+          description: "Unexpected error."
+          schema:
+            $ref: "#/definitions/Error"
+      security:
+        - JWT: [ ]
+
+  /api/new:
     post:
       consumes:
         - "application/json"
       produces:
         - "application/json"
-      description: "Give a full URL and get a shortened URL that will redirect to it."
-      operationId: "urlRandom"
+      summary: '' # TODO
+      operationId: "urlCustom"
       parameters:
         - in: "body"
-          name: "original"
+          name: "terse"
           required: true
           schema:
-            properties:
-              deleteAt:
-                format: "date-time"
-                type: "string"
-              mediaPreview:
-                $ref: "#/definitions/MediaPreview"
-              URL:
-                type: "string"
-            type: "object"
-            required:
-              - "original"
+            $ref: "#/definitions/TerseOptionalShortened"
       responses:
         200:
           description: "The shortened URL to visit that will redirect to the given full URL."
@@ -176,6 +170,17 @@ paths:
 
 definitions:
 
+  # Schema for Terse dump.
+  Dump:
+    properties:
+      terse:
+        $ref: "#/definitions/Terse"
+      visits:
+        type: "array"
+        items:
+          $ref: "#/definitions/Visit"
+    type: "object"
+
   # Schema for error response body.
   Error:
     properties:
@@ -231,6 +236,37 @@ definitions:
       - "title"
       - "type"
       - "canonicalURL"
+
+  # Schema for a Terse URL, which represented a shortened URL and original pair plus metadata.
+  Terse:
+    properties:
+      deleteAt:
+        format: "date-time"
+        type: "string"
+      originalURL:
+        type: "string"
+      mediaPreview:
+        $ref: "#/definitions/MediaPreview"
+      shortenedURL:
+        type: "string"
+    required:
+      - "originalURL"
+      - "shortenedURL"
+
+  # Schema for a Terse URL, with an optional shortened URL.
+  TerseOptionalShortened:
+    properties:
+      deleteAt:
+        format: "date-time"
+        type: "string"
+      originalURL:
+        type: "string"
+      mediaPreview:
+        $ref: "#/definitions/MediaPreview"
+      shortenedURL:
+        type: "string"
+    required:
+      - "originalURL"
 
   # Schema for Twitter OG meta tags.
   Twitter:

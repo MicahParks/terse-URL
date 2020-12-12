@@ -37,66 +37,6 @@ func init() {
         }
       }
     },
-    "/api/custom": {
-      "post": {
-        "security": [
-          {
-            "JWT": []
-          }
-        ],
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "summary": "Give a full URL and a custom shortened URL, create the redirection to it. Custom URLs cannot be \"api\".",
-        "operationId": "urlCustom",
-        "parameters": [
-          {
-            "name": "tersePair",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "type": "object",
-              "required": [
-                "original",
-                "shortened"
-              ],
-              "properties": {
-                "deleteAt": {
-                  "type": "string",
-                  "format": "date-time"
-                },
-                "mediaPreview": {
-                  "$ref": "#/definitions/MediaPreview"
-                },
-                "originalURL": {
-                  "type": "string"
-                },
-                "shortenedURL": {
-                  "type": "string"
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "The shortened URL to visit that will redirect to the given full URL.",
-            "schema": {
-              "type": "string"
-            }
-          },
-          "default": {
-            "description": "Unexpected error.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          }
-        }
-      }
-    },
     "/api/delete": {
       "delete": {
         "security": [
@@ -135,43 +75,90 @@ func init() {
         }
       }
     },
-    "/api/random": {
+    "/api/dump": {
+      "get": {
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "operationId": "urlDump",
+        "responses": {
+          "200": {
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Dump"
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/api/dump/{shortened}": {
+      "get": {
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "operationId": "urlDumpShortened",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "shortened",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "$ref": "#/definitions/Dump"
+            }
+          },
+          "default": {
+            "description": "Unexpected error.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/api/new": {
       "post": {
         "security": [
           {
             "JWT": []
           }
         ],
-        "description": "Give a full URL and get a shortened URL that will redirect to it.",
         "consumes": [
           "application/json"
         ],
         "produces": [
           "application/json"
         ],
-        "operationId": "urlRandom",
+        "operationId": "urlCustom",
         "parameters": [
           {
-            "name": "original",
+            "name": "terse",
             "in": "body",
             "required": true,
             "schema": {
-              "type": "object",
-              "required": [
-                "original"
-              ],
-              "properties": {
-                "URL": {
-                  "type": "string"
-                },
-                "deleteAt": {
-                  "type": "string",
-                  "format": "date-time"
-                },
-                "mediaPreview": {
-                  "$ref": "#/definitions/MediaPreview"
-                }
-              }
+              "$ref": "#/definitions/TerseOptionalShortened"
             }
           }
         ],
@@ -263,6 +250,20 @@ func init() {
     }
   },
   "definitions": {
+    "Dump": {
+      "type": "object",
+      "properties": {
+        "terse": {
+          "$ref": "#/definitions/Terse"
+        },
+        "visits": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Visit"
+          }
+        }
+      }
+    },
     "Error": {
       "type": "object",
       "required": [
@@ -334,6 +335,47 @@ func init() {
           "type": "string"
         },
         "videoURL": {
+          "type": "string"
+        }
+      }
+    },
+    "Terse": {
+      "required": [
+        "originalURL",
+        "shortenedURL"
+      ],
+      "properties": {
+        "deleteAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "mediaPreview": {
+          "$ref": "#/definitions/MediaPreview"
+        },
+        "originalURL": {
+          "type": "string"
+        },
+        "shortenedURL": {
+          "type": "string"
+        }
+      }
+    },
+    "TerseOptionalShortened": {
+      "required": [
+        "originalURL"
+      ],
+      "properties": {
+        "deleteAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "mediaPreview": {
+          "$ref": "#/definitions/MediaPreview"
+        },
+        "originalURL": {
+          "type": "string"
+        },
+        "shortenedURL": {
           "type": "string"
         }
       }
@@ -425,66 +467,6 @@ func init() {
         }
       }
     },
-    "/api/custom": {
-      "post": {
-        "security": [
-          {
-            "JWT": []
-          }
-        ],
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "summary": "Give a full URL and a custom shortened URL, create the redirection to it. Custom URLs cannot be \"api\".",
-        "operationId": "urlCustom",
-        "parameters": [
-          {
-            "name": "tersePair",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "type": "object",
-              "required": [
-                "original",
-                "shortened"
-              ],
-              "properties": {
-                "deleteAt": {
-                  "type": "string",
-                  "format": "date-time"
-                },
-                "mediaPreview": {
-                  "$ref": "#/definitions/MediaPreview"
-                },
-                "originalURL": {
-                  "type": "string"
-                },
-                "shortenedURL": {
-                  "type": "string"
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "The shortened URL to visit that will redirect to the given full URL.",
-            "schema": {
-              "type": "string"
-            }
-          },
-          "default": {
-            "description": "Unexpected error.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          }
-        }
-      }
-    },
     "/api/delete": {
       "delete": {
         "security": [
@@ -523,43 +505,90 @@ func init() {
         }
       }
     },
-    "/api/random": {
+    "/api/dump": {
+      "get": {
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "operationId": "urlDump",
+        "responses": {
+          "200": {
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Dump"
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/api/dump/{shortened}": {
+      "get": {
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "operationId": "urlDumpShortened",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "shortened",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "$ref": "#/definitions/Dump"
+            }
+          },
+          "default": {
+            "description": "Unexpected error.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/api/new": {
       "post": {
         "security": [
           {
             "JWT": []
           }
         ],
-        "description": "Give a full URL and get a shortened URL that will redirect to it.",
         "consumes": [
           "application/json"
         ],
         "produces": [
           "application/json"
         ],
-        "operationId": "urlRandom",
+        "operationId": "urlCustom",
         "parameters": [
           {
-            "name": "original",
+            "name": "terse",
             "in": "body",
             "required": true,
             "schema": {
-              "type": "object",
-              "required": [
-                "original"
-              ],
-              "properties": {
-                "URL": {
-                  "type": "string"
-                },
-                "deleteAt": {
-                  "type": "string",
-                  "format": "date-time"
-                },
-                "mediaPreview": {
-                  "$ref": "#/definitions/MediaPreview"
-                }
-              }
+              "$ref": "#/definitions/TerseOptionalShortened"
             }
           }
         ],
@@ -651,6 +680,20 @@ func init() {
     }
   },
   "definitions": {
+    "Dump": {
+      "type": "object",
+      "properties": {
+        "terse": {
+          "$ref": "#/definitions/Terse"
+        },
+        "visits": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Visit"
+          }
+        }
+      }
+    },
     "Error": {
       "type": "object",
       "required": [
@@ -722,6 +765,47 @@ func init() {
           "type": "string"
         },
         "videoURL": {
+          "type": "string"
+        }
+      }
+    },
+    "Terse": {
+      "required": [
+        "originalURL",
+        "shortenedURL"
+      ],
+      "properties": {
+        "deleteAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "mediaPreview": {
+          "$ref": "#/definitions/MediaPreview"
+        },
+        "originalURL": {
+          "type": "string"
+        },
+        "shortenedURL": {
+          "type": "string"
+        }
+      }
+    },
+    "TerseOptionalShortened": {
+      "required": [
+        "originalURL"
+      ],
+      "properties": {
+        "deleteAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "mediaPreview": {
+          "$ref": "#/definitions/MediaPreview"
+        },
+        "originalURL": {
+          "type": "string"
+        },
+        "shortenedURL": {
           "type": "string"
         }
       }

@@ -13,40 +13,40 @@ import (
 	"github.com/MicahParks/terse-URL/models"
 )
 
-// URLCustomHandlerFunc turns a function with the right signature into a url custom handler
-type URLCustomHandlerFunc func(URLCustomParams, *models.JWTInfo) middleware.Responder
+// URLDumpHandlerFunc turns a function with the right signature into a url dump handler
+type URLDumpHandlerFunc func(URLDumpParams, *models.JWTInfo) middleware.Responder
 
 // Handle executing the request and returning a response
-func (fn URLCustomHandlerFunc) Handle(params URLCustomParams, principal *models.JWTInfo) middleware.Responder {
+func (fn URLDumpHandlerFunc) Handle(params URLDumpParams, principal *models.JWTInfo) middleware.Responder {
 	return fn(params, principal)
 }
 
-// URLCustomHandler interface for that can handle valid url custom params
-type URLCustomHandler interface {
-	Handle(URLCustomParams, *models.JWTInfo) middleware.Responder
+// URLDumpHandler interface for that can handle valid url dump params
+type URLDumpHandler interface {
+	Handle(URLDumpParams, *models.JWTInfo) middleware.Responder
 }
 
-// NewURLCustom creates a new http.Handler for the url custom operation
-func NewURLCustom(ctx *middleware.Context, handler URLCustomHandler) *URLCustom {
-	return &URLCustom{Context: ctx, Handler: handler}
+// NewURLDump creates a new http.Handler for the url dump operation
+func NewURLDump(ctx *middleware.Context, handler URLDumpHandler) *URLDump {
+	return &URLDump{Context: ctx, Handler: handler}
 }
 
-/*URLCustom swagger:route POST /api/new urlCustom
+/*URLDump swagger:route GET /api/dump urlDump
 
-URLCustom url custom API
+URLDump url dump API
 
 */
-type URLCustom struct {
+type URLDump struct {
 	Context *middleware.Context
-	Handler URLCustomHandler
+	Handler URLDumpHandler
 }
 
-func (o *URLCustom) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
+func (o *URLDump) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	route, rCtx, _ := o.Context.RouteInfo(r)
 	if rCtx != nil {
 		r = rCtx
 	}
-	var Params = NewURLCustomParams()
+	var Params = NewURLDumpParams()
 
 	uprinc, aCtx, err := o.Context.Authorize(r, route)
 	if err != nil {

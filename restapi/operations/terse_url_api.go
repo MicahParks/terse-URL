@@ -53,11 +53,14 @@ func NewTerseURLAPI(spec *loads.Document) *TerseURLAPI {
 		URLDeleteHandler: URLDeleteHandlerFunc(func(params URLDeleteParams, principal *models.JWTInfo) middleware.Responder {
 			return middleware.NotImplemented("operation URLDelete has not yet been implemented")
 		}),
+		URLDumpHandler: URLDumpHandlerFunc(func(params URLDumpParams, principal *models.JWTInfo) middleware.Responder {
+			return middleware.NotImplemented("operation URLDump has not yet been implemented")
+		}),
+		URLDumpShortenedHandler: URLDumpShortenedHandlerFunc(func(params URLDumpShortenedParams, principal *models.JWTInfo) middleware.Responder {
+			return middleware.NotImplemented("operation URLDumpShortened has not yet been implemented")
+		}),
 		URLGetHandler: URLGetHandlerFunc(func(params URLGetParams) middleware.Responder {
 			return middleware.NotImplemented("operation URLGet has not yet been implemented")
-		}),
-		URLRandomHandler: URLRandomHandlerFunc(func(params URLRandomParams, principal *models.JWTInfo) middleware.Responder {
-			return middleware.NotImplemented("operation URLRandom has not yet been implemented")
 		}),
 		URLTrackHandler: URLTrackHandlerFunc(func(params URLTrackParams, principal *models.JWTInfo) middleware.Responder {
 			return middleware.NotImplemented("operation URLTrack has not yet been implemented")
@@ -116,10 +119,12 @@ type TerseURLAPI struct {
 	URLCustomHandler URLCustomHandler
 	// URLDeleteHandler sets the operation handler for the url delete operation
 	URLDeleteHandler URLDeleteHandler
+	// URLDumpHandler sets the operation handler for the url dump operation
+	URLDumpHandler URLDumpHandler
+	// URLDumpShortenedHandler sets the operation handler for the url dump shortened operation
+	URLDumpShortenedHandler URLDumpShortenedHandler
 	// URLGetHandler sets the operation handler for the url get operation
 	URLGetHandler URLGetHandler
-	// URLRandomHandler sets the operation handler for the url random operation
-	URLRandomHandler URLRandomHandler
 	// URLTrackHandler sets the operation handler for the url track operation
 	URLTrackHandler URLTrackHandler
 	// ServeError is called when an error is received, there is a default handler
@@ -211,11 +216,14 @@ func (o *TerseURLAPI) Validate() error {
 	if o.URLDeleteHandler == nil {
 		unregistered = append(unregistered, "URLDeleteHandler")
 	}
+	if o.URLDumpHandler == nil {
+		unregistered = append(unregistered, "URLDumpHandler")
+	}
+	if o.URLDumpShortenedHandler == nil {
+		unregistered = append(unregistered, "URLDumpShortenedHandler")
+	}
 	if o.URLGetHandler == nil {
 		unregistered = append(unregistered, "URLGetHandler")
-	}
-	if o.URLRandomHandler == nil {
-		unregistered = append(unregistered, "URLRandomHandler")
 	}
 	if o.URLTrackHandler == nil {
 		unregistered = append(unregistered, "URLTrackHandler")
@@ -326,7 +334,7 @@ func (o *TerseURLAPI) initHandlerCache() {
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/api/custom"] = NewURLCustom(o.context, o.URLCustomHandler)
+	o.handlers["POST"]["/api/new"] = NewURLCustom(o.context, o.URLCustomHandler)
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
@@ -334,11 +342,15 @@ func (o *TerseURLAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/{shortened}"] = NewURLGet(o.context, o.URLGetHandler)
-	if o.handlers["POST"] == nil {
-		o.handlers["POST"] = make(map[string]http.Handler)
+	o.handlers["GET"]["/api/dump"] = NewURLDump(o.context, o.URLDumpHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/api/random"] = NewURLRandom(o.context, o.URLRandomHandler)
+	o.handlers["GET"]["/api/dump/{shortened}"] = NewURLDumpShortened(o.context, o.URLDumpShortenedHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/{shortened}"] = NewURLGet(o.context, o.URLGetHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}

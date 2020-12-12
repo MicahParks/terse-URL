@@ -9,17 +9,22 @@ import (
 	"errors"
 	"net/url"
 	golangswaggerpaths "path"
+	"strings"
 )
 
-// URLCustomURL generates an URL for the url custom operation
-type URLCustomURL struct {
+// URLDumpShortenedURL generates an URL for the url dump shortened operation
+type URLDumpShortenedURL struct {
+	Shortened string
+
 	_basePath string
+	// avoid unkeyed usage
+	_ struct{}
 }
 
 // WithBasePath sets the base path for this url builder, only required when it's different from the
 // base path specified in the swagger spec.
 // When the value of the base path is an empty string
-func (o *URLCustomURL) WithBasePath(bp string) *URLCustomURL {
+func (o *URLDumpShortenedURL) WithBasePath(bp string) *URLDumpShortenedURL {
 	o.SetBasePath(bp)
 	return o
 }
@@ -27,15 +32,22 @@ func (o *URLCustomURL) WithBasePath(bp string) *URLCustomURL {
 // SetBasePath sets the base path for this url builder, only required when it's different from the
 // base path specified in the swagger spec.
 // When the value of the base path is an empty string
-func (o *URLCustomURL) SetBasePath(bp string) {
+func (o *URLDumpShortenedURL) SetBasePath(bp string) {
 	o._basePath = bp
 }
 
 // Build a url path and query string
-func (o *URLCustomURL) Build() (*url.URL, error) {
+func (o *URLDumpShortenedURL) Build() (*url.URL, error) {
 	var _result url.URL
 
-	var _path = "/api/new"
+	var _path = "/api/dump/{shortened}"
+
+	shortened := o.Shortened
+	if shortened != "" {
+		_path = strings.Replace(_path, "{shortened}", shortened, -1)
+	} else {
+		return nil, errors.New("shortened is required on URLDumpShortenedURL")
+	}
 
 	_basePath := o._basePath
 	if _basePath == "" {
@@ -47,7 +59,7 @@ func (o *URLCustomURL) Build() (*url.URL, error) {
 }
 
 // Must is a helper function to panic when the url builder returns an error
-func (o *URLCustomURL) Must(u *url.URL, err error) *url.URL {
+func (o *URLDumpShortenedURL) Must(u *url.URL, err error) *url.URL {
 	if err != nil {
 		panic(err)
 	}
@@ -58,17 +70,17 @@ func (o *URLCustomURL) Must(u *url.URL, err error) *url.URL {
 }
 
 // String returns the string representation of the path with query string
-func (o *URLCustomURL) String() string {
+func (o *URLDumpShortenedURL) String() string {
 	return o.Must(o.Build()).String()
 }
 
 // BuildFull builds a full url with scheme, host, path and query string
-func (o *URLCustomURL) BuildFull(scheme, host string) (*url.URL, error) {
+func (o *URLDumpShortenedURL) BuildFull(scheme, host string) (*url.URL, error) {
 	if scheme == "" {
-		return nil, errors.New("scheme is required for a full url on URLCustomURL")
+		return nil, errors.New("scheme is required for a full url on URLDumpShortenedURL")
 	}
 	if host == "" {
-		return nil, errors.New("host is required for a full url on URLCustomURL")
+		return nil, errors.New("host is required for a full url on URLDumpShortenedURL")
 	}
 
 	base, err := o.Build()
@@ -82,6 +94,6 @@ func (o *URLCustomURL) BuildFull(scheme, host string) (*url.URL, error) {
 }
 
 // StringFull returns the string representation of a complete url
-func (o *URLCustomURL) StringFull(scheme, host string) string {
+func (o *URLDumpShortenedURL) StringFull(scheme, host string) string {
 	return o.Must(o.BuildFull(scheme, host)).String()
 }
