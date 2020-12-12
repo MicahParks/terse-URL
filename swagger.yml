@@ -198,7 +198,7 @@ definitions:
         items:
           type: "string"
 
-  # Schema for
+  # Schema for social media previews.
   MediaPreview:
     properties:
       imageURL:
