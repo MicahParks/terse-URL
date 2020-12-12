@@ -151,7 +151,7 @@ func init() {
         "produces": [
           "application/json"
         ],
-        "operationId": "urlCustom",
+        "operationId": "urlNew",
         "parameters": [
           {
             "name": "terse",
@@ -581,7 +581,7 @@ func init() {
         "produces": [
           "application/json"
         ],
-        "operationId": "urlCustom",
+        "operationId": "urlNew",
         "parameters": [
           {
             "name": "terse",

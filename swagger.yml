@@ -100,7 +100,7 @@ paths: # TODO Add summary to all endpoints.
       produces:
         - "application/json"
       summary: '' # TODO
-      operationId: "urlCustom"
+      operationId: "urlNew"
       parameters:
         - in: "body"
           name: "terse"

@@ -47,9 +47,6 @@ func NewTerseURLAPI(spec *loads.Document) *TerseURLAPI {
 		AliveHandler: AliveHandlerFunc(func(params AliveParams) middleware.Responder {
 			return middleware.NotImplemented("operation Alive has not yet been implemented")
 		}),
-		URLCustomHandler: URLCustomHandlerFunc(func(params URLCustomParams, principal *models.JWTInfo) middleware.Responder {
-			return middleware.NotImplemented("operation URLCustom has not yet been implemented")
-		}),
 		URLDeleteHandler: URLDeleteHandlerFunc(func(params URLDeleteParams, principal *models.JWTInfo) middleware.Responder {
 			return middleware.NotImplemented("operation URLDelete has not yet been implemented")
 		}),
@@ -61,6 +58,9 @@ func NewTerseURLAPI(spec *loads.Document) *TerseURLAPI {
 		}),
 		URLGetHandler: URLGetHandlerFunc(func(params URLGetParams) middleware.Responder {
 			return middleware.NotImplemented("operation URLGet has not yet been implemented")
+		}),
+		URLNewHandler: URLNewHandlerFunc(func(params URLNewParams, principal *models.JWTInfo) middleware.Responder {
+			return middleware.NotImplemented("operation URLNew has not yet been implemented")
 		}),
 		URLTrackHandler: URLTrackHandlerFunc(func(params URLTrackParams, principal *models.JWTInfo) middleware.Responder {
 			return middleware.NotImplemented("operation URLTrack has not yet been implemented")
@@ -115,8 +115,6 @@ type TerseURLAPI struct {
 
 	// AliveHandler sets the operation handler for the alive operation
 	AliveHandler AliveHandler
-	// URLCustomHandler sets the operation handler for the url custom operation
-	URLCustomHandler URLCustomHandler
 	// URLDeleteHandler sets the operation handler for the url delete operation
 	URLDeleteHandler URLDeleteHandler
 	// URLDumpHandler sets the operation handler for the url dump operation
@@ -125,6 +123,8 @@ type TerseURLAPI struct {
 	URLDumpShortenedHandler URLDumpShortenedHandler
 	// URLGetHandler sets the operation handler for the url get operation
 	URLGetHandler URLGetHandler
+	// URLNewHandler sets the operation handler for the url new operation
+	URLNewHandler URLNewHandler
 	// URLTrackHandler sets the operation handler for the url track operation
 	URLTrackHandler URLTrackHandler
 	// ServeError is called when an error is received, there is a default handler
@@ -210,9 +210,6 @@ func (o *TerseURLAPI) Validate() error {
 	if o.AliveHandler == nil {
 		unregistered = append(unregistered, "AliveHandler")
 	}
-	if o.URLCustomHandler == nil {
-		unregistered = append(unregistered, "URLCustomHandler")
-	}
 	if o.URLDeleteHandler == nil {
 		unregistered = append(unregistered, "URLDeleteHandler")
 	}
@@ -224,6 +221,9 @@ func (o *TerseURLAPI) Validate() error {
 	}
 	if o.URLGetHandler == nil {
 		unregistered = append(unregistered, "URLGetHandler")
+	}
+	if o.URLNewHandler == nil {
+		unregistered = append(unregistered, "URLNewHandler")
 	}
 	if o.URLTrackHandler == nil {
 		unregistered = append(unregistered, "URLTrackHandler")
@@ -331,10 +331,6 @@ func (o *TerseURLAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/api/alive"] = NewAlive(o.context, o.AliveHandler)
-	if o.handlers["POST"] == nil {
-		o.handlers["POST"] = make(map[string]http.Handler)
-	}
-	o.handlers["POST"]["/api/new"] = NewURLCustom(o.context, o.URLCustomHandler)
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
@@ -351,6 +347,10 @@ func (o *TerseURLAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/{shortened}"] = NewURLGet(o.context, o.URLGetHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/api/new"] = NewURLNew(o.context, o.URLNewHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}

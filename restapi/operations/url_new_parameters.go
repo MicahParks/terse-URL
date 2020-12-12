@@ -16,18 +16,18 @@ import (
 	"github.com/MicahParks/terse-URL/models"
 )
 
-// NewURLCustomParams creates a new URLCustomParams object
+// NewURLNewParams creates a new URLNewParams object
 // no default values defined in spec.
-func NewURLCustomParams() URLCustomParams {
+func NewURLNewParams() URLNewParams {
 
-	return URLCustomParams{}
+	return URLNewParams{}
 }
 
-// URLCustomParams contains all the bound params for the url custom operation
+// URLNewParams contains all the bound params for the url new operation
 // typically these are obtained from a http.Request
 //
-// swagger:parameters urlCustom
-type URLCustomParams struct {
+// swagger:parameters urlNew
+type URLNewParams struct {
 
 	// HTTP Request Object
 	HTTPRequest *http.Request `json:"-"`
@@ -42,8 +42,8 @@ type URLCustomParams struct {
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
 // for simple values it will use straight method calls.
 //
-// To ensure default values, the struct must have been initialized with NewURLCustomParams() beforehand.
-func (o *URLCustomParams) BindRequest(r *http.Request, route *middleware.MatchedRoute) error {
+// To ensure default values, the struct must have been initialized with NewURLNewParams() beforehand.
+func (o *URLNewParams) BindRequest(r *http.Request, route *middleware.MatchedRoute) error {
 	var res []error
 
 	o.HTTPRequest = r

@@ -11,15 +11,15 @@ import (
 	golangswaggerpaths "path"
 )
 
-// URLRandomURL generates an URL for the url random operation
-type URLRandomURL struct {
+// URLNewURL generates an URL for the url new operation
+type URLNewURL struct {
 	_basePath string
 }
 
 // WithBasePath sets the base path for this url builder, only required when it's different from the
 // base path specified in the swagger spec.
 // When the value of the base path is an empty string
-func (o *URLRandomURL) WithBasePath(bp string) *URLRandomURL {
+func (o *URLNewURL) WithBasePath(bp string) *URLNewURL {
 	o.SetBasePath(bp)
 	return o
 }
@@ -27,15 +27,15 @@ func (o *URLRandomURL) WithBasePath(bp string) *URLRandomURL {
 // SetBasePath sets the base path for this url builder, only required when it's different from the
 // base path specified in the swagger spec.
 // When the value of the base path is an empty string
-func (o *URLRandomURL) SetBasePath(bp string) {
+func (o *URLNewURL) SetBasePath(bp string) {
 	o._basePath = bp
 }
 
 // Build a url path and query string
-func (o *URLRandomURL) Build() (*url.URL, error) {
+func (o *URLNewURL) Build() (*url.URL, error) {
 	var _result url.URL
 
-	var _path = "/api/random"
+	var _path = "/api/new"
 
 	_basePath := o._basePath
 	if _basePath == "" {
@@ -47,7 +47,7 @@ func (o *URLRandomURL) Build() (*url.URL, error) {
 }
 
 // Must is a helper function to panic when the url builder returns an error
-func (o *URLRandomURL) Must(u *url.URL, err error) *url.URL {
+func (o *URLNewURL) Must(u *url.URL, err error) *url.URL {
 	if err != nil {
 		panic(err)
 	}
@@ -58,17 +58,17 @@ func (o *URLRandomURL) Must(u *url.URL, err error) *url.URL {
 }
 
 // String returns the string representation of the path with query string
-func (o *URLRandomURL) String() string {
+func (o *URLNewURL) String() string {
 	return o.Must(o.Build()).String()
 }
 
 // BuildFull builds a full url with scheme, host, path and query string
-func (o *URLRandomURL) BuildFull(scheme, host string) (*url.URL, error) {
+func (o *URLNewURL) BuildFull(scheme, host string) (*url.URL, error) {
 	if scheme == "" {
-		return nil, errors.New("scheme is required for a full url on URLRandomURL")
+		return nil, errors.New("scheme is required for a full url on URLNewURL")
 	}
 	if host == "" {
-		return nil, errors.New("host is required for a full url on URLRandomURL")
+		return nil, errors.New("host is required for a full url on URLNewURL")
 	}
 
 	base, err := o.Build()
@@ -82,6 +82,6 @@ func (o *URLRandomURL) BuildFull(scheme, host string) (*url.URL, error) {
 }
 
 // StringFull returns the string representation of a complete url
-func (o *URLRandomURL) StringFull(scheme, host string) string {
+func (o *URLNewURL) StringFull(scheme, host string) string {
 	return o.Must(o.BuildFull(scheme, host)).String()
 }
