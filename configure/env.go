@@ -80,7 +80,7 @@ func invalidPathsParse(s string) (invalidPaths []string) {
 	}
 
 	// Make sure all the always invalid paths are in the slice.
-	have := false
+	var have bool
 	for _, alwaysInvalid := range alwaysInvalidPaths { // TODO Validate.
 		have = false
 		for _, path := range invalidPaths {
