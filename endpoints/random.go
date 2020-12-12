@@ -18,7 +18,7 @@ import (
 	"github.com/teris-io/shortid"
 )
 
-func HandleRandom(invalidPaths []string, logger *zap.SugaredLogger, shortID *shortid.Shortid, terseStore storage.TerseStore) operations.URLRandomHandlerFunc {
+func HandleRandom(invalidPaths []string, logger *zap.SugaredLogger, shortID *shortid.Shortid, shortIDParanoid bool, terseStore storage.TerseStore) operations.URLRandomHandlerFunc {
 	return func(params operations.URLRandomParams, _ *models.JWTInfo) middleware.Responder {
 
 		// Do not have debug level logging on in production, as it will log clog up the logs.
@@ -79,28 +79,28 @@ func HandleRandom(invalidPaths []string, logger *zap.SugaredLogger, shortID *sho
 				}
 			}
 
-			// Confirm the randomly generated URL is not already in use.
-			//
-			// TODO add a config to turn this off and or an unsafe endpoint where this is turned off.
-			if _, err = terseStore.GetTerse(ctx, shortened, nil, nil, context.Background()); err != nil {
+			// Confirm the randomly generated URL is not already in use, if paranoid.
+			if shortIDParanoid {
+				if _, err = terseStore.GetTerse(ctx, shortened, nil, nil, context.Background()); err != nil {
 
-				// If the shortened URL was not found, good.
-				if errors.Is(err, storage.ErrShortenedNotFound) {
-					err = nil
-				} else {
+					// If the shortened URL was not found, good.
+					if errors.Is(err, storage.ErrShortenedNotFound) {
+						err = nil
+					} else {
 
-					// Log with the appropriate level.
-					message := "Failed to check if randomly generated URL is already in use."
-					logger.Errorw(message,
-						"error", err.Error(),
-					)
+						// Log with the appropriate level.
+						message := "Failed to check if randomly generated URL is already in use."
+						logger.Errorw(message,
+							"error", err.Error(),
+						)
 
-					// Report the error to the client.
-					code := int64(500)
-					return &operations.URLRandomDefault{Payload: &models.Error{
-						Code:    &code,
-						Message: &message,
-					}}
+						// Report the error to the client.
+						code := int64(500)
+						return &operations.URLRandomDefault{Payload: &models.Error{
+							Code:    &code,
+							Message: &message,
+						}}
+					}
 				}
 			}
 

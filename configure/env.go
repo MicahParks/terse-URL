@@ -54,6 +54,7 @@ type configuration struct {
 	KeycloakRealm         string
 	KeycloakSecret        string
 	InvalidPaths          []string
+	ShortIDParanoid       bool
 	ShortIDSeed           uint64
 	TerseMongoCollection  string
 	TerseMongoDatabase    string
@@ -131,6 +132,7 @@ func readEnvVars() (config *configuration, err error) {
 	config.KeycloakID = os.Getenv("KEYCLOAK_ID")
 	config.KeycloakRealm = os.Getenv("KEYCLOAK_REALM")
 	config.KeycloakSecret = os.Getenv("KEYCLOAK_SECRET")
+	config.ShortIDParanoid = len(os.Getenv("SHORTID_PARANOID")) != 0
 	config.TerseMongoCollection = os.Getenv("TERSE_MONGO_COLLECTION")
 	config.TerseMongoDatabase = os.Getenv("TERSE_MONGO_DATABASE")
 	config.TerseMongoURI = os.Getenv("TERSE_MONGO_URI")

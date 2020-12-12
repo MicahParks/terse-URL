@@ -16,6 +16,7 @@ Environment variable table:
 |`KEYCLOAK_ID`            |The ID of the Keycloak client that is a service account.                                                                                                                  |blank        |`terseBackend`                        |
 |`KEYCLOAK_REALM`         |The realm Keycloak uses for this service.                                                                                                                                 |blank        |`terseURL`                            |
 |`KEYCLOAK_SECRET`        |The secret for the service account's Keycloak client.                                                                                                                     |blank        |`123e4567-e89b-12d3-a456-426614174000`|
+|`SHORTID_PARANOID`       |Indicate whether randomly generated short URLs should be checked to see if they are already in use. Any value sets the boolean to true. Empty for false.                  |blank        |`true`                                |
 |`SHORTID_SEED`           |The seed to give the random shortened URL generator. Unsigned 64 bit integer.                                                                                             |System clock |`2301015`                             |
 |`TERSE_MONGO_COLLECTION` |The MongoDB collection to store Terse pairs in.                                                                                                                           |`terseStore` |`terseStore`                          |
 |`TERSE_MONGO_DATABASE`   |The MongoDB database used to store the Terse collection in. Default `terseURL`.                                                                                           |`terseURL`   |`terseURL`                            |
@@ -31,7 +32,7 @@ Environment variable table:
 
 - [ ] Address TODOs.
 - [ ] Move things to `/api`?
-- [ ] Add an `/randomUltraSafe` endpoint?
+- [x] ~~Add an `/randomUltraSafe` endpoint?~~
 - [ ] Add an `/upsert` endpoint?
 - [ ] Social media link preview.
 - [ ] Move frontend to another repo.

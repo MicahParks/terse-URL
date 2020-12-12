@@ -13,12 +13,13 @@ import (
 
 // Configuration is the Go structure that contains all needed configurations gathered on startup.
 type Configuration struct {
-	Logger       *zap.SugaredLogger
-	InvalidPaths []string
-	KeycloakInfo KeycloakInfo
-	ShortID      *shortid.Shortid
-	TerseStore   storage.TerseStore
-	VisitsStore  storage.VisitsStore
+	Logger          *zap.SugaredLogger
+	InvalidPaths    []string
+	KeycloakInfo    KeycloakInfo
+	ShortID         *shortid.Shortid
+	ShortIDParanoid bool
+	TerseStore      storage.TerseStore
+	VisitsStore     storage.VisitsStore
 }
 
 // Configure gathers all startup configurations, formats them, and returns them as a Go struct.
@@ -143,6 +144,7 @@ func Configure() (config Configuration, err error) {
 
 	// Copy over any other needed raw config info.
 	config.InvalidPaths = rawConfig.InvalidPaths
+	config.ShortIDParanoid = rawConfig.ShortIDParanoid
 
 	return config, nil
 }
