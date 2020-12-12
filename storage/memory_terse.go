@@ -34,25 +34,6 @@ func (m *MemTerse) Close(_ context.Context) (err error) {
 	return nil
 }
 
-func (m *MemTerse) ScheduleDeletions(_ context.Context) (err error) {
-
-	//// Lock the Terse map for async safe use.
-	//m.mux.Lock()
-	//defer m.mux.Unlock()
-	//
-	//// Iterate through all Terse.
-	//for _, terse := range m.terse {
-	//
-	//	// If the Terse has a deletion time, schedule it asynchronously.
-	//	if terse.DeleteAt != nil {
-	//		go deleteTerseBlocking(*terse.DeleteAt, m.errChan, terse.Shortened, m)
-	//	}
-	//}
-
-	// There is no use case for this function, since memory should not be reloaded on program restart.
-	return nil
-}
-
 func (m *MemTerse) DeleteTerse(_ context.Context, shortened string) (err error) {
 
 	// Lock the Terse map for async safe use.
@@ -88,7 +69,7 @@ func (m *MemTerse) GetTerse(_ context.Context, shortened string, visit *models.V
 	return terse.Original, nil
 }
 
-func (m *MemTerse) UpsertTerse(_ context.Context, deleteAt *time.Time, original, shortened string) (err error) {
+func (m *MemTerse) UpdateTerse(_ context.Context, deleteAt *time.Time, original, shortened string) (err error) {
 
 	// Lock the Terse map for async safe use.
 	m.mux.Lock()

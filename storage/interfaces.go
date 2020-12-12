@@ -2,38 +2,49 @@ package storage
 
 import (
 	"context"
-	"time"
 
 	"github.com/MicahParks/terse-URL/models"
 )
 
-// TerseStore is the shortened link storage interface. It allows for link storage operations without needing to know how
-// or where the shortened link data is stored.
-type TerseStore interface { // TODO Add a method that removes all redirections based on original?
+// TerseStore is the Terse storage interface. It allows for Terse storage operations without needing to know how
+// the Terse data is stored.
+type TerseStore interface {
+
+	// AddTerse adds a Terse to the TerseStore. The shortened URL will be active after this.
+	AddTerse(ctx context.Context, terse *models.Terse)
 
 	// Close closes the connection to the underlying storage. This does not close the connection to the VisitsStore.
 	Close(ctx context.Context) (err error)
 
-	// DeleteLink deletes the given shortened URL.
+	// DeleteTerse deletes the given shortened URL.
 	DeleteTerse(ctx context.Context, shortened string) (err error)
 
-	// GetLink retrieves an original URL given it's shortened URL. The visit will be stored in the VisitsStore, unless
-	// it is nil. visitCancel and visitCtx are the context.CancelFunc and context.Context for the VisitsStore
-	// interactions. The error must be storage.ErrShortenedNotFound if the shortened URL is not found.
-	GetTerse(ctx context.Context, shortened string, visit *models.Visit, visitCancel context.CancelFunc, visitCtx context.Context) (original string, err error)
+	// Dump returns a dump of all data for a given shortened URL.
+	Dump(ctx context.Context, shortened string) (dump *models.Dump, err error)
 
-	// PutLink inserts the original and shortened URL key value pair to the underlying storage. The shortened link is
-	// considered active after this. If deleteAt is nil, the Terse will not be scheduled for deletion.
-	UpsertTerse(ctx context.Context, deleteAt *time.Time, original, shortened string) (err error)
+	// DumpAll returns a map of shortened URLs to dump data.
+	DumpAll(ctx context.Context) (dump map[string]*models.Dump, err error)
+
+	// GetTerse retrieves all non-Visit Terse data give its shortened URL. The error must be
+	// storage.ErrShortenedNotFound if the shortened URL is not found.
+	// TODO Delete Terse if expired
+	GetTerse(ctx context.Context, shortened string, visit *models.Visit) (original string, err error)
+
+	// UpdateTerse assumes the Terse already exists. It will override all of its values. The error must be
+	// storage.ErrShortenedNotFound if the shortened URL is not found.
+	UpdateTerse(ctx context.Context, terse *models.Terse) (err error)
 
 	// VisitsStore returns the underlying VisitsStore, which hold the backend storage for tracking visits to shortened
 	// URLs.
 	VisitsStore() VisitsStore
 }
 
-// VisitsStore is the shortened link storage interface. It allows for storage operations relating to tracking shortened
-// URL visits without needing to know where the visits are stored.
+// VisitsStore is the Visits storage interface. It allows for Visits storage operations without needing to know how the
+// Visits data is stored.
 type VisitsStore interface {
+
+	// AddVisit adds the visit to the visits store.
+	AddVisit(ctx context.Context, shortened string, visit *models.Visit) (err error)
 
 	// Close closes the connection to the underlying storage.
 	Close(ctx context.Context) (err error)
@@ -43,7 +54,4 @@ type VisitsStore interface {
 
 	// GetVisits gets all visits to the shortened URL.
 	GetVisits(ctx context.Context, shortened string) (visits []*models.Visit, err error)
-
-	// PutVisit stores the visit to the shortened URL.
-	AddVisit(ctx context.Context, shortened string, visit *models.Visit) (err error)
 }

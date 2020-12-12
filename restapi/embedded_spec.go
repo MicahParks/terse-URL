@@ -89,8 +89,8 @@ func init() {
         "responses": {
           "200": {
             "schema": {
-              "type": "array",
-              "items": {
+              "type": "object",
+              "additionalProperties": {
                 "$ref": "#/definitions/Dump"
               }
             }
@@ -477,8 +477,8 @@ func init() {
         "responses": {
           "200": {
             "schema": {
-              "type": "array",
-              "items": {
+              "type": "object",
+              "additionalProperties": {
                 "$ref": "#/definitions/Dump"
               }
             }

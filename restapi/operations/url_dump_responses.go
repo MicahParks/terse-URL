@@ -25,7 +25,7 @@ type URLDumpOK struct {
 	/*
 	  In: Body
 	*/
-	Payload []*models.Dump `json:"body,omitempty"`
+	Payload map[string]models.Dump `json:"body,omitempty"`
 }
 
 // NewURLDumpOK creates URLDumpOK with default headers values
@@ -35,13 +35,13 @@ func NewURLDumpOK() *URLDumpOK {
 }
 
 // WithPayload adds the payload to the url dump o k response
-func (o *URLDumpOK) WithPayload(payload []*models.Dump) *URLDumpOK {
+func (o *URLDumpOK) WithPayload(payload map[string]models.Dump) *URLDumpOK {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the url dump o k response
-func (o *URLDumpOK) SetPayload(payload []*models.Dump) {
+func (o *URLDumpOK) SetPayload(payload map[string]models.Dump) {
 	o.Payload = payload
 }
 
@@ -51,8 +51,8 @@ func (o *URLDumpOK) WriteResponse(rw http.ResponseWriter, producer runtime.Produ
 	rw.WriteHeader(200)
 	payload := o.Payload
 	if payload == nil {
-		// return empty array
-		payload = make([]*models.Dump, 0, 50)
+		// return empty map
+		payload = make(map[string]models.Dump, 50)
 	}
 
 	if err := producer.Produce(rw, payload); err != nil {

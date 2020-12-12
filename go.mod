@@ -15,6 +15,7 @@ require (
 	github.com/go-openapi/swag v0.19.12
 	github.com/go-openapi/validate v0.20.0
 	github.com/golang/snappy v0.0.2 // indirect
+	github.com/google/go-cmp v0.5.3 // indirect
 	github.com/jessevdk/go-flags v1.4.0
 	github.com/klauspost/compress v1.11.3 // indirect
 	github.com/patrickmn/go-cache v2.1.0+incompatible // indirect
