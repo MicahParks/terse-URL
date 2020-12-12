@@ -149,8 +149,8 @@ definitions:
       terse:
         $ref: "#/definitions/Terse"
       visits:
-        type: "array"
-        items:
+        type: "object"
+        additionalProperties:
           $ref: "#/definitions/Visit"
     type: "object"
 

@@ -14,10 +14,6 @@ type TerseStore interface { // TODO Add a method that removes all redirections b
 	// Close closes the connection to the underlying storage. This does not close the connection to the VisitsStore.
 	Close(ctx context.Context) (err error)
 
-	// RescheduleDeletions deletes expired links in the underlying storage and schedules deletions for the rest. It
-	// should be called on startup for underlying storage that is persistent.
-	ScheduleDeletions(ctx context.Context) (err error)
-
 	// DeleteLink deletes the given shortened URL.
 	DeleteTerse(ctx context.Context, shortened string) (err error)
 
