@@ -33,7 +33,7 @@ paths: # TODO Add summary to all endpoints.
       produces:
         - "application/json"
       summary: "Delete the given shortened URL from the backend storage, cause the shortened URL to immediately expire."
-      operationId: "urlDelete"
+      operationId: "terseDelete"
       parameters:
         - in: "body"
           name: "shortened"
@@ -55,7 +55,7 @@ paths: # TODO Add summary to all endpoints.
       produces:
         - "application/json"
       description: ""
-      operationId: "urlDump"
+      operationId: "terseDump"
       responses:
         200:
           description: ""
@@ -75,7 +75,7 @@ paths: # TODO Add summary to all endpoints.
       produces:
         - "application/json"
       description: ""
-      operationId: "urlDumpShortened"
+      operationId: "terseDumpShortened"
       parameters:
         - in: "path"
           name: "shortened"
@@ -93,24 +93,33 @@ paths: # TODO Add summary to all endpoints.
       security:
         - JWT: [ ]
 
-  /api/new:
+  /api/{operation}:
     post:
       consumes:
         - "application/json"
       produces:
         - "application/json"
       summary: '' # TODO
-      operationId: "urlNew"
+      operationId: "terseNew"
       parameters:
         - in: "body"
           name: "terse"
           required: true
           schema:
             $ref: "#/definitions/TerseOptionalShortened"
+        - in: "path"
+          enum:
+            - "create"
+            - "update"
+            - "upsert"
+          name: "operation"
+          required: true
+          type: "string"
       responses:
         200:
-          description: "The shortened URL to visit that will redirect to the given full URL."
+          description: "" # TODO
           schema:
+            description: "The shortened URL affected."
             type: "string"
         default:
           description: "Unexpected error."
@@ -124,7 +133,7 @@ paths: # TODO Add summary to all endpoints.
   /{shortened}:
     get:
       description: "Use the shortened URL. It will redirect to the full URL if it has not expired."
-      operationId: "urlGet"
+      operationId: "terseGet"
       parameters:
         - in: "path"
           name: "shortened"

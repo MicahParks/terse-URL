@@ -55,7 +55,7 @@ func (m *MongoDBVisits) DeleteVisits(ctx context.Context, shortened string) (err
 	return nil
 }
 
-func (m *MongoDBVisits) GetVisits(ctx context.Context, shortened string) (visits []*models.Visit, err error) {
+func (m *MongoDBVisits) ReadVisits(ctx context.Context, shortened string) (visits []*models.Visit, err error) {
 
 	// Create a filter that will be used to match all documents for this shortened URL.
 	filter := bson.D{{"_id", shortened}}

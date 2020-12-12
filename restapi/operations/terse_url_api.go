@@ -47,20 +47,20 @@ func NewTerseURLAPI(spec *loads.Document) *TerseURLAPI {
 		AliveHandler: AliveHandlerFunc(func(params AliveParams) middleware.Responder {
 			return middleware.NotImplemented("operation Alive has not yet been implemented")
 		}),
-		URLDeleteHandler: URLDeleteHandlerFunc(func(params URLDeleteParams, principal *models.JWTInfo) middleware.Responder {
-			return middleware.NotImplemented("operation URLDelete has not yet been implemented")
+		TerseDeleteHandler: TerseDeleteHandlerFunc(func(params TerseDeleteParams, principal *models.JWTInfo) middleware.Responder {
+			return middleware.NotImplemented("operation TerseDelete has not yet been implemented")
 		}),
-		URLDumpHandler: URLDumpHandlerFunc(func(params URLDumpParams, principal *models.JWTInfo) middleware.Responder {
-			return middleware.NotImplemented("operation URLDump has not yet been implemented")
+		TerseDumpHandler: TerseDumpHandlerFunc(func(params TerseDumpParams, principal *models.JWTInfo) middleware.Responder {
+			return middleware.NotImplemented("operation TerseDump has not yet been implemented")
 		}),
-		URLDumpShortenedHandler: URLDumpShortenedHandlerFunc(func(params URLDumpShortenedParams, principal *models.JWTInfo) middleware.Responder {
-			return middleware.NotImplemented("operation URLDumpShortened has not yet been implemented")
+		TerseDumpShortenedHandler: TerseDumpShortenedHandlerFunc(func(params TerseDumpShortenedParams, principal *models.JWTInfo) middleware.Responder {
+			return middleware.NotImplemented("operation TerseDumpShortened has not yet been implemented")
 		}),
-		URLGetHandler: URLGetHandlerFunc(func(params URLGetParams) middleware.Responder {
-			return middleware.NotImplemented("operation URLGet has not yet been implemented")
+		TerseGetHandler: TerseGetHandlerFunc(func(params TerseGetParams) middleware.Responder {
+			return middleware.NotImplemented("operation TerseGet has not yet been implemented")
 		}),
-		URLNewHandler: URLNewHandlerFunc(func(params URLNewParams, principal *models.JWTInfo) middleware.Responder {
-			return middleware.NotImplemented("operation URLNew has not yet been implemented")
+		TerseNewHandler: TerseNewHandlerFunc(func(params TerseNewParams, principal *models.JWTInfo) middleware.Responder {
+			return middleware.NotImplemented("operation TerseNew has not yet been implemented")
 		}),
 
 		// Applies when the "Authorization" header is set
@@ -112,16 +112,16 @@ type TerseURLAPI struct {
 
 	// AliveHandler sets the operation handler for the alive operation
 	AliveHandler AliveHandler
-	// URLDeleteHandler sets the operation handler for the url delete operation
-	URLDeleteHandler URLDeleteHandler
-	// URLDumpHandler sets the operation handler for the url dump operation
-	URLDumpHandler URLDumpHandler
-	// URLDumpShortenedHandler sets the operation handler for the url dump shortened operation
-	URLDumpShortenedHandler URLDumpShortenedHandler
-	// URLGetHandler sets the operation handler for the url get operation
-	URLGetHandler URLGetHandler
-	// URLNewHandler sets the operation handler for the url new operation
-	URLNewHandler URLNewHandler
+	// TerseDeleteHandler sets the operation handler for the terse delete operation
+	TerseDeleteHandler TerseDeleteHandler
+	// TerseDumpHandler sets the operation handler for the terse dump operation
+	TerseDumpHandler TerseDumpHandler
+	// TerseDumpShortenedHandler sets the operation handler for the terse dump shortened operation
+	TerseDumpShortenedHandler TerseDumpShortenedHandler
+	// TerseGetHandler sets the operation handler for the terse get operation
+	TerseGetHandler TerseGetHandler
+	// TerseNewHandler sets the operation handler for the terse new operation
+	TerseNewHandler TerseNewHandler
 	// ServeError is called when an error is received, there is a default handler
 	// but you can set your own with this
 	ServeError func(http.ResponseWriter, *http.Request, error)
@@ -205,20 +205,20 @@ func (o *TerseURLAPI) Validate() error {
 	if o.AliveHandler == nil {
 		unregistered = append(unregistered, "AliveHandler")
 	}
-	if o.URLDeleteHandler == nil {
-		unregistered = append(unregistered, "URLDeleteHandler")
+	if o.TerseDeleteHandler == nil {
+		unregistered = append(unregistered, "TerseDeleteHandler")
 	}
-	if o.URLDumpHandler == nil {
-		unregistered = append(unregistered, "URLDumpHandler")
+	if o.TerseDumpHandler == nil {
+		unregistered = append(unregistered, "TerseDumpHandler")
 	}
-	if o.URLDumpShortenedHandler == nil {
-		unregistered = append(unregistered, "URLDumpShortenedHandler")
+	if o.TerseDumpShortenedHandler == nil {
+		unregistered = append(unregistered, "TerseDumpShortenedHandler")
 	}
-	if o.URLGetHandler == nil {
-		unregistered = append(unregistered, "URLGetHandler")
+	if o.TerseGetHandler == nil {
+		unregistered = append(unregistered, "TerseGetHandler")
 	}
-	if o.URLNewHandler == nil {
-		unregistered = append(unregistered, "URLNewHandler")
+	if o.TerseNewHandler == nil {
+		unregistered = append(unregistered, "TerseNewHandler")
 	}
 
 	if len(unregistered) > 0 {
@@ -326,23 +326,23 @@ func (o *TerseURLAPI) initHandlerCache() {
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
-	o.handlers["DELETE"]["/api/delete"] = NewURLDelete(o.context, o.URLDeleteHandler)
+	o.handlers["DELETE"]["/api/delete"] = NewTerseDelete(o.context, o.TerseDeleteHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/api/dump"] = NewURLDump(o.context, o.URLDumpHandler)
+	o.handlers["GET"]["/api/dump"] = NewTerseDump(o.context, o.TerseDumpHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/api/dump/{shortened}"] = NewURLDumpShortened(o.context, o.URLDumpShortenedHandler)
+	o.handlers["GET"]["/api/dump/{shortened}"] = NewTerseDumpShortened(o.context, o.TerseDumpShortenedHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/{shortened}"] = NewURLGet(o.context, o.URLGetHandler)
+	o.handlers["GET"]["/{shortened}"] = NewTerseGet(o.context, o.TerseGetHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/api/new"] = NewURLNew(o.context, o.URLNewHandler)
+	o.handlers["POST"]["/api/{operation}"] = NewTerseNew(o.context, o.TerseNewHandler)
 }
 
 // Serve creates a http handler to serve the API over HTTP

@@ -8,15 +8,34 @@ import (
 )
 
 type MemVisits struct {
-	mux    *sync.Mutex
-	visits map[string]*Visits
+	mux    sync.RWMutex
+	visits map[string][]*models.Visit
 }
 
 func NewMemVisits() (visitsStore VisitsStore) {
 	return &MemVisits{
-		mux:    &sync.Mutex{},
-		visits: make(map[string]*Visits),
+		visits: make(map[string][]*models.Visit),
 	}
+}
+
+func (m *MemVisits) AddVisit(_ context.Context, shortened string, visit *models.Visit) (err error) {
+
+	// Lock the Visits map for async safe use.
+	m.mux.Lock()
+	defer m.mux.Unlock()
+
+	// Confirm the shortened URL is a key in the map.
+	var ok bool
+	var visits []*models.Visit
+	if visits, ok = m.visits[shortened]; !ok {
+		visits = make([]*models.Visit, 0)
+		m.visits[shortened] = visits
+	}
+
+	// Add the visits to the slice of visits for this shortened URL.
+	m.visits[shortened] = append(visits, visit)
+
+	return nil
 }
 
 func (m *MemVisits) Close(_ context.Context) (err error) {
@@ -29,42 +48,24 @@ func (m *MemVisits) DeleteVisits(_ context.Context, shortened string) (err error
 	m.mux.Lock()
 	defer m.mux.Unlock()
 
-	// Delete all visits.
+	// Delete all visits for the shortened URL.
 	delete(m.visits, shortened)
 
 	return nil
 }
 
-func (m *MemVisits) GetVisits(_ context.Context, shortened string) (visits []*models.Visit, err error) {
+func (m *MemVisits) ReadVisits(_ context.Context, shortened string) (visits []*models.Visit, err error) {
 
 	// Lock the Visits map for async safe use.
-	m.mux.Lock()
-	defer m.mux.Unlock()
+	m.mux.RLock()
+	defer m.mux.RUnlock()
 
 	// Confirm the shortened URL is a key in the map.
-	visitsStruct, ok := m.visits[shortened]
-	if !ok {
+	var ok bool
+	if visits, ok = m.visits[shortened]; !ok {
 		return nil, ErrShortenedNotFound
 	}
 
 	// Return the visits.
-	return visitsStruct.Visits, nil
-}
-
-func (m *MemVisits) AddVisit(_ context.Context, shortened string, visit *models.Visit) (err error) {
-
-	// Lock the Visits map for async safe use.
-	m.mux.Lock()
-	defer m.mux.Unlock()
-
-	// Confirm the shortened URL is a key in the map.
-	visitsStruct, ok := m.visits[shortened]
-	if !ok {
-		return ErrShortenedNotFound
-	}
-
-	// Add the visits to the slice of visits for this shortened URL.
-	visitsStruct.Visits = append(visitsStruct.Visits, visit)
-
-	return nil
+	return visits, nil
 }

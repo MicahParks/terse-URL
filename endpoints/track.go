@@ -28,7 +28,7 @@ func HandleTrack(logger *zap.SugaredLogger, visitsStorage storage.VisitsStore) o
 		// Get the visits from storage.
 		var err error
 		var visits []*models.Visit
-		if visits, err = visitsStorage.GetVisits(ctx, params.Shortened); err != nil {
+		if visits, err = visitsStorage.ReadVisits(ctx, params.Shortened); err != nil {
 
 			// Log with the appropriate level.
 			logger.Warnw("Failed to find the visits for the given shortened URL.",

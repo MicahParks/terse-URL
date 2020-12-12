@@ -51,7 +51,7 @@ func init() {
           "application/json"
         ],
         "summary": "Delete the given shortened URL from the backend storage, cause the shortened URL to immediately expire.",
-        "operationId": "urlDelete",
+        "operationId": "terseDelete",
         "parameters": [
           {
             "name": "shortened",
@@ -85,7 +85,7 @@ func init() {
         "produces": [
           "application/json"
         ],
-        "operationId": "urlDump",
+        "operationId": "terseDump",
         "responses": {
           "200": {
             "schema": {
@@ -114,7 +114,7 @@ func init() {
         "produces": [
           "application/json"
         ],
-        "operationId": "urlDumpShortened",
+        "operationId": "terseDumpShortened",
         "parameters": [
           {
             "type": "string",
@@ -138,7 +138,7 @@ func init() {
         }
       }
     },
-    "/api/new": {
+    "/api/{operation}": {
       "post": {
         "security": [
           {
@@ -151,7 +151,7 @@ func init() {
         "produces": [
           "application/json"
         ],
-        "operationId": "urlNew",
+        "operationId": "terseNew",
         "parameters": [
           {
             "name": "terse",
@@ -160,12 +160,23 @@ func init() {
             "schema": {
               "$ref": "#/definitions/TerseOptionalShortened"
             }
+          },
+          {
+            "enum": [
+              "new",
+              "update",
+              "upsert"
+            ],
+            "type": "string",
+            "name": "operation",
+            "in": "path",
+            "required": true
           }
         ],
         "responses": {
           "200": {
-            "description": "The shortened URL to visit that will redirect to the given full URL.",
             "schema": {
+              "description": "The shortened URL affected.",
               "type": "string"
             }
           },
@@ -181,7 +192,7 @@ func init() {
     "/{shortened}": {
       "get": {
         "description": "Use the shortened URL. It will redirect to the full URL if it has not expired.",
-        "operationId": "urlGet",
+        "operationId": "terseGet",
         "parameters": [
           {
             "type": "string",
@@ -439,7 +450,7 @@ func init() {
           "application/json"
         ],
         "summary": "Delete the given shortened URL from the backend storage, cause the shortened URL to immediately expire.",
-        "operationId": "urlDelete",
+        "operationId": "terseDelete",
         "parameters": [
           {
             "name": "shortened",
@@ -473,7 +484,7 @@ func init() {
         "produces": [
           "application/json"
         ],
-        "operationId": "urlDump",
+        "operationId": "terseDump",
         "responses": {
           "200": {
             "schema": {
@@ -502,7 +513,7 @@ func init() {
         "produces": [
           "application/json"
         ],
-        "operationId": "urlDumpShortened",
+        "operationId": "terseDumpShortened",
         "parameters": [
           {
             "type": "string",
@@ -526,7 +537,7 @@ func init() {
         }
       }
     },
-    "/api/new": {
+    "/api/{operation}": {
       "post": {
         "security": [
           {
@@ -539,7 +550,7 @@ func init() {
         "produces": [
           "application/json"
         ],
-        "operationId": "urlNew",
+        "operationId": "terseNew",
         "parameters": [
           {
             "name": "terse",
@@ -548,12 +559,23 @@ func init() {
             "schema": {
               "$ref": "#/definitions/TerseOptionalShortened"
             }
+          },
+          {
+            "enum": [
+              "new",
+              "update",
+              "upsert"
+            ],
+            "type": "string",
+            "name": "operation",
+            "in": "path",
+            "required": true
           }
         ],
         "responses": {
           "200": {
-            "description": "The shortened URL to visit that will redirect to the given full URL.",
             "schema": {
+              "description": "The shortened URL affected.",
               "type": "string"
             }
           },
@@ -569,7 +591,7 @@ func init() {
     "/{shortened}": {
       "get": {
         "description": "Use the shortened URL. It will redirect to the full URL if it has not expired.",
-        "operationId": "urlGet",
+        "operationId": "terseGet",
         "parameters": [
           {
             "type": "string",

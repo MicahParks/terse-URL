@@ -10,6 +10,9 @@ var (
 
 	// ErrShortenedNotFound indicates the given shortened URL was not found in the underlying storage.
 	ErrShortenedNotFound = errors.New("the shortened URL was not found")
+
+	// ErrShortenedExists indicates that an attempt was made to add a shortened URL that already existed.
+	ErrShortenedExists = errors.New("the shortened URL already exists")
 )
 
 type ctxCreator func() (ctx context.Context, cancel context.CancelFunc)

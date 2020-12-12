@@ -31,9 +31,7 @@ Environment variable table:
 ## TODO
 
 - [ ] Address TODOs.
-- [ ] Move things to `/api`?
-- [x] ~~Add an `/randomUltraSafe` endpoint?~~
-- [ ] Add an `/upsert` endpoint?
+- [ ] Redis storage backend.
 - [ ] Social media link preview.
 - [ ] Move frontend to another repo.
 - [ ] Change storage configs to files?
@@ -41,3 +39,6 @@ Environment variable table:
 - [ ] Change user created warnings to info?
 - [ ] A good README.md.
 - [ ] Write tests.
+- [x] Move things to `/api`?
+- [x] Add an `/upsert` endpoint?
+- [x] Add an `/randomUltraSafe` endpoint?
