@@ -23,7 +23,6 @@ Environment variable table:
 |`VISITS_MONGO_DATABASE`  |The MongoDB database to store the Visits collection in.                                                                                                                   |`terseURL`   |`terseURL`                            |
 |`VISITS_MONGO_URI`       |The MongoDB URI for the MongoDB server used for the database with the Visits collection in it.                                                                            |blank        |`mongodb://mongodb0.example.com:27017`|
 |`VISITS_STORE_TYPE`      |The type of storage backend for Visits. Leave blank to not track visits.                                                                                                  |blank        |blank or `memory` or `mongo`          |
-|`WORKERS_BUFFER`         |The quantity of work items that can be in a queue to async incoming request workers.                                                                                      |`1`          |`2`                                   |
 |`WORKER_COUNT`           |The quantity of workers to use for incoming request async tasks like performing async database calls. Not the number of incoming requests that can be handled at one time.|`4`          |`10`                                  |
 
 ## TODO

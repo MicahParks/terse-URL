@@ -285,6 +285,87 @@ func init() {
         }
       }
     },
+    "Preview": {
+      "required": [
+        "imageURL",
+        "title",
+        "type",
+        "canonicalURL"
+      ],
+      "properties": {
+        "audioURL": {
+          "type": "string"
+        },
+        "canonicalURL": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "determiner": {
+          "type": "string"
+        },
+        "imageURL": {
+          "type": "string"
+        },
+        "locale": {
+          "type": "string"
+        },
+        "localeAlt": {
+          "type": "string"
+        },
+        "siteName": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "twitter": {
+          "type": "object",
+          "$ref": "#/definitions/Twitter"
+        },
+        "type": {
+          "type": "string"
+        },
+        "videoURL": {
+          "type": "string"
+        }
+      }
+    },
+    "Twitter": {
+      "properties": {
+        "card": {
+          "type": "string",
+          "enum": [
+            "app",
+            "player",
+            "summary",
+            "summary_large_image"
+          ]
+        },
+        "creator": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "imageURL": {
+          "type": "string"
+        },
+        "site": {
+          "type": "string"
+        },
+        "siteID": {
+          "type": "string"
+        },
+        "streamURL": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        }
+      }
+    },
     "Visit": {
       "required": [
         "accessed",
@@ -583,6 +664,87 @@ func init() {
           "items": {
             "type": "string"
           }
+        }
+      }
+    },
+    "Preview": {
+      "required": [
+        "imageURL",
+        "title",
+        "type",
+        "canonicalURL"
+      ],
+      "properties": {
+        "audioURL": {
+          "type": "string"
+        },
+        "canonicalURL": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "determiner": {
+          "type": "string"
+        },
+        "imageURL": {
+          "type": "string"
+        },
+        "locale": {
+          "type": "string"
+        },
+        "localeAlt": {
+          "type": "string"
+        },
+        "siteName": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "twitter": {
+          "type": "object",
+          "$ref": "#/definitions/Twitter"
+        },
+        "type": {
+          "type": "string"
+        },
+        "videoURL": {
+          "type": "string"
+        }
+      }
+    },
+    "Twitter": {
+      "properties": {
+        "card": {
+          "type": "string",
+          "enum": [
+            "app",
+            "player",
+            "summary",
+            "summary_large_image"
+          ]
+        },
+        "creator": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "imageURL": {
+          "type": "string"
+        },
+        "site": {
+          "type": "string"
+        },
+        "siteID": {
+          "type": "string"
+        },
+        "streamURL": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
         }
       }
     },

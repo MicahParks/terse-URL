@@ -59,7 +59,7 @@ func Configure() (config Configuration, err error) {
 
 	// Create a ctxerrgroup for misc asynchronous items needed for requests.
 	// TODO Make sure this is used properly.
-	group := ctxerrgroup.New(rawConfig.WorkerCount, rawConfig.WorkersBuffer, true, func(_ ctxerrgroup.Group, err error) {
+	group := ctxerrgroup.New(rawConfig.WorkerCount, func(_ ctxerrgroup.Group, err error) {
 		logger.Errorw("An error occurred with a ctxerrgroup worker.",
 			"error", err.Error(),
 		)

@@ -23,9 +23,6 @@ const (
 	// defaultWorkerCount is the default amount of workers to have in the ctxerrgroup.
 	defaultWorkerCount = 4
 
-	// defaultWorkersBuffer is the default amount of work to buffer to workers for the ctxerrgroup.
-	defaultWorkersBuffer = 1
-
 	// memoryStorage is the constant used when describing a storage backend only in memory.
 	memoryStorage = "memory"
 
@@ -67,7 +64,6 @@ type configuration struct {
 	VisitsMongoURI        string
 	VisitsStoreType       string
 	WorkerCount           uint
-	WorkersBuffer         uint
 }
 
 // invalidPathsParse parses a comma separated string into a slice of strings. It adds in paths that are always invalid
@@ -117,10 +113,6 @@ func readEnvVars() (config *configuration, err error) {
 	workerCount := os.Getenv("WORKER_COUNT")
 	if config.WorkerCount, err = stringToUint(workerCount, defaultWorkerCount); err != nil {
 		return nil, fmt.Errorf("%w: %s", err, workerCount)
-	}
-	workersBuffer := os.Getenv("WORKERS_BUFFER")
-	if config.WorkersBuffer, err = stringToUint(workersBuffer, defaultWorkersBuffer); err != nil {
-		return nil, fmt.Errorf("%w: %s", err, workersBuffer)
 	}
 
 	// Transform the short ID seed into a uint64, if given.
