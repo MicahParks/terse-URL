@@ -1,5 +1,7 @@
 # terse URL
 
+[![Go Report Card](https://goreportcard.com/badge/github.com/MicahParks/terse-URL)](https://goreportcard.com/report/github.com/MicahParks/terse-URL) [![Go Reference](https://pkg.go.dev/badge/github.com/MicahParks/terse-URL.svg)](https://pkg.go.dev/github.com/MicahParks/terse-URL)
+
 Currently under development.
 
 ## Configuration

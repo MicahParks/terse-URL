@@ -11,6 +11,7 @@ import (
 	"github.com/MicahParks/terse-URL/storage"
 )
 
+// Configuration is the Go structure that contains all needed configurations gathered on startup.
 type Configuration struct {
 	Logger       *zap.SugaredLogger
 	InvalidPaths []string
@@ -20,6 +21,7 @@ type Configuration struct {
 	VisitsStore  storage.VisitsStore
 }
 
+// Configure gathers all startup configurations, formats them, and returns them as a Go struct.
 func Configure() (config Configuration, err error) {
 
 	// Create a logger.
