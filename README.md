@@ -32,10 +32,10 @@ Environment variable table:
 - [ ] Social media link preview.
 - [ ] Move frontend to another repo.
 - [ ] Change storage configs to files?
-- [ ] Take away auth?
 - [ ] Change user created warnings to info?
 - [ ] A good README.md.
 - [ ] Write tests.
-- [x] Move things to `/api`?
-- [x] Add an `/upsert` endpoint?
-- [x] Add an `/randomUltraSafe` endpoint?
+- [x] Take away auth.
+- [x] Move things to `/api`.
+- [x] Add an `/upsert` endpoint.
+- [x] Add an `/randomUltraSafe` endpoint.
