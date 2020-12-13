@@ -36,20 +36,22 @@ func HandleWrite(logger *zap.SugaredLogger, shortID *shortid.Shortid, terseStore
 
 		// If no shortened URL was given, create one.
 		var err error
-		if *terse.ShortenedURL, err = shortID.Generate(); err != nil { // TODO Loop this in paranoid mode?
+		if params.Terse.ShortenedURL == "" {
+			if *terse.ShortenedURL, err = shortID.Generate(); err != nil { // TODO Loop this in paranoid mode?
 
-			// Log at the appropriate level.
-			message := "Failed to create random shortened URL."
-			logger.Errorw(message,
-				"error", err.Error(),
-			)
+				// Log at the appropriate level.
+				message := "Failed to create random shortened URL."
+				logger.Errorw(message,
+					"error", err.Error(),
+				)
 
-			// Report the error to the client.
-			code := int64(500)
-			return &api.TerseWriteDefault{Payload: &models.Error{
-				Code:    &code,
-				Message: &message,
-			}}
+				// Report the error to the client.
+				code := int64(500)
+				return &api.TerseWriteDefault{Payload: &models.Error{
+					Code:    &code,
+					Message: &message,
+				}}
+			}
 		}
 
 		// Decide which operation to do.
@@ -70,7 +72,7 @@ func HandleWrite(logger *zap.SugaredLogger, shortID *shortid.Shortid, terseStore
 			var message string
 			if errors.Is(err, storage.ErrShortenedExists) {
 				code = 400
-				message = "Not going to existing shortened URL."
+				message = "Not going to overwrite existing shortened URL."
 				logger.Infow(message,
 					"shortened", terse.ShortenedURL,
 					"error", err.Error(),
@@ -85,10 +87,12 @@ func HandleWrite(logger *zap.SugaredLogger, shortID *shortid.Shortid, terseStore
 			}
 
 			// Report the error to the client.
-			return &api.TerseWriteDefault{Payload: &models.Error{
+			resp := &api.TerseWriteDefault{Payload: &models.Error{
 				Code:    &code,
 				Message: &message,
 			}}
+			resp.SetStatusCode(int(code))
+			return resp
 		}
 
 		return &api.TerseWriteOK{

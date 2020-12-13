@@ -48,10 +48,12 @@ func HandleRead(logger *zap.SugaredLogger, terseStore storage.TerseStore) api.Te
 			}
 
 			// Report the error to the client.
-			return &api.TerseReadDefault{Payload: &models.Error{
+			resp := &api.TerseReadDefault{Payload: &models.Error{
 				Code:    &code,
 				Message: &message,
 			}}
+			resp.SetStatusCode(int(code))
+			return resp
 		}
 
 		return &api.TerseReadOK{

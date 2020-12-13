@@ -41,10 +41,12 @@ func HandleDelete(logger *zap.SugaredLogger, terseStore storage.TerseStore) api.
 
 				// Report the error to the client.
 				code := int64(500)
-				return &api.TerseDeleteDefault{Payload: &models.Error{
+				resp := &api.TerseDeleteDefault{Payload: &models.Error{
 					Code:    &code,
 					Message: &message,
 				}}
+				resp.SetStatusCode(int(code))
+				return resp
 			}
 		}
 
@@ -61,10 +63,12 @@ func HandleDelete(logger *zap.SugaredLogger, terseStore storage.TerseStore) api.
 
 				// Report the error to the client.
 				code := int64(500)
-				return &api.TerseDeleteDefault{Payload: &models.Error{
+				resp := &api.TerseDeleteDefault{Payload: &models.Error{
 					Code:    &code,
 					Message: &message,
 				}}
+				resp.SetStatusCode(int(code))
+				return resp
 			}
 		}
 
