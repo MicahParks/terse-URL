@@ -2,7 +2,7 @@ swagger: "2.0"
 
 basePath: "/"
 
-host: "shorten.micahparks.com" # TODO Change if you found this off the internet and want to run it yourself.
+host: "terseurl.com" # TODO Change if you found this off the internet and want to run it yourself.
 
 info:
   description: "The Terse URL shortener."
