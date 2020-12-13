@@ -42,14 +42,14 @@ func configureAPI(api *operations.TerseURLAPI) http.Handler {
 	api.JSONProducer = runtime.JSONProducer()
 
 	// Assign the endpoint handlers.
-	api.AliveHandler = endpoints.HandleAlive()
-	api.TerseDeleteHandler = endpoints.HandleDelete(logger.Named("/api/delete/{shortened}"), config.TerseStore)
-	api.TerseDumpHandler = endpoints.HandleDump(logger.Named("/api/dump"), config.TerseStore)
-	api.TerseDumpShortenedHandler = endpoints.HandleDumpShortened(logger.Named("/api/dump/{shortened}"), config.TerseStore)
-	api.TerseReadHandler = endpoints.HandleRead(logger.Named("/api/read/{shortened}"), config.TerseStore)
-	api.TerseVisitsHandler = endpoints.HandleVisits(logger.Named("/api/visits/{shortened}"), config.VisitsStore)
-	api.TerseWriteHandler = endpoints.HandleWrite(logger.Named("/api/write/{operation}"), config.ShortID, config.TerseStore)
-	api.TerseRedirectHandler = endpoints.HandleRedirect(logger.Named("/{shortened}"), config.TerseStore)
+	api.APITerseDeleteHandler = endpoints.HandleDelete(logger.Named("/api/delete/{shortened}"), config.TerseStore)
+	api.APITerseExportHandler = endpoints.HandleExport(logger.Named("/api/export"), config.TerseStore)
+	api.APITerseExportOneHandler = endpoints.HandleExportOne(logger.Named("/api/export/{shortened}"), config.TerseStore)
+	api.APITerseReadHandler = endpoints.HandleRead(logger.Named("/api/read/{shortened}"), config.TerseStore)
+	api.APITerseVisitsHandler = endpoints.HandleVisits(logger.Named("/api/visits/{shortened}"), config.VisitsStore)
+	api.APITerseWriteHandler = endpoints.HandleWrite(logger.Named("/api/write/{operation}"), config.ShortID, config.TerseStore)
+	api.PublicTerseRedirectHandler = endpoints.HandleRedirect(logger.Named("/{shortened}"), config.TerseStore)
+	api.SystemAliveHandler = endpoints.HandleAlive()
 
 	api.PreServerShutdown = func() {}
 

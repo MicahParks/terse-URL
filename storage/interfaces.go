@@ -20,12 +20,12 @@ type TerseStore interface {
 	// DeleteTerse deletes the given shortened URL. No error should be given if the shortened URL is not found.
 	DeleteTerse(ctx context.Context, shortened string) (err error)
 
-	// Dump returns a dump of all data for a given shortened URL. The error must be storage.ErrShortenedNotFound if the
-	// shortened URL is not found.
-	Dump(ctx context.Context, shortened string) (dump models.Dump, err error)
+	// Export returns a export of Terse and Visit data for a given shortened URL. The error must be
+	// storage.ErrShortenedNotFound if the shortened URL is not found.
+	Export(ctx context.Context, shortened string) (export models.Export, err error)
 
-	// DumpAll returns a map of shortened URLs to dump data.
-	DumpAll(ctx context.Context) (dump map[string]models.Dump, err error)
+	// ExportAll returns a map of shortened URLs to export data.
+	ExportAll(ctx context.Context) (export map[string]models.Export, err error)
 
 	// GetTerse retrieves all non-Visit Terse data give its shortened URL. A nil visit may be passed in and the visit
 	// should not be recorded. The error must be storage.ErrShortenedNotFound if the shortened URL is not found.
@@ -54,7 +54,7 @@ type VisitsStore interface {
 	// Close closes the connection to the underlying storage.
 	Close(ctx context.Context) (err error)
 
-	// TODO Add a DumpAll method that will dump everything to a map? Better for TerseStore.Dump performance.
+	// TODO Add a ExportAll method that will export everything to a map? Better for TerseStore.Export performance.
 
 	// DeleteVisits deletes all visits to the shortened URL. No error should be given if the shortened URL is not found.
 	DeleteVisits(ctx context.Context, shortened string) (err error)

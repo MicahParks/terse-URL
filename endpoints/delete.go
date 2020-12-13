@@ -8,12 +8,12 @@ import (
 
 	"github.com/MicahParks/terse-URL/configure"
 	"github.com/MicahParks/terse-URL/models"
-	"github.com/MicahParks/terse-URL/restapi/operations"
+	"github.com/MicahParks/terse-URL/restapi/operations/api"
 	"github.com/MicahParks/terse-URL/storage"
 )
 
-func HandleDelete(logger *zap.SugaredLogger, terseStore storage.TerseStore) operations.TerseDeleteHandlerFunc {
-	return func(params operations.TerseDeleteParams) middleware.Responder {
+func HandleDelete(logger *zap.SugaredLogger, terseStore storage.TerseStore) api.TerseDeleteHandlerFunc {
+	return func(params api.TerseDeleteParams) middleware.Responder {
 
 		// Do not have debug level logging on in production, as it will log clog up the logs.
 		logger.Debugw("Parameters",
@@ -41,7 +41,7 @@ func HandleDelete(logger *zap.SugaredLogger, terseStore storage.TerseStore) oper
 
 				// Report the error to the client.
 				code := int64(500)
-				return &operations.TerseDeleteDefault{Payload: &models.Error{
+				return &api.TerseDeleteDefault{Payload: &models.Error{
 					Code:    &code,
 					Message: &message,
 				}}
@@ -61,13 +61,13 @@ func HandleDelete(logger *zap.SugaredLogger, terseStore storage.TerseStore) oper
 
 				// Report the error to the client.
 				code := int64(500)
-				return &operations.TerseDeleteDefault{Payload: &models.Error{
+				return &api.TerseDeleteDefault{Payload: &models.Error{
 					Code:    &code,
 					Message: &message,
 				}}
 			}
 		}
 
-		return &operations.TerseDeleteOK{}
+		return &api.TerseDeleteOK{}
 	}
 }

@@ -26,7 +26,8 @@ tags:
 paths: # TODO Add summary to all endpoints.
   /api/alive:
     get:
-      description: "For Caddy to determine if the upstream provider (this executable) is alive."
+      summary: "Used by Caddy or other reverse proxy to determine if the service is alive."
+      description: "Any non-200 response means the service is not alive."
       operationId: "alive"
       responses:
         200:
@@ -40,10 +41,13 @@ paths: # TODO Add summary to all endpoints.
         - "application/json"
       produces:
         - "application/json"
-      summary: "Delete the given shortened URL from the backend storage, cause the shortened URL to immediately expire."
+      summary: "Delete Terse and or Visit data for the given shortened URL."
+      description: "If only Terse data is deleted, the API user is responsible for cleaning up its Visit data before
+      adding new Terse data under the same shortened URL."
       operationId: "terseDelete"
       parameters:
-        - in: "body"
+        - description: "Indicate if Terse and or Visit data should be deleted."
+          in: "body"
           name: "delete"
           required: true
           schema:
@@ -55,13 +59,14 @@ paths: # TODO Add summary to all endpoints.
               visits:
                 default: true
                 type: "boolean"
-        - in: "path"
+        - description: "The shortened URL whose data should be deleted."
+          in: "path"
           name: "shortened"
           required: true
           type: "string"
       responses:
         200:
-          description: "The shortened URL was successfully deleted from the backend storage."
+          description: "The shortened URL's data was successfully deleted from the backend storage."
         default:
           description: "Unexpected error."
           schema:
@@ -69,19 +74,20 @@ paths: # TODO Add summary to all endpoints.
       tags:
         - "api"
 
-  /api/dump:
+  /api/export:
     get:
       produces:
         - "application/json"
+      summary: "Export all Terse and Visit data from the backend."
       description: ""
-      operationId: "terseDump"
+      operationId: "terseExport"
       responses:
         200:
-          description: ""
+          description: "All of the Terse and Visit data from the backend."
           schema:
             type: "object"
             additionalProperties:
-              $ref: "#/definitions/Dump"
+              $ref: "#/definitions/Export"
         default:
           description: "Unexpected error."
           schema:
@@ -89,12 +95,12 @@ paths: # TODO Add summary to all endpoints.
       tags:
         - "api"
 
-  /api/dump/{shortened}:
+  /api/export/{shortened}:
     get:
       produces:
         - "application/json"
       description: ""
-      operationId: "terseDumpShortened"
+      operationId: "terseExportOne"
       parameters:
         - in: "path"
           name: "shortened"
@@ -104,7 +110,7 @@ paths: # TODO Add summary to all endpoints.
         200:
           description: ""
           schema:
-            $ref: "#/definitions/Dump"
+            $ref: "#/definitions/Export"
         default:
           description: "Unexpected error."
           schema:
@@ -222,8 +228,8 @@ paths: # TODO Add summary to all endpoints.
 
 definitions:
 
-  # Schema for Terse dump.
-  Dump:
+  # Schema for Terse export. It contains Terse and Visit data for a shortened URL.
+  Export:
     properties:
       terse:
         $ref: "#/definitions/Terse"

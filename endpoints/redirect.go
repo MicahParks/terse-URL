@@ -10,12 +10,12 @@ import (
 
 	"github.com/MicahParks/terse-URL/configure"
 	"github.com/MicahParks/terse-URL/models"
-	"github.com/MicahParks/terse-URL/restapi/operations"
+	"github.com/MicahParks/terse-URL/restapi/operations/public"
 	"github.com/MicahParks/terse-URL/storage"
 )
 
-func HandleRedirect(logger *zap.SugaredLogger, terseStore storage.TerseStore) operations.TerseRedirectHandlerFunc {
-	return func(params operations.TerseRedirectParams) middleware.Responder {
+func HandleRedirect(logger *zap.SugaredLogger, terseStore storage.TerseStore) public.TerseRedirectHandlerFunc {
+	return func(params public.TerseRedirectParams) middleware.Responder {
 
 		// Debug info.
 		logger.Debugw("Parameters",
@@ -54,10 +54,10 @@ func HandleRedirect(logger *zap.SugaredLogger, terseStore storage.TerseStore) op
 			}
 
 			// Report the error to the client.
-			return &operations.TerseRedirectNotFound{}
+			return &public.TerseRedirectNotFound{}
 		}
 
-		return &operations.TerseRedirectFound{
+		return &public.TerseRedirectFound{
 			Location: *terse.OriginalURL,
 		}
 	}

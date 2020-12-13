@@ -18,6 +18,10 @@ import (
 	"github.com/go-openapi/spec"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
+
+	apiops "github.com/MicahParks/terse-URL/restapi/operations/api"
+	"github.com/MicahParks/terse-URL/restapi/operations/public"
+	"github.com/MicahParks/terse-URL/restapi/operations/system"
 )
 
 // NewTerseURLAPI creates a new TerseURL instance
@@ -42,34 +46,34 @@ func NewTerseURLAPI(spec *loads.Document) *TerseURLAPI {
 
 		JSONProducer: runtime.JSONProducer(),
 
-		AliveHandler: AliveHandlerFunc(func(params AliveParams) middleware.Responder {
-			return middleware.NotImplemented("operation Alive has not yet been implemented")
+		SystemAliveHandler: system.AliveHandlerFunc(func(params system.AliveParams) middleware.Responder {
+			return middleware.NotImplemented("operation system.Alive has not yet been implemented")
 		}),
-		TerseDeleteHandler: TerseDeleteHandlerFunc(func(params TerseDeleteParams) middleware.Responder {
-			return middleware.NotImplemented("operation TerseDelete has not yet been implemented")
+		APITerseDeleteHandler: apiops.TerseDeleteHandlerFunc(func(params apiops.TerseDeleteParams) middleware.Responder {
+			return middleware.NotImplemented("operation api.TerseDelete has not yet been implemented")
 		}),
-		TerseDumpHandler: TerseDumpHandlerFunc(func(params TerseDumpParams) middleware.Responder {
-			return middleware.NotImplemented("operation TerseDump has not yet been implemented")
+		APITerseExportHandler: apiops.TerseExportHandlerFunc(func(params apiops.TerseExportParams) middleware.Responder {
+			return middleware.NotImplemented("operation api.TerseExport has not yet been implemented")
 		}),
-		TerseDumpShortenedHandler: TerseDumpShortenedHandlerFunc(func(params TerseDumpShortenedParams) middleware.Responder {
-			return middleware.NotImplemented("operation TerseDumpShortened has not yet been implemented")
+		APITerseExportOneHandler: apiops.TerseExportOneHandlerFunc(func(params apiops.TerseExportOneParams) middleware.Responder {
+			return middleware.NotImplemented("operation api.TerseExportOne has not yet been implemented")
 		}),
-		TerseReadHandler: TerseReadHandlerFunc(func(params TerseReadParams) middleware.Responder {
-			return middleware.NotImplemented("operation TerseRead has not yet been implemented")
+		APITerseReadHandler: apiops.TerseReadHandlerFunc(func(params apiops.TerseReadParams) middleware.Responder {
+			return middleware.NotImplemented("operation api.TerseRead has not yet been implemented")
 		}),
-		TerseRedirectHandler: TerseRedirectHandlerFunc(func(params TerseRedirectParams) middleware.Responder {
-			return middleware.NotImplemented("operation TerseRedirect has not yet been implemented")
+		PublicTerseRedirectHandler: public.TerseRedirectHandlerFunc(func(params public.TerseRedirectParams) middleware.Responder {
+			return middleware.NotImplemented("operation public.TerseRedirect has not yet been implemented")
 		}),
-		TerseVisitsHandler: TerseVisitsHandlerFunc(func(params TerseVisitsParams) middleware.Responder {
-			return middleware.NotImplemented("operation TerseVisits has not yet been implemented")
+		APITerseVisitsHandler: apiops.TerseVisitsHandlerFunc(func(params apiops.TerseVisitsParams) middleware.Responder {
+			return middleware.NotImplemented("operation api.TerseVisits has not yet been implemented")
 		}),
-		TerseWriteHandler: TerseWriteHandlerFunc(func(params TerseWriteParams) middleware.Responder {
-			return middleware.NotImplemented("operation TerseWrite has not yet been implemented")
+		APITerseWriteHandler: apiops.TerseWriteHandlerFunc(func(params apiops.TerseWriteParams) middleware.Responder {
+			return middleware.NotImplemented("operation api.TerseWrite has not yet been implemented")
 		}),
 	}
 }
 
-/*TerseURLAPI the terse URL API */
+/*TerseURLAPI The Terse URL shortener. */
 type TerseURLAPI struct {
 	spec            *loads.Document
 	context         *middleware.Context
@@ -100,22 +104,22 @@ type TerseURLAPI struct {
 	//   - application/json
 	JSONProducer runtime.Producer
 
-	// AliveHandler sets the operation handler for the alive operation
-	AliveHandler AliveHandler
-	// TerseDeleteHandler sets the operation handler for the terse delete operation
-	TerseDeleteHandler TerseDeleteHandler
-	// TerseDumpHandler sets the operation handler for the terse dump operation
-	TerseDumpHandler TerseDumpHandler
-	// TerseDumpShortenedHandler sets the operation handler for the terse dump shortened operation
-	TerseDumpShortenedHandler TerseDumpShortenedHandler
-	// TerseReadHandler sets the operation handler for the terse read operation
-	TerseReadHandler TerseReadHandler
-	// TerseRedirectHandler sets the operation handler for the terse redirect operation
-	TerseRedirectHandler TerseRedirectHandler
-	// TerseVisitsHandler sets the operation handler for the terse visits operation
-	TerseVisitsHandler TerseVisitsHandler
-	// TerseWriteHandler sets the operation handler for the terse write operation
-	TerseWriteHandler TerseWriteHandler
+	// SystemAliveHandler sets the operation handler for the alive operation
+	SystemAliveHandler system.AliveHandler
+	// APITerseDeleteHandler sets the operation handler for the terse delete operation
+	APITerseDeleteHandler apiops.TerseDeleteHandler
+	// APITerseExportHandler sets the operation handler for the terse export operation
+	APITerseExportHandler apiops.TerseExportHandler
+	// APITerseExportOneHandler sets the operation handler for the terse export one operation
+	APITerseExportOneHandler apiops.TerseExportOneHandler
+	// APITerseReadHandler sets the operation handler for the terse read operation
+	APITerseReadHandler apiops.TerseReadHandler
+	// PublicTerseRedirectHandler sets the operation handler for the terse redirect operation
+	PublicTerseRedirectHandler public.TerseRedirectHandler
+	// APITerseVisitsHandler sets the operation handler for the terse visits operation
+	APITerseVisitsHandler apiops.TerseVisitsHandler
+	// APITerseWriteHandler sets the operation handler for the terse write operation
+	APITerseWriteHandler apiops.TerseWriteHandler
 	// ServeError is called when an error is received, there is a default handler
 	// but you can set your own with this
 	ServeError func(http.ResponseWriter, *http.Request, error)
@@ -192,29 +196,29 @@ func (o *TerseURLAPI) Validate() error {
 		unregistered = append(unregistered, "JSONProducer")
 	}
 
-	if o.AliveHandler == nil {
-		unregistered = append(unregistered, "AliveHandler")
+	if o.SystemAliveHandler == nil {
+		unregistered = append(unregistered, "system.AliveHandler")
 	}
-	if o.TerseDeleteHandler == nil {
-		unregistered = append(unregistered, "TerseDeleteHandler")
+	if o.APITerseDeleteHandler == nil {
+		unregistered = append(unregistered, "api.TerseDeleteHandler")
 	}
-	if o.TerseDumpHandler == nil {
-		unregistered = append(unregistered, "TerseDumpHandler")
+	if o.APITerseExportHandler == nil {
+		unregistered = append(unregistered, "api.TerseExportHandler")
 	}
-	if o.TerseDumpShortenedHandler == nil {
-		unregistered = append(unregistered, "TerseDumpShortenedHandler")
+	if o.APITerseExportOneHandler == nil {
+		unregistered = append(unregistered, "api.TerseExportOneHandler")
 	}
-	if o.TerseReadHandler == nil {
-		unregistered = append(unregistered, "TerseReadHandler")
+	if o.APITerseReadHandler == nil {
+		unregistered = append(unregistered, "api.TerseReadHandler")
 	}
-	if o.TerseRedirectHandler == nil {
-		unregistered = append(unregistered, "TerseRedirectHandler")
+	if o.PublicTerseRedirectHandler == nil {
+		unregistered = append(unregistered, "public.TerseRedirectHandler")
 	}
-	if o.TerseVisitsHandler == nil {
-		unregistered = append(unregistered, "TerseVisitsHandler")
+	if o.APITerseVisitsHandler == nil {
+		unregistered = append(unregistered, "api.TerseVisitsHandler")
 	}
-	if o.TerseWriteHandler == nil {
-		unregistered = append(unregistered, "TerseWriteHandler")
+	if o.APITerseWriteHandler == nil {
+		unregistered = append(unregistered, "api.TerseWriteHandler")
 	}
 
 	if len(unregistered) > 0 {
@@ -307,35 +311,35 @@ func (o *TerseURLAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/api/alive"] = NewAlive(o.context, o.AliveHandler)
+	o.handlers["GET"]["/api/alive"] = system.NewAlive(o.context, o.SystemAliveHandler)
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
-	o.handlers["DELETE"]["/api/delete/{shortened}"] = NewTerseDelete(o.context, o.TerseDeleteHandler)
+	o.handlers["DELETE"]["/api/delete/{shortened}"] = apiops.NewTerseDelete(o.context, o.APITerseDeleteHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/api/dump"] = NewTerseDump(o.context, o.TerseDumpHandler)
+	o.handlers["GET"]["/api/export"] = apiops.NewTerseExport(o.context, o.APITerseExportHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/api/dump/{shortened}"] = NewTerseDumpShortened(o.context, o.TerseDumpShortenedHandler)
+	o.handlers["GET"]["/api/export/{shortened}"] = apiops.NewTerseExportOne(o.context, o.APITerseExportOneHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/api/read/{shortened}"] = NewTerseRead(o.context, o.TerseReadHandler)
+	o.handlers["GET"]["/api/read/{shortened}"] = apiops.NewTerseRead(o.context, o.APITerseReadHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/{shortened}"] = NewTerseRedirect(o.context, o.TerseRedirectHandler)
+	o.handlers["GET"]["/{shortened}"] = public.NewTerseRedirect(o.context, o.PublicTerseRedirectHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/api/visits/{shortened}"] = NewTerseVisits(o.context, o.TerseVisitsHandler)
+	o.handlers["GET"]["/api/visits/{shortened}"] = apiops.NewTerseVisits(o.context, o.APITerseVisitsHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/api/write/{operation}"] = NewTerseWrite(o.context, o.TerseWriteHandler)
+	o.handlers["POST"]["/api/write/{operation}"] = apiops.NewTerseWrite(o.context, o.APITerseWriteHandler)
 }
 
 // Serve creates a http handler to serve the API over HTTP

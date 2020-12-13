@@ -9,12 +9,12 @@ import (
 
 	"github.com/MicahParks/terse-URL/configure"
 	"github.com/MicahParks/terse-URL/models"
-	"github.com/MicahParks/terse-URL/restapi/operations"
+	"github.com/MicahParks/terse-URL/restapi/operations/api"
 	"github.com/MicahParks/terse-URL/storage"
 )
 
-func HandleWrite(logger *zap.SugaredLogger, shortID *shortid.Shortid, terseStore storage.TerseStore) operations.TerseWriteHandlerFunc {
-	return func(params operations.TerseWriteParams) middleware.Responder {
+func HandleWrite(logger *zap.SugaredLogger, shortID *shortid.Shortid, terseStore storage.TerseStore) api.TerseWriteHandlerFunc {
+	return func(params api.TerseWriteParams) middleware.Responder {
 
 		// Debug info.
 		logger.Debugw("Performing Terse write.",
@@ -46,7 +46,7 @@ func HandleWrite(logger *zap.SugaredLogger, shortID *shortid.Shortid, terseStore
 
 			// Report the error to the client.
 			code := int64(500)
-			return &operations.TerseWriteDefault{Payload: &models.Error{
+			return &api.TerseWriteDefault{Payload: &models.Error{
 				Code:    &code,
 				Message: &message,
 			}}
@@ -85,13 +85,13 @@ func HandleWrite(logger *zap.SugaredLogger, shortID *shortid.Shortid, terseStore
 			}
 
 			// Report the error to the client.
-			return &operations.TerseWriteDefault{Payload: &models.Error{
+			return &api.TerseWriteDefault{Payload: &models.Error{
 				Code:    &code,
 				Message: &message,
 			}}
 		}
 
-		return &operations.TerseWriteOK{
+		return &api.TerseWriteOK{
 			Payload: *terse.ShortenedURL,
 		}
 	}

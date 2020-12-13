@@ -20,7 +20,12 @@ func init() {
 	SwaggerJSON = json.RawMessage([]byte(`{
   "swagger": "2.0",
   "info": {
+    "description": "The Terse URL shortener.",
     "title": "Terse URL",
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    },
     "version": "0.0.1"
   },
   "host": "shorten.micahparks.com",
@@ -28,7 +33,11 @@ func init() {
   "paths": {
     "/api/alive": {
       "get": {
-        "description": "For Caddy to determine if the upstream provider (this executable) is alive.",
+        "description": "Any non-200 response means the service is not alive.",
+        "tags": [
+          "system"
+        ],
+        "summary": "Used by Caddy or other reverse proxy to determine if the service is alive.",
         "operationId": "alive",
         "responses": {
           "200": {
@@ -39,16 +48,21 @@ func init() {
     },
     "/api/delete/{shortened}": {
       "delete": {
+        "description": "If only Terse data is deleted, the API user is responsible for cleaning up its Visit data before adding new Terse data under the same shortened URL.",
         "consumes": [
           "application/json"
         ],
         "produces": [
           "application/json"
         ],
-        "summary": "Delete the given shortened URL from the backend storage, cause the shortened URL to immediately expire.",
+        "tags": [
+          "api"
+        ],
+        "summary": "Delete Terse and or Visit data for the given shortened URL.",
         "operationId": "terseDelete",
         "parameters": [
           {
+            "description": "Indicate if Terse and or Visit data should be deleted.",
             "name": "delete",
             "in": "body",
             "required": true,
@@ -68,6 +82,7 @@ func init() {
           },
           {
             "type": "string",
+            "description": "The shortened URL whose data should be deleted.",
             "name": "shortened",
             "in": "path",
             "required": true
@@ -75,7 +90,7 @@ func init() {
         ],
         "responses": {
           "200": {
-            "description": "The shortened URL was successfully deleted from the backend storage."
+            "description": "The shortened URL's data was successfully deleted from the backend storage."
           },
           "default": {
             "description": "Unexpected error.",
@@ -86,18 +101,23 @@ func init() {
         }
       }
     },
-    "/api/dump": {
+    "/api/export": {
       "get": {
         "produces": [
           "application/json"
         ],
-        "operationId": "terseDump",
+        "tags": [
+          "api"
+        ],
+        "summary": "Export all Terse and Visit data from the backend.",
+        "operationId": "terseExport",
         "responses": {
           "200": {
+            "description": "All of the Terse and Visit data from the backend.",
             "schema": {
               "type": "object",
               "additionalProperties": {
-                "$ref": "#/definitions/Dump"
+                "$ref": "#/definitions/Export"
               }
             }
           },
@@ -110,12 +130,15 @@ func init() {
         }
       }
     },
-    "/api/dump/{shortened}": {
+    "/api/export/{shortened}": {
       "get": {
         "produces": [
           "application/json"
         ],
-        "operationId": "terseDumpShortened",
+        "tags": [
+          "api"
+        ],
+        "operationId": "terseExportOne",
         "parameters": [
           {
             "type": "string",
@@ -127,7 +150,7 @@ func init() {
         "responses": {
           "200": {
             "schema": {
-              "$ref": "#/definitions/Dump"
+              "$ref": "#/definitions/Export"
             }
           },
           "default": {
@@ -143,6 +166,9 @@ func init() {
       "get": {
         "produces": [
           "application/json"
+        ],
+        "tags": [
+          "api"
         ],
         "operationId": "terseRead",
         "parameters": [
@@ -172,6 +198,9 @@ func init() {
       "get": {
         "produces": [
           "application/json"
+        ],
+        "tags": [
+          "api"
         ],
         "operationId": "terseVisits",
         "parameters": [
@@ -208,6 +237,9 @@ func init() {
         ],
         "produces": [
           "application/json"
+        ],
+        "tags": [
+          "api"
         ],
         "operationId": "terseWrite",
         "parameters": [
@@ -250,6 +282,9 @@ func init() {
     "/{shortened}": {
       "get": {
         "description": "Use the shortened URL. It will redirect to the full URL if it has not expired.",
+        "tags": [
+          "public"
+        ],
         "operationId": "terseRedirect",
         "parameters": [
           {
@@ -277,20 +312,6 @@ func init() {
     }
   },
   "definitions": {
-    "Dump": {
-      "type": "object",
-      "properties": {
-        "terse": {
-          "$ref": "#/definitions/Terse"
-        },
-        "visits": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/Visit"
-          }
-        }
-      }
-    },
     "Error": {
       "type": "object",
       "required": [
@@ -303,6 +324,20 @@ func init() {
         },
         "message": {
           "type": "string"
+        }
+      }
+    },
+    "Export": {
+      "type": "object",
+      "properties": {
+        "terse": {
+          "$ref": "#/definitions/Terse"
+        },
+        "visits": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Visit"
+          }
         }
       }
     },
@@ -452,12 +487,31 @@ func init() {
         }
       }
     }
-  }
+  },
+  "tags": [
+    {
+      "description": "Endpoints to perform operations on Terse data.",
+      "name": "api"
+    },
+    {
+      "description": "Endpoints that are publicly accessible.",
+      "name": "public"
+    },
+    {
+      "description": "Endpoints required by the system that are not public facing and do not affect Terse data.",
+      "name": "system"
+    }
+  ]
 }`))
 	FlatSwaggerJSON = json.RawMessage([]byte(`{
   "swagger": "2.0",
   "info": {
+    "description": "The Terse URL shortener.",
     "title": "Terse URL",
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    },
     "version": "0.0.1"
   },
   "host": "shorten.micahparks.com",
@@ -465,7 +519,11 @@ func init() {
   "paths": {
     "/api/alive": {
       "get": {
-        "description": "For Caddy to determine if the upstream provider (this executable) is alive.",
+        "description": "Any non-200 response means the service is not alive.",
+        "tags": [
+          "system"
+        ],
+        "summary": "Used by Caddy or other reverse proxy to determine if the service is alive.",
         "operationId": "alive",
         "responses": {
           "200": {
@@ -476,16 +534,21 @@ func init() {
     },
     "/api/delete/{shortened}": {
       "delete": {
+        "description": "If only Terse data is deleted, the API user is responsible for cleaning up its Visit data before adding new Terse data under the same shortened URL.",
         "consumes": [
           "application/json"
         ],
         "produces": [
           "application/json"
         ],
-        "summary": "Delete the given shortened URL from the backend storage, cause the shortened URL to immediately expire.",
+        "tags": [
+          "api"
+        ],
+        "summary": "Delete Terse and or Visit data for the given shortened URL.",
         "operationId": "terseDelete",
         "parameters": [
           {
+            "description": "Indicate if Terse and or Visit data should be deleted.",
             "name": "delete",
             "in": "body",
             "required": true,
@@ -505,6 +568,7 @@ func init() {
           },
           {
             "type": "string",
+            "description": "The shortened URL whose data should be deleted.",
             "name": "shortened",
             "in": "path",
             "required": true
@@ -512,7 +576,7 @@ func init() {
         ],
         "responses": {
           "200": {
-            "description": "The shortened URL was successfully deleted from the backend storage."
+            "description": "The shortened URL's data was successfully deleted from the backend storage."
           },
           "default": {
             "description": "Unexpected error.",
@@ -523,18 +587,23 @@ func init() {
         }
       }
     },
-    "/api/dump": {
+    "/api/export": {
       "get": {
         "produces": [
           "application/json"
         ],
-        "operationId": "terseDump",
+        "tags": [
+          "api"
+        ],
+        "summary": "Export all Terse and Visit data from the backend.",
+        "operationId": "terseExport",
         "responses": {
           "200": {
+            "description": "All of the Terse and Visit data from the backend.",
             "schema": {
               "type": "object",
               "additionalProperties": {
-                "$ref": "#/definitions/Dump"
+                "$ref": "#/definitions/Export"
               }
             }
           },
@@ -547,12 +616,15 @@ func init() {
         }
       }
     },
-    "/api/dump/{shortened}": {
+    "/api/export/{shortened}": {
       "get": {
         "produces": [
           "application/json"
         ],
-        "operationId": "terseDumpShortened",
+        "tags": [
+          "api"
+        ],
+        "operationId": "terseExportOne",
         "parameters": [
           {
             "type": "string",
@@ -564,7 +636,7 @@ func init() {
         "responses": {
           "200": {
             "schema": {
-              "$ref": "#/definitions/Dump"
+              "$ref": "#/definitions/Export"
             }
           },
           "default": {
@@ -580,6 +652,9 @@ func init() {
       "get": {
         "produces": [
           "application/json"
+        ],
+        "tags": [
+          "api"
         ],
         "operationId": "terseRead",
         "parameters": [
@@ -609,6 +684,9 @@ func init() {
       "get": {
         "produces": [
           "application/json"
+        ],
+        "tags": [
+          "api"
         ],
         "operationId": "terseVisits",
         "parameters": [
@@ -645,6 +723,9 @@ func init() {
         ],
         "produces": [
           "application/json"
+        ],
+        "tags": [
+          "api"
         ],
         "operationId": "terseWrite",
         "parameters": [
@@ -687,6 +768,9 @@ func init() {
     "/{shortened}": {
       "get": {
         "description": "Use the shortened URL. It will redirect to the full URL if it has not expired.",
+        "tags": [
+          "public"
+        ],
         "operationId": "terseRedirect",
         "parameters": [
           {
@@ -714,20 +798,6 @@ func init() {
     }
   },
   "definitions": {
-    "Dump": {
-      "type": "object",
-      "properties": {
-        "terse": {
-          "$ref": "#/definitions/Terse"
-        },
-        "visits": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/Visit"
-          }
-        }
-      }
-    },
     "Error": {
       "type": "object",
       "required": [
@@ -740,6 +810,20 @@ func init() {
         },
         "message": {
           "type": "string"
+        }
+      }
+    },
+    "Export": {
+      "type": "object",
+      "properties": {
+        "terse": {
+          "$ref": "#/definitions/Terse"
+        },
+        "visits": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Visit"
+          }
         }
       }
     },
@@ -889,6 +973,20 @@ func init() {
         }
       }
     }
-  }
+  },
+  "tags": [
+    {
+      "description": "Endpoints to perform operations on Terse data.",
+      "name": "api"
+    },
+    {
+      "description": "Endpoints that are publicly accessible.",
+      "name": "public"
+    },
+    {
+      "description": "Endpoints required by the system that are not public facing and do not affect Terse data.",
+      "name": "system"
+    }
+  ]
 }`))
 }

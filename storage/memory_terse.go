@@ -69,7 +69,7 @@ func (m *MemTerse) DeleteTerse(_ context.Context, shortened string) (err error) 
 	return nil
 }
 
-func (m *MemTerse) Dump(ctx context.Context, shortened string) (dump models.Dump, err error) {
+func (m *MemTerse) Export(ctx context.Context, shortened string) (export models.Export, err error) {
 
 	// Lock the Terse map for async safe use.
 	m.mux.RLock()
@@ -78,29 +78,29 @@ func (m *MemTerse) Dump(ctx context.Context, shortened string) (dump models.Dump
 	// Get the Terse.
 	terse, ok := m.terse[shortened]
 	if !ok {
-		return models.Dump{}, ErrShortenedNotFound
+		return models.Export{}, ErrShortenedNotFound
 	}
 
 	// Get the visits for the Terse.
 	var visits []*models.Visit
 	if visits, err = m.visitsStore.ReadVisits(ctx, shortened); err != nil {
-		return models.Dump{}, err
+		return models.Export{}, err
 	}
 
-	return models.Dump{
+	return models.Export{
 		Terse:  terse,
 		Visits: visits,
 	}, nil
 }
 
-func (m *MemTerse) DumpAll(ctx context.Context) (dump map[string]models.Dump, err error) {
+func (m *MemTerse) ExportAll(ctx context.Context) (export map[string]models.Export, err error) {
 
 	// Lock the Terse map for async safe use.
 	m.mux.RLock()
 	defer m.mux.RUnlock()
 
-	// Create the dump map.
-	dump = make(map[string]models.Dump)
+	// Create the export map.
+	export = make(map[string]models.Export)
 
 	// Iterate through the shortened URLs and add them to the map.
 	for shortened, terse := range m.terse {
@@ -111,14 +111,14 @@ func (m *MemTerse) DumpAll(ctx context.Context) (dump map[string]models.Dump, er
 			return nil, err
 		}
 
-		// Add the shortened URL and its visits to the data dump.
-		dump[shortened] = models.Dump{
+		// Add the shortened URL and its visits to the data export.
+		export[shortened] = models.Export{
 			Terse:  terse,
 			Visits: visits,
 		}
 	}
 
-	return dump, nil
+	return export, nil
 }
 
 func (m *MemTerse) GetTerse(_ context.Context, shortened string, visit *models.Visit) (terse *models.Terse, err error) {

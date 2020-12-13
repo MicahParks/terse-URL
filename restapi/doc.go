@@ -2,11 +2,13 @@
 
 // Package restapi Terse URL
 //
+//  The Terse URL shortener.
 //  Schemes:
 //    http
 //  Host: shorten.micahparks.com
 //  BasePath: /
 //  Version: 0.0.1
+//  License: MIT https://opensource.org/licenses/MIT
 //
 //  Consumes:
 //    - application/json

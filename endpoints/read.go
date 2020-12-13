@@ -8,12 +8,12 @@ import (
 
 	"github.com/MicahParks/terse-URL/configure"
 	"github.com/MicahParks/terse-URL/models"
-	"github.com/MicahParks/terse-URL/restapi/operations"
+	"github.com/MicahParks/terse-URL/restapi/operations/api"
 	"github.com/MicahParks/terse-URL/storage"
 )
 
-func HandleRead(logger *zap.SugaredLogger, terseStore storage.TerseStore) operations.TerseReadHandlerFunc {
-	return func(params operations.TerseReadParams) middleware.Responder {
+func HandleRead(logger *zap.SugaredLogger, terseStore storage.TerseStore) api.TerseReadHandlerFunc {
+	return func(params api.TerseReadParams) middleware.Responder {
 
 		// Debug info.
 		logger.Debugw("Parameters",
@@ -48,13 +48,13 @@ func HandleRead(logger *zap.SugaredLogger, terseStore storage.TerseStore) operat
 			}
 
 			// Report the error to the client.
-			return &operations.TerseReadDefault{Payload: &models.Error{
+			return &api.TerseReadDefault{Payload: &models.Error{
 				Code:    &code,
 				Message: &message,
 			}}
 		}
 
-		return &operations.TerseReadOK{
+		return &api.TerseReadOK{
 			Payload: terse,
 		}
 	}
