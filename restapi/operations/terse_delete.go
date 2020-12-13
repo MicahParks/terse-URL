@@ -13,40 +13,40 @@ import (
 	"github.com/MicahParks/terse-URL/models"
 )
 
-// URLNewHandlerFunc turns a function with the right signature into a url new handler
-type URLNewHandlerFunc func(URLNewParams, *models.JWTInfo) middleware.Responder
+// TerseDeleteHandlerFunc turns a function with the right signature into a terse delete handler
+type TerseDeleteHandlerFunc func(TerseDeleteParams, *models.JWTInfo) middleware.Responder
 
 // Handle executing the request and returning a response
-func (fn URLNewHandlerFunc) Handle(params URLNewParams, principal *models.JWTInfo) middleware.Responder {
+func (fn TerseDeleteHandlerFunc) Handle(params TerseDeleteParams, principal *models.JWTInfo) middleware.Responder {
 	return fn(params, principal)
 }
 
-// URLNewHandler interface for that can handle valid url new params
-type URLNewHandler interface {
-	Handle(URLNewParams, *models.JWTInfo) middleware.Responder
+// TerseDeleteHandler interface for that can handle valid terse delete params
+type TerseDeleteHandler interface {
+	Handle(TerseDeleteParams, *models.JWTInfo) middleware.Responder
 }
 
-// NewURLNew creates a new http.Handler for the url new operation
-func NewURLNew(ctx *middleware.Context, handler URLNewHandler) *URLNew {
-	return &URLNew{Context: ctx, Handler: handler}
+// NewTerseDelete creates a new http.Handler for the terse delete operation
+func NewTerseDelete(ctx *middleware.Context, handler TerseDeleteHandler) *TerseDelete {
+	return &TerseDelete{Context: ctx, Handler: handler}
 }
 
-/*URLNew swagger:route POST /api/new urlNew
+/*TerseDelete swagger:route DELETE /api/delete terseDelete
 
-URLNew url new API
+Delete the given shortened URL from the backend storage, cause the shortened URL to immediately expire.
 
 */
-type URLNew struct {
+type TerseDelete struct {
 	Context *middleware.Context
-	Handler URLNewHandler
+	Handler TerseDeleteHandler
 }
 
-func (o *URLNew) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
+func (o *TerseDelete) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	route, rCtx, _ := o.Context.RouteInfo(r)
 	if rCtx != nil {
 		r = rCtx
 	}
-	var Params = NewURLNewParams()
+	var Params = NewTerseDeleteParams()
 
 	uprinc, aCtx, err := o.Context.Authorize(r, route)
 	if err != nil {

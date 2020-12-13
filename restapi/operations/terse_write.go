@@ -13,40 +13,40 @@ import (
 	"github.com/MicahParks/terse-URL/models"
 )
 
-// URLDumpShortenedHandlerFunc turns a function with the right signature into a url dump shortened handler
-type URLDumpShortenedHandlerFunc func(URLDumpShortenedParams, *models.JWTInfo) middleware.Responder
+// TerseWriteHandlerFunc turns a function with the right signature into a terse write handler
+type TerseWriteHandlerFunc func(TerseWriteParams, *models.JWTInfo) middleware.Responder
 
 // Handle executing the request and returning a response
-func (fn URLDumpShortenedHandlerFunc) Handle(params URLDumpShortenedParams, principal *models.JWTInfo) middleware.Responder {
+func (fn TerseWriteHandlerFunc) Handle(params TerseWriteParams, principal *models.JWTInfo) middleware.Responder {
 	return fn(params, principal)
 }
 
-// URLDumpShortenedHandler interface for that can handle valid url dump shortened params
-type URLDumpShortenedHandler interface {
-	Handle(URLDumpShortenedParams, *models.JWTInfo) middleware.Responder
+// TerseWriteHandler interface for that can handle valid terse write params
+type TerseWriteHandler interface {
+	Handle(TerseWriteParams, *models.JWTInfo) middleware.Responder
 }
 
-// NewURLDumpShortened creates a new http.Handler for the url dump shortened operation
-func NewURLDumpShortened(ctx *middleware.Context, handler URLDumpShortenedHandler) *URLDumpShortened {
-	return &URLDumpShortened{Context: ctx, Handler: handler}
+// NewTerseWrite creates a new http.Handler for the terse write operation
+func NewTerseWrite(ctx *middleware.Context, handler TerseWriteHandler) *TerseWrite {
+	return &TerseWrite{Context: ctx, Handler: handler}
 }
 
-/*URLDumpShortened swagger:route GET /api/dump/{shortened} urlDumpShortened
+/*TerseWrite swagger:route POST /api/write/{operation} terseWrite
 
-URLDumpShortened url dump shortened API
+TerseWrite terse write API
 
 */
-type URLDumpShortened struct {
+type TerseWrite struct {
 	Context *middleware.Context
-	Handler URLDumpShortenedHandler
+	Handler TerseWriteHandler
 }
 
-func (o *URLDumpShortened) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
+func (o *TerseWrite) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	route, rCtx, _ := o.Context.RouteInfo(r)
 	if rCtx != nil {
 		r = rCtx
 	}
-	var Params = NewURLDumpShortenedParams()
+	var Params = NewTerseWriteParams()
 
 	uprinc, aCtx, err := o.Context.Authorize(r, route)
 	if err != nil {

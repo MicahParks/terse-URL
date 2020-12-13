@@ -32,6 +32,7 @@ Environment variable table:
 
 - [ ] Address TODOs.
 - [ ] Redis storage backend.
+- [ ] Delete expired Terse.
 - [ ] Social media link preview.
 - [ ] Move frontend to another repo.
 - [ ] Change storage configs to files?

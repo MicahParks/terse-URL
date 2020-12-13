@@ -12,8 +12,8 @@ import (
 	"strings"
 )
 
-// URLDumpShortenedURL generates an URL for the url dump shortened operation
-type URLDumpShortenedURL struct {
+// TerseReadURL generates an URL for the terse read operation
+type TerseReadURL struct {
 	Shortened string
 
 	_basePath string
@@ -24,7 +24,7 @@ type URLDumpShortenedURL struct {
 // WithBasePath sets the base path for this url builder, only required when it's different from the
 // base path specified in the swagger spec.
 // When the value of the base path is an empty string
-func (o *URLDumpShortenedURL) WithBasePath(bp string) *URLDumpShortenedURL {
+func (o *TerseReadURL) WithBasePath(bp string) *TerseReadURL {
 	o.SetBasePath(bp)
 	return o
 }
@@ -32,21 +32,21 @@ func (o *URLDumpShortenedURL) WithBasePath(bp string) *URLDumpShortenedURL {
 // SetBasePath sets the base path for this url builder, only required when it's different from the
 // base path specified in the swagger spec.
 // When the value of the base path is an empty string
-func (o *URLDumpShortenedURL) SetBasePath(bp string) {
+func (o *TerseReadURL) SetBasePath(bp string) {
 	o._basePath = bp
 }
 
 // Build a url path and query string
-func (o *URLDumpShortenedURL) Build() (*url.URL, error) {
+func (o *TerseReadURL) Build() (*url.URL, error) {
 	var _result url.URL
 
-	var _path = "/api/dump/{shortened}"
+	var _path = "/api/read/{shortened}"
 
 	shortened := o.Shortened
 	if shortened != "" {
 		_path = strings.Replace(_path, "{shortened}", shortened, -1)
 	} else {
-		return nil, errors.New("shortened is required on URLDumpShortenedURL")
+		return nil, errors.New("shortened is required on TerseReadURL")
 	}
 
 	_basePath := o._basePath
@@ -59,7 +59,7 @@ func (o *URLDumpShortenedURL) Build() (*url.URL, error) {
 }
 
 // Must is a helper function to panic when the url builder returns an error
-func (o *URLDumpShortenedURL) Must(u *url.URL, err error) *url.URL {
+func (o *TerseReadURL) Must(u *url.URL, err error) *url.URL {
 	if err != nil {
 		panic(err)
 	}
@@ -70,17 +70,17 @@ func (o *URLDumpShortenedURL) Must(u *url.URL, err error) *url.URL {
 }
 
 // String returns the string representation of the path with query string
-func (o *URLDumpShortenedURL) String() string {
+func (o *TerseReadURL) String() string {
 	return o.Must(o.Build()).String()
 }
 
 // BuildFull builds a full url with scheme, host, path and query string
-func (o *URLDumpShortenedURL) BuildFull(scheme, host string) (*url.URL, error) {
+func (o *TerseReadURL) BuildFull(scheme, host string) (*url.URL, error) {
 	if scheme == "" {
-		return nil, errors.New("scheme is required for a full url on URLDumpShortenedURL")
+		return nil, errors.New("scheme is required for a full url on TerseReadURL")
 	}
 	if host == "" {
-		return nil, errors.New("host is required for a full url on URLDumpShortenedURL")
+		return nil, errors.New("host is required for a full url on TerseReadURL")
 	}
 
 	base, err := o.Build()
@@ -94,6 +94,6 @@ func (o *URLDumpShortenedURL) BuildFull(scheme, host string) (*url.URL, error) {
 }
 
 // StringFull returns the string representation of a complete url
-func (o *URLDumpShortenedURL) StringFull(scheme, host string) string {
+func (o *TerseReadURL) StringFull(scheme, host string) string {
 	return o.Must(o.BuildFull(scheme, host)).String()
 }

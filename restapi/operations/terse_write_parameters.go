@@ -12,26 +12,33 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
+	"github.com/go-openapi/strfmt"
+	"github.com/go-openapi/validate"
 
 	"github.com/MicahParks/terse-URL/models"
 )
 
-// NewURLNewParams creates a new URLNewParams object
+// NewTerseWriteParams creates a new TerseWriteParams object
 // no default values defined in spec.
-func NewURLNewParams() URLNewParams {
+func NewTerseWriteParams() TerseWriteParams {
 
-	return URLNewParams{}
+	return TerseWriteParams{}
 }
 
-// URLNewParams contains all the bound params for the url new operation
+// TerseWriteParams contains all the bound params for the terse write operation
 // typically these are obtained from a http.Request
 //
-// swagger:parameters urlNew
-type URLNewParams struct {
+// swagger:parameters terseWrite
+type TerseWriteParams struct {
 
 	// HTTP Request Object
 	HTTPRequest *http.Request `json:"-"`
 
+	/*
+	  Required: true
+	  In: path
+	*/
+	Operation string
 	/*
 	  Required: true
 	  In: body
@@ -42,11 +49,16 @@ type URLNewParams struct {
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
 // for simple values it will use straight method calls.
 //
-// To ensure default values, the struct must have been initialized with NewURLNewParams() beforehand.
-func (o *URLNewParams) BindRequest(r *http.Request, route *middleware.MatchedRoute) error {
+// To ensure default values, the struct must have been initialized with NewTerseWriteParams() beforehand.
+func (o *TerseWriteParams) BindRequest(r *http.Request, route *middleware.MatchedRoute) error {
 	var res []error
 
 	o.HTTPRequest = r
+
+	rOperation, rhkOperation, _ := route.Params.GetOK("operation")
+	if err := o.bindOperation(rOperation, rhkOperation, route.Formats); err != nil {
+		res = append(res, err)
+	}
 
 	if runtime.HasBody(r) {
 		defer r.Body.Close()
@@ -73,5 +85,34 @@ func (o *URLNewParams) BindRequest(r *http.Request, route *middleware.MatchedRou
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+// bindOperation binds and validates parameter Operation from path.
+func (o *TerseWriteParams) bindOperation(rawData []string, hasKey bool, formats strfmt.Registry) error {
+	var raw string
+	if len(rawData) > 0 {
+		raw = rawData[len(rawData)-1]
+	}
+
+	// Required: true
+	// Parameter is provided by construction from the route
+
+	o.Operation = raw
+
+	if err := o.validateOperation(formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// validateOperation carries on validations for parameter Operation
+func (o *TerseWriteParams) validateOperation(formats strfmt.Registry) error {
+
+	if err := validate.EnumCase("operation", "path", o.Operation, []interface{}{"create", "update", "upsert"}, true); err != nil {
+		return err
+	}
+
 	return nil
 }

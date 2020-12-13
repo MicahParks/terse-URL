@@ -13,18 +13,18 @@ import (
 	"github.com/go-openapi/strfmt"
 )
 
-// NewURLGetParams creates a new URLGetParams object
+// NewTerseVisitsParams creates a new TerseVisitsParams object
 // no default values defined in spec.
-func NewURLGetParams() URLGetParams {
+func NewTerseVisitsParams() TerseVisitsParams {
 
-	return URLGetParams{}
+	return TerseVisitsParams{}
 }
 
-// URLGetParams contains all the bound params for the url get operation
+// TerseVisitsParams contains all the bound params for the terse visits operation
 // typically these are obtained from a http.Request
 //
-// swagger:parameters urlGet
-type URLGetParams struct {
+// swagger:parameters terseVisits
+type TerseVisitsParams struct {
 
 	// HTTP Request Object
 	HTTPRequest *http.Request `json:"-"`
@@ -39,8 +39,8 @@ type URLGetParams struct {
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
 // for simple values it will use straight method calls.
 //
-// To ensure default values, the struct must have been initialized with NewURLGetParams() beforehand.
-func (o *URLGetParams) BindRequest(r *http.Request, route *middleware.MatchedRoute) error {
+// To ensure default values, the struct must have been initialized with NewTerseVisitsParams() beforehand.
+func (o *TerseVisitsParams) BindRequest(r *http.Request, route *middleware.MatchedRoute) error {
 	var res []error
 
 	o.HTTPRequest = r
@@ -57,7 +57,7 @@ func (o *URLGetParams) BindRequest(r *http.Request, route *middleware.MatchedRou
 }
 
 // bindShortened binds and validates parameter Shortened from path.
-func (o *URLGetParams) bindShortened(rawData []string, hasKey bool, formats strfmt.Registry) error {
+func (o *TerseVisitsParams) bindShortened(rawData []string, hasKey bool, formats strfmt.Registry) error {
 	var raw string
 	if len(rawData) > 0 {
 		raw = rawData[len(rawData)-1]

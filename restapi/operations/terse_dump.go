@@ -13,40 +13,40 @@ import (
 	"github.com/MicahParks/terse-URL/models"
 )
 
-// URLDumpHandlerFunc turns a function with the right signature into a url dump handler
-type URLDumpHandlerFunc func(URLDumpParams, *models.JWTInfo) middleware.Responder
+// TerseDumpHandlerFunc turns a function with the right signature into a terse dump handler
+type TerseDumpHandlerFunc func(TerseDumpParams, *models.JWTInfo) middleware.Responder
 
 // Handle executing the request and returning a response
-func (fn URLDumpHandlerFunc) Handle(params URLDumpParams, principal *models.JWTInfo) middleware.Responder {
+func (fn TerseDumpHandlerFunc) Handle(params TerseDumpParams, principal *models.JWTInfo) middleware.Responder {
 	return fn(params, principal)
 }
 
-// URLDumpHandler interface for that can handle valid url dump params
-type URLDumpHandler interface {
-	Handle(URLDumpParams, *models.JWTInfo) middleware.Responder
+// TerseDumpHandler interface for that can handle valid terse dump params
+type TerseDumpHandler interface {
+	Handle(TerseDumpParams, *models.JWTInfo) middleware.Responder
 }
 
-// NewURLDump creates a new http.Handler for the url dump operation
-func NewURLDump(ctx *middleware.Context, handler URLDumpHandler) *URLDump {
-	return &URLDump{Context: ctx, Handler: handler}
+// NewTerseDump creates a new http.Handler for the terse dump operation
+func NewTerseDump(ctx *middleware.Context, handler TerseDumpHandler) *TerseDump {
+	return &TerseDump{Context: ctx, Handler: handler}
 }
 
-/*URLDump swagger:route GET /api/dump urlDump
+/*TerseDump swagger:route GET /api/dump terseDump
 
-URLDump url dump API
+TerseDump terse dump API
 
 */
-type URLDump struct {
+type TerseDump struct {
 	Context *middleware.Context
-	Handler URLDumpHandler
+	Handler TerseDumpHandler
 }
 
-func (o *URLDump) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
+func (o *TerseDump) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	route, rCtx, _ := o.Context.RouteInfo(r)
 	if rCtx != nil {
 		r = rCtx
 	}
-	var Params = NewURLDumpParams()
+	var Params = NewTerseDumpParams()
 
 	uprinc, aCtx, err := o.Context.Authorize(r, route)
 	if err != nil {

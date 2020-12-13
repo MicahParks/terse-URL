@@ -13,18 +13,18 @@ import (
 	"github.com/go-openapi/strfmt"
 )
 
-// NewURLDumpShortenedParams creates a new URLDumpShortenedParams object
+// NewTerseRedirectParams creates a new TerseRedirectParams object
 // no default values defined in spec.
-func NewURLDumpShortenedParams() URLDumpShortenedParams {
+func NewTerseRedirectParams() TerseRedirectParams {
 
-	return URLDumpShortenedParams{}
+	return TerseRedirectParams{}
 }
 
-// URLDumpShortenedParams contains all the bound params for the url dump shortened operation
+// TerseRedirectParams contains all the bound params for the terse redirect operation
 // typically these are obtained from a http.Request
 //
-// swagger:parameters urlDumpShortened
-type URLDumpShortenedParams struct {
+// swagger:parameters terseRedirect
+type TerseRedirectParams struct {
 
 	// HTTP Request Object
 	HTTPRequest *http.Request `json:"-"`
@@ -39,8 +39,8 @@ type URLDumpShortenedParams struct {
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
 // for simple values it will use straight method calls.
 //
-// To ensure default values, the struct must have been initialized with NewURLDumpShortenedParams() beforehand.
-func (o *URLDumpShortenedParams) BindRequest(r *http.Request, route *middleware.MatchedRoute) error {
+// To ensure default values, the struct must have been initialized with NewTerseRedirectParams() beforehand.
+func (o *TerseRedirectParams) BindRequest(r *http.Request, route *middleware.MatchedRoute) error {
 	var res []error
 
 	o.HTTPRequest = r
@@ -57,7 +57,7 @@ func (o *URLDumpShortenedParams) BindRequest(r *http.Request, route *middleware.
 }
 
 // bindShortened binds and validates parameter Shortened from path.
-func (o *URLDumpShortenedParams) bindShortened(rawData []string, hasKey bool, formats strfmt.Registry) error {
+func (o *TerseRedirectParams) bindShortened(rawData []string, hasKey bool, formats strfmt.Registry) error {
 	var raw string
 	if len(rawData) > 0 {
 		raw = rawData[len(rawData)-1]

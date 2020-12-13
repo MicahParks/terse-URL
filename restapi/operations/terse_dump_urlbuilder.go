@@ -11,15 +11,15 @@ import (
 	golangswaggerpaths "path"
 )
 
-// URLDeleteURL generates an URL for the url delete operation
-type URLDeleteURL struct {
+// TerseDumpURL generates an URL for the terse dump operation
+type TerseDumpURL struct {
 	_basePath string
 }
 
 // WithBasePath sets the base path for this url builder, only required when it's different from the
 // base path specified in the swagger spec.
 // When the value of the base path is an empty string
-func (o *URLDeleteURL) WithBasePath(bp string) *URLDeleteURL {
+func (o *TerseDumpURL) WithBasePath(bp string) *TerseDumpURL {
 	o.SetBasePath(bp)
 	return o
 }
@@ -27,15 +27,15 @@ func (o *URLDeleteURL) WithBasePath(bp string) *URLDeleteURL {
 // SetBasePath sets the base path for this url builder, only required when it's different from the
 // base path specified in the swagger spec.
 // When the value of the base path is an empty string
-func (o *URLDeleteURL) SetBasePath(bp string) {
+func (o *TerseDumpURL) SetBasePath(bp string) {
 	o._basePath = bp
 }
 
 // Build a url path and query string
-func (o *URLDeleteURL) Build() (*url.URL, error) {
+func (o *TerseDumpURL) Build() (*url.URL, error) {
 	var _result url.URL
 
-	var _path = "/api/delete"
+	var _path = "/api/dump"
 
 	_basePath := o._basePath
 	if _basePath == "" {
@@ -47,7 +47,7 @@ func (o *URLDeleteURL) Build() (*url.URL, error) {
 }
 
 // Must is a helper function to panic when the url builder returns an error
-func (o *URLDeleteURL) Must(u *url.URL, err error) *url.URL {
+func (o *TerseDumpURL) Must(u *url.URL, err error) *url.URL {
 	if err != nil {
 		panic(err)
 	}
@@ -58,17 +58,17 @@ func (o *URLDeleteURL) Must(u *url.URL, err error) *url.URL {
 }
 
 // String returns the string representation of the path with query string
-func (o *URLDeleteURL) String() string {
+func (o *TerseDumpURL) String() string {
 	return o.Must(o.Build()).String()
 }
 
 // BuildFull builds a full url with scheme, host, path and query string
-func (o *URLDeleteURL) BuildFull(scheme, host string) (*url.URL, error) {
+func (o *TerseDumpURL) BuildFull(scheme, host string) (*url.URL, error) {
 	if scheme == "" {
-		return nil, errors.New("scheme is required for a full url on URLDeleteURL")
+		return nil, errors.New("scheme is required for a full url on TerseDumpURL")
 	}
 	if host == "" {
-		return nil, errors.New("host is required for a full url on URLDeleteURL")
+		return nil, errors.New("host is required for a full url on TerseDumpURL")
 	}
 
 	base, err := o.Build()
@@ -82,6 +82,6 @@ func (o *URLDeleteURL) BuildFull(scheme, host string) (*url.URL, error) {
 }
 
 // StringFull returns the string representation of a complete url
-func (o *URLDeleteURL) StringFull(scheme, host string) string {
+func (o *TerseDumpURL) StringFull(scheme, host string) string {
 	return o.Must(o.BuildFull(scheme, host)).String()
 }

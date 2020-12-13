@@ -120,7 +120,7 @@ func (m *MemTerse) DumpAll(ctx context.Context) (dump map[string]*models.Dump, e
 func (m *MemTerse) GetTerse(_ context.Context, shortened string, visit *models.Visit) (original string, err error) {
 
 	// Track the visit to this shortened URL. Do this in a separate goroutine so the response is faster.
-	if m.visitsStore != nil {
+	if visit != nil && m.visitsStore != nil {
 		ctx, cancel := m.createCtx()
 		go m.group.AddWorkItem(ctx, cancel, func(workCtx context.Context) (err error) {
 			return m.visitsStore.AddVisit(workCtx, shortened, visit)

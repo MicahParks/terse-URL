@@ -13,40 +13,40 @@ import (
 	"github.com/MicahParks/terse-URL/models"
 )
 
-// URLDeleteHandlerFunc turns a function with the right signature into a url delete handler
-type URLDeleteHandlerFunc func(URLDeleteParams, *models.JWTInfo) middleware.Responder
+// TerseVisitsHandlerFunc turns a function with the right signature into a terse visits handler
+type TerseVisitsHandlerFunc func(TerseVisitsParams, *models.JWTInfo) middleware.Responder
 
 // Handle executing the request and returning a response
-func (fn URLDeleteHandlerFunc) Handle(params URLDeleteParams, principal *models.JWTInfo) middleware.Responder {
+func (fn TerseVisitsHandlerFunc) Handle(params TerseVisitsParams, principal *models.JWTInfo) middleware.Responder {
 	return fn(params, principal)
 }
 
-// URLDeleteHandler interface for that can handle valid url delete params
-type URLDeleteHandler interface {
-	Handle(URLDeleteParams, *models.JWTInfo) middleware.Responder
+// TerseVisitsHandler interface for that can handle valid terse visits params
+type TerseVisitsHandler interface {
+	Handle(TerseVisitsParams, *models.JWTInfo) middleware.Responder
 }
 
-// NewURLDelete creates a new http.Handler for the url delete operation
-func NewURLDelete(ctx *middleware.Context, handler URLDeleteHandler) *URLDelete {
-	return &URLDelete{Context: ctx, Handler: handler}
+// NewTerseVisits creates a new http.Handler for the terse visits operation
+func NewTerseVisits(ctx *middleware.Context, handler TerseVisitsHandler) *TerseVisits {
+	return &TerseVisits{Context: ctx, Handler: handler}
 }
 
-/*URLDelete swagger:route DELETE /api/delete urlDelete
+/*TerseVisits swagger:route GET /api/visits/{shortened} terseVisits
 
-Delete the given shortened URL from the backend storage, cause the shortened URL to immediately expire.
+TerseVisits terse visits API
 
 */
-type URLDelete struct {
+type TerseVisits struct {
 	Context *middleware.Context
-	Handler URLDeleteHandler
+	Handler TerseVisitsHandler
 }
 
-func (o *URLDelete) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
+func (o *TerseVisits) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	route, rCtx, _ := o.Context.RouteInfo(r)
 	if rCtx != nil {
 		r = rCtx
 	}
-	var Params = NewURLDeleteParams()
+	var Params = NewTerseVisitsParams()
 
 	uprinc, aCtx, err := o.Context.Authorize(r, route)
 	if err != nil {

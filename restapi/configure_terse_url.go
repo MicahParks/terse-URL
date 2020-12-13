@@ -18,7 +18,7 @@ import (
 	"github.com/MicahParks/terse-URL/restapi/operations"
 )
 
-//go:generate swagger generate server --target ../../shortener --name TerseURL --spec ../swagger.yml --principal interface{}
+//go:generate swagger generate server --target ../../terse-URL --name TerseURL --spec ../swagger.yml --principal models.JWTInfo
 
 func configureFlags(api *operations.TerseURLAPI) {
 	// api.CommandLineOptionsGroups = []swag.CommandLineOptionsGroup{ ... }
@@ -34,10 +34,6 @@ func configureAPI(api *operations.TerseURLAPI) http.Handler {
 		log.Fatalf("Failed to configure the service.\nError: %s\n", err.Error())
 	}
 	logger := config.Logger
-	logger.Infow("Logger is configured and deletions (if any) have been scheduled.")
-
-	// Assign the generated code's logger to Zap.
-	api.Logger = logger.Named("generated code").Infof
 
 	api.UseSwaggerUI()
 
@@ -56,10 +52,13 @@ func configureAPI(api *operations.TerseURLAPI) http.Handler {
 
 	// Assign the endpoint handlers.
 	api.AliveHandler = endpoints.HandleAlive()
-	api.URLDeleteHandler = endpoints.HandleDelete(logger.Named("/api/delete"), config.TerseStore)
-	api.URLGetHandler = endpoints.HandleGet(logger.Named("/{shortened}"), config.TerseStore)
-	api.URLNewHandler = endpoints.HandleNew(config.InvalidPaths, logger.Named("/api/random"), config.ShortID, config.ShortIDParanoid, config.TerseStore)
-	api.URLTrackHandler = endpoints.HandleTrack(logger.Named("/api/tracked/{shortened}"), config.VisitsStore)
+	api.TerseDeleteHandler = endpoints.HandleDelete(logger.Named("/api/delete"), config.TerseStore)
+	api.TerseDumpHandler = endpoints.HandleDump(logger.Named("/api/dump"))
+	api.TerseDumpShortenedHandler = endpoints.HandleDumpShortened(logger.Named("/api/dump/{shortened}"))
+	api.TerseReadHandler = endpoints.HandleRead(logger.Named("/api/read/{shortened}"))
+	api.TerseRedirectHandler = endpoints.HandleRedirect(logger.Named("/{shortened}"))
+	api.TerseVisitsHandler = endpoints.HandleVisits(logger.Named("/api/visits/{shortened}"))
+	api.TerseWriteHandler = endpoints.HandleWrite(logger.Named("/api/write/{operation}"))
 
 	api.PreServerShutdown = func() {}
 

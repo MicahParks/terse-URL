@@ -127,16 +127,6 @@ func Configure() (config Configuration, err error) {
 		config.TerseStore = storage.NewMemTerse(DefaultCtx, errChan, &group, config.VisitsStore)
 	}
 
-	// Schedule any existing deletions for the Terse pairs.
-	ctx, cancel := DefaultCtx()
-	defer cancel()
-	if err = config.TerseStore.ScheduleDeletions(ctx); err != nil {
-		logger.Fatalw("Failed to schedule deletions",
-			"error", err.Error(),
-		)
-		return Configuration{}, err
-	}
-
 	// Create the short ID generator.
 	if config.ShortID, err = shortid.New(1, shortid.DefaultABC, rawConfig.ShortIDSeed); err != nil {
 		return Configuration{}, err

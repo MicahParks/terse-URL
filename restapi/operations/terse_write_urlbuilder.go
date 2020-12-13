@@ -12,9 +12,9 @@ import (
 	"strings"
 )
 
-// URLGetURL generates an URL for the url get operation
-type URLGetURL struct {
-	Shortened string
+// TerseWriteURL generates an URL for the terse write operation
+type TerseWriteURL struct {
+	Operation string
 
 	_basePath string
 	// avoid unkeyed usage
@@ -24,7 +24,7 @@ type URLGetURL struct {
 // WithBasePath sets the base path for this url builder, only required when it's different from the
 // base path specified in the swagger spec.
 // When the value of the base path is an empty string
-func (o *URLGetURL) WithBasePath(bp string) *URLGetURL {
+func (o *TerseWriteURL) WithBasePath(bp string) *TerseWriteURL {
 	o.SetBasePath(bp)
 	return o
 }
@@ -32,21 +32,21 @@ func (o *URLGetURL) WithBasePath(bp string) *URLGetURL {
 // SetBasePath sets the base path for this url builder, only required when it's different from the
 // base path specified in the swagger spec.
 // When the value of the base path is an empty string
-func (o *URLGetURL) SetBasePath(bp string) {
+func (o *TerseWriteURL) SetBasePath(bp string) {
 	o._basePath = bp
 }
 
 // Build a url path and query string
-func (o *URLGetURL) Build() (*url.URL, error) {
+func (o *TerseWriteURL) Build() (*url.URL, error) {
 	var _result url.URL
 
-	var _path = "/{shortened}"
+	var _path = "/api/write/{operation}"
 
-	shortened := o.Shortened
-	if shortened != "" {
-		_path = strings.Replace(_path, "{shortened}", shortened, -1)
+	operation := o.Operation
+	if operation != "" {
+		_path = strings.Replace(_path, "{operation}", operation, -1)
 	} else {
-		return nil, errors.New("shortened is required on URLGetURL")
+		return nil, errors.New("operation is required on TerseWriteURL")
 	}
 
 	_basePath := o._basePath
@@ -59,7 +59,7 @@ func (o *URLGetURL) Build() (*url.URL, error) {
 }
 
 // Must is a helper function to panic when the url builder returns an error
-func (o *URLGetURL) Must(u *url.URL, err error) *url.URL {
+func (o *TerseWriteURL) Must(u *url.URL, err error) *url.URL {
 	if err != nil {
 		panic(err)
 	}
@@ -70,17 +70,17 @@ func (o *URLGetURL) Must(u *url.URL, err error) *url.URL {
 }
 
 // String returns the string representation of the path with query string
-func (o *URLGetURL) String() string {
+func (o *TerseWriteURL) String() string {
 	return o.Must(o.Build()).String()
 }
 
 // BuildFull builds a full url with scheme, host, path and query string
-func (o *URLGetURL) BuildFull(scheme, host string) (*url.URL, error) {
+func (o *TerseWriteURL) BuildFull(scheme, host string) (*url.URL, error) {
 	if scheme == "" {
-		return nil, errors.New("scheme is required for a full url on URLGetURL")
+		return nil, errors.New("scheme is required for a full url on TerseWriteURL")
 	}
 	if host == "" {
-		return nil, errors.New("host is required for a full url on URLGetURL")
+		return nil, errors.New("host is required for a full url on TerseWriteURL")
 	}
 
 	base, err := o.Build()
@@ -94,6 +94,6 @@ func (o *URLGetURL) BuildFull(scheme, host string) (*url.URL, error) {
 }
 
 // StringFull returns the string representation of a complete url
-func (o *URLGetURL) StringFull(scheme, host string) string {
+func (o *TerseWriteURL) StringFull(scheme, host string) string {
 	return o.Must(o.BuildFull(scheme, host)).String()
 }

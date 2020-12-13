@@ -93,14 +93,63 @@ paths: # TODO Add summary to all endpoints.
       security:
         - JWT: [ ]
 
-  /api/{operation}:
+  /api/read/{shortened}:
+    get:
+      produces:
+        - "application/json"
+      summary: "" # TODO
+      operationId: "terseRead"
+      parameters:
+        - in: "path"
+          name: "shortened"
+          required: true
+          type: "string"
+      responses:
+        200:
+          description: "" # TODO
+          schema:
+            $ref: "#/definitions/Terse"
+        default:
+          description: "Unexpected error."
+          schema:
+            $ref: "#/definitions/Error"
+      security:
+        - JWT: [ ]
+
+  /api/visits/{shortened}:
+    get:
+      produces:
+        - "application/json"
+      summary: "" # TODO
+      operationId: "terseVisits"
+      parameters:
+        - in: "path"
+          name: "shortened"
+          required: true
+          type: "string"
+      responses:
+        200:
+          description: "" # TODO
+          schema:
+            description: "The shortened URL affected."
+            type: "array"
+            items:
+              $ref: "#/definitions/Visit"
+        default:
+          description: "Unexpected error."
+          schema:
+            $ref: "#/definitions/Error"
+      security:
+        - JWT: [ ]
+
+  /api/write/{operation}:
     post:
       consumes:
         - "application/json"
       produces:
         - "application/json"
       summary: '' # TODO
-      operationId: "terseNew"
+      operationId: "terseWrite"
       parameters:
         - in: "body"
           name: "terse"
@@ -133,7 +182,7 @@ paths: # TODO Add summary to all endpoints.
   /{shortened}:
     get:
       description: "Use the shortened URL. It will redirect to the full URL if it has not expired."
-      operationId: "terseGet"
+      operationId: "terseRedirect"
       parameters:
         - in: "path"
           name: "shortened"

@@ -12,18 +12,18 @@ import (
 	"github.com/go-openapi/runtime/middleware"
 )
 
-// NewURLDumpParams creates a new URLDumpParams object
+// NewTerseDumpParams creates a new TerseDumpParams object
 // no default values defined in spec.
-func NewURLDumpParams() URLDumpParams {
+func NewTerseDumpParams() TerseDumpParams {
 
-	return URLDumpParams{}
+	return TerseDumpParams{}
 }
 
-// URLDumpParams contains all the bound params for the url dump operation
+// TerseDumpParams contains all the bound params for the terse dump operation
 // typically these are obtained from a http.Request
 //
-// swagger:parameters urlDump
-type URLDumpParams struct {
+// swagger:parameters terseDump
+type TerseDumpParams struct {
 
 	// HTTP Request Object
 	HTTPRequest *http.Request `json:"-"`
@@ -32,8 +32,8 @@ type URLDumpParams struct {
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
 // for simple values it will use straight method calls.
 //
-// To ensure default values, the struct must have been initialized with NewURLDumpParams() beforehand.
-func (o *URLDumpParams) BindRequest(r *http.Request, route *middleware.MatchedRoute) error {
+// To ensure default values, the struct must have been initialized with NewTerseDumpParams() beforehand.
+func (o *TerseDumpParams) BindRequest(r *http.Request, route *middleware.MatchedRoute) error {
 	var res []error
 
 	o.HTTPRequest = r

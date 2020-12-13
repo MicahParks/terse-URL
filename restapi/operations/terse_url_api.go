@@ -56,11 +56,17 @@ func NewTerseURLAPI(spec *loads.Document) *TerseURLAPI {
 		TerseDumpShortenedHandler: TerseDumpShortenedHandlerFunc(func(params TerseDumpShortenedParams, principal *models.JWTInfo) middleware.Responder {
 			return middleware.NotImplemented("operation TerseDumpShortened has not yet been implemented")
 		}),
-		TerseGetHandler: TerseGetHandlerFunc(func(params TerseGetParams) middleware.Responder {
-			return middleware.NotImplemented("operation TerseGet has not yet been implemented")
+		TerseReadHandler: TerseReadHandlerFunc(func(params TerseReadParams, principal *models.JWTInfo) middleware.Responder {
+			return middleware.NotImplemented("operation TerseRead has not yet been implemented")
 		}),
-		TerseNewHandler: TerseNewHandlerFunc(func(params TerseNewParams, principal *models.JWTInfo) middleware.Responder {
-			return middleware.NotImplemented("operation TerseNew has not yet been implemented")
+		TerseRedirectHandler: TerseRedirectHandlerFunc(func(params TerseRedirectParams) middleware.Responder {
+			return middleware.NotImplemented("operation TerseRedirect has not yet been implemented")
+		}),
+		TerseVisitsHandler: TerseVisitsHandlerFunc(func(params TerseVisitsParams, principal *models.JWTInfo) middleware.Responder {
+			return middleware.NotImplemented("operation TerseVisits has not yet been implemented")
+		}),
+		TerseWriteHandler: TerseWriteHandlerFunc(func(params TerseWriteParams, principal *models.JWTInfo) middleware.Responder {
+			return middleware.NotImplemented("operation TerseWrite has not yet been implemented")
 		}),
 
 		// Applies when the "Authorization" header is set
@@ -118,10 +124,14 @@ type TerseURLAPI struct {
 	TerseDumpHandler TerseDumpHandler
 	// TerseDumpShortenedHandler sets the operation handler for the terse dump shortened operation
 	TerseDumpShortenedHandler TerseDumpShortenedHandler
-	// TerseGetHandler sets the operation handler for the terse get operation
-	TerseGetHandler TerseGetHandler
-	// TerseNewHandler sets the operation handler for the terse new operation
-	TerseNewHandler TerseNewHandler
+	// TerseReadHandler sets the operation handler for the terse read operation
+	TerseReadHandler TerseReadHandler
+	// TerseRedirectHandler sets the operation handler for the terse redirect operation
+	TerseRedirectHandler TerseRedirectHandler
+	// TerseVisitsHandler sets the operation handler for the terse visits operation
+	TerseVisitsHandler TerseVisitsHandler
+	// TerseWriteHandler sets the operation handler for the terse write operation
+	TerseWriteHandler TerseWriteHandler
 	// ServeError is called when an error is received, there is a default handler
 	// but you can set your own with this
 	ServeError func(http.ResponseWriter, *http.Request, error)
@@ -214,11 +224,17 @@ func (o *TerseURLAPI) Validate() error {
 	if o.TerseDumpShortenedHandler == nil {
 		unregistered = append(unregistered, "TerseDumpShortenedHandler")
 	}
-	if o.TerseGetHandler == nil {
-		unregistered = append(unregistered, "TerseGetHandler")
+	if o.TerseReadHandler == nil {
+		unregistered = append(unregistered, "TerseReadHandler")
 	}
-	if o.TerseNewHandler == nil {
-		unregistered = append(unregistered, "TerseNewHandler")
+	if o.TerseRedirectHandler == nil {
+		unregistered = append(unregistered, "TerseRedirectHandler")
+	}
+	if o.TerseVisitsHandler == nil {
+		unregistered = append(unregistered, "TerseVisitsHandler")
+	}
+	if o.TerseWriteHandler == nil {
+		unregistered = append(unregistered, "TerseWriteHandler")
 	}
 
 	if len(unregistered) > 0 {
@@ -338,11 +354,19 @@ func (o *TerseURLAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/{shortened}"] = NewTerseGet(o.context, o.TerseGetHandler)
+	o.handlers["GET"]["/api/read/{shortened}"] = NewTerseRead(o.context, o.TerseReadHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/{shortened}"] = NewTerseRedirect(o.context, o.TerseRedirectHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/api/visits/{shortened}"] = NewTerseVisits(o.context, o.TerseVisitsHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/api/{operation}"] = NewTerseNew(o.context, o.TerseNewHandler)
+	o.handlers["POST"]["/api/write/{operation}"] = NewTerseWrite(o.context, o.TerseWriteHandler)
 }
 
 // Serve creates a http handler to serve the API over HTTP

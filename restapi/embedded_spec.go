@@ -138,7 +138,79 @@ func init() {
         }
       }
     },
-    "/api/{operation}": {
+    "/api/read/{shortened}": {
+      "get": {
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "operationId": "terseRead",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "shortened",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "$ref": "#/definitions/Terse"
+            }
+          },
+          "default": {
+            "description": "Unexpected error.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/api/visits/{shortened}": {
+      "get": {
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "operationId": "terseVisits",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "shortened",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "description": "The shortened URL affected.",
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Visit"
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/api/write/{operation}": {
       "post": {
         "security": [
           {
@@ -151,7 +223,7 @@ func init() {
         "produces": [
           "application/json"
         ],
-        "operationId": "terseNew",
+        "operationId": "terseWrite",
         "parameters": [
           {
             "name": "terse",
@@ -163,7 +235,7 @@ func init() {
           },
           {
             "enum": [
-              "new",
+              "create",
               "update",
               "upsert"
             ],
@@ -192,7 +264,7 @@ func init() {
     "/{shortened}": {
       "get": {
         "description": "Use the shortened URL. It will redirect to the full URL if it has not expired.",
-        "operationId": "terseGet",
+        "operationId": "terseRedirect",
         "parameters": [
           {
             "type": "string",
@@ -537,7 +609,79 @@ func init() {
         }
       }
     },
-    "/api/{operation}": {
+    "/api/read/{shortened}": {
+      "get": {
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "operationId": "terseRead",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "shortened",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "$ref": "#/definitions/Terse"
+            }
+          },
+          "default": {
+            "description": "Unexpected error.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/api/visits/{shortened}": {
+      "get": {
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "operationId": "terseVisits",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "shortened",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "description": "The shortened URL affected.",
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Visit"
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/api/write/{operation}": {
       "post": {
         "security": [
           {
@@ -550,7 +694,7 @@ func init() {
         "produces": [
           "application/json"
         ],
-        "operationId": "terseNew",
+        "operationId": "terseWrite",
         "parameters": [
           {
             "name": "terse",
@@ -562,7 +706,7 @@ func init() {
           },
           {
             "enum": [
-              "new",
+              "create",
               "update",
               "upsert"
             ],
@@ -591,7 +735,7 @@ func init() {
     "/{shortened}": {
       "get": {
         "description": "Use the shortened URL. It will redirect to the full URL if it has not expired.",
-        "operationId": "terseGet",
+        "operationId": "terseRedirect",
         "parameters": [
           {
             "type": "string",
