@@ -12,7 +12,7 @@ COPY . .
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -ldflags "-s -w" -o terseURL cmd/terse-url-server/main.go
 
 
-# The actual container.
+# The actual image being produced.
 FROM alpine
 
 # Set some defaults for the host to bind to and the port to make it easier for people.
