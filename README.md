@@ -27,7 +27,7 @@ Environment variable table:
 - [ ] Implement `/api/import` endpoints.
 - [ ] Implement social media link previews.
 - [ ] Implement bbolt storage backend.
-- [ ] Implement Redis storage backend.
+- [ ] Implement Redis storage backend?
 - [ ] Reimplement Mongo storage.
 - [ ] Write tests.
 - [ ] Write a good README.md.
