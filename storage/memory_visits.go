@@ -25,9 +25,8 @@ func (m *MemVisits) AddVisit(_ context.Context, shortened string, visit *models.
 	defer m.mux.Unlock()
 
 	// Confirm the shortened URL is a key in the map.
-	var ok bool
-	var visits []*models.Visit
-	if visits, ok = m.visits[shortened]; !ok {
+	visits, ok := m.visits[shortened]
+	if !ok {
 		visits = make([]*models.Visit, 0)
 		m.visits[shortened] = visits
 	}
