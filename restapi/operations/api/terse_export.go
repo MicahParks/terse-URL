@@ -33,6 +33,8 @@ func NewTerseExport(ctx *middleware.Context, handler TerseExportHandler) *TerseE
 
 Export all Terse and Visit data from the backend.
 
+Depending on the underlying storage and amount of data, this may take a while.
+
 */
 type TerseExport struct {
 	Context *middleware.Context

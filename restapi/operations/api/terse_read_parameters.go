@@ -29,7 +29,7 @@ type TerseReadParams struct {
 	// HTTP Request Object
 	HTTPRequest *http.Request `json:"-"`
 
-	/*
+	/*The shortened URL to get the Terse data for.
 	  Required: true
 	  In: path
 	*/

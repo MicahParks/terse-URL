@@ -34,12 +34,12 @@ type TerseWriteParams struct {
 	// HTTP Request Object
 	HTTPRequest *http.Request `json:"-"`
 
-	/*
+	/*The write operation to perform with the Terse data.
 	  Required: true
 	  In: path
 	*/
 	Operation string
-	/*
+	/*The Terse data, with an optional shortened URL. If no shortened URL is given, one will be generated randomly and returned in the response.
 	  Required: true
 	  In: body
 	*/

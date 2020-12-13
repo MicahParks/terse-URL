@@ -103,6 +103,7 @@ func init() {
     },
     "/api/export": {
       "get": {
+        "description": "Depending on the underlying storage and amount of data, this may take a while.",
         "produces": [
           "application/json"
         ],
@@ -113,8 +114,9 @@ func init() {
         "operationId": "terseExport",
         "responses": {
           "200": {
-            "description": "All of the Terse and Visit data from the backend.",
+            "description": "The export was successfully retrieved.",
             "schema": {
+              "description": "All of the Terse and Visit data from the backend.",
               "type": "object",
               "additionalProperties": {
                 "$ref": "#/definitions/Export"
@@ -138,10 +140,12 @@ func init() {
         "tags": [
           "api"
         ],
+        "summary": "Export Terse and Visit data for a single shortened URL.",
         "operationId": "terseExportOne",
         "parameters": [
           {
             "type": "string",
+            "description": "The shortened URL to get the export for.",
             "name": "shortened",
             "in": "path",
             "required": true
@@ -149,7 +153,9 @@ func init() {
         ],
         "responses": {
           "200": {
+            "description": "The export was successfully retrieved.",
             "schema": {
+              "description": "The Terse and Visits data for a single shortened URL.",
               "$ref": "#/definitions/Export"
             }
           },
@@ -170,10 +176,12 @@ func init() {
         "tags": [
           "api"
         ],
+        "summary": "Read the Terse data for a single shortened URL.",
         "operationId": "terseRead",
         "parameters": [
           {
             "type": "string",
+            "description": "The shortened URL to get the Terse data for.",
             "name": "shortened",
             "in": "path",
             "required": true
@@ -181,7 +189,9 @@ func init() {
         ],
         "responses": {
           "200": {
+            "description": "The Terse data was successfully retrieved.",
             "schema": {
+              "description": "The Terse data for a single shortened URL.",
               "$ref": "#/definitions/Terse"
             }
           },
@@ -202,10 +212,12 @@ func init() {
         "tags": [
           "api"
         ],
+        "summary": "Get the Visit data for a single shortened URL.",
         "operationId": "terseVisits",
         "parameters": [
           {
             "type": "string",
+            "description": "The shortened URL to get the Visit data for.",
             "name": "shortened",
             "in": "path",
             "required": true
@@ -213,8 +225,9 @@ func init() {
         ],
         "responses": {
           "200": {
+            "description": "The Visit data was successfully retrieved.",
             "schema": {
-              "description": "The shortened URL affected.",
+              "description": "The visit data for a single shortened URL.",
               "type": "array",
               "items": {
                 "$ref": "#/definitions/Visit"
@@ -232,6 +245,7 @@ func init() {
     },
     "/api/write/{operation}": {
       "post": {
+        "description": "\"insert\" will fail if the shortened URL already exists. \"update\" will fail if the shortened URL does not already exist. \"upsert\" will only fail if there is a failure interacting with the underlying storage. If no shortened URL is included in the given Terse data, one ill be generated randomly and returned in the response.",
         "consumes": [
           "application/json"
         ],
@@ -241,9 +255,11 @@ func init() {
         "tags": [
           "api"
         ],
+        "summary": "Perform a write operation on Terse data for a shortened URL.",
         "operationId": "terseWrite",
         "parameters": [
           {
+            "description": "The Terse data, with an optional shortened URL. If no shortened URL is given, one will be generated randomly and returned in the response.",
             "name": "terse",
             "in": "body",
             "required": true,
@@ -258,6 +274,7 @@ func init() {
               "upsert"
             ],
             "type": "string",
+            "description": "The write operation to perform with the Terse data.",
             "name": "operation",
             "in": "path",
             "required": true
@@ -265,6 +282,7 @@ func init() {
         ],
         "responses": {
           "200": {
+            "description": "The write operation was successful.",
             "schema": {
               "description": "The shortened URL affected.",
               "type": "string"
@@ -296,7 +314,7 @@ func init() {
         ],
         "responses": {
           "302": {
-            "description": "The shortened URL to visit that will redirect to the given full URL.",
+            "description": "An HTTP response that will redirect to the shortened URL's full URL.",
             "headers": {
               "Location": {
                 "type": "string",
@@ -589,6 +607,7 @@ func init() {
     },
     "/api/export": {
       "get": {
+        "description": "Depending on the underlying storage and amount of data, this may take a while.",
         "produces": [
           "application/json"
         ],
@@ -599,8 +618,9 @@ func init() {
         "operationId": "terseExport",
         "responses": {
           "200": {
-            "description": "All of the Terse and Visit data from the backend.",
+            "description": "The export was successfully retrieved.",
             "schema": {
+              "description": "All of the Terse and Visit data from the backend.",
               "type": "object",
               "additionalProperties": {
                 "$ref": "#/definitions/Export"
@@ -624,10 +644,12 @@ func init() {
         "tags": [
           "api"
         ],
+        "summary": "Export Terse and Visit data for a single shortened URL.",
         "operationId": "terseExportOne",
         "parameters": [
           {
             "type": "string",
+            "description": "The shortened URL to get the export for.",
             "name": "shortened",
             "in": "path",
             "required": true
@@ -635,7 +657,9 @@ func init() {
         ],
         "responses": {
           "200": {
+            "description": "The export was successfully retrieved.",
             "schema": {
+              "description": "The Terse and Visits data for a single shortened URL.",
               "$ref": "#/definitions/Export"
             }
           },
@@ -656,10 +680,12 @@ func init() {
         "tags": [
           "api"
         ],
+        "summary": "Read the Terse data for a single shortened URL.",
         "operationId": "terseRead",
         "parameters": [
           {
             "type": "string",
+            "description": "The shortened URL to get the Terse data for.",
             "name": "shortened",
             "in": "path",
             "required": true
@@ -667,7 +693,9 @@ func init() {
         ],
         "responses": {
           "200": {
+            "description": "The Terse data was successfully retrieved.",
             "schema": {
+              "description": "The Terse data for a single shortened URL.",
               "$ref": "#/definitions/Terse"
             }
           },
@@ -688,10 +716,12 @@ func init() {
         "tags": [
           "api"
         ],
+        "summary": "Get the Visit data for a single shortened URL.",
         "operationId": "terseVisits",
         "parameters": [
           {
             "type": "string",
+            "description": "The shortened URL to get the Visit data for.",
             "name": "shortened",
             "in": "path",
             "required": true
@@ -699,8 +729,9 @@ func init() {
         ],
         "responses": {
           "200": {
+            "description": "The Visit data was successfully retrieved.",
             "schema": {
-              "description": "The shortened URL affected.",
+              "description": "The visit data for a single shortened URL.",
               "type": "array",
               "items": {
                 "$ref": "#/definitions/Visit"
@@ -718,6 +749,7 @@ func init() {
     },
     "/api/write/{operation}": {
       "post": {
+        "description": "\"insert\" will fail if the shortened URL already exists. \"update\" will fail if the shortened URL does not already exist. \"upsert\" will only fail if there is a failure interacting with the underlying storage. If no shortened URL is included in the given Terse data, one ill be generated randomly and returned in the response.",
         "consumes": [
           "application/json"
         ],
@@ -727,9 +759,11 @@ func init() {
         "tags": [
           "api"
         ],
+        "summary": "Perform a write operation on Terse data for a shortened URL.",
         "operationId": "terseWrite",
         "parameters": [
           {
+            "description": "The Terse data, with an optional shortened URL. If no shortened URL is given, one will be generated randomly and returned in the response.",
             "name": "terse",
             "in": "body",
             "required": true,
@@ -744,6 +778,7 @@ func init() {
               "upsert"
             ],
             "type": "string",
+            "description": "The write operation to perform with the Terse data.",
             "name": "operation",
             "in": "path",
             "required": true
@@ -751,6 +786,7 @@ func init() {
         ],
         "responses": {
           "200": {
+            "description": "The write operation was successful.",
             "schema": {
               "description": "The shortened URL affected.",
               "type": "string"
@@ -782,7 +818,7 @@ func init() {
         ],
         "responses": {
           "302": {
-            "description": "The shortened URL to visit that will redirect to the given full URL.",
+            "description": "An HTTP response that will redirect to the shortened URL's full URL.",
             "headers": {
               "Location": {
                 "type": "string",

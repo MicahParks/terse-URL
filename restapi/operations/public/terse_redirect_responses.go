@@ -14,7 +14,7 @@ import (
 // TerseRedirectFoundCode is the HTTP code returned for type TerseRedirectFound
 const TerseRedirectFoundCode int = 302
 
-/*TerseRedirectFound The shortened URL to visit that will redirect to the given full URL.
+/*TerseRedirectFound An HTTP response that will redirect to the shortened URL's full URL.
 
 swagger:response terseRedirectFound
 */

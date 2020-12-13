@@ -23,7 +23,7 @@ tags:
 #schemes:
 #  - "https"
 
-paths: # TODO Add summary to all endpoints.
+paths:
   /api/alive:
     get:
       summary: "Used by Caddy or other reverse proxy to determine if the service is alive."
@@ -79,12 +79,13 @@ paths: # TODO Add summary to all endpoints.
       produces:
         - "application/json"
       summary: "Export all Terse and Visit data from the backend."
-      description: ""
+      description: "Depending on the underlying storage and amount of data, this may take a while."
       operationId: "terseExport"
       responses:
         200:
-          description: "All of the Terse and Visit data from the backend."
+          description: "The export was successfully retrieved."
           schema:
+            description: "All of the Terse and Visit data from the backend."
             type: "object"
             additionalProperties:
               $ref: "#/definitions/Export"
@@ -99,17 +100,20 @@ paths: # TODO Add summary to all endpoints.
     get:
       produces:
         - "application/json"
+      summary: "Export Terse and Visit data for a single shortened URL."
       description: ""
       operationId: "terseExportOne"
       parameters:
-        - in: "path"
+        - description: "The shortened URL to get the export for."
+          in: "path"
           name: "shortened"
           required: true
           type: "string"
       responses:
         200:
-          description: ""
+          description: "The export was successfully retrieved."
           schema:
+            description: "The Terse and Visits data for a single shortened URL."
             $ref: "#/definitions/Export"
         default:
           description: "Unexpected error."
@@ -122,17 +126,20 @@ paths: # TODO Add summary to all endpoints.
     get:
       produces:
         - "application/json"
-      summary: "" # TODO
+      summary: "Read the Terse data for a single shortened URL."
+      description: ""
       operationId: "terseRead"
       parameters:
-        - in: "path"
+        - description: "The shortened URL to get the Terse data for."
+          in: "path"
           name: "shortened"
           required: true
           type: "string"
       responses:
         200:
-          description: "" # TODO
+          description: "The Terse data was successfully retrieved."
           schema:
+            description: "The Terse data for a single shortened URL."
             $ref: "#/definitions/Terse"
         default:
           description: "Unexpected error."
@@ -145,18 +152,19 @@ paths: # TODO Add summary to all endpoints.
     get:
       produces:
         - "application/json"
-      summary: "" # TODO
+      summary: "Get the Visit data for a single shortened URL."
       operationId: "terseVisits"
       parameters:
-        - in: "path"
+        - description: "The shortened URL to get the Visit data for."
+          in: "path"
           name: "shortened"
           required: true
           type: "string"
       responses:
         200:
-          description: "" # TODO
+          description: "The Visit data was successfully retrieved."
           schema:
-            description: "The shortened URL affected."
+            description: "The visit data for a single shortened URL."
             type: "array"
             items:
               $ref: "#/definitions/Visit"
@@ -173,15 +181,21 @@ paths: # TODO Add summary to all endpoints.
         - "application/json"
       produces:
         - "application/json"
-      summary: '' # TODO
+      summary: "Perform a write operation on Terse data for a shortened URL."
+      description: '"insert" will fail if the shortened URL already exists. "update" will fail if the shortened URL does
+      not already exist. "upsert" will only fail if there is a failure interacting with the underlying storage. If no
+      shortened URL is included in the given Terse data, one ill be generated randomly and returned in the response.'
       operationId: "terseWrite"
       parameters:
-        - in: "body"
+        - description: "The Terse data, with an optional shortened URL. If no shortened URL is given, one will be
+        generated randomly and returned in the response."
+          in: "body"
           name: "terse"
           required: true
           schema:
             $ref: "#/definitions/TerseOptionalShortened"
-        - in: "path"
+        - description: "The write operation to perform with the Terse data."
+          in: "path"
           enum:
             - "insert"
             - "update"
@@ -191,7 +205,7 @@ paths: # TODO Add summary to all endpoints.
           type: "string"
       responses:
         200:
-          description: "" # TODO
+          description: "The write operation was successful."
           schema:
             description: "The shortened URL affected."
             type: "string"
@@ -215,7 +229,7 @@ paths: # TODO Add summary to all endpoints.
           type: "string"
       responses:
         302:
-          description: "The shortened URL to visit that will redirect to the given full URL."
+          description: "An HTTP response that will redirect to the shortened URL's full URL."
           headers:
             Location:
               description: "The full URL that the redirect leads to."

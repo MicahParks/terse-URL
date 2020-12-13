@@ -28,6 +28,7 @@ Environment variable table:
 
 - [ ] Address TODOs.
 - [ ] Implement `SHORTID_PARANOID`.
+- [ ] Implement `/api/import` endpoints.
 - [ ] Reimplement Mongo storage.
 - [ ] Redis storage backend.
 - [ ] Delete expired Terse.

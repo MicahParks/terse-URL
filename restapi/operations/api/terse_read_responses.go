@@ -16,13 +16,13 @@ import (
 // TerseReadOKCode is the HTTP code returned for type TerseReadOK
 const TerseReadOKCode int = 200
 
-/*TerseReadOK terse read o k
+/*TerseReadOK The Terse data was successfully retrieved.
 
 swagger:response terseReadOK
 */
 type TerseReadOK struct {
 
-	/*
+	/*The Terse data for a single shortened URL.
 	  In: Body
 	*/
 	Payload *models.Terse `json:"body,omitempty"`

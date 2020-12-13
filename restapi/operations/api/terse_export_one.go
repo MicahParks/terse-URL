@@ -31,7 +31,7 @@ func NewTerseExportOne(ctx *middleware.Context, handler TerseExportOneHandler) *
 
 /*TerseExportOne swagger:route GET /api/export/{shortened} api terseExportOne
 
-TerseExportOne terse export one API
+Export Terse and Visit data for a single shortened URL.
 
 */
 type TerseExportOne struct {

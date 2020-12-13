@@ -16,13 +16,13 @@ import (
 // TerseExportOneOKCode is the HTTP code returned for type TerseExportOneOK
 const TerseExportOneOKCode int = 200
 
-/*TerseExportOneOK terse export one o k
+/*TerseExportOneOK The export was successfully retrieved.
 
 swagger:response terseExportOneOK
 */
 type TerseExportOneOK struct {
 
-	/*
+	/*The Terse and Visits data for a single shortened URL.
 	  In: Body
 	*/
 	Payload *models.Export `json:"body,omitempty"`

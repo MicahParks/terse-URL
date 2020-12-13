@@ -16,13 +16,13 @@ import (
 // TerseVisitsOKCode is the HTTP code returned for type TerseVisitsOK
 const TerseVisitsOKCode int = 200
 
-/*TerseVisitsOK terse visits o k
+/*TerseVisitsOK The Visit data was successfully retrieved.
 
 swagger:response terseVisitsOK
 */
 type TerseVisitsOK struct {
 
-	/*The shortened URL affected.
+	/*The visit data for a single shortened URL.
 	  In: Body
 	*/
 	Payload []*models.Visit `json:"body,omitempty"`

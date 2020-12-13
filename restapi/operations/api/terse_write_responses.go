@@ -16,7 +16,7 @@ import (
 // TerseWriteOKCode is the HTTP code returned for type TerseWriteOK
 const TerseWriteOKCode int = 200
 
-/*TerseWriteOK terse write o k
+/*TerseWriteOK The write operation was successful.
 
 swagger:response terseWriteOK
 */

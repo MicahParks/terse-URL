@@ -29,7 +29,7 @@ type TerseExportOneParams struct {
 	// HTTP Request Object
 	HTTPRequest *http.Request `json:"-"`
 
-	/*
+	/*The shortened URL to get the export for.
 	  Required: true
 	  In: path
 	*/
