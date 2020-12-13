@@ -36,7 +36,7 @@ func (m *MemTerse) Close(_ context.Context) (err error) {
 	return nil
 }
 
-func (m *MemTerse) CreateTerse(_ context.Context, terse *models.Terse) (err error) {
+func (m *MemTerse) InsertTerse(_ context.Context, terse *models.Terse) (err error) {
 
 	// Lock the Terse map for async safe use.
 	m.mux.Lock()

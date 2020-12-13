@@ -169,7 +169,7 @@ paths: # TODO Add summary to all endpoints.
             $ref: "#/definitions/TerseOptionalShortened"
         - in: "path"
           enum:
-            - "create"
+            - "insert"
             - "update"
             - "upsert"
           name: "operation"

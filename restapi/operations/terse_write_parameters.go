@@ -110,7 +110,7 @@ func (o *TerseWriteParams) bindOperation(rawData []string, hasKey bool, formats 
 // validateOperation carries on validations for parameter Operation
 func (o *TerseWriteParams) validateOperation(formats strfmt.Registry) error {
 
-	if err := validate.EnumCase("operation", "path", o.Operation, []interface{}{"create", "update", "upsert"}, true); err != nil {
+	if err := validate.EnumCase("operation", "path", o.Operation, []interface{}{"insert", "update", "upsert"}, true); err != nil {
 		return err
 	}
 

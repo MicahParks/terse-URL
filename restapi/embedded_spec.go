@@ -221,7 +221,7 @@ func init() {
           },
           {
             "enum": [
-              "create",
+              "insert",
               "update",
               "upsert"
             ],
@@ -678,7 +678,7 @@ func init() {
           },
           {
             "enum": [
-              "create",
+              "insert",
               "update",
               "upsert"
             ],

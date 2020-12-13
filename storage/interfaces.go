@@ -10,9 +10,9 @@ import (
 // the Terse data is stored.
 type TerseStore interface {
 
-	// CreateTerse adds a Terse to the TerseStore. The shortened URL will be active after this. The error must be
+	// InsertTerse adds a Terse to the TerseStore. The shortened URL will be active after this. The error must be
 	// storage.ErrShortenedExists if the shortened URL is already present.
-	CreateTerse(ctx context.Context, terse *models.Terse) (err error)
+	InsertTerse(ctx context.Context, terse *models.Terse) (err error)
 
 	// Close closes the connection to the underlying storage. This does not close the connection to the VisitsStore.
 	Close(ctx context.Context) (err error)
