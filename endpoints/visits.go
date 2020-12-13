@@ -1,6 +1,8 @@
 package endpoints
 
 import (
+	"errors"
+
 	"github.com/go-openapi/runtime/middleware"
 	"go.uber.org/zap"
 
@@ -27,6 +29,9 @@ func HandleVisits(logger *zap.SugaredLogger, visitsStore storage.VisitsStore) op
 		if err != nil {
 
 			// Log at the appropriate level.
+			if errors.Is(err, storage.ErrShortenedNotFound) {
+
+			}
 			logger.Infow("Failed to find the visits for the requested shortened URL.",
 				"shortened", params.Shortened,
 				"error", err.Error(),

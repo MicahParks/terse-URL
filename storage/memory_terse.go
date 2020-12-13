@@ -117,7 +117,7 @@ func (m *MemTerse) DumpAll(ctx context.Context) (dump map[string]models.Dump, er
 	return dump, nil
 }
 
-func (m *MemTerse) GetTerse(_ context.Context, shortened string, visit *models.Visit) (original string, err error) {
+func (m *MemTerse) GetTerse(_ context.Context, shortened string, visit *models.Visit) (terse *models.Terse, err error) {
 
 	// Track the visit to this shortened URL. Do this in a separate goroutine so the response is faster.
 	if visit != nil && m.visitsStore != nil {
@@ -132,12 +132,13 @@ func (m *MemTerse) GetTerse(_ context.Context, shortened string, visit *models.V
 	defer m.mux.RUnlock()
 
 	// Check to see if the shortened URL already exists.
-	terse, ok := m.terse[shortened]
+	var ok bool
+	terse, ok = m.terse[shortened]
 	if ok {
-		return "", ErrShortenedExists
+		return nil, ErrShortenedExists
 	}
 
-	return *terse.ShortenedURL, nil
+	return terse, nil
 }
 
 func (m *MemTerse) UpdateTerse(_ context.Context, terse *models.Terse) (err error) {

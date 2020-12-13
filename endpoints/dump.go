@@ -10,7 +10,7 @@ import (
 	"github.com/MicahParks/terse-URL/storage"
 )
 
-func HandleDump(debug bool, logger *zap.SugaredLogger, terseStore storage.TerseStore) operations.TerseDumpHandlerFunc {
+func HandleDump(logger *zap.SugaredLogger, terseStore storage.TerseStore) operations.TerseDumpHandlerFunc {
 	return func(params operations.TerseDumpParams, _ *models.JWTInfo) middleware.Responder {
 
 		// Debug info.
