@@ -27,18 +27,18 @@ Environment variable table:
 ## TODO
 
 - [ ] Address TODOs.
+- [ ] Delete expired Terse.
 - [ ] Implement `SHORTID_PARANOID`.
 - [ ] Implement `/api/import` endpoints.
+- [ ] Implement social media link previews.
+- [ ] Implement Redis storage backend.
 - [ ] Reimplement Mongo storage.
-- [ ] Redis storage backend.
-- [ ] Delete expired Terse.
-- [ ] Social media link preview.
-- [ ] Move frontend to another repo.
-- [ ] A good README.md.
 - [ ] Write tests.
+- [ ] Write a good README.md.
+- [ ] Move frontend to another repo.
 - [ ] Implement JWT + JWKs authentication?
-- [ ] Change storage configs to files?
-- [ ] Change user created warnings to info?
+- [ ] Configure storage backends via config files?
+- [x] Change user created warnings to info.
 - [x] Take away auth.
 - [x] Move things to `/api`.
 - [x] Add an `/upsert` endpoint.

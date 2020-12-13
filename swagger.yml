@@ -173,7 +173,7 @@ paths:
       tags:
         - "api"
 
-  /api/write/{operation}:
+  /api/write/{operation}: # TODO Include blurb about how including social media link preview will cause 200 instead of 302.
     post:
       consumes:
         - "application/json"
@@ -225,7 +225,7 @@ paths:
           name: "shortened"
           required: true
           type: "string"
-      responses:
+      responses: # TODO Add 200 response for when social media link previews are enabled.
         302:
           description: "An HTTP response that will redirect to the shortened URL's full URL."
           headers:
