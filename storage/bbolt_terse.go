@@ -7,6 +7,7 @@ import (
 )
 
 type BboltTerse struct {
+	// TODO Use a write channel and batch write or batch write and they are opportunistically combined into larger transactions?
 }
 
 func (b *BboltTerse) InsertTerse(ctx context.Context, terse *models.Terse) (err error) {
