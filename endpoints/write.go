@@ -77,6 +77,13 @@ func HandleWrite(logger *zap.SugaredLogger, shortID *shortid.Shortid, terseStore
 					"shortened", terse.ShortenedURL,
 					"error", err.Error(),
 				)
+			} else if errors.Is(err, storage.ErrShortenedNotFound) {
+				code = 400
+				message = "Shortened URL not found."
+				logger.Infow(message,
+					"shortened", terse.ShortenedURL,
+					"error", err.Error(),
+				)
 			} else {
 				code = 500
 				message = "Failed to write Terse."
