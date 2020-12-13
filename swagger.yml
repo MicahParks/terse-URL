@@ -113,7 +113,6 @@ paths:
         200:
           description: "The export was successfully retrieved."
           schema:
-            description: "The Terse and Visits data for a single shortened URL."
             $ref: "#/definitions/Export"
         default:
           description: "Unexpected error."
@@ -139,7 +138,6 @@ paths:
         200:
           description: "The Terse data was successfully retrieved."
           schema:
-            description: "The Terse data for a single shortened URL."
             $ref: "#/definitions/Terse"
         default:
           description: "Unexpected error."
