@@ -21,10 +21,12 @@ Environment variable table:
 ## TODO
 
 - [ ] Address TODOs.
+- [ ] Write a utility that will export `.bbolt` to JSON.
 - [ ] Delete expired Terse.
 - [ ] Implement `SHORTID_PARANOID`.
 - [ ] Implement `/api/import` endpoints.
 - [ ] Implement social media link previews.
+- [ ] Implement bbolt storage backend.
 - [ ] Implement Redis storage backend.
 - [ ] Reimplement Mongo storage.
 - [ ] Write tests.
