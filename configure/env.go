@@ -40,7 +40,7 @@ var (
 	ErrMissingRequiredConfig = errors.New("required configuration missing")
 
 	// alwaysInvalidPaths
-	alwaysInvalidPaths = []string{"api", "docs", "frontend", "swagger.json"}
+	alwaysInvalidPaths = []string{"api", "docs", "swagger.json"}
 
 	// defaultTimeout is the default timeout for any incoming (from clients) and outgoing (to databases) requests.
 	defaultTimeout = time.Minute
