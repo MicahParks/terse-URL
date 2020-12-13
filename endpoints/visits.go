@@ -28,18 +28,26 @@ func HandleVisits(logger *zap.SugaredLogger, visitsStore storage.VisitsStore) op
 		visits, err := visitsStore.ReadVisits(ctx, params.Shortened)
 		if err != nil {
 
-			// Log at the appropriate level.
+			// Log at the appropriate level. Assign the response code and message.
+			var code int64
+			var message string
 			if errors.Is(err, storage.ErrShortenedNotFound) {
-
+				code = 400
+				message = "Shortened URL not found." // TODO Constant
+				logger.Infow(message,
+					"shortened", params.Shortened,
+					"error", err.Error(),
+				)
+			} else {
+				code = 500
+				message = "Failed to find the visits for the shortened URL."
+				logger.Errorw(message,
+					"shortened", params.Shortened,
+					"error", err.Error(),
+				)
 			}
-			logger.Infow("Failed to find the visits for the requested shortened URL.",
-				"shortened", params.Shortened,
-				"error", err.Error(),
-			)
 
 			// Report the error to the client.
-			code := int64(500)
-			message := "Failed to retrieve visits from storage."
 			return &operations.TerseVisitsDefault{Payload: &models.Error{
 				Code:    &code,
 				Message: &message,
