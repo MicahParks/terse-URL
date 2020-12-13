@@ -33,6 +33,10 @@ func NewMemTerse(createCtx ctxCreator, errChan chan<- error, group *ctxerrgroup.
 }
 
 func (m *MemTerse) Close(_ context.Context) (err error) {
+
+	// Kill the worker pool.
+	m.group.Kill()
+
 	return nil
 }
 

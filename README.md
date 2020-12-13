@@ -27,6 +27,8 @@ Environment variable table:
 ## TODO
 
 - [ ] Address TODOs.
+- [ ] Implement `SHORTID_PARANOID`.
+- [ ] Reimplement Mongo storage.
 - [ ] Redis storage backend.
 - [ ] Delete expired Terse.
 - [ ] Social media link preview.
