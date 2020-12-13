@@ -26,7 +26,7 @@ paths: # TODO Add summary to all endpoints.
         200:
           description: "Service is alive."
 
-  /api/delete:
+  /api/delete/{shortened}:
     delete:
       consumes:
         - "application/json"
@@ -36,10 +36,21 @@ paths: # TODO Add summary to all endpoints.
       operationId: "terseDelete"
       parameters:
         - in: "body"
-          name: "shortened"
+          name: "delete"
           required: true
           schema:
-            type: "string"
+            type: "object"
+            properties:
+              terse:
+                default: true
+                type: "boolean"
+              visits:
+                default: true
+                type: "boolean"
+        - in: "path"
+          name: "shortened"
+          required: true
+          type: "string"
       responses:
         200:
           description: "The shortened URL was successfully deleted from the backend storage."

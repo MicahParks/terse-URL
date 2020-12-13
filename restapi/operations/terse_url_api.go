@@ -342,7 +342,7 @@ func (o *TerseURLAPI) initHandlerCache() {
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
-	o.handlers["DELETE"]["/api/delete"] = NewTerseDelete(o.context, o.TerseDeleteHandler)
+	o.handlers["DELETE"]["/api/delete/{shortened}"] = NewTerseDelete(o.context, o.TerseDeleteHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}

@@ -9,11 +9,16 @@ import (
 	"errors"
 	"net/url"
 	golangswaggerpaths "path"
+	"strings"
 )
 
 // TerseDeleteURL generates an URL for the terse delete operation
 type TerseDeleteURL struct {
+	Shortened string
+
 	_basePath string
+	// avoid unkeyed usage
+	_ struct{}
 }
 
 // WithBasePath sets the base path for this url builder, only required when it's different from the
@@ -35,7 +40,14 @@ func (o *TerseDeleteURL) SetBasePath(bp string) {
 func (o *TerseDeleteURL) Build() (*url.URL, error) {
 	var _result url.URL
 
-	var _path = "/api/delete"
+	var _path = "/api/delete/{shortened}"
+
+	shortened := o.Shortened
+	if shortened != "" {
+		_path = strings.Replace(_path, "{shortened}", shortened, -1)
+	} else {
+		return nil, errors.New("shortened is required on TerseDeleteURL")
+	}
 
 	_basePath := o._basePath
 	if _basePath == "" {

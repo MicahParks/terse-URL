@@ -17,8 +17,11 @@ func HandleDelete(logger *zap.SugaredLogger, terseStore storage.TerseStore) oper
 
 		// Do not have debug level logging on in production, as it will log clog up the logs.
 		logger.Debugw("Parameters",
-			"shortened", fmt.Sprintf("%+v", params.Shortened),
+			"delete", fmt.Sprintf("%+v", params.Delete),
+			"shortened", params.Shortened,
 		)
+
+		// TODO Non-debug level log?
 
 		// Create a new request context.
 		ctx, cancel := configure.DefaultCtx()
@@ -26,39 +29,43 @@ func HandleDelete(logger *zap.SugaredLogger, terseStore storage.TerseStore) oper
 
 		// Delete the shortened URL's Terse pair from storage.
 		var err error
-		if err = terseStore.DeleteTerse(ctx, params.Shortened); err != nil {
+		if params.Delete.Terse == nil || *params.Delete.Terse { // TODO Does the default value populate?
+			if err = terseStore.DeleteTerse(ctx, params.Shortened); err != nil {
 
-			// Log with the appropriate level.
-			message := "Failed to delete Terse pair."
-			logger.Warnw(message,
-				"shortened", params.Shortened,
-				"error", err.Error(),
-			)
+				// Log at the appropriate level.
+				message := "Failed to delete Terse."
+				logger.Warnw(message,
+					"shortened", params.Shortened,
+					"error", err.Error(),
+				)
 
-			// Report the error to the client.
-			code := int64(500)
-			return &operations.TerseDeleteDefault{Payload: &models.Error{
-				Code:    &code,
-				Message: &message,
-			}}
+				// Report the error to the client.
+				code := int64(500)
+				return &operations.TerseDeleteDefault{Payload: &models.Error{
+					Code:    &code,
+					Message: &message,
+				}}
+			}
 		}
 
 		// Delete the visits for the shortened URL.
-		if err = terseStore.VisitsStore().DeleteVisits(ctx, params.Shortened); err != nil {
+		if params.Delete.Visits == nil || *params.Delete.Visits { // TODO Does the default value populate?
+			if err = terseStore.VisitsStore().DeleteVisits(ctx, params.Shortened); err != nil {
 
-			// Log with the appropriate level.
-			message := "Failed to delete the visits for this shortened URL. Terse pair deleted."
-			logger.Warnw(message,
-				"shortened", params.Shortened,
-				"error", err.Error(),
-			)
+				// Log with the appropriate level.
+				message := "Failed to delete the visits for this shortened URL. Terse deleted."
+				logger.Warnw(message,
+					"shortened", params.Shortened,
+					"error", err.Error(),
+				)
 
-			// Report the error to the client.
-			code := int64(500)
-			return &operations.TerseDeleteDefault{Payload: &models.Error{
-				Code:    &code,
-				Message: &message,
-			}}
+				// Report the error to the client.
+				code := int64(500)
+				return &operations.TerseDeleteDefault{Payload: &models.Error{
+					Code:    &code,
+					Message: &message,
+				}}
+			}
 		}
 
 		return &operations.TerseDeleteOK{}

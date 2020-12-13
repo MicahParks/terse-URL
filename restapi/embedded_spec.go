@@ -37,7 +37,7 @@ func init() {
         }
       }
     },
-    "/api/delete": {
+    "/api/delete/{shortened}": {
       "delete": {
         "security": [
           {
@@ -54,12 +54,28 @@ func init() {
         "operationId": "terseDelete",
         "parameters": [
           {
-            "name": "shortened",
+            "name": "delete",
             "in": "body",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "object",
+              "properties": {
+                "terse": {
+                  "type": "boolean",
+                  "default": true
+                },
+                "visits": {
+                  "type": "boolean",
+                  "default": true
+                }
+              }
             }
+          },
+          {
+            "type": "string",
+            "name": "shortened",
+            "in": "path",
+            "required": true
           }
         ],
         "responses": {
@@ -508,7 +524,7 @@ func init() {
         }
       }
     },
-    "/api/delete": {
+    "/api/delete/{shortened}": {
       "delete": {
         "security": [
           {
@@ -525,12 +541,28 @@ func init() {
         "operationId": "terseDelete",
         "parameters": [
           {
-            "name": "shortened",
+            "name": "delete",
             "in": "body",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "object",
+              "properties": {
+                "terse": {
+                  "type": "boolean",
+                  "default": true
+                },
+                "visits": {
+                  "type": "boolean",
+                  "default": true
+                }
+              }
             }
+          },
+          {
+            "type": "string",
+            "name": "shortened",
+            "in": "path",
+            "required": true
           }
         ],
         "responses": {

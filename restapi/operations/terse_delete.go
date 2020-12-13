@@ -9,6 +9,8 @@ import (
 	"net/http"
 
 	"github.com/go-openapi/runtime/middleware"
+	"github.com/go-openapi/strfmt"
+	"github.com/go-openapi/swag"
 
 	"github.com/MicahParks/terse-URL/models"
 )
@@ -31,7 +33,7 @@ func NewTerseDelete(ctx *middleware.Context, handler TerseDeleteHandler) *TerseD
 	return &TerseDelete{Context: ctx, Handler: handler}
 }
 
-/*TerseDelete swagger:route DELETE /api/delete terseDelete
+/*TerseDelete swagger:route DELETE /api/delete/{shortened} terseDelete
 
 Delete the given shortened URL from the backend storage, cause the shortened URL to immediately expire.
 
@@ -70,4 +72,39 @@ func (o *TerseDelete) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 
 	o.Context.Respond(rw, r, route.Produces, route, res)
 
+}
+
+// TerseDeleteBody terse delete body
+//
+// swagger:model TerseDeleteBody
+type TerseDeleteBody struct {
+
+	// terse
+	Terse *bool `json:"terse,omitempty"`
+
+	// visits
+	Visits *bool `json:"visits,omitempty"`
+}
+
+// Validate validates this terse delete body
+func (o *TerseDeleteBody) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *TerseDeleteBody) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *TerseDeleteBody) UnmarshalBinary(b []byte) error {
+	var res TerseDeleteBody
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
+	return nil
 }

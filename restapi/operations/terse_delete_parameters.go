@@ -12,6 +12,7 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
+	"github.com/go-openapi/strfmt"
 )
 
 // NewTerseDeleteParams creates a new TerseDeleteParams object
@@ -34,6 +35,11 @@ type TerseDeleteParams struct {
 	  Required: true
 	  In: body
 	*/
+	Delete TerseDeleteBody
+	/*
+	  Required: true
+	  In: path
+	*/
 	Shortened string
 }
 
@@ -48,22 +54,48 @@ func (o *TerseDeleteParams) BindRequest(r *http.Request, route *middleware.Match
 
 	if runtime.HasBody(r) {
 		defer r.Body.Close()
-		var body string
+		var body TerseDeleteBody
 		if err := route.Consumer.Consume(r.Body, &body); err != nil {
 			if err == io.EOF {
-				res = append(res, errors.Required("shortened", "body", ""))
+				res = append(res, errors.Required("delete", "body", ""))
 			} else {
-				res = append(res, errors.NewParseError("shortened", "body", "", err))
+				res = append(res, errors.NewParseError("delete", "body", "", err))
 			}
 		} else {
-			// no validation required on inline body
-			o.Shortened = body
+			// validate body object
+			if err := body.Validate(route.Formats); err != nil {
+				res = append(res, err)
+			}
+
+			if len(res) == 0 {
+				o.Delete = body
+			}
 		}
 	} else {
-		res = append(res, errors.Required("shortened", "body", ""))
+		res = append(res, errors.Required("delete", "body", ""))
 	}
+	rShortened, rhkShortened, _ := route.Params.GetOK("shortened")
+	if err := o.bindShortened(rShortened, rhkShortened, route.Formats); err != nil {
+		res = append(res, err)
+	}
+
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+// bindShortened binds and validates parameter Shortened from path.
+func (o *TerseDeleteParams) bindShortened(rawData []string, hasKey bool, formats strfmt.Registry) error {
+	var raw string
+	if len(rawData) > 0 {
+		raw = rawData[len(rawData)-1]
+	}
+
+	// Required: true
+	// Parameter is provided by construction from the route
+
+	o.Shortened = raw
+
 	return nil
 }
