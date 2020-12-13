@@ -218,6 +218,7 @@ paths:
   # characters or less.
   /{shortened}:
     get:
+      summary: "Typically a web browser would visit this endpoint, then get redirected."
       description: "Use the shortened URL. It will redirect to the full URL if it has not expired."
       operationId: "terseRedirect"
       parameters:

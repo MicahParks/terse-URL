@@ -31,6 +31,8 @@ func NewTerseRedirect(ctx *middleware.Context, handler TerseRedirectHandler) *Te
 
 /*TerseRedirect swagger:route GET /{shortened} public terseRedirect
 
+Typically a web browser would visit this endpoint, then get redirected.
+
 Use the shortened URL. It will redirect to the full URL if it has not expired.
 
 */

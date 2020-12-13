@@ -31,7 +31,7 @@ func init() {
     },
     "version": "0.0.1"
   },
-  "host": "terseurl.com",
+  "host": "localhost:30000",
   "basePath": "/",
   "paths": {
     "/api/alive": {
@@ -304,6 +304,7 @@ func init() {
         "tags": [
           "public"
         ],
+        "summary": "Typically a web browser would visit this endpoint, then get redirected.",
         "operationId": "terseRedirect",
         "parameters": [
           {
@@ -536,7 +537,7 @@ func init() {
     },
     "version": "0.0.1"
   },
-  "host": "terseurl.com",
+  "host": "localhost:30000",
   "basePath": "/",
   "paths": {
     "/api/alive": {
@@ -809,6 +810,7 @@ func init() {
         "tags": [
           "public"
         ],
+        "summary": "Typically a web browser would visit this endpoint, then get redirected.",
         "operationId": "terseRedirect",
         "parameters": [
           {
