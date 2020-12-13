@@ -58,7 +58,7 @@ func (b *BboltTerse) DeleteTerse(_ context.Context, shortened string) (err error
 	// Open the bbolt database for writing, batch if possible.
 	if err = b.bbolt.Batch(func(tx *bbolt.Tx) error {
 
-		// Write the Terse to the bucket.
+		// Delete the Terse from the bucket.
 		if err = tx.Bucket(b.terseBucket).Delete([]byte(shortened)); err != nil {
 			return err
 		}
