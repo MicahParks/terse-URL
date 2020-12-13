@@ -29,7 +29,7 @@ func configureAPI(api *operations.TerseURLAPI) http.Handler {
 	api.ServeError = errors.ServeError
 
 	// Configure the service.
-	config, err := configure.Configure() // TODO Return configuration structure.
+	config, err := configure.Configure()
 	if err != nil {
 		log.Fatalf("Failed to configure the service.\nError: %s\n", err.Error())
 	}

@@ -33,7 +33,7 @@ func HandleVisits(logger *zap.SugaredLogger, visitsStore storage.VisitsStore) ap
 			var message string
 			if errors.Is(err, storage.ErrShortenedNotFound) {
 				code = 400
-				message = "Shortened URL not found." // TODO Constant
+				message = "Shortened URL not found."
 				logger.Infow(message,
 					"shortened", params.Shortened,
 					"error", err.Error(),
