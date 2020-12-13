@@ -64,23 +64,6 @@ func Configure() (config Configuration, err error) {
 	case memoryStorage:
 		config.VisitsStore = storage.NewMemVisits()
 
-	//// Use MongoDB for Visits storage.
-	//case mongoStorage:
-	//
-	//	// Create a context that will fail the creation of the Visits store if it takes too long to contact MongoDB.
-	//	ctx, cancel := DefaultCtx()
-	//	defer cancel()
-	//
-	//	// Create the Visits storage with MongoDB.
-	//	opts := options.Client().ApplyURI(rawConfig.VisitsMongoURI)
-	//	if config.VisitsStore, err = storage.NewMongoDBVisits(ctx, rawConfig.VisitsMongoDatabase, rawConfig.VisitsMongoCollection, opts); err != nil {
-	//		logger.Fatalw("Failed to reach MongoDB.",
-	//			"store", "VisitsStore",
-	//			"error", err.Error(),
-	//		)
-	//		return Configuration{}, err // Should be unreachable.
-	//	}
-
 	// If no known Visits storage was specified, don't store visits.
 	default:
 		config.VisitsStore = nil // Ineffectual assignment, but more clearly shows visits will not be tracked by default.
@@ -92,23 +75,6 @@ func Configure() (config Configuration, err error) {
 	// Use an in memory implementation for Terse storage.
 	case memoryStorage:
 		config.TerseStore = storage.NewMemTerse(DefaultCtx, errChan, &group, config.VisitsStore)
-
-	//// Set up MongoDB for the Terse storage.
-	//case mongoStorage:
-	//
-	//	// Create a context that will fail the creation of the Terse store if it takes too long to contact MongoDB.
-	//	ctx, cancel := DefaultCtx()
-	//	defer cancel()
-	//
-	//	// Create the Terse storage with MongoDB.
-	//	opts := options.Client().ApplyURI(rawConfig.TerseMongoURI)
-	//	if config.TerseStore, err = storage.NewMongoDBTerse(ctx, DefaultCtx, rawConfig.TerseMongoDatabase, rawConfig.TerseMongoCollection, errChan, &group, config.VisitsStore, opts); err != nil {
-	//		logger.Fatalw("Failed to reach MongoDB.",
-	//			"store", "VisitsStore",
-	//			"error", err.Error(),
-	//		)
-	//		return Configuration{}, err // Should be unreachable.
-	//	}
 
 	// If no known Terse storage was specified in the configuration use an in memory implementation.
 	default:

@@ -11,23 +11,11 @@ import (
 
 const (
 
-	// defaultMongoDatabase is the default MongoDB database to use.
-	defaultMongoDatabase = "terseURL"
-
-	// defaultMongoTerseCollection is the default MongoDB collection name for the TerseStore.
-	defaultMongoTerseCollection = "terseStore"
-
-	// defaultMongoVisitsCollection is the default MongoDB collection name for the VisitsStore.
-	defaultMongoVisitsCollection = "visitsStore"
-
 	// defaultWorkerCount is the default amount of workers to have in the ctxerrgroup.
 	defaultWorkerCount = 4
 
 	// memoryStorage is the constant used when describing a storage backend only in memory.
 	memoryStorage = "memory"
-
-	// mongoStorage is the string constant used when describing a storage backend of MongoDB.
-	mongoStorage = "mongo"
 )
 
 var (
@@ -35,9 +23,6 @@ var (
 	// ErrCantBeZeroOrNegative indicates that an integer value cannot be zero negative, but a zero or negative value was
 	// provided.
 	ErrCantBeZeroOrNegative = errors.New("integer cannot be negative")
-
-	// ErrMissingRequiredConfig indicates that a required configuration was missing.
-	ErrMissingRequiredConfig = errors.New("required configuration missing")
 
 	// alwaysInvalidPaths
 	alwaysInvalidPaths = []string{"api", "docs", "swagger.json"}
@@ -48,19 +33,13 @@ var (
 
 // configuration holds all the necessary information for
 type configuration struct {
-	DefaultTimeout        time.Duration
-	InvalidPaths          []string
-	ShortIDParanoid       bool
-	ShortIDSeed           uint64
-	TerseMongoCollection  string
-	TerseMongoDatabase    string
-	TerseMongoURI         string
-	TerseStoreType        string
-	VisitsMongoCollection string
-	VisitsMongoDatabase   string
-	VisitsMongoURI        string
-	VisitsStoreType       string
-	WorkerCount           uint
+	DefaultTimeout  time.Duration
+	InvalidPaths    []string
+	ShortIDParanoid bool
+	ShortIDSeed     uint64
+	TerseStoreType  string
+	VisitsStoreType string
+	WorkerCount     uint
 }
 
 // invalidPathsParse parses a comma separated string into a slice of strings. It adds in paths that are always invalid
@@ -125,40 +104,8 @@ func readEnvVars() (config *configuration, err error) {
 
 	// Assign the string value configurations.
 	config.ShortIDParanoid = len(os.Getenv("SHORTID_PARANOID")) != 0
-	config.TerseMongoCollection = os.Getenv("TERSE_MONGO_COLLECTION")
-	config.TerseMongoDatabase = os.Getenv("TERSE_MONGO_DATABASE")
-	config.TerseMongoURI = os.Getenv("TERSE_MONGO_URI")
 	config.TerseStoreType = os.Getenv("TERSE_STORE_TYPE")
-	config.VisitsMongoCollection = os.Getenv("VISITS_MONGO_COLLECTION")
-	config.VisitsMongoDatabase = os.Getenv("VISITS_MONGO_DATABASE")
-	config.VisitsMongoURI = os.Getenv("VISITS_MONGO_URI")
 	config.VisitsStoreType = os.Getenv("VISITS_STORE_TYPE")
-
-	// If using MongoDB for Terse storage, check for defaults to use.
-	if config.TerseStoreType == mongoStorage {
-		if config.TerseMongoCollection == "" {
-			config.TerseMongoCollection = defaultMongoTerseCollection
-		}
-		if config.TerseMongoDatabase == "" {
-			config.TerseMongoDatabase = defaultMongoDatabase
-		}
-		if config.TerseMongoURI == "" {
-			return nil, fmt.Errorf("%w: Terse MongoDB URI required when Terse storage is in MongoDB", ErrMissingRequiredConfig)
-		}
-	}
-
-	// If using MongoDB for visits, check for defaults to use.
-	if config.VisitsStoreType == mongoStorage {
-		if config.VisitsMongoCollection == "" {
-			config.VisitsMongoCollection = defaultMongoVisitsCollection
-		}
-		if config.VisitsMongoDatabase == "" {
-			config.VisitsMongoDatabase = defaultMongoDatabase
-		}
-		if config.TerseMongoURI == "" {
-			return nil, fmt.Errorf("%w: Visits MongoDB URI required when Visits storage is in MongoDB", ErrMissingRequiredConfig)
-		}
-	}
 
 	return config, nil
 }
