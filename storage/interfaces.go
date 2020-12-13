@@ -14,7 +14,8 @@ type TerseStore interface {
 	// storage.ErrShortenedExists if the shortened URL is already present.
 	InsertTerse(ctx context.Context, terse *models.Terse) (err error)
 
-	// Close closes the connection to the underlying storage. This does not close the connection to the VisitsStore.
+	// Close closes the connection to the underlying storage. This may or may not close the connection to the
+	// VisitsStore, depending on the configuration.
 	Close(ctx context.Context) (err error)
 
 	// DeleteTerse deletes the given shortened URL. No error should be given if the shortened URL is not found.
