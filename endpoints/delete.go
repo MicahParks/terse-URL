@@ -12,8 +12,8 @@ import (
 	"github.com/MicahParks/terse-URL/storage"
 )
 
-func HandleDelete(logger *zap.SugaredLogger, terseStore storage.TerseStore) operations.URLDeleteHandlerFunc {
-	return func(params operations.URLDeleteParams, _ *models.JWTInfo) middleware.Responder {
+func HandleDelete(logger *zap.SugaredLogger, terseStore storage.TerseStore) operations.TerseDeleteHandlerFunc {
+	return func(params operations.TerseDeleteParams, _ *models.JWTInfo) middleware.Responder {
 
 		// Do not have debug level logging on in production, as it will log clog up the logs.
 		logger.Debugw("Parameters",
@@ -37,7 +37,7 @@ func HandleDelete(logger *zap.SugaredLogger, terseStore storage.TerseStore) oper
 
 			// Report the error to the client.
 			code := int64(500)
-			return &operations.URLDeleteDefault{Payload: &models.Error{
+			return &operations.TerseDeleteDefault{Payload: &models.Error{
 				Code:    &code,
 				Message: &message,
 			}}
@@ -55,12 +55,12 @@ func HandleDelete(logger *zap.SugaredLogger, terseStore storage.TerseStore) oper
 
 			// Report the error to the client.
 			code := int64(500)
-			return &operations.URLDeleteDefault{Payload: &models.Error{
+			return &operations.TerseDeleteDefault{Payload: &models.Error{
 				Code:    &code,
 				Message: &message,
 			}}
 		}
 
-		return &operations.URLDeleteOK{}
+		return &operations.TerseDeleteOK{}
 	}
 }

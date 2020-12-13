@@ -122,7 +122,6 @@ func Configure() (config Configuration, err error) {
 		}
 
 	// If no known Terse storage was specified in the configuration use an in memory implementation.
-	// TODO Change to bbolt when implemented.
 	default:
 		config.TerseStore = storage.NewMemTerse(DefaultCtx, errChan, &group, config.VisitsStore)
 	}

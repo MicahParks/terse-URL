@@ -22,10 +22,10 @@ type TerseStore interface {
 
 	// Dump returns a dump of all data for a given shortened URL. The error must be storage.ErrShortenedNotFound if the
 	// shortened URL is not found.
-	Dump(ctx context.Context, shortened string) (dump *models.Dump, err error)
+	Dump(ctx context.Context, shortened string) (dump models.Dump, err error)
 
 	// DumpAll returns a map of shortened URLs to dump data.
-	DumpAll(ctx context.Context) (dump map[string]*models.Dump, err error)
+	DumpAll(ctx context.Context) (dump map[string]models.Dump, err error)
 
 	// GetTerse retrieves all non-Visit Terse data give its shortened URL. A nil visit may be passed in and the visit
 	// should not be recorded. The error must be storage.ErrShortenedNotFound if the shortened URL is not found.
