@@ -1,7 +1,11 @@
 FROM golang:1.15 AS builder
 
-# Create a working directory and copy the code into it.
+# Get the Golang dependencies for better caching.
 WORKDIR /app
+COPY go.mod go.sum ./
+RUN go mod download
+
+# Copy the code in.
 COPY . .
 
 # Build the code.

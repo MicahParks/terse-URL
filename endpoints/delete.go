@@ -49,7 +49,7 @@ func HandleDelete(logger *zap.SugaredLogger, terseStore storage.TerseStore) api.
 		}
 
 		// Delete the visits for the shortened URL.
-		if params.Delete.Visits == nil || *params.Delete.Visits { // TODO Does the default value populate?
+		if params.Delete.Visits == nil || *params.Delete.Visits && terseStore.VisitsStore() != nil { // TODO Does the default value populate?
 			if err = terseStore.VisitsStore().DeleteVisits(ctx, params.Shortened); err != nil {
 
 				// Log with the appropriate level.

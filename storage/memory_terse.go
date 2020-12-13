@@ -82,9 +82,11 @@ func (m *MemTerse) Export(ctx context.Context, shortened string) (export models.
 	}
 
 	// Get the visits for the Terse.
-	var visits []*models.Visit
-	if visits, err = m.visitsStore.ReadVisits(ctx, shortened); err != nil {
-		return models.Export{}, err
+	visits := make([]*models.Visit, 0)
+	if m.visitsStore != nil {
+		if visits, err = m.visitsStore.ReadVisits(ctx, shortened); err != nil {
+			return models.Export{}, err
+		}
 	}
 
 	return models.Export{
@@ -106,9 +108,11 @@ func (m *MemTerse) ExportAll(ctx context.Context) (export map[string]models.Expo
 	for shortened, terse := range m.terse {
 
 		// Get the visits for the Terse.
-		var visits []*models.Visit
-		if visits, err = m.visitsStore.ReadVisits(ctx, *terse.ShortenedURL); err != nil {
-			return nil, err
+		visits := make([]*models.Visit, 0)
+		if m.visitsStore != nil {
+			if visits, err = m.visitsStore.ReadVisits(ctx, *terse.ShortenedURL); err != nil {
+				return nil, err
+			}
 		}
 
 		// Add the shortened URL and its visits to the data export.
