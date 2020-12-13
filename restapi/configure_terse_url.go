@@ -53,12 +53,12 @@ func configureAPI(api *operations.TerseURLAPI) http.Handler {
 	// Assign the endpoint handlers.
 	api.AliveHandler = endpoints.HandleAlive()
 	api.TerseDeleteHandler = endpoints.HandleDelete(logger.Named("/api/delete"), config.TerseStore)
-	api.TerseDumpHandler = endpoints.HandleDump(logger.Named("/api/dump"))
-	api.TerseDumpShortenedHandler = endpoints.HandleDumpShortened(logger.Named("/api/dump/{shortened}"))
-	api.TerseReadHandler = endpoints.HandleRead(logger.Named("/api/read/{shortened}"))
-	api.TerseRedirectHandler = endpoints.HandleRedirect(logger.Named("/{shortened}"))
-	api.TerseVisitsHandler = endpoints.HandleVisits(logger.Named("/api/visits/{shortened}"))
-	api.TerseWriteHandler = endpoints.HandleWrite(logger.Named("/api/write/{operation}"))
+	api.TerseDumpHandler = endpoints.HandleDump(logger.Named("/api/dump"), config.TerseStore)
+	api.TerseDumpShortenedHandler = endpoints.HandleDumpShortened(logger.Named("/api/dump/{shortened}"), config.TerseStore)
+	api.TerseReadHandler = endpoints.HandleRead(logger.Named("/api/read/{shortened}"), config.TerseStore)
+	api.TerseRedirectHandler = endpoints.HandleRedirect(logger.Named("/{shortened}"), config.TerseStore)
+	api.TerseVisitsHandler = endpoints.HandleVisits(logger.Named("/api/visits/{shortened}"), config.VisitsStore)
+	api.TerseWriteHandler = endpoints.HandleWrite(logger.Named("/api/write/{operation}"), config.ShortID, config.TerseStore)
 
 	api.PreServerShutdown = func() {}
 
