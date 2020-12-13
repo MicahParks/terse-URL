@@ -142,8 +142,8 @@ func (m *MemTerse) GetTerse(_ context.Context, shortened string, visit *models.V
 	// Check to see if the shortened URL already exists.
 	var ok bool
 	terse, ok = m.terse[shortened]
-	if ok {
-		return nil, ErrShortenedExists
+	if !ok {
+		return nil, ErrShortenedNotFound
 	}
 
 	return terse, nil
