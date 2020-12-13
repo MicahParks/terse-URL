@@ -53,7 +53,26 @@ func configureAPI(api *operations.TerseURLAPI) http.Handler {
 
 	api.PreServerShutdown = func() {}
 
-	api.ServerShutdown = func() {}
+	api.ServerShutdown = func() {
+
+		// Create a context to close the Terse and Visits stores.
+		ctx, cancel := configure.DefaultCtx()
+		defer cancel()
+
+		// Close the TerseStore.
+		if err = config.TerseStore.Close(ctx); err != nil {
+			logger.Errorw("Failed to close the TerseStore.",
+				"error", err.Error(),
+			)
+		}
+
+		// Close the VisitsStore.
+		if err = config.VisitsStore.Close(ctx); err != nil {
+			logger.Errorw("Failed to close the VisitsStore.",
+				"error", err.Error(),
+			)
+		}
+	}
 
 	return setupGlobalMiddleware(api.Serve(setupMiddlewares))
 }

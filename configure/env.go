@@ -16,6 +16,9 @@ const (
 
 	// memoryStorage is the constant used when describing a storage backend only in memory.
 	memoryStorage = "memory"
+
+	// bboltStorage is the constant used when describing a storage backend as a bbolt file.
+	bboltStorage = "bbolt"
 )
 
 var (
