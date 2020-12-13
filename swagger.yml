@@ -20,8 +20,8 @@ tags:
   - description: "Endpoints required by the system that are not public facing and do not affect Terse data."
     name: "system"
 
-#schemes:
-#  - "https"
+schemes:
+  - "http"
 
 paths:
   /api/alive:

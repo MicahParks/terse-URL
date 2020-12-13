@@ -22,7 +22,7 @@ swagger:response terseExportOneOK
 */
 type TerseExportOneOK struct {
 
-	/*The Terse and Visits data for a single shortened URL.
+	/*
 	  In: Body
 	*/
 	Payload *models.Export `json:"body,omitempty"`

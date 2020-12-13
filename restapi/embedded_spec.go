@@ -18,6 +18,9 @@ var (
 
 func init() {
 	SwaggerJSON = json.RawMessage([]byte(`{
+  "schemes": [
+    "http"
+  ],
   "swagger": "2.0",
   "info": {
     "description": "The Terse URL shortener.",
@@ -28,7 +31,7 @@ func init() {
     },
     "version": "0.0.1"
   },
-  "host": "shorten.micahparks.com",
+  "host": "terseurl.com",
   "basePath": "/",
   "paths": {
     "/api/alive": {
@@ -155,7 +158,6 @@ func init() {
           "200": {
             "description": "The export was successfully retrieved.",
             "schema": {
-              "description": "The Terse and Visits data for a single shortened URL.",
               "$ref": "#/definitions/Export"
             }
           },
@@ -191,7 +193,6 @@ func init() {
           "200": {
             "description": "The Terse data was successfully retrieved.",
             "schema": {
-              "description": "The Terse data for a single shortened URL.",
               "$ref": "#/definitions/Terse"
             }
           },
@@ -522,6 +523,9 @@ func init() {
   ]
 }`))
 	FlatSwaggerJSON = json.RawMessage([]byte(`{
+  "schemes": [
+    "http"
+  ],
   "swagger": "2.0",
   "info": {
     "description": "The Terse URL shortener.",
@@ -532,7 +536,7 @@ func init() {
     },
     "version": "0.0.1"
   },
-  "host": "shorten.micahparks.com",
+  "host": "terseurl.com",
   "basePath": "/",
   "paths": {
     "/api/alive": {
@@ -659,7 +663,6 @@ func init() {
           "200": {
             "description": "The export was successfully retrieved.",
             "schema": {
-              "description": "The Terse and Visits data for a single shortened URL.",
               "$ref": "#/definitions/Export"
             }
           },
@@ -695,7 +698,6 @@ func init() {
           "200": {
             "description": "The Terse data was successfully retrieved.",
             "schema": {
-              "description": "The Terse data for a single shortened URL.",
               "$ref": "#/definitions/Terse"
             }
           },

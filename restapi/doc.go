@@ -5,7 +5,7 @@
 //  The Terse URL shortener.
 //  Schemes:
 //    http
-//  Host: shorten.micahparks.com
+//  Host: terseurl.com
 //  BasePath: /
 //  Version: 0.0.1
 //  License: MIT https://opensource.org/licenses/MIT

@@ -22,7 +22,7 @@ swagger:response terseReadOK
 */
 type TerseReadOK struct {
 
-	/*The Terse data for a single shortened URL.
+	/*
 	  In: Body
 	*/
 	Payload *models.Terse `json:"body,omitempty"`
