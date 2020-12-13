@@ -5,8 +5,20 @@ basePath: "/"
 host: "shorten.micahparks.com" # TODO Change if you found this off the internet and want to run it yourself.
 
 info:
-  version: "0.0.1"
+  description: "The Terse URL shortener."
+  license:
+    name: "MIT"
+    url: "https://opensource.org/licenses/MIT"
   title: "Terse URL"
+  version: "0.0.1"
+
+tags:
+  - description: "Endpoints to perform operations on Terse data."
+    name: "api"
+  - description: "Endpoints that are publicly accessible."
+    name: "public"
+  - description: "Endpoints required by the system that are not public facing and do not affect Terse data."
+    name: "system"
 
 #schemes:
 #  - "https"
@@ -19,6 +31,8 @@ paths: # TODO Add summary to all endpoints.
       responses:
         200:
           description: "Service is alive."
+      tags:
+        - "system"
 
   /api/delete/{shortened}:
     delete:
@@ -52,6 +66,8 @@ paths: # TODO Add summary to all endpoints.
           description: "Unexpected error."
           schema:
             $ref: "#/definitions/Error"
+      tags:
+        - "api"
 
   /api/dump:
     get:
@@ -70,6 +86,8 @@ paths: # TODO Add summary to all endpoints.
           description: "Unexpected error."
           schema:
             $ref: "#/definitions/Error"
+      tags:
+        - "api"
 
   /api/dump/{shortened}:
     get:
@@ -91,6 +109,8 @@ paths: # TODO Add summary to all endpoints.
           description: "Unexpected error."
           schema:
             $ref: "#/definitions/Error"
+      tags:
+        - "api"
 
   /api/read/{shortened}:
     get:
@@ -112,6 +132,8 @@ paths: # TODO Add summary to all endpoints.
           description: "Unexpected error."
           schema:
             $ref: "#/definitions/Error"
+      tags:
+        - "api"
 
   /api/visits/{shortened}:
     get:
@@ -136,6 +158,8 @@ paths: # TODO Add summary to all endpoints.
           description: "Unexpected error."
           schema:
             $ref: "#/definitions/Error"
+      tags:
+        - "api"
 
   /api/write/{operation}:
     post:
@@ -169,6 +193,8 @@ paths: # TODO Add summary to all endpoints.
           description: "Unexpected error."
           schema:
             $ref: "#/definitions/Error"
+      tags:
+        - "api"
 
   # IDs are always 9 characters or greater, so they can be put at the base path as long as all other paths are 8
   # characters or less.
@@ -190,6 +216,8 @@ paths: # TODO Add summary to all endpoints.
               type: "string"
         404:
           description: "The shortened URL expired or never existed."
+      tags:
+        - "public"
 
 
 definitions:

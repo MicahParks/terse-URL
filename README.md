@@ -33,10 +33,11 @@ Environment variable table:
 - [ ] Delete expired Terse.
 - [ ] Social media link preview.
 - [ ] Move frontend to another repo.
-- [ ] Change storage configs to files?
-- [ ] Change user created warnings to info?
 - [ ] A good README.md.
 - [ ] Write tests.
+- [ ] Implement JWT + JWKs authentication?
+- [ ] Change storage configs to files?
+- [ ] Change user created warnings to info?
 - [x] Take away auth.
 - [x] Move things to `/api`.
 - [x] Add an `/upsert` endpoint.
