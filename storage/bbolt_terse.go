@@ -49,8 +49,8 @@ func (b *BboltTerse) InsertTerse(_ context.Context, terse *models.Terse) (err er
 	return nil
 }
 
-func (b *BboltTerse) Close(ctx context.Context) (err error) {
-	panic("implement me")
+func (b *BboltTerse) Close(_ context.Context) (err error) {
+	return b.bbolt.Close()
 }
 
 func (b *BboltTerse) DeleteTerse(_ context.Context, shortened string) (err error) {
