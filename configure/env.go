@@ -49,10 +49,6 @@ var (
 // configuration holds all the necessary information for
 type configuration struct {
 	DefaultTimeout        time.Duration
-	KeycloakBaseURL       string
-	KeycloakID            string
-	KeycloakRealm         string
-	KeycloakSecret        string
 	InvalidPaths          []string
 	ShortIDParanoid       bool
 	ShortIDSeed           uint64
@@ -128,10 +124,6 @@ func readEnvVars() (config *configuration, err error) {
 	config.InvalidPaths = invalidPathsParse(os.Getenv("INVALID_PATHS"))
 
 	// Assign the string value configurations.
-	config.KeycloakBaseURL = os.Getenv("KEYCLOAK_BASE_URL")
-	config.KeycloakID = os.Getenv("KEYCLOAK_ID")
-	config.KeycloakRealm = os.Getenv("KEYCLOAK_REALM")
-	config.KeycloakSecret = os.Getenv("KEYCLOAK_SECRET")
 	config.ShortIDParanoid = len(os.Getenv("SHORTID_PARANOID")) != 0
 	config.TerseMongoCollection = os.Getenv("TERSE_MONGO_COLLECTION")
 	config.TerseMongoDatabase = os.Getenv("TERSE_MONGO_DATABASE")
@@ -141,11 +133,6 @@ func readEnvVars() (config *configuration, err error) {
 	config.VisitsMongoDatabase = os.Getenv("VISITS_MONGO_DATABASE")
 	config.VisitsMongoURI = os.Getenv("VISITS_MONGO_URI")
 	config.VisitsStoreType = os.Getenv("VISITS_STORE_TYPE")
-
-	//// Confirm none of the Keycloak environment variables are empty.
-	//if config.KeycloakBaseURL == "" || config.KeycloakID == "" || config.KeycloakRealm == "" || config.KeycloakSecret == "" {
-	//	return nil, fmt.Errorf("%w: All Keycloak enviornment variables must be populated", ErrMissingRequiredConfig)
-	//}
 
 	// If using MongoDB for Terse storage, check for defaults to use.
 	if config.TerseStoreType == mongoStorage {

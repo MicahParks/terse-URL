@@ -41,15 +41,6 @@ func configureAPI(api *operations.TerseURLAPI) http.Handler {
 
 	api.JSONProducer = runtime.JSONProducer()
 
-	//// Set up the authentication handler.
-	//logger.Infow("Configuring authentication with Keycloak.")
-	//if api.JWTAuth, err = configure.HandleAuth(&config.KeycloakInfo, logger); err != nil {
-	//	logger.Fatalw("Failed to configure Keycloak.",
-	//		"error", err.Error(),
-	//	)
-	//}
-	//logger.Infow("Authentication with Keycloak configured.")
-
 	// Assign the endpoint handlers.
 	api.AliveHandler = endpoints.HandleAlive()
 	api.TerseDeleteHandler = endpoints.HandleDelete(logger.Named("/api/delete/{shortened}"), config.TerseStore)

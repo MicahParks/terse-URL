@@ -11,12 +11,6 @@ info:
 #schemes:
 #  - "https"
 
-securityDefinitions:
-  JWT:
-    in: "header"
-    name: "Authorization"
-    type: "apiKey"
-
 paths: # TODO Add summary to all endpoints.
   /api/alive:
     get:
@@ -58,8 +52,6 @@ paths: # TODO Add summary to all endpoints.
           description: "Unexpected error."
           schema:
             $ref: "#/definitions/Error"
-#      security:
-#        - JWT: [ ]
 
   /api/dump:
     get:
@@ -78,8 +70,6 @@ paths: # TODO Add summary to all endpoints.
           description: "Unexpected error."
           schema:
             $ref: "#/definitions/Error"
-#      security:
-#        - JWT: [ ]
 
   /api/dump/{shortened}:
     get:
@@ -101,8 +91,6 @@ paths: # TODO Add summary to all endpoints.
           description: "Unexpected error."
           schema:
             $ref: "#/definitions/Error"
-#      security:
-#        - JWT: [ ]
 
   /api/read/{shortened}:
     get:
@@ -124,8 +112,6 @@ paths: # TODO Add summary to all endpoints.
           description: "Unexpected error."
           schema:
             $ref: "#/definitions/Error"
-#      security:
-#        - JWT: [ ]
 
   /api/visits/{shortened}:
     get:
@@ -150,8 +136,6 @@ paths: # TODO Add summary to all endpoints.
           description: "Unexpected error."
           schema:
             $ref: "#/definitions/Error"
-#      security:
-#        - JWT: [ ]
 
   /api/write/{operation}:
     post:
@@ -185,8 +169,6 @@ paths: # TODO Add summary to all endpoints.
           description: "Unexpected error."
           schema:
             $ref: "#/definitions/Error"
-#      security:
-#        - JWT: [ ]
 
   # IDs are always 9 characters or greater, so they can be put at the base path as long as all other paths are 8
   # characters or less.
@@ -234,16 +216,6 @@ definitions:
       - "code"
       - "message"
     type: "object"
-
-  # Schema for passing JWT information around.
-  JWTInfo:
-    properties:
-      email:
-        type: "string"
-      groups:
-        type: "array"
-        items:
-          type: "string"
 
   # Schema for social media previews.
   MediaPreview:

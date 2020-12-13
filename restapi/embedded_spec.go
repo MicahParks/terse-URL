@@ -306,19 +306,6 @@ func init() {
         }
       }
     },
-    "JWTInfo": {
-      "properties": {
-        "email": {
-          "type": "string"
-        },
-        "groups": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        }
-      }
-    },
     "MediaPreview": {
       "required": [
         "imageURL",
@@ -464,13 +451,6 @@ func init() {
           "type": "string"
         }
       }
-    }
-  },
-  "securityDefinitions": {
-    "JWT": {
-      "type": "apiKey",
-      "name": "Authorization",
-      "in": "header"
     }
   }
 }`))
@@ -763,19 +743,6 @@ func init() {
         }
       }
     },
-    "JWTInfo": {
-      "properties": {
-        "email": {
-          "type": "string"
-        },
-        "groups": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        }
-      }
-    },
     "MediaPreview": {
       "required": [
         "imageURL",
@@ -921,13 +888,6 @@ func init() {
           "type": "string"
         }
       }
-    }
-  },
-  "securityDefinitions": {
-    "JWT": {
-      "type": "apiKey",
-      "name": "Authorization",
-      "in": "header"
     }
   }
 }`))

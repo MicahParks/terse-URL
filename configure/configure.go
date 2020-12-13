@@ -14,7 +14,6 @@ import (
 type Configuration struct {
 	Logger          *zap.SugaredLogger
 	InvalidPaths    []string
-	KeycloakInfo    KeycloakInfo
 	ShortID         *shortid.Shortid
 	ShortIDParanoid bool
 	TerseStore      storage.TerseStore
@@ -40,14 +39,6 @@ func Configure() (config Configuration, err error) {
 			"error", err.Error(),
 		)
 		return Configuration{}, err // Should be unreachable.
-	}
-
-	// Create the Keycloak information data structure.
-	config.KeycloakInfo = KeycloakInfo{
-		BaseURL:      rawConfig.KeycloakBaseURL,
-		ClientID:     rawConfig.KeycloakID,
-		ClientSecret: rawConfig.KeycloakSecret,
-		Realm:        rawConfig.KeycloakRealm,
 	}
 
 	// Set the database timeout.
