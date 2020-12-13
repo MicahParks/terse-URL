@@ -16,6 +16,7 @@ require (
 	github.com/jessevdk/go-flags v1.4.0
 	github.com/patrickmn/go-cache v2.1.0+incompatible // indirect
 	github.com/teris-io/shortid v0.0.0-20201117134242-e59966efd125
+	go.etcd.io/bbolt v1.3.5
 	go.uber.org/multierr v1.6.0 // indirect
 	go.uber.org/zap v1.16.0
 	golang.org/x/net v0.0.0-20201209123823-ac852fbbde11
