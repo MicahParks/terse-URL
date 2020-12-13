@@ -18,8 +18,6 @@ import (
 	"github.com/go-openapi/spec"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
-
-	"github.com/MicahParks/terse-URL/models"
 )
 
 // NewTerseURLAPI creates a new TerseURL instance
@@ -47,34 +45,27 @@ func NewTerseURLAPI(spec *loads.Document) *TerseURLAPI {
 		AliveHandler: AliveHandlerFunc(func(params AliveParams) middleware.Responder {
 			return middleware.NotImplemented("operation Alive has not yet been implemented")
 		}),
-		TerseDeleteHandler: TerseDeleteHandlerFunc(func(params TerseDeleteParams, principal *models.JWTInfo) middleware.Responder {
+		TerseDeleteHandler: TerseDeleteHandlerFunc(func(params TerseDeleteParams) middleware.Responder {
 			return middleware.NotImplemented("operation TerseDelete has not yet been implemented")
 		}),
-		TerseDumpHandler: TerseDumpHandlerFunc(func(params TerseDumpParams, principal *models.JWTInfo) middleware.Responder {
+		TerseDumpHandler: TerseDumpHandlerFunc(func(params TerseDumpParams) middleware.Responder {
 			return middleware.NotImplemented("operation TerseDump has not yet been implemented")
 		}),
-		TerseDumpShortenedHandler: TerseDumpShortenedHandlerFunc(func(params TerseDumpShortenedParams, principal *models.JWTInfo) middleware.Responder {
+		TerseDumpShortenedHandler: TerseDumpShortenedHandlerFunc(func(params TerseDumpShortenedParams) middleware.Responder {
 			return middleware.NotImplemented("operation TerseDumpShortened has not yet been implemented")
 		}),
-		TerseReadHandler: TerseReadHandlerFunc(func(params TerseReadParams, principal *models.JWTInfo) middleware.Responder {
+		TerseReadHandler: TerseReadHandlerFunc(func(params TerseReadParams) middleware.Responder {
 			return middleware.NotImplemented("operation TerseRead has not yet been implemented")
 		}),
 		TerseRedirectHandler: TerseRedirectHandlerFunc(func(params TerseRedirectParams) middleware.Responder {
 			return middleware.NotImplemented("operation TerseRedirect has not yet been implemented")
 		}),
-		TerseVisitsHandler: TerseVisitsHandlerFunc(func(params TerseVisitsParams, principal *models.JWTInfo) middleware.Responder {
+		TerseVisitsHandler: TerseVisitsHandlerFunc(func(params TerseVisitsParams) middleware.Responder {
 			return middleware.NotImplemented("operation TerseVisits has not yet been implemented")
 		}),
-		TerseWriteHandler: TerseWriteHandlerFunc(func(params TerseWriteParams, principal *models.JWTInfo) middleware.Responder {
+		TerseWriteHandler: TerseWriteHandlerFunc(func(params TerseWriteParams) middleware.Responder {
 			return middleware.NotImplemented("operation TerseWrite has not yet been implemented")
 		}),
-
-		// Applies when the "Authorization" header is set
-		JWTAuth: func(token string) (*models.JWTInfo, error) {
-			return nil, errors.NotImplemented("api key auth (JWT) Authorization from header param [Authorization] has not yet been implemented")
-		},
-		// default authorizer is authorized meaning no requests are blocked
-		APIAuthorizer: security.Authorized(),
 	}
 }
 
@@ -108,13 +99,6 @@ type TerseURLAPI struct {
 	// JSONProducer registers a producer for the following mime types:
 	//   - application/json
 	JSONProducer runtime.Producer
-
-	// JWTAuth registers a function that takes a token and returns a principal
-	// it performs authentication based on an api key Authorization provided in the header
-	JWTAuth func(string) (*models.JWTInfo, error)
-
-	// APIAuthorizer provides access control (ACL/RBAC/ABAC) by providing access to the request and authenticated principal
-	APIAuthorizer runtime.Authorizer
 
 	// AliveHandler sets the operation handler for the alive operation
 	AliveHandler AliveHandler
@@ -208,10 +192,6 @@ func (o *TerseURLAPI) Validate() error {
 		unregistered = append(unregistered, "JSONProducer")
 	}
 
-	if o.JWTAuth == nil {
-		unregistered = append(unregistered, "AuthorizationAuth")
-	}
-
 	if o.AliveHandler == nil {
 		unregistered = append(unregistered, "AliveHandler")
 	}
@@ -251,23 +231,12 @@ func (o *TerseURLAPI) ServeErrorFor(operationID string) func(http.ResponseWriter
 
 // AuthenticatorsFor gets the authenticators for the specified security schemes
 func (o *TerseURLAPI) AuthenticatorsFor(schemes map[string]spec.SecurityScheme) map[string]runtime.Authenticator {
-	result := make(map[string]runtime.Authenticator)
-	for name := range schemes {
-		switch name {
-		case "JWT":
-			scheme := schemes[name]
-			result[name] = o.APIKeyAuthenticator(scheme.Name, scheme.In, func(token string) (interface{}, error) {
-				return o.JWTAuth(token)
-			})
-
-		}
-	}
-	return result
+	return nil
 }
 
 // Authorizer returns the registered authorizer
 func (o *TerseURLAPI) Authorizer() runtime.Authorizer {
-	return o.APIAuthorizer
+	return nil
 }
 
 // ConsumersFor gets the consumers for the specified media types.

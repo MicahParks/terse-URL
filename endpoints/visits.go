@@ -13,7 +13,7 @@ import (
 )
 
 func HandleVisits(logger *zap.SugaredLogger, visitsStore storage.VisitsStore) operations.TerseVisitsHandlerFunc {
-	return func(params operations.TerseVisitsParams, _ *models.JWTInfo) middleware.Responder {
+	return func(params operations.TerseVisitsParams) middleware.Responder {
 
 		// Debug info.
 		logger.Debugw("Parameters",

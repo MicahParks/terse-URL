@@ -11,21 +11,19 @@ import (
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
-
-	"github.com/MicahParks/terse-URL/models"
 )
 
 // TerseDeleteHandlerFunc turns a function with the right signature into a terse delete handler
-type TerseDeleteHandlerFunc func(TerseDeleteParams, *models.JWTInfo) middleware.Responder
+type TerseDeleteHandlerFunc func(TerseDeleteParams) middleware.Responder
 
 // Handle executing the request and returning a response
-func (fn TerseDeleteHandlerFunc) Handle(params TerseDeleteParams, principal *models.JWTInfo) middleware.Responder {
-	return fn(params, principal)
+func (fn TerseDeleteHandlerFunc) Handle(params TerseDeleteParams) middleware.Responder {
+	return fn(params)
 }
 
 // TerseDeleteHandler interface for that can handle valid terse delete params
 type TerseDeleteHandler interface {
-	Handle(TerseDeleteParams, *models.JWTInfo) middleware.Responder
+	Handle(TerseDeleteParams) middleware.Responder
 }
 
 // NewTerseDelete creates a new http.Handler for the terse delete operation
@@ -50,25 +48,12 @@ func (o *TerseDelete) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	}
 	var Params = NewTerseDeleteParams()
 
-	uprinc, aCtx, err := o.Context.Authorize(r, route)
-	if err != nil {
-		o.Context.Respond(rw, r, route.Produces, route, err)
-		return
-	}
-	if aCtx != nil {
-		r = aCtx
-	}
-	var principal *models.JWTInfo
-	if uprinc != nil {
-		principal = uprinc.(*models.JWTInfo) // this is really a models.JWTInfo, I promise
-	}
-
 	if err := o.Context.BindValidRequest(r, route, &Params); err != nil { // bind params
 		o.Context.Respond(rw, r, route.Produces, route, err)
 		return
 	}
 
-	res := o.Handler.Handle(Params, principal) // actually handle the request
+	res := o.Handler.Handle(Params) // actually handle the request
 
 	o.Context.Respond(rw, r, route.Produces, route, res)
 

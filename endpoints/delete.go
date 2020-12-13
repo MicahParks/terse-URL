@@ -13,7 +13,7 @@ import (
 )
 
 func HandleDelete(logger *zap.SugaredLogger, terseStore storage.TerseStore) operations.TerseDeleteHandlerFunc {
-	return func(params operations.TerseDeleteParams, _ *models.JWTInfo) middleware.Responder {
+	return func(params operations.TerseDeleteParams) middleware.Responder {
 
 		// Do not have debug level logging on in production, as it will log clog up the logs.
 		logger.Debugw("Parameters",

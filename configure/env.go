@@ -142,10 +142,10 @@ func readEnvVars() (config *configuration, err error) {
 	config.VisitsMongoURI = os.Getenv("VISITS_MONGO_URI")
 	config.VisitsStoreType = os.Getenv("VISITS_STORE_TYPE")
 
-	// Confirm none of the Keycloak environment variables are empty.
-	if config.KeycloakBaseURL == "" || config.KeycloakID == "" || config.KeycloakRealm == "" || config.KeycloakSecret == "" {
-		return nil, fmt.Errorf("%w: All Keycloak enviornment variables must be populated", ErrMissingRequiredConfig)
-	}
+	//// Confirm none of the Keycloak environment variables are empty.
+	//if config.KeycloakBaseURL == "" || config.KeycloakID == "" || config.KeycloakRealm == "" || config.KeycloakSecret == "" {
+	//	return nil, fmt.Errorf("%w: All Keycloak enviornment variables must be populated", ErrMissingRequiredConfig)
+	//}
 
 	// If using MongoDB for Terse storage, check for defaults to use.
 	if config.TerseStoreType == mongoStorage {

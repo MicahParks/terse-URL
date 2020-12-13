@@ -9,21 +9,19 @@ import (
 	"net/http"
 
 	"github.com/go-openapi/runtime/middleware"
-
-	"github.com/MicahParks/terse-URL/models"
 )
 
 // TerseDumpHandlerFunc turns a function with the right signature into a terse dump handler
-type TerseDumpHandlerFunc func(TerseDumpParams, *models.JWTInfo) middleware.Responder
+type TerseDumpHandlerFunc func(TerseDumpParams) middleware.Responder
 
 // Handle executing the request and returning a response
-func (fn TerseDumpHandlerFunc) Handle(params TerseDumpParams, principal *models.JWTInfo) middleware.Responder {
-	return fn(params, principal)
+func (fn TerseDumpHandlerFunc) Handle(params TerseDumpParams) middleware.Responder {
+	return fn(params)
 }
 
 // TerseDumpHandler interface for that can handle valid terse dump params
 type TerseDumpHandler interface {
-	Handle(TerseDumpParams, *models.JWTInfo) middleware.Responder
+	Handle(TerseDumpParams) middleware.Responder
 }
 
 // NewTerseDump creates a new http.Handler for the terse dump operation
@@ -48,25 +46,12 @@ func (o *TerseDump) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	}
 	var Params = NewTerseDumpParams()
 
-	uprinc, aCtx, err := o.Context.Authorize(r, route)
-	if err != nil {
-		o.Context.Respond(rw, r, route.Produces, route, err)
-		return
-	}
-	if aCtx != nil {
-		r = aCtx
-	}
-	var principal *models.JWTInfo
-	if uprinc != nil {
-		principal = uprinc.(*models.JWTInfo) // this is really a models.JWTInfo, I promise
-	}
-
 	if err := o.Context.BindValidRequest(r, route, &Params); err != nil { // bind params
 		o.Context.Respond(rw, r, route.Produces, route, err)
 		return
 	}
 
-	res := o.Handler.Handle(Params, principal) // actually handle the request
+	res := o.Handler.Handle(Params) // actually handle the request
 
 	o.Context.Respond(rw, r, route.Produces, route, res)
 

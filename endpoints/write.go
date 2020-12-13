@@ -14,7 +14,7 @@ import (
 )
 
 func HandleWrite(logger *zap.SugaredLogger, shortID *shortid.Shortid, terseStore storage.TerseStore) operations.TerseWriteHandlerFunc {
-	return func(params operations.TerseWriteParams, _ *models.JWTInfo) middleware.Responder {
+	return func(params operations.TerseWriteParams) middleware.Responder {
 
 		// Debug info.
 		logger.Debugw("Performing Terse write.",

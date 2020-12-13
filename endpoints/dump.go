@@ -11,7 +11,7 @@ import (
 )
 
 func HandleDump(logger *zap.SugaredLogger, terseStore storage.TerseStore) operations.TerseDumpHandlerFunc {
-	return func(params operations.TerseDumpParams, _ *models.JWTInfo) middleware.Responder {
+	return func(params operations.TerseDumpParams) middleware.Responder {
 
 		// Debug info.
 		logger.Debug("Performing data dump.")

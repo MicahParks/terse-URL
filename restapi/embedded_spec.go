@@ -39,11 +39,6 @@ func init() {
     },
     "/api/delete/{shortened}": {
       "delete": {
-        "security": [
-          {
-            "JWT": []
-          }
-        ],
         "consumes": [
           "application/json"
         ],
@@ -93,11 +88,6 @@ func init() {
     },
     "/api/dump": {
       "get": {
-        "security": [
-          {
-            "JWT": []
-          }
-        ],
         "produces": [
           "application/json"
         ],
@@ -122,11 +112,6 @@ func init() {
     },
     "/api/dump/{shortened}": {
       "get": {
-        "security": [
-          {
-            "JWT": []
-          }
-        ],
         "produces": [
           "application/json"
         ],
@@ -156,11 +141,6 @@ func init() {
     },
     "/api/read/{shortened}": {
       "get": {
-        "security": [
-          {
-            "JWT": []
-          }
-        ],
         "produces": [
           "application/json"
         ],
@@ -190,11 +170,6 @@ func init() {
     },
     "/api/visits/{shortened}": {
       "get": {
-        "security": [
-          {
-            "JWT": []
-          }
-        ],
         "produces": [
           "application/json"
         ],
@@ -228,11 +203,6 @@ func init() {
     },
     "/api/write/{operation}": {
       "post": {
-        "security": [
-          {
-            "JWT": []
-          }
-        ],
         "consumes": [
           "application/json"
         ],
@@ -526,11 +496,6 @@ func init() {
     },
     "/api/delete/{shortened}": {
       "delete": {
-        "security": [
-          {
-            "JWT": []
-          }
-        ],
         "consumes": [
           "application/json"
         ],
@@ -580,11 +545,6 @@ func init() {
     },
     "/api/dump": {
       "get": {
-        "security": [
-          {
-            "JWT": []
-          }
-        ],
         "produces": [
           "application/json"
         ],
@@ -609,11 +569,6 @@ func init() {
     },
     "/api/dump/{shortened}": {
       "get": {
-        "security": [
-          {
-            "JWT": []
-          }
-        ],
         "produces": [
           "application/json"
         ],
@@ -643,11 +598,6 @@ func init() {
     },
     "/api/read/{shortened}": {
       "get": {
-        "security": [
-          {
-            "JWT": []
-          }
-        ],
         "produces": [
           "application/json"
         ],
@@ -677,11 +627,6 @@ func init() {
     },
     "/api/visits/{shortened}": {
       "get": {
-        "security": [
-          {
-            "JWT": []
-          }
-        ],
         "produces": [
           "application/json"
         ],
@@ -715,11 +660,6 @@ func init() {
     },
     "/api/write/{operation}": {
       "post": {
-        "security": [
-          {
-            "JWT": []
-          }
-        ],
         "consumes": [
           "application/json"
         ],

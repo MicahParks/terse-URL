@@ -13,7 +13,7 @@ import (
 )
 
 func HandleRead(logger *zap.SugaredLogger, terseStore storage.TerseStore) operations.TerseReadHandlerFunc {
-	return func(params operations.TerseReadParams, _ *models.JWTInfo) middleware.Responder {
+	return func(params operations.TerseReadParams) middleware.Responder {
 
 		// Debug info.
 		logger.Debugw("Parameters",

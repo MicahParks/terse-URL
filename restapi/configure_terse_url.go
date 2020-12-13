@@ -41,24 +41,24 @@ func configureAPI(api *operations.TerseURLAPI) http.Handler {
 
 	api.JSONProducer = runtime.JSONProducer()
 
-	// Set up the authentication handler.
-	logger.Infow("Configuring authentication with Keycloak.")
-	if api.JWTAuth, err = configure.HandleAuth(&config.KeycloakInfo, logger); err != nil {
-		logger.Fatalw("Failed to configure Keycloak.",
-			"error", err.Error(),
-		)
-	}
-	logger.Infow("Authentication with Keycloak configured.")
+	//// Set up the authentication handler.
+	//logger.Infow("Configuring authentication with Keycloak.")
+	//if api.JWTAuth, err = configure.HandleAuth(&config.KeycloakInfo, logger); err != nil {
+	//	logger.Fatalw("Failed to configure Keycloak.",
+	//		"error", err.Error(),
+	//	)
+	//}
+	//logger.Infow("Authentication with Keycloak configured.")
 
 	// Assign the endpoint handlers.
 	api.AliveHandler = endpoints.HandleAlive()
-	api.TerseDeleteHandler = endpoints.HandleDelete(logger.Named("/api/delete"), config.TerseStore)
+	api.TerseDeleteHandler = endpoints.HandleDelete(logger.Named("/api/delete/{shortened}"), config.TerseStore)
 	api.TerseDumpHandler = endpoints.HandleDump(logger.Named("/api/dump"), config.TerseStore)
 	api.TerseDumpShortenedHandler = endpoints.HandleDumpShortened(logger.Named("/api/dump/{shortened}"), config.TerseStore)
 	api.TerseReadHandler = endpoints.HandleRead(logger.Named("/api/read/{shortened}"), config.TerseStore)
-	api.TerseRedirectHandler = endpoints.HandleRedirect(logger.Named("/{shortened}"), config.TerseStore)
 	api.TerseVisitsHandler = endpoints.HandleVisits(logger.Named("/api/visits/{shortened}"), config.VisitsStore)
 	api.TerseWriteHandler = endpoints.HandleWrite(logger.Named("/api/write/{operation}"), config.ShortID, config.TerseStore)
+	api.TerseRedirectHandler = endpoints.HandleRedirect(logger.Named("/{shortened}"), config.TerseStore)
 
 	api.PreServerShutdown = func() {}
 

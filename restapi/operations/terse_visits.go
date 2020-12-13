@@ -9,21 +9,19 @@ import (
 	"net/http"
 
 	"github.com/go-openapi/runtime/middleware"
-
-	"github.com/MicahParks/terse-URL/models"
 )
 
 // TerseVisitsHandlerFunc turns a function with the right signature into a terse visits handler
-type TerseVisitsHandlerFunc func(TerseVisitsParams, *models.JWTInfo) middleware.Responder
+type TerseVisitsHandlerFunc func(TerseVisitsParams) middleware.Responder
 
 // Handle executing the request and returning a response
-func (fn TerseVisitsHandlerFunc) Handle(params TerseVisitsParams, principal *models.JWTInfo) middleware.Responder {
-	return fn(params, principal)
+func (fn TerseVisitsHandlerFunc) Handle(params TerseVisitsParams) middleware.Responder {
+	return fn(params)
 }
 
 // TerseVisitsHandler interface for that can handle valid terse visits params
 type TerseVisitsHandler interface {
-	Handle(TerseVisitsParams, *models.JWTInfo) middleware.Responder
+	Handle(TerseVisitsParams) middleware.Responder
 }
 
 // NewTerseVisits creates a new http.Handler for the terse visits operation
@@ -48,25 +46,12 @@ func (o *TerseVisits) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	}
 	var Params = NewTerseVisitsParams()
 
-	uprinc, aCtx, err := o.Context.Authorize(r, route)
-	if err != nil {
-		o.Context.Respond(rw, r, route.Produces, route, err)
-		return
-	}
-	if aCtx != nil {
-		r = aCtx
-	}
-	var principal *models.JWTInfo
-	if uprinc != nil {
-		principal = uprinc.(*models.JWTInfo) // this is really a models.JWTInfo, I promise
-	}
-
 	if err := o.Context.BindValidRequest(r, route, &Params); err != nil { // bind params
 		o.Context.Respond(rw, r, route.Produces, route, err)
 		return
 	}
 
-	res := o.Handler.Handle(Params, principal) // actually handle the request
+	res := o.Handler.Handle(Params) // actually handle the request
 
 	o.Context.Respond(rw, r, route.Produces, route, res)
 

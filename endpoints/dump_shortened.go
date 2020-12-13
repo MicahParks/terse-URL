@@ -13,7 +13,7 @@ import (
 )
 
 func HandleDumpShortened(logger *zap.SugaredLogger, terseStore storage.TerseStore) operations.TerseDumpShortenedHandlerFunc {
-	return func(params operations.TerseDumpShortenedParams, _ *models.JWTInfo) middleware.Responder {
+	return func(params operations.TerseDumpShortenedParams) middleware.Responder {
 
 		// Debug info.
 		logger.Debugw("Performing data dump for shortened URL.",
