@@ -54,6 +54,8 @@ type VisitsStore interface {
 	// Close closes the connection to the underlying storage.
 	Close(ctx context.Context) (err error)
 
+	// TODO Add a DumpAll method that will dump everything to a map? Better for TerseStore.Dump performance.
+
 	// DeleteVisits deletes all visits to the shortened URL. No error should be given if the shortened URL is not found.
 	DeleteVisits(ctx context.Context, shortened string) (err error)
 
