@@ -12,11 +12,13 @@ import (
 	"github.com/MicahParks/terse-URL/storage"
 )
 
+// HandleRead creates and /api/read/{shortened} endpoint handler via a closure. It can perform exports of a single
+// shortened URL's Terse data.
 func HandleRead(logger *zap.SugaredLogger, terseStore storage.TerseStore) api.TerseReadHandlerFunc {
 	return func(params api.TerseReadParams) middleware.Responder {
 
-		// Debug info.
-		logger.Debugw("Parameters",
+		// Log the event.
+		logger.Infow("Reading a shortened URL's Terse data.",
 			"shortened", params.Shortened,
 		)
 
@@ -25,7 +27,7 @@ func HandleRead(logger *zap.SugaredLogger, terseStore storage.TerseStore) api.Te
 		defer cancel()
 
 		// Get the Terse from the TerseStore.
-		terse, err := terseStore.GetTerse(ctx, params.Shortened, nil)
+		terse, err := terseStore.ReadTerse(ctx, params.Shortened, nil)
 		if err != nil {
 
 			// Log at the appropriate level. Assign the response code and message.

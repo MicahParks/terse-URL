@@ -41,12 +41,12 @@ paths:
         - "application/json"
       produces:
         - "application/json"
-      summary: "Delete Terse and or Visit data for the given shortened URL."
-      description: "If only Terse data is deleted, the API user is responsible for cleaning up its Visit data before
+      summary: "Delete Terse and or Visits data for the given shortened URL."
+      description: "If only Terse data is deleted, the API user is responsible for cleaning up its Visits data before
       adding new Terse data under the same shortened URL."
       operationId: "terseDelete"
       parameters:
-        - description: "Indicate if Terse and or Visit data should be deleted."
+        - description: "Indicate if Terse and or Visits data should be deleted."
           in: "body"
           name: "delete"
           required: true
@@ -78,14 +78,14 @@ paths:
     get:
       produces:
         - "application/json"
-      summary: "Export all Terse and Visit data from the backend."
+      summary: "Export all Terse and Visits data from the backend."
       description: "Depending on the underlying storage and amount of data, this may take a while."
       operationId: "terseExport"
       responses:
         200:
           description: "The export was successfully retrieved."
           schema:
-            description: "All of the Terse and Visit data from the backend."
+            description: "All of the Terse and Visits data from the backend."
             type: "object"
             additionalProperties:
               $ref: "#/definitions/Export"
@@ -100,7 +100,7 @@ paths:
     get:
       produces:
         - "application/json"
-      summary: "Export Terse and Visit data for a single shortened URL."
+      summary: "Export Terse and Visits data for a single shortened URL."
       description: ""
       operationId: "terseExportOne"
       parameters:
@@ -150,17 +150,17 @@ paths:
     get:
       produces:
         - "application/json"
-      summary: "Get the Visit data for a single shortened URL."
+      summary: "Get the Visits data for a single shortened URL."
       operationId: "terseVisits"
       parameters:
-        - description: "The shortened URL to get the Visit data for."
+        - description: "The shortened URL to get the s data for."
           in: "path"
           name: "shortened"
           required: true
           type: "string"
       responses:
         200:
-          description: "The Visit data was successfully retrieved."
+          description: "The Visits data was successfully retrieved."
           schema:
             description: "The visit data for a single shortened URL."
             type: "array"
@@ -182,7 +182,7 @@ paths:
       summary: "Perform a write operation on Terse data for a shortened URL."
       description: '"insert" will fail if the shortened URL already exists. "update" will fail if the shortened URL does
       not already exist. "upsert" will only fail if there is a failure interacting with the underlying storage. If no
-      shortened URL is included in the given Terse data, one ill be generated randomly and returned in the response.'
+      shortened URL is included in the given Terse data, one will be generated randomly and returned in the response.'
       operationId: "terseWrite"
       parameters:
         - description: "The Terse data, with an optional shortened URL. If no shortened URL is given, one will be
@@ -241,7 +241,7 @@ paths:
 
 definitions:
 
-  # Schema for Terse export. It contains Terse and Visit data for a shortened URL.
+  # Schema for Terse export. It contains Terse and Visits data for a shortened URL.
   Export:
     properties:
       terse:

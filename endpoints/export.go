@@ -10,13 +10,13 @@ import (
 	"github.com/MicahParks/terse-URL/storage"
 )
 
+// HandleExport creates and /api/export endpoint handler via a closure. It can perform exports of all Terse and Visits
+// data.
 func HandleExport(logger *zap.SugaredLogger, terseStore storage.TerseStore) api.TerseExportHandlerFunc {
 	return func(params api.TerseExportParams) middleware.Responder {
 
-		// Debug info.
-		logger.Debug("Performing data dump.")
-
-		// TODO Non-debug level log?
+		// Log the event.
+		logger.Info("Exporting all Terse and Visits data.")
 
 		// Create a request context.
 		//

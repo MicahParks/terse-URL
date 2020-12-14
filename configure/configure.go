@@ -135,7 +135,8 @@ func handleAsyncError(errChan <-chan error, logger *zap.SugaredLogger) {
 	}
 }
 
-// TODO
+// readStorageConfig determines which value to use. Either the value at the file at configPath or the envValue. The
+// chosen value will be turned into a raw JSON message.
 func readStorageConfig(envValue string, logger *zap.SugaredLogger, configPath string) (configJSON json.RawMessage, err error) {
 
 	// Decide if the configPath is valid. Generate a long message from it.
@@ -153,7 +154,8 @@ func readStorageConfig(envValue string, logger *zap.SugaredLogger, configPath st
 	if envValue == "" {
 
 		// Log that no environment variable was present.
-		logger.Infow(fmt.Sprintf("No %s environment variable configuration present. Attempting to read configuration file.", logMessage),
+		message := fmt.Sprintf("No %s environment variable configuration present. Attempting to read configuration file.", logMessage)
+		logger.Infow(message,
 			"filePath", configPath,
 		)
 
@@ -164,7 +166,7 @@ func readStorageConfig(envValue string, logger *zap.SugaredLogger, configPath st
 			// If it doesn't exist. Use the default config.
 			if os.IsNotExist(existErr) {
 
-				// Do nothing. Return an empy config.
+				// Do nothing. Return an empty config.
 
 			} else {
 

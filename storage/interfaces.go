@@ -14,8 +14,8 @@ type TerseStore interface {
 	// storage.ErrShortenedExists if the shortened URL is already present.
 	InsertTerse(ctx context.Context, terse *models.Terse) (err error)
 
-	// Close closes the connection to the underlying storage. This may or may not close the connection to the
-	// VisitsStore, depending on the configuration.
+	// Close closes the connection to the underlying storage. The ctxerrgroup should be killed. This may or may not
+	// close the connection to the VisitsStore, depending on the configuration.
 	Close(ctx context.Context) (err error)
 
 	// DeleteTerse deletes the given shortened URL. No error should be given if the shortened URL is not found.
@@ -28,10 +28,10 @@ type TerseStore interface {
 	// ExportAll returns a map of shortened URLs to export data.
 	ExportAll(ctx context.Context) (export map[string]models.Export, err error)
 
-	// GetTerse retrieves all non-Visit Terse data give its shortened URL. A nil visit may be passed in and the visit
+	// ReadTerse retrieves all non-Visit Terse data give its shortened URL. A nil visit may be passed in and the visit
 	// should not be recorded. The error must be storage.ErrShortenedNotFound if the shortened URL is not found.
 	// TODO Delete Terse if expired
-	GetTerse(ctx context.Context, shortened string, visit *models.Visit) (terse *models.Terse, err error)
+	ReadTerse(ctx context.Context, shortened string, visit *models.Visit) (terse *models.Terse, err error)
 
 	// UpdateTerse assumes the Terse already exists. It will override all of its values. The error must be
 	// storage.ErrShortenedNotFound if the shortened URL is not found.

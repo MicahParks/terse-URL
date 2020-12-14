@@ -13,11 +13,18 @@ import (
 	"github.com/MicahParks/terse-URL/storage"
 )
 
+// HandleWrite creates and /api/write/{operation} endpoint handler via a closure. It can perform write operations on a
+// single shortened URL's Terse data.
 func HandleWrite(logger *zap.SugaredLogger, shortID *shortid.Shortid, terseStore storage.TerseStore) api.TerseWriteHandlerFunc {
 	return func(params api.TerseWriteParams) middleware.Responder {
 
 		// Debug info.
-		logger.Debugw("Performing Terse write.",
+		logger.Debugw("Terse data",
+			"terseData", params.Terse,
+		)
+
+		// Log the event.
+		logger.Infow("Writing terse data.",
 			"operation", params.Operation,
 			"shortened", params.Terse.ShortenedURL,
 		)
@@ -28,7 +35,7 @@ func HandleWrite(logger *zap.SugaredLogger, shortID *shortid.Shortid, terseStore
 
 		// Create the Terse data structure.
 		terse := &models.Terse{
-			DeleteAt:     params.Terse.DeleteAt, // TODO How to get zero value?
+			DeleteAt:     params.Terse.DeleteAt, // TODO How to get zero value? Convert to time.Time(params.Terse.DeleteAt).IsZero()
 			MediaPreview: params.Terse.MediaPreview,
 			OriginalURL:  params.Terse.OriginalURL,
 			ShortenedURL: &params.Terse.ShortenedURL,

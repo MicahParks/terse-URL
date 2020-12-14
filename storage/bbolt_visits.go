@@ -9,11 +9,13 @@ import (
 	"github.com/MicahParks/terse-URL/models"
 )
 
+// BboltVisits if a VisitsStore implementation that relies on a bbolt file for the backend storage.
 type BboltVisits struct {
 	db           *bbolt.DB
 	visitsBucket []byte
 }
 
+// NewBboltVisits creates a new NewBboltVisits given the required assets.
 func NewBboltVisits(db *bbolt.DB, visitsBucket []byte) (visitsStore VisitsStore) {
 	return &BboltVisits{
 		db:           db,
@@ -21,6 +23,8 @@ func NewBboltVisits(db *bbolt.DB, visitsBucket []byte) (visitsStore VisitsStore)
 	}
 }
 
+// AddVisit inserts the visit into the VisitsStore. This implementation has no network activity and ignores the given
+// context.
 func (b *BboltVisits) AddVisit(_ context.Context, shortened string, visit *models.Visit) (err error) {
 
 	// Get the existing visits.
@@ -54,10 +58,13 @@ func (b *BboltVisits) AddVisit(_ context.Context, shortened string, visit *model
 	return nil
 }
 
+// Close closes the bbolt database file. This implementation has no network activity and ignores the given context.
 func (b *BboltVisits) Close(_ context.Context) (err error) {
 	return b.db.Close()
 }
 
+// DeleteVisits deletes all visits associated with the given shortened URL. This implementation has no network activity
+// and ignores the given context.
 func (b *BboltVisits) DeleteVisits(_ context.Context, shortened string) (err error) {
 
 	// Open the bbolt database for writing, batch if possible.
@@ -76,10 +83,13 @@ func (b *BboltVisits) DeleteVisits(_ context.Context, shortened string) (err err
 	return nil
 }
 
+// ReadVisits gets all visits for the given shortened URL. This implementation has no network activity and ignores the
+// given context.
 func (b *BboltVisits) ReadVisits(_ context.Context, shortened string) (visits []*models.Visit, err error) {
 	return b.readVisits(shortened)
 }
 
+// readVisits gets all visits for the given shortened URL.
 func (b *BboltVisits) readVisits(shortened string) (visits []*models.Visit, err error) {
 
 	// Open the bbolt database for reading.
@@ -94,9 +104,13 @@ func (b *BboltVisits) readVisits(shortened string) (visits []*models.Visit, err 
 		return nil, err
 	}
 
-	// Turn the JSON data into the Go structure.
-	if err = json.Unmarshal(data, &visits); err != nil {
-		return nil, err
+	// Only unmarshal data if there was any.
+	if data != nil {
+
+		// Turn the JSON data into the Go structure.
+		if err = json.Unmarshal(data, &visits); err != nil {
+			return nil, err
+		}
 	}
 
 	return visits, nil

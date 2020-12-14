@@ -19,6 +19,7 @@ Environment variable table:
 |`WORKER_COUNT`     |The quantity of workers to use for incoming request async tasks like performing async database calls. Not the number of incoming requests that can be handled at one time.     |`4`              |`10`                                         |
 
 ### JSON formatted storage configuration
+
 TODO
 
 ## TODO
@@ -28,6 +29,7 @@ TODO
 - [ ] Delete expired Terse.
 - [ ] Implement `SHORTID_PARANOID`.
 - [ ] Implement `/api/import` endpoints.
+- [ ] Visit counts.
 - [ ] Implement social media link previews.
 - [ ] Implement bbolt storage backend.
 - [ ] Implement Redis storage backend?

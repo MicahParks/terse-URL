@@ -1,8 +1,6 @@
 package endpoints
 
 import (
-	"fmt"
-
 	"github.com/go-openapi/runtime/middleware"
 	"go.uber.org/zap"
 
@@ -12,16 +10,16 @@ import (
 	"github.com/MicahParks/terse-URL/storage"
 )
 
+// HandleDelete creates a /api/delete/{shortened} endpoint handler via a closure. It can delete Terse and Visits data
+// given the associated shortened URL.
 func HandleDelete(logger *zap.SugaredLogger, terseStore storage.TerseStore) api.TerseDeleteHandlerFunc {
 	return func(params api.TerseDeleteParams) middleware.Responder {
 
-		// Do not have debug level logging on in production, as it will log clog up the logs.
-		logger.Debugw("Parameters",
-			"delete", fmt.Sprintf("%+v", params.Delete),
-			"shortened", params.Shortened,
+		// Log the event.
+		logger.Infow("Deleting a shortened URL's assets.",
+			"deleteTerse", params.Delete.Terse,
+			"deleteVisits", params.Delete.Visits,
 		)
-
-		// TODO Non-debug level log?
 
 		// Create a new request context.
 		ctx, cancel := configure.DefaultCtx()
@@ -29,7 +27,7 @@ func HandleDelete(logger *zap.SugaredLogger, terseStore storage.TerseStore) api.
 
 		// Delete the shortened URL's Terse pair from storage.
 		var err error
-		if params.Delete.Terse == nil || *params.Delete.Terse { // TODO Does the default value populate?
+		if params.Delete.Terse == nil || *params.Delete.Terse {
 			if err = terseStore.DeleteTerse(ctx, params.Shortened); err != nil {
 
 				// Log at the appropriate level.
@@ -51,7 +49,7 @@ func HandleDelete(logger *zap.SugaredLogger, terseStore storage.TerseStore) api.
 		}
 
 		// Delete the visits for the shortened URL.
-		if params.Delete.Visits == nil || *params.Delete.Visits && terseStore.VisitsStore() != nil { // TODO Does the default value populate?
+		if params.Delete.Visits == nil || *params.Delete.Visits && terseStore.VisitsStore() != nil {
 			if err = terseStore.VisitsStore().DeleteVisits(ctx, params.Shortened); err != nil {
 
 				// Log with the appropriate level.

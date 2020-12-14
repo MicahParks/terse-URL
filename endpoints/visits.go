@@ -12,11 +12,13 @@ import (
 	"github.com/MicahParks/terse-URL/storage"
 )
 
+// HandleVisits creates and /api/visits/{shortened} endpoint handler via a closure. It can perform exports of a single
+// shortened URL's Visits data.
 func HandleVisits(logger *zap.SugaredLogger, visitsStore storage.VisitsStore) api.TerseVisitsHandlerFunc {
 	return func(params api.TerseVisitsParams) middleware.Responder {
 
-		// Debug info.
-		logger.Debugw("Parameters",
+		// Log the event.
+		logger.Infow("Reading a shortened URL's Visits data.",
 			"shortened", params.Shortened,
 		)
 
