@@ -27,9 +27,6 @@ var (
 	// ErrShortenedExists indicates that an attempt was made to add a shortened URL that already existed.
 	ErrShortenedExists = errors.New("the shortened URL already exists")
 
-	// ErrNoStorageConfig indicates that no storage configuration was given, but one was required.
-	ErrNoStorageConfig = errors.New("no storage configuration was given, but one was required")
-
 	// bboltTerseBucket is the bbolt bucket to use for Terse.
 	bboltTerseBucket = []byte("terse")
 
