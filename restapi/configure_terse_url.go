@@ -67,10 +67,12 @@ func configureAPI(api *operations.TerseURLAPI) http.Handler {
 		}
 
 		// Close the VisitsStore.
-		if err = config.VisitsStore.Close(ctx); err != nil {
-			logger.Errorw("Failed to close the VisitsStore.",
-				"error", err.Error(),
-			)
+		if config.VisitsStore != nil {
+			if err = config.VisitsStore.Close(ctx); err != nil {
+				logger.Errorw("Failed to close the VisitsStore.",
+					"error", err.Error(),
+				)
+			}
 		}
 	}
 

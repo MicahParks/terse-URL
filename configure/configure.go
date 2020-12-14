@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"os"
 
 	"github.com/MicahParks/ctxerrgroup"
 	"github.com/teris-io/shortid"
@@ -149,17 +150,33 @@ func readStorageConfig(envValue string, logger *zap.SugaredLogger, configPath st
 	}
 
 	// Use the environment variable's value, if present.
-	if envValue != "" {
+	if envValue == "" {
 
 		// Log that no environment variable was present.
 		logger.Infow(fmt.Sprintf("No %s environment variable configuration present. Attempting to read configuration file.", logMessage),
 			"filePath", configPath,
 		)
 
-		// Read the JSON file where the configuration is expected to be at.
+		// Stat the config file.
 		var data []byte
-		if data, err = ioutil.ReadFile(configPath); err != nil {
-			return nil, err
+		if _, existErr := os.Stat(configPath); existErr != nil {
+
+			// If it doesn't exist. Use the default config.
+			if os.IsNotExist(existErr) {
+
+				// Do nothing. Return an empy config.
+
+			} else {
+
+				// Return any other errors.
+				return nil, existErr
+			}
+
+		} else {
+			// Read the JSON file where the configuration is expected to be at.
+			if data, err = ioutil.ReadFile(configPath); err != nil {
+				return nil, err
+			}
 		}
 
 		// Place the data in the envValue variable.

@@ -12,11 +12,14 @@ import (
 
 const (
 
-	// memoryStorage is the constant used when describing a storage backend only in memory.
-	memoryStorage = "memory"
+	// storageBbolt is the constant used when describing a storage backend as a bbolt file.
+	storageBbolt = "bbolt"
 
-	// bboltStorage is the constant used when describing a storage backend as a bbolt file.
-	bboltStorage = "bbolt"
+	// storageMemory is the constant used when describing a storage backend only in memory.
+	storageMemory = "memory"
+
+	// storageNil is the constant used when describing a non-existent storage backend.
+	storageNil = "nil"
 )
 
 var (
@@ -42,6 +45,43 @@ type configuration struct {
 type ctxCreator func() (ctx context.Context, cancel context.CancelFunc)
 
 // TODO
+func NewTerseStore(configJSON json.RawMessage, createCtx ctxCreator, errChan chan<- error, group *ctxerrgroup.Group, visitsStore VisitsStore) (terseStore TerseStore, storeType string, err error) {
+
+	// Create the configuration.
+	config := &configuration{}
+
+	// If no JSON was given, use an in memory implementation.
+	if len(configJSON) == 0 {
+		config.Type = storageMemory
+	} else {
+
+		// Turn the configuration JSON into a Go structure.
+		if err = json.Unmarshal(configJSON, config); err != nil {
+			return nil, "", err
+		}
+	}
+
+	// Create the appropriate TerseStore.
+	switch config.Type {
+
+	// Open a file as a bbolt database for the TerseStore.
+	case storageBbolt:
+		var db *bbolt.DB
+		if db, err = openBbolt(config.BboltPath); err != nil {
+			return nil, "", err
+		}
+		terseStore = NewBboltTerse(db, createCtx, group, bboltTerseBucket, visitsStore)
+
+	// Use and in memory implementation of the VisitsStore by default.
+	default:
+		config.Type = storageMemory
+		terseStore = NewMemTerse(createCtx, errChan, group, visitsStore)
+	}
+
+	return terseStore, config.Type, nil
+}
+
+// TODO
 func NewVisitsStore(configJSON json.RawMessage) (visitsStore VisitsStore, storeType string, err error) {
 
 	// Create the configuration.
@@ -49,7 +89,7 @@ func NewVisitsStore(configJSON json.RawMessage) (visitsStore VisitsStore, storeT
 
 	// If no configuration was give, return a nil VisitsStore.
 	if len(configJSON) == 0 {
-		return nil, "", nil
+		return nil, storageNil, nil
 	}
 
 	// Turn the configuration JSON into a Go structure.
@@ -61,7 +101,7 @@ func NewVisitsStore(configJSON json.RawMessage) (visitsStore VisitsStore, storeT
 	switch config.Type {
 
 	// Open a file as a bbolt database for the VisitsStore.
-	case bboltStorage:
+	case storageBbolt:
 		var db *bbolt.DB
 		if db, err = openBbolt(config.BboltPath); err != nil {
 			return nil, "", err
@@ -70,42 +110,11 @@ func NewVisitsStore(configJSON json.RawMessage) (visitsStore VisitsStore, storeT
 
 	// Use and in memory implementation of the VisitsStore by default.
 	default:
-		config.Type = memoryStorage
-		visitsStore = NewMemVisits()
+		config.Type = storageNil
+		visitsStore = nil
 	}
 
 	return visitsStore, config.Type, nil
-}
-
-// TODO
-func NewTerseStore(configJSON json.RawMessage, createCtx ctxCreator, errChan chan<- error, group *ctxerrgroup.Group, visitsStore VisitsStore) (terseStore TerseStore, storeType string, err error) {
-
-	// Create the configuration.
-	config := &configuration{}
-
-	// Turn the configuration JSON into a Go structure.
-	if err = json.Unmarshal(configJSON, config); err != nil {
-		return nil, "", err
-	}
-
-	// Create the appropriate TerseStore.
-	switch config.Type {
-
-	// Open a file as a bbolt database for the TerseStore.
-	case bboltStorage:
-		var db *bbolt.DB
-		if db, err = openBbolt(config.BboltPath); err != nil {
-			return nil, "", err
-		}
-		terseStore = NewBboltTerse(db, createCtx, group, bboltTerseBucket, visitsStore)
-
-	// Use and in memory implementation of the VisitsStore by default.
-	default:
-		config.Type = memoryStorage
-		terseStore = NewMemTerse(createCtx, errChan, group, visitsStore)
-	}
-
-	return terseStore, config.Type, nil
 }
 
 // deleteTerseBlocking deletes the Terse associated with the given shortened URL at the given deletion time. If an error
