@@ -13,12 +13,6 @@ const (
 
 	// defaultWorkerCount is the default amount of workers to have in the ctxerrgroup.
 	defaultWorkerCount = 4
-
-	// memoryStorage is the constant used when describing a storage backend only in memory.
-	memoryStorage = "memory"
-
-	// bboltStorage is the constant used when describing a storage backend as a bbolt file.
-	bboltStorage = "bbolt"
 )
 
 var (
@@ -40,8 +34,8 @@ type configuration struct {
 	InvalidPaths    []string
 	ShortIDParanoid bool
 	ShortIDSeed     uint64
-	TerseStoreType  string
-	VisitsStoreType string
+	TerseStoreJSON  string
+	VisitsStoreJSON string
 	WorkerCount     uint
 }
 
@@ -107,8 +101,8 @@ func readEnvVars() (config *configuration, err error) {
 
 	// Assign the string value configurations.
 	config.ShortIDParanoid = len(os.Getenv("SHORTID_PARANOID")) != 0
-	config.TerseStoreType = os.Getenv("TERSE_STORE_TYPE")
-	config.VisitsStoreType = os.Getenv("VISITS_STORE_TYPE")
+	config.TerseStoreJSON = os.Getenv("TERSE_STORE_JSON")
+	config.VisitsStoreJSON = os.Getenv("VISITS_STORE_JSON")
 
 	return config, nil
 }

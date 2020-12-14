@@ -2,12 +2,24 @@ package configure
 
 import (
 	"context"
+	"encoding/json"
+	"fmt"
+	"io/ioutil"
 
 	"github.com/MicahParks/ctxerrgroup"
 	"github.com/teris-io/shortid"
 	"go.uber.org/zap"
 
 	"github.com/MicahParks/terse-URL/storage"
+)
+
+const (
+
+	// configPathTerseStore is the location to find the TerseStore JSON configuration file.
+	configPathTerseStore = "terseStore.json"
+
+	// configPathVisitsStore is the location to find the VisitsStore JSON configuration file.
+	configPathVisitsStore = "visitsStore.json"
 )
 
 // Configuration is the Go structure that contains all needed configurations gathered on startup.
@@ -57,29 +69,43 @@ func Configure() (config Configuration, err error) {
 		)
 	})
 
-	// Create the correct VisitsStore.
-	switch rawConfig.VisitsStoreType {
-
-	// Use an in memory implementation for Visits storage.
-	case memoryStorage:
-		config.VisitsStore = storage.NewMemVisits()
-
-	// If no known Visits storage was specified, don't store visits.
-	default:
-		config.VisitsStore = nil // Ineffectual assignment, but more clearly shows visits will not be tracked by default.
+	// Get the VisitsStore configuration.
+	var visitsConfig json.RawMessage
+	if visitsConfig, err = readStorageConfig(rawConfig.VisitsStoreJSON, logger, configPathVisitsStore); err != nil {
+		return Configuration{}, err
 	}
 
-	// Create the correct TerseStore.
-	switch rawConfig.TerseStoreType {
-
-	// Use an in memory implementation for Terse storage.
-	case memoryStorage:
-		config.TerseStore = storage.NewMemTerse(DefaultCtx, errChan, &group, config.VisitsStore)
-
-	// If no known Terse storage was specified in the configuration use an in memory implementation.
-	default:
-		config.TerseStore = storage.NewMemTerse(DefaultCtx, errChan, &group, config.VisitsStore)
+	// Create the VisitsStore.
+	var visitsStoreType string
+	if config.VisitsStore, visitsStoreType, err = storage.NewVisitsStore(visitsConfig); err != nil {
+		logger.Fatalw("Failed to create VisitsStore.",
+			"type", visitsStoreType,
+			"error", err.Error(),
+		)
+		return Configuration{}, err // Should be unreachable.
 	}
+	logger.Infow("Created VisitsStore.",
+		"type", visitsStoreType,
+	)
+
+	// Get the TerseStore configuration.
+	var terseConfig json.RawMessage
+	if terseConfig, err = readStorageConfig(rawConfig.TerseStoreJSON, logger, configPathTerseStore); err != nil {
+		return Configuration{}, err
+	}
+
+	// Create the TerseStore.
+	var terseStoreType string
+	if config.TerseStore, terseStoreType, err = storage.NewTerseStore(terseConfig, DefaultCtx, errChan, &group, config.VisitsStore); err != nil {
+		logger.Fatalw("Failed to create TerseStore.",
+			"type", terseStoreType,
+			"error", err.Error(),
+		)
+		return Configuration{}, err // Should be unreachable.
+	}
+	logger.Infow("Created TerseStore.",
+		"type", terseStoreType,
+	)
 
 	// Create the short ID generator.
 	if config.ShortID, err = shortid.New(1, shortid.DefaultABC, rawConfig.ShortIDSeed); err != nil {
@@ -106,4 +132,43 @@ func handleAsyncError(errChan <-chan error, logger *zap.SugaredLogger) {
 			"error", err.Error(),
 		)
 	}
+}
+
+// TODO
+func readStorageConfig(envValue string, logger *zap.SugaredLogger, configPath string) (configJSON json.RawMessage, err error) {
+
+	// Decide if the configPath is valid. Generate a long message from it.
+	var logMessage string
+	switch configPath {
+	case configPathTerseStore:
+		logMessage = "TerseStore"
+	case configPathVisitsStore:
+		logMessage = "VisitsStore"
+	default:
+		panic("not implemented")
+	}
+
+	// Use the environment variable's value, if present.
+	if envValue != "" {
+
+		// Log that no environment variable was present.
+		logger.Infow(fmt.Sprintf("No %s environment variable configuration present. Attempting to read configuration file.", logMessage),
+			"filePath", configPath,
+		)
+
+		// Read the JSON file where the configuration is expected to be at.
+		var data []byte
+		if data, err = ioutil.ReadFile(configPath); err != nil {
+			return nil, err
+		}
+
+		// Place the data in the envValue variable.
+		envValue = string(data)
+	} else {
+
+		// Log that the environment variable is present.
+		logger.Infow(fmt.Sprintf("%s environment variable configuration present.", logMessage))
+	}
+
+	return json.RawMessage(envValue), nil
 }

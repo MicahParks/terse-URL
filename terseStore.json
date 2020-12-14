@@ -1,4 +1,4 @@
 {
   "type": "bbolt",
-  "filePath": "terse.bbolt"
+  "bboltPath": "terse.bbolt"
 }

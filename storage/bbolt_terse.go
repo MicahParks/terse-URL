@@ -12,16 +12,16 @@ import (
 )
 
 type BboltTerse struct {
-	bbolt       *bbolt.DB
+	db          *bbolt.DB
 	createCtx   ctxCreator
-	group       ctxerrgroup.Group
+	group       *ctxerrgroup.Group
 	terseBucket []byte
 	visitsStore VisitsStore
 }
 
-func NewBboltTerse(bolt *bbolt.DB, createCtx ctxCreator, group ctxerrgroup.Group, terseBucket []byte, visitsStore VisitsStore) (terseStore TerseStore) {
+func NewBboltTerse(db *bbolt.DB, createCtx ctxCreator, group *ctxerrgroup.Group, terseBucket []byte, visitsStore VisitsStore) (terseStore TerseStore) {
 	return &BboltTerse{
-		bbolt:       bolt,
+		db:          db,
 		createCtx:   createCtx,
 		group:       group,
 		terseBucket: terseBucket,
@@ -50,13 +50,13 @@ func (b *BboltTerse) InsertTerse(_ context.Context, terse *models.Terse) (err er
 }
 
 func (b *BboltTerse) Close(_ context.Context) (err error) {
-	return b.bbolt.Close()
+	return b.db.Close()
 }
 
 func (b *BboltTerse) DeleteTerse(_ context.Context, shortened string) (err error) {
 
 	// Open the bbolt database for writing, batch if possible.
-	if err = b.bbolt.Batch(func(tx *bbolt.Tx) error {
+	if err = b.db.Batch(func(tx *bbolt.Tx) error {
 
 		// Delete the Terse from the bucket.
 		if err = tx.Bucket(b.terseBucket).Delete([]byte(shortened)); err != nil {
@@ -99,7 +99,7 @@ func (b *BboltTerse) ExportAll(ctx context.Context) (export map[string]models.Ex
 	export = make(map[string]models.Export)
 
 	// Open the bbolt database for reading.
-	if err = b.bbolt.View(func(tx *bbolt.Tx) error {
+	if err = b.db.View(func(tx *bbolt.Tx) error {
 
 		// For every key in the bucket, add it to the export.
 		if err = tx.Bucket(b.terseBucket).ForEach(func(shortened, data []byte) error {
@@ -201,7 +201,7 @@ func (b *BboltTerse) getTerse(shortened string) (terse *models.Terse, err error)
 func (b *BboltTerse) getTerseData(shortened string) (data []byte, err error) {
 
 	// Open the bbolt database for reading.
-	if err = b.bbolt.View(func(tx *bbolt.Tx) error {
+	if err = b.db.View(func(tx *bbolt.Tx) error {
 
 		// Get the Terse from the bucket.
 		data = tx.Bucket(b.terseBucket).Get([]byte(shortened))
@@ -236,7 +236,7 @@ func (b *BboltTerse) writeTerse(terse *models.Terse) (err error) {
 	}
 
 	// Open the bbolt database for writing, batch if possible.
-	if err = b.bbolt.Batch(func(tx *bbolt.Tx) error {
+	if err = b.db.Batch(func(tx *bbolt.Tx) error {
 
 		// Write the Terse to the bucket.
 		if err = tx.Bucket(b.terseBucket).Put([]byte(*terse.ShortenedURL), value); err != nil {
