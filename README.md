@@ -29,16 +29,20 @@ TODO
 - [ ] Delete expired Terse.
 - [ ] Implement `SHORTID_PARANOID`.
 - [ ] Implement `/api/import` endpoints.
-- [ ] Visit counts.
 - [ ] Implement social media link previews.
+- [ ] Implement fingerprinting with fingerprintjs, but remove HTML canvas extraction. Embed minified in single HTML
+  template.
 - [ ] Implement bbolt storage backend.
 - [ ] Implement Redis storage backend?
+- [ ] Implement pluggable store interface implementations.
+- [ ] Flag strategy.
+- [ ] Visit counts.
 - [ ] Reimplement Mongo storage.
 - [ ] Write tests.
 - [ ] Write a good README.md.
 - [ ] Move frontend to another repo.
-- [ ] Implement JWT + JWKs authentication?
-- [ ] Configure storage backends via config files?
+- [ ] Implement JWT + JWKS authentication?
+- [x] Configure storage backends via config files?
 - [x] Change user created warnings to info.
 - [x] Take away auth.
 - [x] Move things to `/api`.

@@ -12,8 +12,8 @@ import (
 	"github.com/MicahParks/terse-URL/storage"
 )
 
-// HandleExport creates and /api/export/{shortened} endpoint handler via a closure. It can perform exports of a single
-// shortened URL's Terse and Visits data.
+// HandleExportOne creates and /api/export/{shortened} endpoint handler via a closure. It can perform exports of a
+// single shortened URL's Terse and Visits data.
 func HandleExportOne(logger *zap.SugaredLogger, terseStore storage.TerseStore) api.TerseExportOneHandlerFunc {
 	return func(params api.TerseExportOneParams) middleware.Responder {
 

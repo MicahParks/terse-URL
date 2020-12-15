@@ -139,9 +139,8 @@ func (b *BboltTerse) InsertTerse(_ context.Context, terse *models.Terse) (err er
 	if _, err = b.getTerseData(*terse.ShortenedURL); !errors.Is(err, ErrShortenedNotFound) {
 		if err != nil {
 			return err
-		} else {
-			return ErrShortenedExists
 		}
+		return ErrShortenedExists
 	}
 	err = nil
 
