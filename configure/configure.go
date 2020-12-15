@@ -25,6 +25,7 @@ const (
 
 // Configuration is the Go structure that contains all needed configurations gathered on startup.
 type Configuration struct {
+	ErrChan         chan error
 	Logger          *zap.SugaredLogger
 	InvalidPaths    []string
 	ShortID         *shortid.Shortid
@@ -58,10 +59,10 @@ func Configure() (config Configuration, err error) {
 	defaultTimeout = rawConfig.DefaultTimeout
 
 	// Create a channel to report errors asynchronously.
-	errChan := make(chan error)
+	config.ErrChan = make(chan error)
 
 	// Log any errors printed asynchronously.
-	go handleAsyncError(errChan, logger)
+	go handleAsyncError(config.ErrChan, logger)
 
 	// Create a ctxerrgroup for misc asynchronous items needed for requests.
 	group := ctxerrgroup.New(rawConfig.WorkerCount, func(_ ctxerrgroup.Group, err error) {
@@ -97,7 +98,7 @@ func Configure() (config Configuration, err error) {
 
 	// Create the TerseStore.
 	var terseStoreType string
-	if config.TerseStore, terseStoreType, err = storage.NewTerseStore(terseConfig, DefaultCtx, errChan, &group, config.VisitsStore); err != nil {
+	if config.TerseStore, terseStoreType, err = storage.NewTerseStore(terseConfig, DefaultCtx, config.ErrChan, &group, config.VisitsStore); err != nil {
 		logger.Fatalw("Failed to create TerseStore.",
 			"type", terseStoreType,
 			"error", err.Error(),

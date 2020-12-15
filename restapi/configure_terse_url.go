@@ -55,6 +55,9 @@ func configureAPI(api *operations.TerseURLAPI) http.Handler {
 
 	api.ServerShutdown = func() {
 
+		// Close the error channel to clean up the async error logging goroutine.
+		close(config.ErrChan)
+
 		// Create a context to close the Terse and Visits stores.
 		ctx, cancel := configure.DefaultCtx()
 		defer cancel()
