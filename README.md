@@ -6,4 +6,5 @@
 - [ ] Zap logger.
 - [ ] Swagger spec.
 - [ ] Fuzzy matching.
-- [ ] Highlight results in `app.js` 
+- [ ] Highlight results in `app.js`.
+- [ ] Line 79 slice out of bounds lol.
