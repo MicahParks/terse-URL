@@ -2,7 +2,7 @@ swagger: "2.0"
 
 basePath: "/"
 
-host: "localhost:30000" # TODO Change if you found this off the internet and want to run it yourself.
+host: "localhost:30000" # TODO Change this.
 
 info:
   description: "A ProlificLabs take-home challenge. https://github.com/ProlificLabs/shakesearch."
@@ -49,7 +49,7 @@ paths:
         200:
           description: "The fuzzy search was a success."
           headers:
-            Location:
+            matches:
               description: "A sorted array of strings that are matches."
               type: "array"
               items:
