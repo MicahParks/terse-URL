@@ -14,19 +14,22 @@ type ShakeSearcher struct {
 }
 
 // Load loads the give file as a slice of string with trimmed space.
-func (s *ShakeSearcher) Load(filePath string) (err error) {
+func NewShakeSearcher(filePath string) (shakeSearcher *ShakeSearcher, err error) {
+
+	// Create the ShakeSearcher.
+	shakeSearcher = &ShakeSearcher{}
 
 	// Read the file into memory.
 	var fileData []byte
 	if fileData, err = ioutil.ReadFile(filePath); err != nil {
-		return err
+		return nil, err
 	}
 
 	// Split the file data by newlines.
 	split := strings.Split(string(fileData), "\n")
 
 	// Create a slice to store the file data.
-	s.uniqueLines = make([]string, 0)
+	shakeSearcher.uniqueLines = make([]string, 0)
 
 	// Create a map to behave as a set of strings.
 	lineSet := make(map[string]bool)
@@ -39,16 +42,16 @@ func (s *ShakeSearcher) Load(filePath string) (err error) {
 	}
 
 	// Allocate the required memory for the return slice so it's faster to add all the strings.
-	s.uniqueLines = make([]string, len(lineSet))
+	shakeSearcher.uniqueLines = make([]string, len(lineSet))
 
 	// Add every unique line to the list of complete works.
 	index := 0
 	for line := range lineSet {
-		s.uniqueLines[index] = line
+		shakeSearcher.uniqueLines[index] = line
 		index++
 	}
 
-	return nil
+	return shakeSearcher, nil
 }
 
 func (s *ShakeSearcher) Search(query string) (results []string) {

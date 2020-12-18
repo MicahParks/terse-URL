@@ -1,10 +1,11 @@
 ## TODO
 - [ ] Dockerfile + docker-compose.
 - [ ] Caddyfile + HTTPS + deploy.
-- [ ] Configure txt file location.
-- [ ] Handle errors.
-- [ ] Zap logger.
-- [ ] Swagger spec.
-- [ ] Fuzzy matching.
+- [x] Configure txt file location.
+- [x] Handle errors.
+- [x] Zap logger.
+- [x] Swagger spec.
+- [x] Fuzzy matching.
 - [ ] Highlight results in `app.js`.
-- [ ] Line 79 slice out of bounds lol.
+- [x] Line 79 slice out of bounds lol.
+- [x] Rate limiter.

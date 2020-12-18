@@ -14,6 +14,7 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 
+	"github.com/MicahParks/shakesearch/configure"
 	"github.com/MicahParks/shakesearch/endpoints"
 	"github.com/MicahParks/shakesearch/restapi/operations"
 )
@@ -28,7 +29,14 @@ func configureAPI(api *operations.ShakesearchAPI) http.Handler {
 	// configure the api here
 	api.ServeError = errors.ServeError
 
-	api.Logger = log.Printf // TODO
+	// Configure the service.
+	logger, shakeSearch, err := configure.Configure()
+	if err != nil {
+		log.Fatalf("Failed to configure the service.\nError: %s", err.Error())
+	}
+
+	// Set the generated code logger to a named zap logger.
+	api.Logger = logger.Named("Generated code").Infof
 
 	api.UseRedoc()
 
@@ -36,8 +44,9 @@ func configureAPI(api *operations.ShakesearchAPI) http.Handler {
 
 	api.JSONProducer = runtime.JSONProducer()
 
+	// Set teh endpoint handlers. Give those that need logging a named logger whose name derives from their endpoint.
 	api.SystemAliveHandler = endpoints.HandleAlive()
-	api.PublicShakeSearchHandler = endpoints.HandleSearch()
+	api.PublicShakeSearchHandler = endpoints.HandleSearch(logger.Named("/search"), shakeSearch)
 
 	api.PreServerShutdown = func() {}
 
