@@ -1,5 +1,7 @@
 # shakesearch
 
+[![Go Report Card](https://goreportcard.com/badge/github.com/MicahParks/shakesearch)](https://goreportcard.com/report/github.com/MicahParks/shakesearch) 
+
 ## Test it yourself
 
 This is deployed right now. Head over to [https://shakesearch.micahparks.com](https://shakesearch.micahparks.com) or use
