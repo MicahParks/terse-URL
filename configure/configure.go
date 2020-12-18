@@ -30,8 +30,6 @@ func Configure() (logger *zap.SugaredLogger, shakeSearcher *shakesearch.ShakeSea
 	logger.Info("Logger created. Starting configuration.")
 
 	// Get the complete works of Shakespeare's file path from an environment variable.
-	//
-	// TODO Document this environment variable.
 	worksPath := os.Getenv(worksPathEnvVar)
 	if worksPath == "" {
 		worksPath = defaultWorksPath
