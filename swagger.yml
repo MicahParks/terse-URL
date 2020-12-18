@@ -5,11 +5,11 @@ basePath: "/"
 host: "localhost:30000" # TODO Change if you found this off the internet and want to run it yourself.
 
 info:
-  description: "The Terse URL shortener."
+  description: "A ProlificLabs take-home challenge. https://github.com/ProlificLabs/shakesearch."
   license:
     name: "MIT"
     url: "https://opensource.org/licenses/MIT"
-  title: "Terse URL"
+  title: "shakesearch"
   version: "0.0.1"
 
 tags:
@@ -36,12 +36,13 @@ paths:
   /search:
     get:
       summary: "Fuzzy search for a string of text in Shakespeare's works."
-      description: "The string will be used in conjunction with this project to perform a fuzzy search on Shakespeare's'
-       " # TODO Add project name.
+      description: "The string will be used in conjunction with [this project](https://github.com/sahilm/fuzzy) to
+      perform a fuzzy search on Shakespeare's"
       operationId: "shakeSearch"
       parameters:
-        - in: "query"
-          name: "q" # TODO Change?
+        - description: "The search query."
+          in: "query"
+          name: "q"
           required: true
           type: "string"
       responses:
@@ -49,7 +50,7 @@ paths:
           description: "The fuzzy search was a success."
           headers:
             Location:
-              description: "An array of strings that contain a match. Sorted by their score."
+              description: "A sorted array of strings that are matches."
               type: "array"
               items:
                 type: "string"
