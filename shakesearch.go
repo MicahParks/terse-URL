@@ -13,7 +13,7 @@ import (
 // to search. The format is a map of all lines and a slice of the line numbers they belong to.
 type ShakeSearcher map[string]*models.Result
 
-// Load loads the give file as a slice of string with trimmed space.
+// NewShakeSearcher loads the give file as a slice of string with trimmed space.
 func NewShakeSearcher(filePath string) (shakeSearcher ShakeSearcher, err error) {
 
 	// Create the ShakeSearcher.
