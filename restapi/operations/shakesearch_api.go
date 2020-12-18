@@ -266,7 +266,7 @@ func (o *ShakesearchAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/search"] = public.NewShakeSearch(o.context, o.PublicShakeSearchHandler)
+	o.handlers["GET"]["/api/search"] = public.NewShakeSearch(o.context, o.PublicShakeSearchHandler)
 }
 
 // Serve creates a http handler to serve the API over HTTP

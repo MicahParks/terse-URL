@@ -19,7 +19,7 @@ const (
 )
 
 // Configure gathers all required information and creates the required Go structs to run the service.
-func Configure() (logger *zap.SugaredLogger, shakeSearcher *shakesearch.ShakeSearcher, err error) {
+func Configure() (logger *zap.SugaredLogger, shakeSearcher shakesearch.ShakeSearcher, err error) {
 
 	// Create a logger.
 	var zapLogger *zap.Logger

@@ -9,7 +9,6 @@ import (
 	"net/http"
 
 	"github.com/go-openapi/runtime"
-	"github.com/go-openapi/swag"
 
 	"github.com/MicahParks/shakesearch/models"
 )
@@ -17,15 +16,16 @@ import (
 // ShakeSearchOKCode is the HTTP code returned for type ShakeSearchOK
 const ShakeSearchOKCode int = 200
 
-/*ShakeSearchOK The fuzzy search was a success.
+/*ShakeSearchOK A sorted array of results that are lines that match the given query.
 
 swagger:response shakeSearchOK
 */
 type ShakeSearchOK struct {
-	/*A sorted array of strings that are matches.
 
-	 */
-	Matches []string `json:"matches"`
+	/*
+	  In: Body
+	*/
+	Payload []*models.Result `json:"body,omitempty"`
 }
 
 // NewShakeSearchOK creates ShakeSearchOK with default headers values
@@ -34,40 +34,30 @@ func NewShakeSearchOK() *ShakeSearchOK {
 	return &ShakeSearchOK{}
 }
 
-// WithMatches adds the matches to the shake search o k response
-func (o *ShakeSearchOK) WithMatches(matches []string) *ShakeSearchOK {
-	o.Matches = matches
+// WithPayload adds the payload to the shake search o k response
+func (o *ShakeSearchOK) WithPayload(payload []*models.Result) *ShakeSearchOK {
+	o.Payload = payload
 	return o
 }
 
-// SetMatches sets the matches to the shake search o k response
-func (o *ShakeSearchOK) SetMatches(matches []string) {
-	o.Matches = matches
+// SetPayload sets the payload to the shake search o k response
+func (o *ShakeSearchOK) SetPayload(payload []*models.Result) {
+	o.Payload = payload
 }
 
 // WriteResponse to the client
 func (o *ShakeSearchOK) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
 
-	// response header matches
-
-	var matchesIR []string
-	for _, matchesI := range o.Matches {
-		matchesIS := matchesI
-		if matchesIS != "" {
-			matchesIR = append(matchesIR, matchesIS)
-		}
-	}
-	matches := swag.JoinByFormat(matchesIR, "")
-	if len(matches) > 0 {
-		hv := matches[0]
-		if hv != "" {
-			rw.Header().Set("matches", hv)
-		}
-	}
-
-	rw.Header().Del(runtime.HeaderContentType) //Remove Content-Type on empty responses
-
 	rw.WriteHeader(200)
+	payload := o.Payload
+	if payload == nil {
+		// return empty array
+		payload = make([]*models.Result, 0, 50)
+	}
+
+	if err := producer.Produce(rw, payload); err != nil {
+		panic(err) // let the recovery middleware deal with this
+	}
 }
 
 /*ShakeSearchDefault Unexpected error.

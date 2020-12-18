@@ -14,6 +14,8 @@ require (
 	github.com/kylelemons/godebug v1.1.0 // indirect
 	github.com/patrickmn/go-cache v2.1.0+incompatible // indirect
 	github.com/sahilm/fuzzy v0.1.0
+	github.com/tidwall/pretty v1.0.2 // indirect
+	go.uber.org/multierr v1.6.0 // indirect
 	go.uber.org/zap v1.16.0
 	golang.org/x/net v0.0.0-20201216054612-986b41b23924
 	golang.org/x/time v0.0.0-20201208040808-7e3f01d25324 // indirect

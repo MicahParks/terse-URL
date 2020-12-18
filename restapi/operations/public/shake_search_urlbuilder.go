@@ -9,11 +9,14 @@ import (
 	"errors"
 	"net/url"
 	golangswaggerpaths "path"
+
+	"github.com/go-openapi/swag"
 )
 
 // ShakeSearchURL generates an URL for the shake search operation
 type ShakeSearchURL struct {
-	Q string
+	MaxResults *int64
+	Q          string
 
 	_basePath string
 	// avoid unkeyed usage
@@ -39,7 +42,7 @@ func (o *ShakeSearchURL) SetBasePath(bp string) {
 func (o *ShakeSearchURL) Build() (*url.URL, error) {
 	var _result url.URL
 
-	var _path = "/search"
+	var _path = "/api/search"
 
 	_basePath := o._basePath
 	if _basePath == "" {
@@ -48,6 +51,14 @@ func (o *ShakeSearchURL) Build() (*url.URL, error) {
 	_result.Path = golangswaggerpaths.Join(_basePath, _path)
 
 	qs := make(url.Values)
+
+	var maxResultsQ string
+	if o.MaxResults != nil {
+		maxResultsQ = swag.FormatInt64(*o.MaxResults)
+	}
+	if maxResultsQ != "" {
+		qs.Set("maxResults", maxResultsQ)
+	}
 
 	qQ := o.Q
 	if qQ != "" {

@@ -5,7 +5,7 @@
 //  A ProlificLabs take-home challenge. https://github.com/ProlificLabs/shakesearch.
 //  Schemes:
 //    http
-//  Host: localhost:30000
+//  Host: shakesearch.micahparks.com
 //  BasePath: /
 //  Version: 0.0.1
 //  License: MIT https://opensource.org/licenses/MIT

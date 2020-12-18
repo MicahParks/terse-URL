@@ -29,7 +29,7 @@ func NewShakeSearch(ctx *middleware.Context, handler ShakeSearchHandler) *ShakeS
 	return &ShakeSearch{Context: ctx, Handler: handler}
 }
 
-/*ShakeSearch swagger:route GET /search public shakeSearch
+/*ShakeSearch swagger:route GET /api/search public shakeSearch
 
 Fuzzy search for a string of text in Shakespeare's works.
 

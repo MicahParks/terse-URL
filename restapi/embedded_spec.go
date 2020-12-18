@@ -31,7 +31,7 @@ func init() {
     },
     "version": "0.0.1"
   },
-  "host": "localhost:30000",
+  "host": "shakesearch.micahparks.com",
   "basePath": "/",
   "paths": {
     "/api/alive": {
@@ -49,7 +49,7 @@ func init() {
         }
       }
     },
-    "/search": {
+    "/api/search": {
       "get": {
         "description": "The string will be used in conjunction with [this project](https://github.com/sahilm/fuzzy) to perform a fuzzy search on Shakespeare's",
         "tags": [
@@ -64,18 +64,22 @@ func init() {
             "name": "q",
             "in": "query",
             "required": true
+          },
+          {
+            "type": "integer",
+            "default": 20,
+            "description": "The maximum number of results to return.",
+            "name": "maxResults",
+            "in": "query"
           }
         ],
         "responses": {
           "200": {
-            "description": "The fuzzy search was a success.",
-            "headers": {
-              "matches": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                },
-                "description": "A sorted array of strings that are matches."
+            "description": "A sorted array of results that are lines that match the given query.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Result"
               }
             }
           },
@@ -102,6 +106,28 @@ func init() {
         },
         "message": {
           "type": "string"
+        }
+      }
+    },
+    "Result": {
+      "properties": {
+        "line": {
+          "description": "The line with a match to the search query.",
+          "type": "string"
+        },
+        "lineNumbers": {
+          "description": "The line numbers in the text file this line is found on.",
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "matchedIndexes": {
+          "description": "The indexes in the line that matched the query.",
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
         }
       }
     }
@@ -131,7 +157,7 @@ func init() {
     },
     "version": "0.0.1"
   },
-  "host": "localhost:30000",
+  "host": "shakesearch.micahparks.com",
   "basePath": "/",
   "paths": {
     "/api/alive": {
@@ -149,7 +175,7 @@ func init() {
         }
       }
     },
-    "/search": {
+    "/api/search": {
       "get": {
         "description": "The string will be used in conjunction with [this project](https://github.com/sahilm/fuzzy) to perform a fuzzy search on Shakespeare's",
         "tags": [
@@ -164,18 +190,22 @@ func init() {
             "name": "q",
             "in": "query",
             "required": true
+          },
+          {
+            "type": "integer",
+            "default": 20,
+            "description": "The maximum number of results to return.",
+            "name": "maxResults",
+            "in": "query"
           }
         ],
         "responses": {
           "200": {
-            "description": "The fuzzy search was a success.",
-            "headers": {
-              "matches": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                },
-                "description": "A sorted array of strings that are matches."
+            "description": "A sorted array of results that are lines that match the given query.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Result"
               }
             }
           },
@@ -202,6 +232,28 @@ func init() {
         },
         "message": {
           "type": "string"
+        }
+      }
+    },
+    "Result": {
+      "properties": {
+        "line": {
+          "description": "The line with a match to the search query.",
+          "type": "string"
+        },
+        "lineNumbers": {
+          "description": "The line numbers in the text file this line is found on.",
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "matchedIndexes": {
+          "description": "The indexes in the line that matched the query.",
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
         }
       }
     }
