@@ -1,0 +1,76 @@
+swagger: "2.0"
+
+basePath: "/"
+
+host: "localhost:30000" # TODO Change if you found this off the internet and want to run it yourself.
+
+info:
+  description: "The Terse URL shortener."
+  license:
+    name: "MIT"
+    url: "https://opensource.org/licenses/MIT"
+  title: "Terse URL"
+  version: "0.0.1"
+
+tags:
+  - description: "Endpoints that are publicly accessible."
+    name: "public"
+  - description: "Endpoints required by the system that are not public facing."
+    name: "system"
+
+schemes:
+  - "http"
+
+paths:
+  /api/alive:
+    get:
+      summary: "Used by Caddy or other reverse proxy to determine if the service is alive."
+      description: "Any non-200 response means the service is not alive."
+      operationId: "alive"
+      responses:
+        200:
+          description: "Service is alive."
+      tags:
+        - "system"
+
+  /search:
+    get:
+      summary: "Fuzzy search for a string of text in Shakespeare's works."
+      description: "The string will be used in conjunction with this project to perform a fuzzy search on Shakespeare's'
+       " # TODO Add project name.
+      operationId: "shakeSearch"
+      parameters:
+        - in: "query"
+          name: "q" # TODO Change?
+          required: true
+          type: "string"
+      responses:
+        200:
+          description: "The fuzzy search was a success."
+          headers:
+            Location:
+              description: "An array of strings that contain a match. Sorted by their score."
+              type: "array"
+              items:
+                type: "string"
+        default:
+          description: "Unexpected error."
+          schema:
+            $ref: "#/definitions/Error"
+      tags:
+        - "public"
+
+
+definitions:
+
+  # Schema for error response body.
+  Error:
+    properties:
+      code:
+        type: "integer"
+      message:
+        type: "string"
+    required:
+      - "code"
+      - "message"
+    type: "object"

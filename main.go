@@ -9,6 +9,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 )
 
 func main() {
@@ -36,7 +37,7 @@ func main() {
 }
 
 type Searcher struct {
-	CompleteWorks string
+	CompleteWorks []string
 	SuffixArray   *suffixarray.Index
 }
 
@@ -63,12 +64,25 @@ func handleSearch(searcher Searcher) func(w http.ResponseWriter, r *http.Request
 }
 
 func (s *Searcher) Load(filename string) error {
-	dat, err := ioutil.ReadFile(filename)
+	fileData, err := ioutil.ReadFile(filename)
 	if err != nil {
 		return fmt.Errorf("Load: %w", err)
 	}
-	s.CompleteWorks = string(dat)
-	s.SuffixArray = suffixarray.New(dat)
+
+	// Split the file data by newlines.
+	split := strings.Split(string(fileData), "\n")
+
+	// Create a slice to store the file data in the same length as the number of elements in the slice, to save on
+	// memory.
+	s.CompleteWorks = make([]string, len(split))
+
+	// Trim the space for the line and add it to the resulting slice.
+	for index, line := range split {
+		s.CompleteWorks[index] = strings.TrimSpace(line)
+	}
+
+	s.CompleteWorks = string(fileData)
+	s.SuffixArray = suffixarray.New(fileData)
 	return nil
 }
 
