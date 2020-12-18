@@ -44,7 +44,7 @@ func configureAPI(api *operations.ShakesearchAPI) http.Handler {
 
 	api.JSONProducer = runtime.JSONProducer()
 
-	// Set teh endpoint handlers. Give those that need logging a named logger whose name derives from their endpoint.
+	// Set the endpoint handlers. Give those that need logging a named logger whose name derives from their endpoint.
 	api.SystemAliveHandler = endpoints.HandleAlive()
 	api.PublicShakeSearchHandler = endpoints.HandleSearch(logger.Named("/search"), shakeSearch)
 
