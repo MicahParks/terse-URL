@@ -1,0 +1,3 @@
+pubsub.micahparks.com {
+    reverse_proxy http://shakesearch:30000
+}

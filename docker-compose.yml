@@ -1,0 +1,21 @@
+version: "3"
+services:
+  caddy:
+    container_name: "caddy"
+    image: "caddy"
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - "./Caddyfile:/etc/caddy/Caddyfile"
+      - "caddy:/data"
+      - "caddyConfig:/config"
+  shakesearch:
+    build:
+      dockerfile: "Dockerfile"
+      context: "."
+    container_name: "shakesearch"
+    image: "micahparks/shakesearch"
+volumes:
+  caddy:
+  caddyConfig:

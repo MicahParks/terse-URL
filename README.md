@@ -1,5 +1,10 @@
 # shakesearch
 
+## How this works in deployment
+
+## Hey look at these features
+swagger spec
+
 ## Configuration
 
 Environment variable table:
@@ -9,6 +14,7 @@ Environment variable table:
 |`SHAKESPEARES_WORKS`|The full or relative file path to a text file containing the complete works of Shakespeare.|`completeworks.txt`|`/home/william/works.txt`|
 
 ## TODO
+- [ ] Frontend...
 - [ ] Dockerfile + docker-compose.
 - [ ] Caddyfile + HTTPS + deploy.
 - [ ] Highlight results in `app.js`.
