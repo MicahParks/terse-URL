@@ -17,10 +17,6 @@ import (
 // swagger:model TerseOptionalShortened
 type TerseOptionalShortened struct {
 
-	// delete at
-	// Format: date-time
-	DeleteAt strfmt.DateTime `json:"deleteAt,omitempty"`
-
 	// media preview
 	MediaPreview *MediaPreview `json:"mediaPreview,omitempty"`
 
@@ -36,10 +32,6 @@ type TerseOptionalShortened struct {
 func (m *TerseOptionalShortened) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateDeleteAt(formats); err != nil {
-		res = append(res, err)
-	}
-
 	if err := m.validateMediaPreview(formats); err != nil {
 		res = append(res, err)
 	}
@@ -51,19 +43,6 @@ func (m *TerseOptionalShortened) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
-	return nil
-}
-
-func (m *TerseOptionalShortened) validateDeleteAt(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.DeleteAt) { // not required
-		return nil
-	}
-
-	if err := validate.FormatOf("deleteAt", "body", "date-time", m.DeleteAt.String(), formats); err != nil {
-		return err
-	}
-
 	return nil
 }
 

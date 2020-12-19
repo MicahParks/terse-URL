@@ -33,7 +33,7 @@ func NewTerseWrite(ctx *middleware.Context, handler TerseWriteHandler) *TerseWri
 
 Perform a write operation on Terse data for a shortened URL.
 
-"insert" will fail if the shortened URL already exists. "update" will fail if the shortened URL does not already exist. "upsert" will only fail if there is a failure interacting with the underlying storage. If no shortened URL is included in the given Terse data, one ill be generated randomly and returned in the response.
+"insert" will fail if the shortened URL already exists. "update" will fail if the shortened URL does not already exist. "upsert" will only fail if there is a failure interacting with the underlying storage. If no shortened URL is included in the given Terse data, one will be generated randomly and returned in the response.
 
 */
 type TerseWrite struct {

@@ -30,7 +30,6 @@ type TerseStore interface {
 
 	// ReadTerse retrieves all non-Visit Terse data give its shortened URL. A nil visit may be passed in and the visit
 	// should not be recorded. The error must be storage.ErrShortenedNotFound if the shortened URL is not found.
-	// TODO Delete Terse if expired
 	ReadTerse(ctx context.Context, shortened string, visit *models.Visit) (terse *models.Terse, err error)
 
 	// UpdateTerse assumes the Terse already exists. It will override all of its values. The error must be

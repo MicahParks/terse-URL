@@ -13,7 +13,7 @@ RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -ldflags "-s -w" -o 
 
 
 # The actual image being produced.
-FROM alpine
+FROM scratch
 
 # Set some defaults for the host to bind to and the port to make it easier for people.
 ENV HOST 0.0.0.0

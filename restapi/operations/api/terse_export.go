@@ -31,7 +31,7 @@ func NewTerseExport(ctx *middleware.Context, handler TerseExportHandler) *TerseE
 
 /*TerseExport swagger:route GET /api/export api terseExport
 
-Export all Terse and Visit data from the backend.
+Export all Terse and Visits data from the backend.
 
 Depending on the underlying storage and amount of data, this may take a while.
 

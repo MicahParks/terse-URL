@@ -51,7 +51,7 @@ func init() {
     },
     "/api/delete/{shortened}": {
       "delete": {
-        "description": "If only Terse data is deleted, the API user is responsible for cleaning up its Visit data before adding new Terse data under the same shortened URL.",
+        "description": "If only Terse data is deleted, the API user is responsible for cleaning up its Visits data before adding new Terse data under the same shortened URL.",
         "consumes": [
           "application/json"
         ],
@@ -61,11 +61,11 @@ func init() {
         "tags": [
           "api"
         ],
-        "summary": "Delete Terse and or Visit data for the given shortened URL.",
+        "summary": "Delete Terse and or Visits data for the given shortened URL.",
         "operationId": "terseDelete",
         "parameters": [
           {
-            "description": "Indicate if Terse and or Visit data should be deleted.",
+            "description": "Indicate if Terse and or Visits data should be deleted.",
             "name": "delete",
             "in": "body",
             "required": true,
@@ -113,13 +113,13 @@ func init() {
         "tags": [
           "api"
         ],
-        "summary": "Export all Terse and Visit data from the backend.",
+        "summary": "Export all Terse and Visits data from the backend.",
         "operationId": "terseExport",
         "responses": {
           "200": {
             "description": "The export was successfully retrieved.",
             "schema": {
-              "description": "All of the Terse and Visit data from the backend.",
+              "description": "All of the Terse and Visits data from the backend.",
               "type": "object",
               "additionalProperties": {
                 "$ref": "#/definitions/Export"
@@ -143,7 +143,7 @@ func init() {
         "tags": [
           "api"
         ],
-        "summary": "Export Terse and Visit data for a single shortened URL.",
+        "summary": "Export Terse and Visits data for a single shortened URL.",
         "operationId": "terseExportOne",
         "parameters": [
           {
@@ -213,12 +213,12 @@ func init() {
         "tags": [
           "api"
         ],
-        "summary": "Get the Visit data for a single shortened URL.",
+        "summary": "Get the Visits data for a single shortened URL.",
         "operationId": "terseVisits",
         "parameters": [
           {
             "type": "string",
-            "description": "The shortened URL to get the Visit data for.",
+            "description": "The shortened URL to get the s data for.",
             "name": "shortened",
             "in": "path",
             "required": true
@@ -226,7 +226,7 @@ func init() {
         ],
         "responses": {
           "200": {
-            "description": "The Visit data was successfully retrieved.",
+            "description": "The Visits data was successfully retrieved.",
             "schema": {
               "description": "The visit data for a single shortened URL.",
               "type": "array",
@@ -246,7 +246,7 @@ func init() {
     },
     "/api/write/{operation}": {
       "post": {
-        "description": "\"insert\" will fail if the shortened URL already exists. \"update\" will fail if the shortened URL does not already exist. \"upsert\" will only fail if there is a failure interacting with the underlying storage. If no shortened URL is included in the given Terse data, one ill be generated randomly and returned in the response.",
+        "description": "\"insert\" will fail if the shortened URL already exists. \"update\" will fail if the shortened URL does not already exist. \"upsert\" will only fail if there is a failure interacting with the underlying storage. If no shortened URL is included in the given Terse data, one will be generated randomly and returned in the response.",
         "consumes": [
           "application/json"
         ],
@@ -414,10 +414,6 @@ func init() {
         "shortenedURL"
       ],
       "properties": {
-        "deleteAt": {
-          "type": "string",
-          "format": "date-time"
-        },
         "mediaPreview": {
           "$ref": "#/definitions/MediaPreview"
         },
@@ -434,10 +430,6 @@ func init() {
         "originalURL"
       ],
       "properties": {
-        "deleteAt": {
-          "type": "string",
-          "format": "date-time"
-        },
         "mediaPreview": {
           "$ref": "#/definitions/MediaPreview"
         },
@@ -557,7 +549,7 @@ func init() {
     },
     "/api/delete/{shortened}": {
       "delete": {
-        "description": "If only Terse data is deleted, the API user is responsible for cleaning up its Visit data before adding new Terse data under the same shortened URL.",
+        "description": "If only Terse data is deleted, the API user is responsible for cleaning up its Visits data before adding new Terse data under the same shortened URL.",
         "consumes": [
           "application/json"
         ],
@@ -567,11 +559,11 @@ func init() {
         "tags": [
           "api"
         ],
-        "summary": "Delete Terse and or Visit data for the given shortened URL.",
+        "summary": "Delete Terse and or Visits data for the given shortened URL.",
         "operationId": "terseDelete",
         "parameters": [
           {
-            "description": "Indicate if Terse and or Visit data should be deleted.",
+            "description": "Indicate if Terse and or Visits data should be deleted.",
             "name": "delete",
             "in": "body",
             "required": true,
@@ -619,13 +611,13 @@ func init() {
         "tags": [
           "api"
         ],
-        "summary": "Export all Terse and Visit data from the backend.",
+        "summary": "Export all Terse and Visits data from the backend.",
         "operationId": "terseExport",
         "responses": {
           "200": {
             "description": "The export was successfully retrieved.",
             "schema": {
-              "description": "All of the Terse and Visit data from the backend.",
+              "description": "All of the Terse and Visits data from the backend.",
               "type": "object",
               "additionalProperties": {
                 "$ref": "#/definitions/Export"
@@ -649,7 +641,7 @@ func init() {
         "tags": [
           "api"
         ],
-        "summary": "Export Terse and Visit data for a single shortened URL.",
+        "summary": "Export Terse and Visits data for a single shortened URL.",
         "operationId": "terseExportOne",
         "parameters": [
           {
@@ -719,12 +711,12 @@ func init() {
         "tags": [
           "api"
         ],
-        "summary": "Get the Visit data for a single shortened URL.",
+        "summary": "Get the Visits data for a single shortened URL.",
         "operationId": "terseVisits",
         "parameters": [
           {
             "type": "string",
-            "description": "The shortened URL to get the Visit data for.",
+            "description": "The shortened URL to get the s data for.",
             "name": "shortened",
             "in": "path",
             "required": true
@@ -732,7 +724,7 @@ func init() {
         ],
         "responses": {
           "200": {
-            "description": "The Visit data was successfully retrieved.",
+            "description": "The Visits data was successfully retrieved.",
             "schema": {
               "description": "The visit data for a single shortened URL.",
               "type": "array",
@@ -752,7 +744,7 @@ func init() {
     },
     "/api/write/{operation}": {
       "post": {
-        "description": "\"insert\" will fail if the shortened URL already exists. \"update\" will fail if the shortened URL does not already exist. \"upsert\" will only fail if there is a failure interacting with the underlying storage. If no shortened URL is included in the given Terse data, one ill be generated randomly and returned in the response.",
+        "description": "\"insert\" will fail if the shortened URL already exists. \"update\" will fail if the shortened URL does not already exist. \"upsert\" will only fail if there is a failure interacting with the underlying storage. If no shortened URL is included in the given Terse data, one will be generated randomly and returned in the response.",
         "consumes": [
           "application/json"
         ],
@@ -920,10 +912,6 @@ func init() {
         "shortenedURL"
       ],
       "properties": {
-        "deleteAt": {
-          "type": "string",
-          "format": "date-time"
-        },
         "mediaPreview": {
           "$ref": "#/definitions/MediaPreview"
         },
@@ -940,10 +928,6 @@ func init() {
         "originalURL"
       ],
       "properties": {
-        "deleteAt": {
-          "type": "string",
-          "format": "date-time"
-        },
         "mediaPreview": {
           "$ref": "#/definitions/MediaPreview"
         },

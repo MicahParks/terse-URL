@@ -31,7 +31,7 @@ type TerseDeleteParams struct {
 	// HTTP Request Object
 	HTTPRequest *http.Request `json:"-"`
 
-	/*Indicate if Terse and or Visit data should be deleted.
+	/*Indicate if Terse and or Visits data should be deleted.
 	  Required: true
 	  In: body
 	*/

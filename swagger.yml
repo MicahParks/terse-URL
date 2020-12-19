@@ -301,9 +301,6 @@ definitions:
   # Schema for a Terse URL, which represented a shortened URL and original pair plus metadata.
   Terse:
     properties:
-      deleteAt:
-        format: "date-time"
-        type: "string"
       originalURL:
         type: "string"
       mediaPreview:
@@ -317,9 +314,6 @@ definitions:
   # Schema for a Terse URL, with an optional shortened URL.
   TerseOptionalShortened:
     properties:
-      deleteAt:
-        format: "date-time"
-        type: "string"
       originalURL:
         type: "string"
       mediaPreview:

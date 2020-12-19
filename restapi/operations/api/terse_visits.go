@@ -31,7 +31,7 @@ func NewTerseVisits(ctx *middleware.Context, handler TerseVisitsHandler) *TerseV
 
 /*TerseVisits swagger:route GET /api/visits/{shortened} api terseVisits
 
-Get the Visit data for a single shortened URL.
+Get the Visits data for a single shortened URL.
 
 */
 type TerseVisits struct {

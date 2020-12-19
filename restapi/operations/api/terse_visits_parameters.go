@@ -29,7 +29,7 @@ type TerseVisitsParams struct {
 	// HTTP Request Object
 	HTTPRequest *http.Request `json:"-"`
 
-	/*The shortened URL to get the Visit data for.
+	/*The shortened URL to get the s data for.
 	  Required: true
 	  In: path
 	*/

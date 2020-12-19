@@ -16,7 +16,7 @@ import (
 // TerseVisitsOKCode is the HTTP code returned for type TerseVisitsOK
 const TerseVisitsOKCode int = 200
 
-/*TerseVisitsOK The Visit data was successfully retrieved.
+/*TerseVisitsOK The Visits data was successfully retrieved.
 
 swagger:response terseVisitsOK
 */

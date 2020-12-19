@@ -22,7 +22,7 @@ swagger:response terseExportOK
 */
 type TerseExportOK struct {
 
-	/*All of the Terse and Visit data from the backend.
+	/*All of the Terse and Visits data from the backend.
 	  In: Body
 	*/
 	Payload map[string]models.Export `json:"body,omitempty"`

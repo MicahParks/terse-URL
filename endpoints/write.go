@@ -35,7 +35,6 @@ func HandleWrite(logger *zap.SugaredLogger, shortID *shortid.Shortid, terseStore
 
 		// Create the Terse data structure.
 		terse := &models.Terse{
-			DeleteAt:     params.Terse.DeleteAt, // TODO How to get zero value? Convert to time.Time(params.Terse.DeleteAt).IsZero()
 			MediaPreview: params.Terse.MediaPreview,
 			OriginalURL:  params.Terse.OriginalURL,
 			ShortenedURL: &params.Terse.ShortenedURL,
