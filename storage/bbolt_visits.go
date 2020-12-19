@@ -58,6 +58,41 @@ func (b *BboltVisits) AddVisit(_ context.Context, shortened string, visit *model
 	return nil
 }
 
+// All exports all visits data.
+func (b *BboltVisits) All(_ context.Context) (allVisits map[string][]*models.Visit, err error) {
+
+	// Create the return map.
+	allVisits = make(map[string][]*models.Visit)
+
+	// Open the bbolt database for reading.
+	if err = b.db.View(func(tx *bbolt.Tx) error {
+
+		// Iterate through all the keys.
+		if err = tx.Bucket(b.visitsBucket).ForEach(func(shortened, value []byte) error {
+
+			// Create the visits.
+			visits := make([]*models.Visit, 0)
+
+			// Unmarshal the visit.
+			if err = json.Unmarshal(value, &visits); err != nil {
+				return err
+			}
+
+			// Assign the visits to the map.
+			allVisits[string(shortened)] = visits
+
+			return nil
+		}); err != nil {
+			return err
+		}
+		return nil
+	}); err != nil {
+		return nil, err
+	}
+
+	return allVisits, nil
+}
+
 // Close closes the bbolt database file. This implementation has no network activity and ignores the given context.
 func (b *BboltVisits) Close(_ context.Context) (err error) {
 	return b.db.Close()

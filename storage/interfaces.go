@@ -51,10 +51,11 @@ type VisitsStore interface {
 	// CreateVisit adds the visit to the visits store.
 	AddVisit(ctx context.Context, shortened string, visit *models.Visit) (err error)
 
+	// All exports all visits data.
+	All(ctx context.Context) (allVisits map[string][]*models.Visit, err error)
+
 	// Close closes the connection to the underlying storage.
 	Close(ctx context.Context) (err error)
-
-	// TODO Add a ExportAll method that will export everything to a map? Better for TerseStore.Export performance.
 
 	// DeleteVisits deletes all visits to the shortened URL. No error should be given if the shortened URL is not found.
 	DeleteVisits(ctx context.Context, shortened string) (err error)

@@ -90,6 +90,18 @@ func (b *BboltTerse) Export(ctx context.Context, shortened string) (export model
 // given context.
 func (b *BboltTerse) ExportAll(ctx context.Context) (export map[string]models.Export, err error) {
 
+	// Create the map for all visits.
+	allVisits := make(map[string][]*models.Visit)
+
+	// Only get visits if there is a visits store.
+	if b.visitsStore != nil {
+
+		// Get all the visits.
+		if allVisits, err = b.visitsStore.All(ctx); err != nil {
+			return nil, err
+		}
+	}
+
 	// Create the export map.
 	export = make(map[string]models.Export)
 
@@ -105,12 +117,10 @@ func (b *BboltTerse) ExportAll(ctx context.Context) (export map[string]models.Ex
 				return err
 			}
 
-			// Get the Visits.
-			visits := make([]*models.Visit, 0)
+			// Get the visits.
+			var visits []*models.Visit // TODO Need to use make()?
 			if b.visitsStore != nil {
-				if visits, err = b.visitsStore.ReadVisits(ctx, string(shortened)); err != nil {
-					return err
-				}
+				visits = allVisits[string(shortened)]
 			}
 
 			// Add the Terse and Visits export to the export map.
@@ -118,11 +128,11 @@ func (b *BboltTerse) ExportAll(ctx context.Context) (export map[string]models.Ex
 				Terse:  terse,
 				Visits: visits,
 			}
+
 			return nil
 		}); err != nil {
 			return err
 		}
-
 		return nil
 	}); err != nil {
 		return nil, err

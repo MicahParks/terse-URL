@@ -41,6 +41,16 @@ func (m *MemVisits) AddVisit(_ context.Context, shortened string, visit *models.
 	return nil
 }
 
+// All exports all visits data.
+func (m *MemVisits) All(_ context.Context) (allVisits map[string][]*models.Visit, err error) {
+
+	// Lock the Visits map for async safe use.
+	m.mux.RLock()
+	defer m.mux.RUnlock()
+
+	return m.visits, nil
+}
+
 // Close lets the garbage collector take care of the old Visits data.
 func (m *MemVisits) Close(_ context.Context) (err error) {
 	m.visits = make(map[string][]*models.Visit)
