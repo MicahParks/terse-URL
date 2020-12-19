@@ -16,7 +16,7 @@ import (
 // TerseDeleteOKCode is the HTTP code returned for type TerseDeleteOK
 const TerseDeleteOKCode int = 200
 
-/*TerseDeleteOK The shortened URL's data was successfully deleted from the backend storage.
+/*TerseDeleteOK terse delete o k
 
 swagger:response terseDeleteOK
 */

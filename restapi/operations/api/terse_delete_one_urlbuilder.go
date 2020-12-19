@@ -9,17 +9,22 @@ import (
 	"errors"
 	"net/url"
 	golangswaggerpaths "path"
+	"strings"
 )
 
-// TerseDeleteURL generates an URL for the terse delete operation
-type TerseDeleteURL struct {
+// TerseDeleteOneURL generates an URL for the terse delete one operation
+type TerseDeleteOneURL struct {
+	Shortened string
+
 	_basePath string
+	// avoid unkeyed usage
+	_ struct{}
 }
 
 // WithBasePath sets the base path for this url builder, only required when it's different from the
 // base path specified in the swagger spec.
 // When the value of the base path is an empty string
-func (o *TerseDeleteURL) WithBasePath(bp string) *TerseDeleteURL {
+func (o *TerseDeleteOneURL) WithBasePath(bp string) *TerseDeleteOneURL {
 	o.SetBasePath(bp)
 	return o
 }
@@ -27,15 +32,22 @@ func (o *TerseDeleteURL) WithBasePath(bp string) *TerseDeleteURL {
 // SetBasePath sets the base path for this url builder, only required when it's different from the
 // base path specified in the swagger spec.
 // When the value of the base path is an empty string
-func (o *TerseDeleteURL) SetBasePath(bp string) {
+func (o *TerseDeleteOneURL) SetBasePath(bp string) {
 	o._basePath = bp
 }
 
 // Build a url path and query string
-func (o *TerseDeleteURL) Build() (*url.URL, error) {
+func (o *TerseDeleteOneURL) Build() (*url.URL, error) {
 	var _result url.URL
 
-	var _path = "/api/delete"
+	var _path = "/api/delete/{shortened}"
+
+	shortened := o.Shortened
+	if shortened != "" {
+		_path = strings.Replace(_path, "{shortened}", shortened, -1)
+	} else {
+		return nil, errors.New("shortened is required on TerseDeleteOneURL")
+	}
 
 	_basePath := o._basePath
 	if _basePath == "" {
@@ -47,7 +59,7 @@ func (o *TerseDeleteURL) Build() (*url.URL, error) {
 }
 
 // Must is a helper function to panic when the url builder returns an error
-func (o *TerseDeleteURL) Must(u *url.URL, err error) *url.URL {
+func (o *TerseDeleteOneURL) Must(u *url.URL, err error) *url.URL {
 	if err != nil {
 		panic(err)
 	}
@@ -58,17 +70,17 @@ func (o *TerseDeleteURL) Must(u *url.URL, err error) *url.URL {
 }
 
 // String returns the string representation of the path with query string
-func (o *TerseDeleteURL) String() string {
+func (o *TerseDeleteOneURL) String() string {
 	return o.Must(o.Build()).String()
 }
 
 // BuildFull builds a full url with scheme, host, path and query string
-func (o *TerseDeleteURL) BuildFull(scheme, host string) (*url.URL, error) {
+func (o *TerseDeleteOneURL) BuildFull(scheme, host string) (*url.URL, error) {
 	if scheme == "" {
-		return nil, errors.New("scheme is required for a full url on TerseDeleteURL")
+		return nil, errors.New("scheme is required for a full url on TerseDeleteOneURL")
 	}
 	if host == "" {
-		return nil, errors.New("host is required for a full url on TerseDeleteURL")
+		return nil, errors.New("host is required for a full url on TerseDeleteOneURL")
 	}
 
 	base, err := o.Build()
@@ -82,6 +94,6 @@ func (o *TerseDeleteURL) BuildFull(scheme, host string) (*url.URL, error) {
 }
 
 // StringFull returns the string representation of a complete url
-func (o *TerseDeleteURL) StringFull(scheme, host string) string {
+func (o *TerseDeleteOneURL) StringFull(scheme, host string) string {
 	return o.Must(o.BuildFull(scheme, host)).String()
 }

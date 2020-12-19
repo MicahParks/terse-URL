@@ -49,6 +49,39 @@ func init() {
         }
       }
     },
+    "/api/delete": {
+      "delete": {
+        "description": "All Terse and or Visits data will be deleted according to the deletion information specified.",
+        "consumes": [
+          "application/json"
+        ],
+        "tags": [
+          "api"
+        ],
+        "summary": "Delete all Terse and or Visits data.",
+        "operationId": "terseDelete",
+        "parameters": [
+          {
+            "description": "A JSON object containing the deletion information. If Terse or Visits data is marked for deletion, it will all be deleted.",
+            "name": "delete",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Delete"
+            }
+          }
+        ],
+        "responses": {
+          "200": {},
+          "default": {
+            "description": "Unexpected error.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
     "/api/delete/{shortened}": {
       "delete": {
         "description": "If only Terse data is deleted, the API user is responsible for cleaning up its Visits data before adding new Terse data under the same shortened URL.",
@@ -62,7 +95,7 @@ func init() {
           "api"
         ],
         "summary": "Delete Terse and or Visits data for the given shortened URL.",
-        "operationId": "terseDelete",
+        "operationId": "terseDeleteOne",
         "parameters": [
           {
             "description": "Indicate if Terse and or Visits data should be deleted.",
@@ -70,17 +103,7 @@ func init() {
             "in": "body",
             "required": true,
             "schema": {
-              "type": "object",
-              "properties": {
-                "terse": {
-                  "type": "boolean",
-                  "default": true
-                },
-                "visits": {
-                  "type": "boolean",
-                  "default": true
-                }
-              }
+              "$ref": "#/definitions/Delete"
             }
           },
           {
@@ -143,7 +166,7 @@ func init() {
         "tags": [
           "api"
         ],
-        "summary": "Export Terse and Visits data for a single shortened URL.",
+        "summary": "Export Terse and Visits data for the given shortened URL.",
         "operationId": "terseExportOne",
         "parameters": [
           {
@@ -170,6 +193,49 @@ func init() {
         }
       }
     },
+    "/api/import": {
+      "post": {
+        "description": "Any imported data will overwrite existing data. Unless deletion information is specified. In that case all Terse or Visits data can be deleted before importing the new data.",
+        "consumes": [
+          "application/json"
+        ],
+        "tags": [
+          "api"
+        ],
+        "summary": "Import existing Terse and Visits data for the given shortened URLs.",
+        "operationId": "terseImport",
+        "parameters": [
+          {
+            "description": "A JSON object containing the deletion information. If Terse or Visits data is marked for deletion, it will all be deleted. An object matching shortened URLs to their previously exported data is also required.",
+            "name": "importDelete",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "delete": {
+                  "$ref": "#/definitions/Delete"
+                },
+                "import": {
+                  "additionalProperties": {
+                    "$ref": "#/definitions/Export"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {},
+          "default": {
+            "description": "Unexpected error.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
     "/api/read/{shortened}": {
       "get": {
         "produces": [
@@ -178,7 +244,7 @@ func init() {
         "tags": [
           "api"
         ],
-        "summary": "Read the Terse data for a single shortened URL.",
+        "summary": "Read the Terse data for the given shortened URL.",
         "operationId": "terseRead",
         "parameters": [
           {
@@ -213,7 +279,7 @@ func init() {
         "tags": [
           "api"
         ],
-        "summary": "Get the Visits data for a single shortened URL.",
+        "summary": "Get the Visits data for the given shortened URL.",
         "operationId": "terseVisits",
         "parameters": [
           {
@@ -228,7 +294,7 @@ func init() {
           "200": {
             "description": "The Visits data was successfully retrieved.",
             "schema": {
-              "description": "The visit data for a single shortened URL.",
+              "description": "The visit data for the given shortened URL.",
               "type": "array",
               "items": {
                 "$ref": "#/definitions/Visit"
@@ -256,7 +322,7 @@ func init() {
         "tags": [
           "api"
         ],
-        "summary": "Perform a write operation on Terse data for a shortened URL.",
+        "summary": "Perform a write operation on Terse data for a given shortened URL.",
         "operationId": "terseWrite",
         "parameters": [
           {
@@ -332,6 +398,18 @@ func init() {
     }
   },
   "definitions": {
+    "Delete": {
+      "properties": {
+        "terse": {
+          "type": "boolean",
+          "default": true
+        },
+        "visits": {
+          "type": "boolean",
+          "default": true
+        }
+      }
+    },
     "Error": {
       "type": "object",
       "required": [
@@ -547,6 +625,39 @@ func init() {
         }
       }
     },
+    "/api/delete": {
+      "delete": {
+        "description": "All Terse and or Visits data will be deleted according to the deletion information specified.",
+        "consumes": [
+          "application/json"
+        ],
+        "tags": [
+          "api"
+        ],
+        "summary": "Delete all Terse and or Visits data.",
+        "operationId": "terseDelete",
+        "parameters": [
+          {
+            "description": "A JSON object containing the deletion information. If Terse or Visits data is marked for deletion, it will all be deleted.",
+            "name": "delete",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Delete"
+            }
+          }
+        ],
+        "responses": {
+          "200": {},
+          "default": {
+            "description": "Unexpected error.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
     "/api/delete/{shortened}": {
       "delete": {
         "description": "If only Terse data is deleted, the API user is responsible for cleaning up its Visits data before adding new Terse data under the same shortened URL.",
@@ -560,7 +671,7 @@ func init() {
           "api"
         ],
         "summary": "Delete Terse and or Visits data for the given shortened URL.",
-        "operationId": "terseDelete",
+        "operationId": "terseDeleteOne",
         "parameters": [
           {
             "description": "Indicate if Terse and or Visits data should be deleted.",
@@ -568,17 +679,7 @@ func init() {
             "in": "body",
             "required": true,
             "schema": {
-              "type": "object",
-              "properties": {
-                "terse": {
-                  "type": "boolean",
-                  "default": true
-                },
-                "visits": {
-                  "type": "boolean",
-                  "default": true
-                }
-              }
+              "$ref": "#/definitions/Delete"
             }
           },
           {
@@ -641,7 +742,7 @@ func init() {
         "tags": [
           "api"
         ],
-        "summary": "Export Terse and Visits data for a single shortened URL.",
+        "summary": "Export Terse and Visits data for the given shortened URL.",
         "operationId": "terseExportOne",
         "parameters": [
           {
@@ -668,6 +769,49 @@ func init() {
         }
       }
     },
+    "/api/import": {
+      "post": {
+        "description": "Any imported data will overwrite existing data. Unless deletion information is specified. In that case all Terse or Visits data can be deleted before importing the new data.",
+        "consumes": [
+          "application/json"
+        ],
+        "tags": [
+          "api"
+        ],
+        "summary": "Import existing Terse and Visits data for the given shortened URLs.",
+        "operationId": "terseImport",
+        "parameters": [
+          {
+            "description": "A JSON object containing the deletion information. If Terse or Visits data is marked for deletion, it will all be deleted. An object matching shortened URLs to their previously exported data is also required.",
+            "name": "importDelete",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "delete": {
+                  "$ref": "#/definitions/Delete"
+                },
+                "import": {
+                  "additionalProperties": {
+                    "$ref": "#/definitions/Export"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {},
+          "default": {
+            "description": "Unexpected error.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
     "/api/read/{shortened}": {
       "get": {
         "produces": [
@@ -676,7 +820,7 @@ func init() {
         "tags": [
           "api"
         ],
-        "summary": "Read the Terse data for a single shortened URL.",
+        "summary": "Read the Terse data for the given shortened URL.",
         "operationId": "terseRead",
         "parameters": [
           {
@@ -711,7 +855,7 @@ func init() {
         "tags": [
           "api"
         ],
-        "summary": "Get the Visits data for a single shortened URL.",
+        "summary": "Get the Visits data for the given shortened URL.",
         "operationId": "terseVisits",
         "parameters": [
           {
@@ -726,7 +870,7 @@ func init() {
           "200": {
             "description": "The Visits data was successfully retrieved.",
             "schema": {
-              "description": "The visit data for a single shortened URL.",
+              "description": "The visit data for the given shortened URL.",
               "type": "array",
               "items": {
                 "$ref": "#/definitions/Visit"
@@ -754,7 +898,7 @@ func init() {
         "tags": [
           "api"
         ],
-        "summary": "Perform a write operation on Terse data for a shortened URL.",
+        "summary": "Perform a write operation on Terse data for a given shortened URL.",
         "operationId": "terseWrite",
         "parameters": [
           {
@@ -830,6 +974,18 @@ func init() {
     }
   },
   "definitions": {
+    "Delete": {
+      "properties": {
+        "terse": {
+          "type": "boolean",
+          "default": true
+        },
+        "visits": {
+          "type": "boolean",
+          "default": true
+        }
+      }
+    },
     "Error": {
       "type": "object",
       "required": [

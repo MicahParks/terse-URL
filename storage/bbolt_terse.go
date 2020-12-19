@@ -42,21 +42,63 @@ func (b *BboltTerse) Close(_ context.Context) (err error) {
 	return b.db.Close()
 }
 
-// DeleteTerse deletes the Terse data for the given shortened URL. This implementation has no network activity and
-// ignores the given context.
-func (b *BboltTerse) DeleteTerse(_ context.Context, shortened string) (err error) {
+// Delete deletes Terse and Visits data as instructed. This implementation has no network activity and ignores the given
+// context.
+func (b *BboltTerse) Delete(ctx context.Context, del models.Delete) (err error) {
 
-	// Open the bbolt database for writing, batch if possible.
-	if err = b.db.Batch(func(tx *bbolt.Tx) error {
-
-		// Delete the Terse from the bucket.
-		if err = tx.Bucket(b.terseBucket).Delete([]byte(shortened)); err != nil {
+	// Delete Visits data if required.
+	if del.Visits == nil || *del.Visits && b.visitsStore != nil {
+		if err = b.visitsStore.Delete(ctx, del); err != nil {
 			return err
 		}
+	}
 
-		return nil
-	}); err != nil {
-		return err
+	// Check to make sure if Terse data needs to be deleted.
+	if del.Terse == nil || *del.Terse {
+
+		// Open the bbolt database for writing.
+		if err = b.db.Update(func(tx *bbolt.Tx) error {
+
+			// Delete the Terse data bucket from the database.
+			if err = tx.DeleteBucket(b.terseBucket); err != nil {
+				return err
+			}
+
+			return nil
+		}); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+// DeleteTerse deletes the Terse and or Visits data for the given shortened URL as instructed. This implementation has
+// no network activity and ignores the given context.
+func (b *BboltTerse) DeleteTerse(ctx context.Context, del models.Delete, shortened string) (err error) {
+
+	// Delete Visits data if required.
+	if del.Visits == nil || *del.Visits && b.visitsStore != nil {
+		if err = b.visitsStore.DeleteVisits(ctx, del, shortened); err != nil {
+			return err
+		}
+	}
+
+	// Check to make sure if Terse data needs to be deleted.
+	if del.Terse == nil || *del.Terse {
+
+		// Open the bbolt database for writing.
+		if err = b.db.Update(func(tx *bbolt.Tx) error {
+
+			// Delete the Terse from the bucket.
+			if err = tx.Bucket(b.terseBucket).Delete([]byte(shortened)); err != nil {
+				return err
+			}
+
+			return nil
+		}); err != nil {
+			return err
+		}
 	}
 
 	return nil
@@ -75,7 +117,7 @@ func (b *BboltTerse) Export(ctx context.Context, shortened string) (export model
 	// Get the visits.
 	visits := make([]*models.Visit, 0)
 	if b.visitsStore != nil {
-		if visits, err = b.visitsStore.ReadVisits(ctx, shortened); err != nil {
+		if visits, err = b.visitsStore.ExportShortened(ctx, shortened); err != nil {
 			return models.Export{}, err
 		}
 	}
@@ -97,7 +139,7 @@ func (b *BboltTerse) ExportAll(ctx context.Context) (export map[string]models.Ex
 	if b.visitsStore != nil {
 
 		// Get all the visits.
-		if allVisits, err = b.visitsStore.All(ctx); err != nil {
+		if allVisits, err = b.visitsStore.Export(ctx); err != nil {
 			return nil, err
 		}
 	}
@@ -139,6 +181,53 @@ func (b *BboltTerse) ExportAll(ctx context.Context) (export map[string]models.Ex
 	}
 
 	return export, nil
+}
+
+// Import imports the given export. It will delete existing Terse and Visits data as instructed by the del argument, if
+// not nil. If the del argument is not present, data will be overwritten and unaffected data will be left alone. This
+// implementation has no network activity and ignores the given context.
+func (b *BboltTerse) Import(ctx context.Context, del *models.Delete, export map[string]*models.Export) (err error) {
+
+	// Check if data needs to be deleted before importing.
+	if del != nil {
+		if err = b.Delete(ctx, *del); err != nil {
+			return err
+		}
+	}
+
+	// Import the Visits data.
+	if b.visitsStore != nil {
+
+		// Import the Visits data. Never pass in a deletion data structure, because that already happened above.
+		if err = b.visitsStore.Import(ctx, nil, export); err != nil {
+			return err
+		}
+	}
+
+	// Write every shortened URL's Terse data to the bbolt database.
+	for shortened, exp := range export {
+
+		// Open the bbolt database for writing, batch if possible.
+		if err = b.db.Batch(func(tx *bbolt.Tx) error {
+
+			// Turn the Terse into JSON bytes.
+			var value []byte
+			if value, err = json.Marshal(exp.Terse); err != nil {
+				return err
+			}
+
+			// Write the Terse to the bucket.
+			if err = tx.Bucket(b.terseBucket).Put([]byte(shortened), value); err != nil {
+				return err
+			}
+
+			return nil
+		}); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 // InsertTerse inserts the Terse into the TerseStore. It will fail if the Terse already exists. This implementation has

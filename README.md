@@ -27,19 +27,19 @@ TODO
 - [ ] Address TODOs.
 - [ ] Write a utility that will export `.bbolt` to JSON.
 - [ ] Implement `SHORTID_PARANOID`.
-- [ ] Implement `/api/import` endpoints.
 - [ ] Implement social media link previews.
 - [ ] Implement fingerprinting with fingerprintjs, but remove HTML canvas extraction. Embed minified in single HTML
   template.
 - [ ] Implement Redis storage backend?
 - [ ] Implement pluggable store interface implementations.
-- [ ] Flag strategy.
 - [ ] Visit counts in TerseStore.
 - [ ] Reimplement Mongo storage.
 - [ ] Write tests.
 - [ ] Write a good README.md.
 - [ ] Move frontend to another repo.
 - [ ] Implement JWT + JWKS authentication?
+- [x] Implement `/api/import` endpoints.
+- [x] Flag strategy.
 - [x] Implement bbolt storage backend.
 - [x] Configure storage backends via config files?
 - [x] Change user created warnings to info.

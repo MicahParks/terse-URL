@@ -31,7 +31,7 @@ func NewTerseRead(ctx *middleware.Context, handler TerseReadHandler) *TerseRead 
 
 /*TerseRead swagger:route GET /api/read/{shortened} api terseRead
 
-Read the Terse data for a single shortened URL.
+Read the Terse data for the given shortened URL.
 
 */
 type TerseRead struct {

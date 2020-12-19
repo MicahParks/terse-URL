@@ -52,11 +52,17 @@ func NewTerseURLAPI(spec *loads.Document) *TerseURLAPI {
 		APITerseDeleteHandler: apiops.TerseDeleteHandlerFunc(func(params apiops.TerseDeleteParams) middleware.Responder {
 			return middleware.NotImplemented("operation api.TerseDelete has not yet been implemented")
 		}),
+		APITerseDeleteOneHandler: apiops.TerseDeleteOneHandlerFunc(func(params apiops.TerseDeleteOneParams) middleware.Responder {
+			return middleware.NotImplemented("operation api.TerseDeleteOne has not yet been implemented")
+		}),
 		APITerseExportHandler: apiops.TerseExportHandlerFunc(func(params apiops.TerseExportParams) middleware.Responder {
 			return middleware.NotImplemented("operation api.TerseExport has not yet been implemented")
 		}),
 		APITerseExportOneHandler: apiops.TerseExportOneHandlerFunc(func(params apiops.TerseExportOneParams) middleware.Responder {
 			return middleware.NotImplemented("operation api.TerseExportOne has not yet been implemented")
+		}),
+		APITerseImportHandler: apiops.TerseImportHandlerFunc(func(params apiops.TerseImportParams) middleware.Responder {
+			return middleware.NotImplemented("operation api.TerseImport has not yet been implemented")
 		}),
 		APITerseReadHandler: apiops.TerseReadHandlerFunc(func(params apiops.TerseReadParams) middleware.Responder {
 			return middleware.NotImplemented("operation api.TerseRead has not yet been implemented")
@@ -108,10 +114,14 @@ type TerseURLAPI struct {
 	SystemAliveHandler system.AliveHandler
 	// APITerseDeleteHandler sets the operation handler for the terse delete operation
 	APITerseDeleteHandler apiops.TerseDeleteHandler
+	// APITerseDeleteOneHandler sets the operation handler for the terse delete one operation
+	APITerseDeleteOneHandler apiops.TerseDeleteOneHandler
 	// APITerseExportHandler sets the operation handler for the terse export operation
 	APITerseExportHandler apiops.TerseExportHandler
 	// APITerseExportOneHandler sets the operation handler for the terse export one operation
 	APITerseExportOneHandler apiops.TerseExportOneHandler
+	// APITerseImportHandler sets the operation handler for the terse import operation
+	APITerseImportHandler apiops.TerseImportHandler
 	// APITerseReadHandler sets the operation handler for the terse read operation
 	APITerseReadHandler apiops.TerseReadHandler
 	// PublicTerseRedirectHandler sets the operation handler for the terse redirect operation
@@ -202,11 +212,17 @@ func (o *TerseURLAPI) Validate() error {
 	if o.APITerseDeleteHandler == nil {
 		unregistered = append(unregistered, "api.TerseDeleteHandler")
 	}
+	if o.APITerseDeleteOneHandler == nil {
+		unregistered = append(unregistered, "api.TerseDeleteOneHandler")
+	}
 	if o.APITerseExportHandler == nil {
 		unregistered = append(unregistered, "api.TerseExportHandler")
 	}
 	if o.APITerseExportOneHandler == nil {
 		unregistered = append(unregistered, "api.TerseExportOneHandler")
+	}
+	if o.APITerseImportHandler == nil {
+		unregistered = append(unregistered, "api.TerseImportHandler")
 	}
 	if o.APITerseReadHandler == nil {
 		unregistered = append(unregistered, "api.TerseReadHandler")
@@ -315,7 +331,11 @@ func (o *TerseURLAPI) initHandlerCache() {
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
-	o.handlers["DELETE"]["/api/delete/{shortened}"] = apiops.NewTerseDelete(o.context, o.APITerseDeleteHandler)
+	o.handlers["DELETE"]["/api/delete"] = apiops.NewTerseDelete(o.context, o.APITerseDeleteHandler)
+	if o.handlers["DELETE"] == nil {
+		o.handlers["DELETE"] = make(map[string]http.Handler)
+	}
+	o.handlers["DELETE"]["/api/delete/{shortened}"] = apiops.NewTerseDeleteOne(o.context, o.APITerseDeleteOneHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
@@ -324,6 +344,10 @@ func (o *TerseURLAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/api/export/{shortened}"] = apiops.NewTerseExportOne(o.context, o.APITerseExportOneHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/api/import"] = apiops.NewTerseImport(o.context, o.APITerseImportHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}

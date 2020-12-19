@@ -22,7 +22,7 @@ swagger:response terseVisitsOK
 */
 type TerseVisitsOK struct {
 
-	/*The visit data for a single shortened URL.
+	/*The visit data for the given shortened URL.
 	  In: Body
 	*/
 	Payload []*models.Visit `json:"body,omitempty"`

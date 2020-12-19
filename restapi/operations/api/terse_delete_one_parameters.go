@@ -12,38 +12,44 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
+	"github.com/go-openapi/strfmt"
 
 	"github.com/MicahParks/terse-URL/models"
 )
 
-// NewTerseDeleteParams creates a new TerseDeleteParams object
+// NewTerseDeleteOneParams creates a new TerseDeleteOneParams object
 // no default values defined in spec.
-func NewTerseDeleteParams() TerseDeleteParams {
+func NewTerseDeleteOneParams() TerseDeleteOneParams {
 
-	return TerseDeleteParams{}
+	return TerseDeleteOneParams{}
 }
 
-// TerseDeleteParams contains all the bound params for the terse delete operation
+// TerseDeleteOneParams contains all the bound params for the terse delete one operation
 // typically these are obtained from a http.Request
 //
-// swagger:parameters terseDelete
-type TerseDeleteParams struct {
+// swagger:parameters terseDeleteOne
+type TerseDeleteOneParams struct {
 
 	// HTTP Request Object
 	HTTPRequest *http.Request `json:"-"`
 
-	/*A JSON object containing the deletion information. If Terse or Visits data is marked for deletion, it will all be deleted.
+	/*Indicate if Terse and or Visits data should be deleted.
 	  Required: true
 	  In: body
 	*/
 	Delete *models.Delete
+	/*The shortened URL whose data should be deleted.
+	  Required: true
+	  In: path
+	*/
+	Shortened string
 }
 
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
 // for simple values it will use straight method calls.
 //
-// To ensure default values, the struct must have been initialized with NewTerseDeleteParams() beforehand.
-func (o *TerseDeleteParams) BindRequest(r *http.Request, route *middleware.MatchedRoute) error {
+// To ensure default values, the struct must have been initialized with NewTerseDeleteOneParams() beforehand.
+func (o *TerseDeleteOneParams) BindRequest(r *http.Request, route *middleware.MatchedRoute) error {
 	var res []error
 
 	o.HTTPRequest = r
@@ -70,8 +76,28 @@ func (o *TerseDeleteParams) BindRequest(r *http.Request, route *middleware.Match
 	} else {
 		res = append(res, errors.Required("delete", "body", ""))
 	}
+	rShortened, rhkShortened, _ := route.Params.GetOK("shortened")
+	if err := o.bindShortened(rShortened, rhkShortened, route.Formats); err != nil {
+		res = append(res, err)
+	}
+
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+// bindShortened binds and validates parameter Shortened from path.
+func (o *TerseDeleteOneParams) bindShortened(rawData []string, hasKey bool, formats strfmt.Registry) error {
+	var raw string
+	if len(rawData) > 0 {
+		raw = rawData[len(rawData)-1]
+	}
+
+	// Required: true
+	// Parameter is provided by construction from the route
+
+	o.Shortened = raw
+
 	return nil
 }

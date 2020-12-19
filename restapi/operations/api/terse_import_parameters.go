@@ -12,50 +12,48 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
-
-	"github.com/MicahParks/terse-URL/models"
 )
 
-// NewTerseDeleteParams creates a new TerseDeleteParams object
+// NewTerseImportParams creates a new TerseImportParams object
 // no default values defined in spec.
-func NewTerseDeleteParams() TerseDeleteParams {
+func NewTerseImportParams() TerseImportParams {
 
-	return TerseDeleteParams{}
+	return TerseImportParams{}
 }
 
-// TerseDeleteParams contains all the bound params for the terse delete operation
+// TerseImportParams contains all the bound params for the terse import operation
 // typically these are obtained from a http.Request
 //
-// swagger:parameters terseDelete
-type TerseDeleteParams struct {
+// swagger:parameters terseImport
+type TerseImportParams struct {
 
 	// HTTP Request Object
 	HTTPRequest *http.Request `json:"-"`
 
-	/*A JSON object containing the deletion information. If Terse or Visits data is marked for deletion, it will all be deleted.
+	/*A JSON object containing the deletion information. If Terse or Visits data is marked for deletion, it will all be deleted. An object matching shortened URLs to their previously exported data is also required.
 	  Required: true
 	  In: body
 	*/
-	Delete *models.Delete
+	ImportDelete TerseImportBody
 }
 
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
 // for simple values it will use straight method calls.
 //
-// To ensure default values, the struct must have been initialized with NewTerseDeleteParams() beforehand.
-func (o *TerseDeleteParams) BindRequest(r *http.Request, route *middleware.MatchedRoute) error {
+// To ensure default values, the struct must have been initialized with NewTerseImportParams() beforehand.
+func (o *TerseImportParams) BindRequest(r *http.Request, route *middleware.MatchedRoute) error {
 	var res []error
 
 	o.HTTPRequest = r
 
 	if runtime.HasBody(r) {
 		defer r.Body.Close()
-		var body models.Delete
+		var body TerseImportBody
 		if err := route.Consumer.Consume(r.Body, &body); err != nil {
 			if err == io.EOF {
-				res = append(res, errors.Required("delete", "body", ""))
+				res = append(res, errors.Required("importDelete", "body", ""))
 			} else {
-				res = append(res, errors.NewParseError("delete", "body", "", err))
+				res = append(res, errors.NewParseError("importDelete", "body", "", err))
 			}
 		} else {
 			// validate body object
@@ -64,11 +62,11 @@ func (o *TerseDeleteParams) BindRequest(r *http.Request, route *middleware.Match
 			}
 
 			if len(res) == 0 {
-				o.Delete = &body
+				o.ImportDelete = body
 			}
 		}
 	} else {
-		res = append(res, errors.Required("delete", "body", ""))
+		res = append(res, errors.Required("importDelete", "body", ""))
 	}
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)

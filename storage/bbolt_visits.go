@@ -29,7 +29,7 @@ func (b *BboltVisits) AddVisit(_ context.Context, shortened string, visit *model
 
 	// Get the existing visits.
 	var visits []*models.Visit
-	if visits, err = b.readVisits(shortened); err != nil {
+	if visits, err = b.exportShortened(shortened); err != nil {
 		return err
 	}
 
@@ -58,8 +58,60 @@ func (b *BboltVisits) AddVisit(_ context.Context, shortened string, visit *model
 	return nil
 }
 
-// All exports all visits data.
-func (b *BboltVisits) All(_ context.Context) (allVisits map[string][]*models.Visit, err error) {
+// Close closes the bbolt database file. This implementation has no network activity and ignores the given context.
+func (b *BboltVisits) Close(_ context.Context) (err error) {
+	return b.db.Close()
+}
+
+// Delete deletes Visits data as instructed by the del argument.
+func (b *BboltVisits) Delete(_ context.Context, del models.Delete) (err error) {
+
+	// Confirm Visits data deletion.
+	if del.Visits == nil || *del.Visits {
+
+		// Open the bbolt database for writing.
+		if err = b.db.Update(func(tx *bbolt.Tx) error {
+
+			// Delete the Visits from the bucket.
+			if err = tx.DeleteBucket(b.visitsBucket); err != nil {
+				return err
+			}
+
+			return nil
+		}); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+// DeleteVisits deletes all visits associated with the given shortened URL, if instructed to by the del argument. This
+// implementation has no network activity and ignores the given context.
+func (b *BboltVisits) DeleteVisits(_ context.Context, del models.Delete, shortened string) (err error) {
+
+	// Confirm Visits data deletion.
+	if del.Visits != nil || *del.Visits {
+
+		// Open the bbolt database for writing, batch if possible.
+		if err = b.db.Batch(func(tx *bbolt.Tx) error {
+
+			// Delete all of this shortened URL's visits from the bucket.
+			if err = tx.Bucket(b.visitsBucket).Delete([]byte(shortened)); err != nil {
+				return err
+			}
+
+			return nil
+		}); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+// Export exports all visits data.
+func (b *BboltVisits) Export(_ context.Context) (allVisits map[string][]*models.Visit, err error) {
 
 	// Create the return map.
 	allVisits = make(map[string][]*models.Visit)
@@ -93,39 +145,50 @@ func (b *BboltVisits) All(_ context.Context) (allVisits map[string][]*models.Vis
 	return allVisits, nil
 }
 
-// Close closes the bbolt database file. This implementation has no network activity and ignores the given context.
-func (b *BboltVisits) Close(_ context.Context) (err error) {
-	return b.db.Close()
+// ExportVisits gets all visits for the given shortened URL. This implementation has no network activity and ignores the
+// given context.
+func (b *BboltVisits) ExportShortened(_ context.Context, shortened string) (visits []*models.Visit, err error) {
+	return b.exportShortened(shortened)
 }
 
-// DeleteVisits deletes all visits associated with the given shortened URL. This implementation has no network activity
-// and ignores the given context.
-func (b *BboltVisits) DeleteVisits(_ context.Context, shortened string) (err error) {
+// Import
+func (b *BboltVisits) Import(ctx context.Context, del *models.Delete, export map[string]*models.Export) (err error) {
 
-	// Open the bbolt database for writing, batch if possible.
-	if err = b.db.Batch(func(tx *bbolt.Tx) error {
-
-		// Delete all of this shortened URL's visits from the bucket.
-		if err = tx.Bucket(b.visitsBucket).Delete([]byte(shortened)); err != nil {
+	// Check if data needs to be deleted before importing.
+	if del != nil {
+		if err = b.Delete(ctx, *del); err != nil {
 			return err
 		}
+	}
 
-		return nil
-	}); err != nil {
-		return err
+	// Write every shortened URL's Visits data to the bbolt database.
+	for shortened, exp := range export {
+
+		// Open the bbolt database for writing, batch if possible.
+		if err = b.db.Batch(func(tx *bbolt.Tx) error {
+
+			// Turn the Terse into JSON bytes.
+			var value []byte
+			if value, err = json.Marshal(exp.Visits); err != nil {
+				return err
+			}
+
+			// Write the Visits to the bucket.
+			if err = tx.Bucket(b.visitsBucket).Put([]byte(shortened), value); err != nil {
+				return err
+			}
+
+			return nil
+		}); err != nil {
+			return err
+		}
 	}
 
 	return nil
 }
 
-// ReadVisits gets all visits for the given shortened URL. This implementation has no network activity and ignores the
-// given context.
-func (b *BboltVisits) ReadVisits(_ context.Context, shortened string) (visits []*models.Visit, err error) {
-	return b.readVisits(shortened)
-}
-
-// readVisits gets all visits for the given shortened URL.
-func (b *BboltVisits) readVisits(shortened string) (visits []*models.Visit, err error) {
+// exportVisits gets all visits for the given shortened URL.
+func (b *BboltVisits) exportShortened(shortened string) (visits []*models.Visit, err error) {
 
 	// Open the bbolt database for reading.
 	var data []byte

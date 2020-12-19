@@ -42,16 +42,55 @@ func (m *MemTerse) Close(_ context.Context) (err error) {
 	return nil
 }
 
+// Delete
+func (m *MemTerse) Delete(ctx context.Context, del models.Delete) (err error) {
+
+	// Delete Visits data if required.
+	if del.Visits == nil || *del.Visits && m.visitsStore != nil {
+		if err = m.visitsStore.Delete(ctx, del); err != nil {
+			return err
+		}
+	}
+
+	// Confirm the deletion of Terse data.
+	if del.Terse == nil || *del.Terse {
+
+		// Lock the Terse Map for async safe use.
+		m.mux.Lock()
+
+		// Reassign the Terse map and the garbage collector will take care of the old data.
+		m.terse = make(map[string]*models.Terse)
+
+		// Unlock the Terse map. The write operation is over.
+		m.mux.Unlock()
+	}
+
+	return nil
+}
+
 // DeleteTerse deletes the Terse data fro the given shortened URL. This implementation has no network activity and
 // ignores the given context.
-func (m *MemTerse) DeleteTerse(_ context.Context, shortened string) (err error) {
+func (m *MemTerse) DeleteTerse(ctx context.Context, del models.Delete, shortened string) (err error) {
 
-	// Lock the Terse map for async safe use.
-	m.mux.Lock()
-	defer m.mux.Unlock()
+	// Delete Visits data if required.
+	if del.Visits == nil || *del.Visits && m.visitsStore != nil {
+		if err = m.visitsStore.DeleteVisits(ctx, del, shortened); err != nil {
+			return err
+		}
+	}
 
-	// Delete the Terse from the Terse map.
-	delete(m.terse, shortened)
+	// Check to make sure if Terse data needs to be deleted.
+	if del.Terse == nil || *del.Terse {
+
+		// Lock the Terse map for async safe use.
+		m.mux.Lock()
+
+		// Delete the Terse from the Terse map.
+		delete(m.terse, shortened)
+
+		// Unlock the Terse map. The write operation is over.
+		m.mux.Unlock()
+	}
 
 	return nil
 }
@@ -73,7 +112,7 @@ func (m *MemTerse) Export(ctx context.Context, shortened string) (export models.
 	// Get the visits for the Terse.
 	visits := make([]*models.Visit, 0)
 	if m.visitsStore != nil {
-		if visits, err = m.visitsStore.ReadVisits(ctx, shortened); err != nil {
+		if visits, err = m.visitsStore.ExportShortened(ctx, shortened); err != nil {
 			return models.Export{}, err
 		}
 	}
@@ -101,7 +140,7 @@ func (m *MemTerse) ExportAll(ctx context.Context) (export map[string]models.Expo
 		// Get the visits for the Terse.
 		visits := make([]*models.Visit, 0)
 		if m.visitsStore != nil {
-			if visits, err = m.visitsStore.ReadVisits(ctx, *terse.ShortenedURL); err != nil {
+			if visits, err = m.visitsStore.ExportShortened(ctx, *terse.ShortenedURL); err != nil {
 				return nil, err
 			}
 		}
@@ -114,6 +153,40 @@ func (m *MemTerse) ExportAll(ctx context.Context) (export map[string]models.Expo
 	}
 
 	return export, nil
+}
+
+// Import imports the given export's data. If del is not nil, data will be deleted accordingly. If del is nil, data
+// may be overwritten, but unaffected data will be untouched. If the VisitsStore is not nil, then the same method
+// will be called for the associated VisitsStore. This implementation has no network activity and partially ignores the
+// given context.
+func (m *MemTerse) Import(ctx context.Context, del *models.Delete, export map[string]*models.Export) (err error) {
+
+	// Check if data needs to be deleted before importing.
+	if del != nil {
+		if err = m.Delete(ctx, *del); err != nil {
+			return err
+		}
+	}
+
+	// Import the Visits data.
+	if m.visitsStore != nil {
+
+		// Import the Visits data. Never pass in a deletion data structure, because that already happened above.
+		if err = m.visitsStore.Import(ctx, nil, export); err != nil {
+			return err
+		}
+	}
+
+	// Lock the Terse map for async safe use.
+	m.mux.Lock()
+	defer m.mux.Unlock()
+
+	// Write every shortened URL's Terse data to the Terse map.
+	for shortened, exp := range export {
+		m.terse[shortened] = exp.Terse
+	}
+
+	return nil
 }
 
 // InsertTerse inserts the Terse into the TerseStore. It will fail if the Terse already exists. This implementation has

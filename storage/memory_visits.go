@@ -41,8 +41,54 @@ func (m *MemVisits) AddVisit(_ context.Context, shortened string, visit *models.
 	return nil
 }
 
-// All exports all visits data.
-func (m *MemVisits) All(_ context.Context) (allVisits map[string][]*models.Visit, err error) {
+// Close lets the garbage collector take care of the old Visits data.
+func (m *MemVisits) Close(_ context.Context) (err error) {
+	m.visits = make(map[string][]*models.Visit)
+	return nil
+}
+
+// Delete deletes visits data according to the del argument. This implementation has no network activity and ignores the
+// given context.
+func (m *MemVisits) Delete(_ context.Context, del models.Delete) (err error) {
+
+	// Confirm the deletion of Visits data.
+	if del.Visits == nil || *del.Visits {
+
+		// Lock the Visits map for async safe use.
+		m.mux.Lock()
+
+		// Reassign the Visits map and the garbage collector will take care of the old data.
+		m.visits = make(map[string][]*models.Visit)
+
+		// Unlock the Visits map. The write operation is over.
+		m.mux.Unlock()
+	}
+
+	return nil
+}
+
+// DeleteVisits deletes all visits associated with the given shortened URL. This implementation has no network activity
+// and ignores the given context.
+func (m *MemVisits) DeleteVisits(_ context.Context, del models.Delete, shortened string) (err error) {
+
+	// Confirm the deletion of Visits data.
+	if del.Visits == nil || *del.Visits {
+
+		// Lock the Visits map for async safe use.
+		m.mux.Lock()
+
+		// Delete all visits for the shortened URL.
+		delete(m.visits, shortened)
+
+		// Unlock the Visits map. The write operation is over.
+		m.mux.Unlock()
+	}
+
+	return nil
+}
+
+// Export exports all visits data. This implementation has no network activity and ignores the given context.
+func (m *MemVisits) Export(_ context.Context) (allVisits map[string][]*models.Visit, err error) {
 
 	// Lock the Visits map for async safe use.
 	m.mux.RLock()
@@ -51,29 +97,9 @@ func (m *MemVisits) All(_ context.Context) (allVisits map[string][]*models.Visit
 	return m.visits, nil
 }
 
-// Close lets the garbage collector take care of the old Visits data.
-func (m *MemVisits) Close(_ context.Context) (err error) {
-	m.visits = make(map[string][]*models.Visit)
-	return nil
-}
-
-// DeleteVisits deletes all visits associated with the given shortened URL. This implementation has no network activity
-// and ignores the given context.
-func (m *MemVisits) DeleteVisits(_ context.Context, shortened string) (err error) {
-
-	// Lock the Visits map for async safe use.
-	m.mux.Lock()
-	defer m.mux.Unlock()
-
-	// Delete all visits for the shortened URL.
-	delete(m.visits, shortened)
-
-	return nil
-}
-
 // ReadVisits gets all visits for the given shortened URL. This implementation has no network activity and ignores the
 // given context.
-func (m *MemVisits) ReadVisits(_ context.Context, shortened string) (visits []*models.Visit, err error) {
+func (m *MemVisits) ExportShortened(_ context.Context, shortened string) (visits []*models.Visit, err error) {
 
 	// Lock the Visits map for async safe use.
 	m.mux.RLock()
@@ -87,4 +113,28 @@ func (m *MemVisits) ReadVisits(_ context.Context, shortened string) (visits []*m
 
 	// Return the visits.
 	return visits, nil
+}
+
+// Import imports the given export's data. If del is not nil, data will be deleted accordingly. If del is nil, data may
+// be overwritten, but unaffected data will not be touched. This implementation has no network activity and ignores the
+// given context.
+func (m *MemVisits) Import(ctx context.Context, del *models.Delete, export map[string]*models.Export) (err error) {
+
+	// Check if data needs to be deleted before importing.
+	if del != nil {
+		if err = m.Delete(ctx, *del); err != nil {
+			return err
+		}
+	}
+
+	// Lock the Visits map for async safe usage.
+	m.mux.Lock()
+	defer m.mux.Unlock()
+
+	// Write every shortened URL's Visits data to the Visits map.
+	for shortened, exp := range export {
+		m.visits[shortened] = exp.Visits
+	}
+
+	return nil
 }
