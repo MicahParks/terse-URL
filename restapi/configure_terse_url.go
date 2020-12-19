@@ -18,8 +18,6 @@ import (
 	"github.com/MicahParks/terse-URL/restapi/operations"
 )
 
-//go:generate swagger generate server --target ../../terse-URL --name TerseURL --spec ../swagger.yml --principal models.JWTInfo
-
 func configureFlags(api *operations.TerseURLAPI) {
 	// api.CommandLineOptionsGroups = []swag.CommandLineOptionsGroup{ ... }
 }
@@ -42,10 +40,11 @@ func configureAPI(api *operations.TerseURLAPI) http.Handler {
 	api.JSONProducer = runtime.JSONProducer()
 
 	// Assign the endpoint handlers.
-	api.APITerseDeleteHandler = endpoints.HandleDelete(logger.Named("/api/delete/{shortened}"), config.TerseStore)
+	api.APITerseDeleteHandler = endpoints.HandleDelete(logger.Named("/api/delete"), config.TerseStore)
+	api.APITerseDeleteOneHandler = endpoints.HandleDeleteOne(logger.Named("/api/delete/{shortened}"), config.TerseStore)
 	api.APITerseExportHandler = endpoints.HandleExport(logger.Named("/api/export"), config.TerseStore)
 	api.APITerseExportOneHandler = endpoints.HandleExportOne(logger.Named("/api/export/{shortened}"), config.TerseStore)
-	api.APITerseReadHandler = endpoints.HandleRead(logger.Named("/api/read/{shortened}"), config.TerseStore)
+	api.APITerseTerseHandler = endpoints.HandleTerse(logger.Named("/api/terse/{shortened}"), config.TerseStore)
 	api.APITerseVisitsHandler = endpoints.HandleVisits(logger.Named("/api/visits/{shortened}"), config.VisitsStore)
 	api.APITerseWriteHandler = endpoints.HandleWrite(logger.Named("/api/write/{operation}"), config.ShortID, config.TerseStore)
 	api.PublicTerseRedirectHandler = endpoints.HandleRedirect(logger.Named("/{shortened}"), config.TerseStore)

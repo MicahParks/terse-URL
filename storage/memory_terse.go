@@ -68,13 +68,13 @@ func (m *MemTerse) Delete(ctx context.Context, del models.Delete) (err error) {
 	return nil
 }
 
-// DeleteTerse deletes the Terse data fro the given shortened URL. This implementation has no network activity and
+// DeleteOne deletes the Terse data fro the given shortened URL. This implementation has no network activity and
 // ignores the given context.
-func (m *MemTerse) DeleteTerse(ctx context.Context, del models.Delete, shortened string) (err error) {
+func (m *MemTerse) DeleteOne(ctx context.Context, del models.Delete, shortened string) (err error) {
 
 	// Delete Visits data if required.
 	if del.Visits == nil || *del.Visits && m.visitsStore != nil {
-		if err = m.visitsStore.DeleteVisits(ctx, del, shortened); err != nil {
+		if err = m.visitsStore.DeleteOne(ctx, del, shortened); err != nil {
 			return err
 		}
 	}
@@ -95,37 +95,9 @@ func (m *MemTerse) DeleteTerse(ctx context.Context, del models.Delete, shortened
 	return nil
 }
 
-// Export exports Terse and Visits data for the given shortened URL. This implementation has no network activity and
-// partially ignores the given context.
-func (m *MemTerse) Export(ctx context.Context, shortened string) (export models.Export, err error) {
-
-	// Lock the Terse map for async safe use.
-	m.mux.RLock()
-	defer m.mux.RUnlock()
-
-	// Get the Terse.
-	terse, ok := m.terse[shortened]
-	if !ok {
-		return models.Export{}, ErrShortenedNotFound
-	}
-
-	// Get the visits for the Terse.
-	visits := make([]*models.Visit, 0)
-	if m.visitsStore != nil {
-		if visits, err = m.visitsStore.ExportShortened(ctx, shortened); err != nil {
-			return models.Export{}, err
-		}
-	}
-
-	return models.Export{
-		Terse:  terse,
-		Visits: visits,
-	}, nil
-}
-
-// ExportAll exports all Terse and Visits data. This implementation has no network activity and partially ignores the
+// Export exports all Terse and Visits data. This implementation has no network activity and partially ignores the
 // given context.
-func (m *MemTerse) ExportAll(ctx context.Context) (export map[string]models.Export, err error) {
+func (m *MemTerse) Export(ctx context.Context) (export map[string]models.Export, err error) {
 
 	// Lock the Terse map for async safe use.
 	m.mux.RLock()
@@ -140,7 +112,7 @@ func (m *MemTerse) ExportAll(ctx context.Context) (export map[string]models.Expo
 		// Get the visits for the Terse.
 		visits := make([]*models.Visit, 0)
 		if m.visitsStore != nil {
-			if visits, err = m.visitsStore.ExportShortened(ctx, *terse.ShortenedURL); err != nil {
+			if visits, err = m.visitsStore.ExportOne(ctx, *terse.ShortenedURL); err != nil {
 				return nil, err
 			}
 		}
@@ -153,6 +125,34 @@ func (m *MemTerse) ExportAll(ctx context.Context) (export map[string]models.Expo
 	}
 
 	return export, nil
+}
+
+// ExportOne exports Terse and Visits data for the given shortened URL. This implementation has no network activity and
+// partially ignores the given context.
+func (m *MemTerse) ExportOne(ctx context.Context, shortened string) (export models.Export, err error) {
+
+	// Lock the Terse map for async safe use.
+	m.mux.RLock()
+	defer m.mux.RUnlock()
+
+	// Get the Terse.
+	terse, ok := m.terse[shortened]
+	if !ok {
+		return models.Export{}, ErrShortenedNotFound
+	}
+
+	// Get the visits for the Terse.
+	visits := make([]*models.Visit, 0)
+	if m.visitsStore != nil {
+		if visits, err = m.visitsStore.ExportOne(ctx, shortened); err != nil {
+			return models.Export{}, err
+		}
+	}
+
+	return models.Export{
+		Terse:  terse,
+		Visits: visits,
+	}, nil
 }
 
 // Import imports the given export's data. If del is not nil, data will be deleted accordingly. If del is nil, data
@@ -189,9 +189,9 @@ func (m *MemTerse) Import(ctx context.Context, del *models.Delete, export map[st
 	return nil
 }
 
-// InsertTerse inserts the Terse into the TerseStore. It will fail if the Terse already exists. This implementation has
+// Insert inserts the Terse into the TerseStore. It will fail if the Terse already exists. This implementation has
 // no network activity and ignores the given context.
-func (m *MemTerse) InsertTerse(_ context.Context, terse *models.Terse) (err error) {
+func (m *MemTerse) Insert(_ context.Context, terse *models.Terse) (err error) {
 
 	// Lock the Terse map for async safe use.
 	m.mux.Lock()
@@ -208,15 +208,15 @@ func (m *MemTerse) InsertTerse(_ context.Context, terse *models.Terse) (err erro
 	return nil
 }
 
-// ReadTerse gets the Terse data for the given shortened URL. This implementation has no network activity and ignores
+// Read gets the Terse data for the given shortened URL. This implementation has no network activity and ignores
 // the given context.
-func (m *MemTerse) ReadTerse(_ context.Context, shortened string, visit *models.Visit) (terse *models.Terse, err error) {
+func (m *MemTerse) Read(_ context.Context, shortened string, visit *models.Visit) (terse *models.Terse, err error) {
 
 	// Track the visit to this shortened URL. Do this in a separate goroutine so the response is faster.
 	if visit != nil && m.visitsStore != nil {
 		ctx, cancel := m.createCtx()
 		go m.group.AddWorkItem(ctx, cancel, func(workCtx context.Context) (err error) {
-			return m.visitsStore.AddVisit(workCtx, shortened, visit)
+			return m.visitsStore.Add(workCtx, shortened, visit)
 		})
 	}
 
@@ -234,9 +234,9 @@ func (m *MemTerse) ReadTerse(_ context.Context, shortened string, visit *models.
 	return terse, nil
 }
 
-// UpdateTerse updates the Terse into the TerseStore. It will fail if the Terse does not exist. This implementation has
+// Update updates the Terse into the TerseStore. It will fail if the Terse does not exist. This implementation has
 // no network activity and ignores the given context.
-func (m *MemTerse) UpdateTerse(_ context.Context, terse *models.Terse) (err error) {
+func (m *MemTerse) Update(_ context.Context, terse *models.Terse) (err error) {
 
 	// Lock the Terse map for async safe use.
 	m.mux.Lock()
@@ -253,9 +253,9 @@ func (m *MemTerse) UpdateTerse(_ context.Context, terse *models.Terse) (err erro
 	return nil
 }
 
-// UpsertTerse upserts the Terse into the TerseStore. This implementation has no network activity and ignores the given
+// Upsert upserts the Terse into the TerseStore. This implementation has no network activity and ignores the given
 // context.
-func (m *MemTerse) UpsertTerse(_ context.Context, terse *models.Terse) (err error) {
+func (m *MemTerse) Upsert(_ context.Context, terse *models.Terse) (err error) {
 
 	// Lock the Terse map for async safe use.
 	m.mux.Lock()

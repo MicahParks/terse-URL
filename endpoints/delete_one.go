@@ -14,12 +14,13 @@ import (
 
 // HandleDelete creates a /api/delete/{shortened} endpoint handler via a closure. It can delete Terse and Visits data
 // given the associated shortened URL.
-func HandleDelete(logger *zap.SugaredLogger, terseStore storage.TerseStore) api.TerseDeleteHandlerFunc {
-	return func(params api.TerseDeleteParams) middleware.Responder {
+func HandleDeleteOne(logger *zap.SugaredLogger, terseStore storage.TerseStore) api.TerseDeleteOneHandlerFunc {
+	return func(params api.TerseDeleteOneParams) middleware.Responder {
 
 		// Log the event.
-		logger.Infow("Deleting Terse and or Visits data.",
+		logger.Infow("Deleting a shortened URL's assets.",
 			"delete", fmt.Sprintf("%+v", params.Delete),
+			"shortened", params.Shortened,
 		)
 
 		// Create a new request context.
@@ -27,17 +28,18 @@ func HandleDelete(logger *zap.SugaredLogger, terseStore storage.TerseStore) api.
 		defer cancel()
 
 		// Delete the shortened URL's Terse pair from storage.
-		if err := terseStore.Delete(ctx, *params.Delete); err != nil {
+		if err := terseStore.DeleteOne(ctx, *params.Delete, params.Shortened); err != nil {
 
 			// Log at the appropriate level.
 			message := "Failed to delete Terse or Visits data."
 			logger.Warnw(message,
+				"shortened", params.Shortened,
 				"error", err.Error(),
 			)
 
 			// Report the error to the client.
 			code := int64(500)
-			resp := &api.TerseDeleteDefault{Payload: &models.Error{
+			resp := &api.TerseDeleteOneDefault{Payload: &models.Error{
 				Code:    &code,
 				Message: &message,
 			}}
@@ -45,6 +47,6 @@ func HandleDelete(logger *zap.SugaredLogger, terseStore storage.TerseStore) api.
 			return resp
 		}
 
-		return &api.TerseDeleteOK{}
+		return &api.TerseDeleteOneOK{}
 	}
 }

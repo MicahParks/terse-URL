@@ -23,9 +23,9 @@ func NewBboltVisits(db *bbolt.DB, visitsBucket []byte) (visitsStore VisitsStore)
 	}
 }
 
-// AddVisit inserts the visit into the VisitsStore. This implementation has no network activity and ignores the given
+// Add inserts the visit into the VisitsStore. This implementation has no network activity and ignores the given
 // context.
-func (b *BboltVisits) AddVisit(_ context.Context, shortened string, visit *models.Visit) (err error) {
+func (b *BboltVisits) Add(_ context.Context, shortened string, visit *models.Visit) (err error) {
 
 	// Get the existing visits.
 	var visits []*models.Visit
@@ -86,12 +86,12 @@ func (b *BboltVisits) Delete(_ context.Context, del models.Delete) (err error) {
 	return nil
 }
 
-// DeleteVisits deletes all visits associated with the given shortened URL, if instructed to by the del argument. This
+// DeleteOne deletes all visits associated with the given shortened URL, if instructed to by the del argument. This
 // implementation has no network activity and ignores the given context.
-func (b *BboltVisits) DeleteVisits(_ context.Context, del models.Delete, shortened string) (err error) {
+func (b *BboltVisits) DeleteOne(_ context.Context, del models.Delete, shortened string) (err error) {
 
 	// Confirm Visits data deletion.
-	if del.Visits != nil || *del.Visits {
+	if del.Visits == nil || *del.Visits {
 
 		// Open the bbolt database for writing, batch if possible.
 		if err = b.db.Batch(func(tx *bbolt.Tx) error {
@@ -145,9 +145,9 @@ func (b *BboltVisits) Export(_ context.Context) (allVisits map[string][]*models.
 	return allVisits, nil
 }
 
-// ExportVisits gets all visits for the given shortened URL. This implementation has no network activity and ignores the
+// ExportOne gets all visits for the given shortened URL. This implementation has no network activity and ignores the
 // given context.
-func (b *BboltVisits) ExportShortened(_ context.Context, shortened string) (visits []*models.Visit, err error) {
+func (b *BboltVisits) ExportOne(_ context.Context, shortened string) (visits []*models.Visit, err error) {
 	return b.exportShortened(shortened)
 }
 

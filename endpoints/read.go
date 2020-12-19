@@ -12,10 +12,10 @@ import (
 	"github.com/MicahParks/terse-URL/storage"
 )
 
-// HandleRead creates and /api/read/{shortened} endpoint handler via a closure. It can perform exports of a single
+// HandleTerse creates and /api/terse/{shortened} endpoint handler via a closure. It can perform exports of a single
 // shortened URL's Terse data.
-func HandleRead(logger *zap.SugaredLogger, terseStore storage.TerseStore) api.TerseReadHandlerFunc {
-	return func(params api.TerseReadParams) middleware.Responder {
+func HandleTerse(logger *zap.SugaredLogger, terseStore storage.TerseStore) api.TerseTerseHandlerFunc {
+	return func(params api.TerseTerseParams) middleware.Responder {
 
 		// Log the event.
 		logger.Infow("Reading a shortened URL's Terse data.",
@@ -27,7 +27,7 @@ func HandleRead(logger *zap.SugaredLogger, terseStore storage.TerseStore) api.Te
 		defer cancel()
 
 		// Get the Terse from the TerseStore.
-		terse, err := terseStore.ReadTerse(ctx, params.Shortened, nil)
+		terse, err := terseStore.Read(ctx, params.Shortened, nil)
 		if err != nil {
 
 			// Log at the appropriate level. Assign the response code and message.
@@ -50,7 +50,7 @@ func HandleRead(logger *zap.SugaredLogger, terseStore storage.TerseStore) api.Te
 			}
 
 			// Report the error to the client.
-			resp := &api.TerseReadDefault{Payload: &models.Error{
+			resp := &api.TerseTerseDefault{Payload: &models.Error{
 				Code:    &code,
 				Message: &message,
 			}}
@@ -58,7 +58,7 @@ func HandleRead(logger *zap.SugaredLogger, terseStore storage.TerseStore) api.Te
 			return resp
 		}
 
-		return &api.TerseReadOK{
+		return &api.TerseTerseOK{
 			Payload: terse,
 		}
 	}

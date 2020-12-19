@@ -172,13 +172,13 @@ paths:
       tags:
         - "api"
 
-  /api/read/{shortened}:
+  /api/terse/{shortened}:
     get:
       produces:
         - "application/json"
       summary: "Read the Terse data for the given shortened URL."
       description: ""
-      operationId: "terseRead"
+      operationId: "terseTerse" # TODO
       parameters:
         - description: "The shortened URL to get the Terse data for."
           in: "path"

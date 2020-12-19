@@ -27,7 +27,7 @@ func HandleExportOne(logger *zap.SugaredLogger, terseStore storage.TerseStore) a
 		defer cancel()
 
 		// Get the data dump.
-		dump, err := terseStore.Export(ctx, params.Shortened)
+		dump, err := terseStore.ExportOne(ctx, params.Shortened)
 		if err != nil {
 
 			// Log at the appropriate level. Assign the response code and message.

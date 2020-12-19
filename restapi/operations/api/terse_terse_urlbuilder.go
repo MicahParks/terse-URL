@@ -12,8 +12,8 @@ import (
 	"strings"
 )
 
-// TerseReadURL generates an URL for the terse read operation
-type TerseReadURL struct {
+// TerseTerseURL generates an URL for the terse terse operation
+type TerseTerseURL struct {
 	Shortened string
 
 	_basePath string
@@ -24,7 +24,7 @@ type TerseReadURL struct {
 // WithBasePath sets the base path for this url builder, only required when it's different from the
 // base path specified in the swagger spec.
 // When the value of the base path is an empty string
-func (o *TerseReadURL) WithBasePath(bp string) *TerseReadURL {
+func (o *TerseTerseURL) WithBasePath(bp string) *TerseTerseURL {
 	o.SetBasePath(bp)
 	return o
 }
@@ -32,21 +32,21 @@ func (o *TerseReadURL) WithBasePath(bp string) *TerseReadURL {
 // SetBasePath sets the base path for this url builder, only required when it's different from the
 // base path specified in the swagger spec.
 // When the value of the base path is an empty string
-func (o *TerseReadURL) SetBasePath(bp string) {
+func (o *TerseTerseURL) SetBasePath(bp string) {
 	o._basePath = bp
 }
 
 // Build a url path and query string
-func (o *TerseReadURL) Build() (*url.URL, error) {
+func (o *TerseTerseURL) Build() (*url.URL, error) {
 	var _result url.URL
 
-	var _path = "/api/read/{shortened}"
+	var _path = "/api/terse/{shortened}"
 
 	shortened := o.Shortened
 	if shortened != "" {
 		_path = strings.Replace(_path, "{shortened}", shortened, -1)
 	} else {
-		return nil, errors.New("shortened is required on TerseReadURL")
+		return nil, errors.New("shortened is required on TerseTerseURL")
 	}
 
 	_basePath := o._basePath
@@ -59,7 +59,7 @@ func (o *TerseReadURL) Build() (*url.URL, error) {
 }
 
 // Must is a helper function to panic when the url builder returns an error
-func (o *TerseReadURL) Must(u *url.URL, err error) *url.URL {
+func (o *TerseTerseURL) Must(u *url.URL, err error) *url.URL {
 	if err != nil {
 		panic(err)
 	}
@@ -70,17 +70,17 @@ func (o *TerseReadURL) Must(u *url.URL, err error) *url.URL {
 }
 
 // String returns the string representation of the path with query string
-func (o *TerseReadURL) String() string {
+func (o *TerseTerseURL) String() string {
 	return o.Must(o.Build()).String()
 }
 
 // BuildFull builds a full url with scheme, host, path and query string
-func (o *TerseReadURL) BuildFull(scheme, host string) (*url.URL, error) {
+func (o *TerseTerseURL) BuildFull(scheme, host string) (*url.URL, error) {
 	if scheme == "" {
-		return nil, errors.New("scheme is required for a full url on TerseReadURL")
+		return nil, errors.New("scheme is required for a full url on TerseTerseURL")
 	}
 	if host == "" {
-		return nil, errors.New("host is required for a full url on TerseReadURL")
+		return nil, errors.New("host is required for a full url on TerseTerseURL")
 	}
 
 	base, err := o.Build()
@@ -94,6 +94,6 @@ func (o *TerseReadURL) BuildFull(scheme, host string) (*url.URL, error) {
 }
 
 // StringFull returns the string representation of a complete url
-func (o *TerseReadURL) StringFull(scheme, host string) string {
+func (o *TerseTerseURL) StringFull(scheme, host string) string {
 	return o.Must(o.BuildFull(scheme, host)).String()
 }

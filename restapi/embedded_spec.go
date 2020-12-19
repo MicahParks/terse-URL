@@ -236,7 +236,7 @@ func init() {
         }
       }
     },
-    "/api/read/{shortened}": {
+    "/api/terse/{shortened}": {
       "get": {
         "produces": [
           "application/json"
@@ -245,7 +245,7 @@ func init() {
           "api"
         ],
         "summary": "Read the Terse data for the given shortened URL.",
-        "operationId": "terseRead",
+        "operationId": "terseTerse",
         "parameters": [
           {
             "type": "string",
@@ -812,7 +812,7 @@ func init() {
         }
       }
     },
-    "/api/read/{shortened}": {
+    "/api/terse/{shortened}": {
       "get": {
         "produces": [
           "application/json"
@@ -821,7 +821,7 @@ func init() {
           "api"
         ],
         "summary": "Read the Terse data for the given shortened URL.",
-        "operationId": "terseRead",
+        "operationId": "terseTerse",
         "parameters": [
           {
             "type": "string",

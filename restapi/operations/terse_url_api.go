@@ -64,11 +64,11 @@ func NewTerseURLAPI(spec *loads.Document) *TerseURLAPI {
 		APITerseImportHandler: apiops.TerseImportHandlerFunc(func(params apiops.TerseImportParams) middleware.Responder {
 			return middleware.NotImplemented("operation api.TerseImport has not yet been implemented")
 		}),
-		APITerseReadHandler: apiops.TerseReadHandlerFunc(func(params apiops.TerseReadParams) middleware.Responder {
-			return middleware.NotImplemented("operation api.TerseRead has not yet been implemented")
-		}),
 		PublicTerseRedirectHandler: public.TerseRedirectHandlerFunc(func(params public.TerseRedirectParams) middleware.Responder {
 			return middleware.NotImplemented("operation public.TerseRedirect has not yet been implemented")
+		}),
+		APITerseTerseHandler: apiops.TerseTerseHandlerFunc(func(params apiops.TerseTerseParams) middleware.Responder {
+			return middleware.NotImplemented("operation api.TerseTerse has not yet been implemented")
 		}),
 		APITerseVisitsHandler: apiops.TerseVisitsHandlerFunc(func(params apiops.TerseVisitsParams) middleware.Responder {
 			return middleware.NotImplemented("operation api.TerseVisits has not yet been implemented")
@@ -122,10 +122,10 @@ type TerseURLAPI struct {
 	APITerseExportOneHandler apiops.TerseExportOneHandler
 	// APITerseImportHandler sets the operation handler for the terse import operation
 	APITerseImportHandler apiops.TerseImportHandler
-	// APITerseReadHandler sets the operation handler for the terse read operation
-	APITerseReadHandler apiops.TerseReadHandler
 	// PublicTerseRedirectHandler sets the operation handler for the terse redirect operation
 	PublicTerseRedirectHandler public.TerseRedirectHandler
+	// APITerseTerseHandler sets the operation handler for the terse terse operation
+	APITerseTerseHandler apiops.TerseTerseHandler
 	// APITerseVisitsHandler sets the operation handler for the terse visits operation
 	APITerseVisitsHandler apiops.TerseVisitsHandler
 	// APITerseWriteHandler sets the operation handler for the terse write operation
@@ -224,11 +224,11 @@ func (o *TerseURLAPI) Validate() error {
 	if o.APITerseImportHandler == nil {
 		unregistered = append(unregistered, "api.TerseImportHandler")
 	}
-	if o.APITerseReadHandler == nil {
-		unregistered = append(unregistered, "api.TerseReadHandler")
-	}
 	if o.PublicTerseRedirectHandler == nil {
 		unregistered = append(unregistered, "public.TerseRedirectHandler")
+	}
+	if o.APITerseTerseHandler == nil {
+		unregistered = append(unregistered, "api.TerseTerseHandler")
 	}
 	if o.APITerseVisitsHandler == nil {
 		unregistered = append(unregistered, "api.TerseVisitsHandler")
@@ -351,11 +351,11 @@ func (o *TerseURLAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/api/read/{shortened}"] = apiops.NewTerseRead(o.context, o.APITerseReadHandler)
+	o.handlers["GET"]["/{shortened}"] = public.NewTerseRedirect(o.context, o.PublicTerseRedirectHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/{shortened}"] = public.NewTerseRedirect(o.context, o.PublicTerseRedirectHandler)
+	o.handlers["GET"]["/api/terse/{shortened}"] = apiops.NewTerseTerse(o.context, o.APITerseTerseHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}

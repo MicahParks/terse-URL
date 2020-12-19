@@ -73,13 +73,13 @@ func (b *BboltTerse) Delete(ctx context.Context, del models.Delete) (err error) 
 	return nil
 }
 
-// DeleteTerse deletes the Terse and or Visits data for the given shortened URL as instructed. This implementation has
+// DeleteOne deletes the Terse and or Visits data for the given shortened URL as instructed. This implementation has
 // no network activity and ignores the given context.
-func (b *BboltTerse) DeleteTerse(ctx context.Context, del models.Delete, shortened string) (err error) {
+func (b *BboltTerse) DeleteOne(ctx context.Context, del models.Delete, shortened string) (err error) {
 
 	// Delete Visits data if required.
 	if del.Visits == nil || *del.Visits && b.visitsStore != nil {
-		if err = b.visitsStore.DeleteVisits(ctx, del, shortened); err != nil {
+		if err = b.visitsStore.DeleteOne(ctx, del, shortened); err != nil {
 			return err
 		}
 	}
@@ -104,33 +104,9 @@ func (b *BboltTerse) DeleteTerse(ctx context.Context, del models.Delete, shorten
 	return nil
 }
 
-// Export exports Terse and Visits data for the given shortened URL. This implementation has no network activity and
-// partially ignores the given context.
-func (b *BboltTerse) Export(ctx context.Context, shortened string) (export models.Export, err error) {
-
-	// Get the Terse from the bucket.
-	var terse *models.Terse
-	if terse, err = b.getTerse(shortened); err != nil {
-		return models.Export{}, err
-	}
-
-	// Get the visits.
-	visits := make([]*models.Visit, 0)
-	if b.visitsStore != nil {
-		if visits, err = b.visitsStore.ExportShortened(ctx, shortened); err != nil {
-			return models.Export{}, err
-		}
-	}
-
-	return models.Export{
-		Terse:  terse,
-		Visits: visits,
-	}, nil
-}
-
-// ExportAll exports all Terse and Visits data. This implementation has no network activity and partially ignores the
+// Export exports all Terse and Visits data. This implementation has no network activity and partially ignores the
 // given context.
-func (b *BboltTerse) ExportAll(ctx context.Context) (export map[string]models.Export, err error) {
+func (b *BboltTerse) Export(ctx context.Context) (export map[string]models.Export, err error) {
 
 	// Create the map for all visits.
 	allVisits := make(map[string][]*models.Visit)
@@ -183,6 +159,30 @@ func (b *BboltTerse) ExportAll(ctx context.Context) (export map[string]models.Ex
 	return export, nil
 }
 
+// ExportOne exports Terse and Visits data for the given shortened URL. This implementation has no network activity and
+// partially ignores the given context.
+func (b *BboltTerse) ExportOne(ctx context.Context, shortened string) (export models.Export, err error) {
+
+	// Get the Terse from the bucket.
+	var terse *models.Terse
+	if terse, err = b.getTerse(shortened); err != nil {
+		return models.Export{}, err
+	}
+
+	// Get the visits.
+	visits := make([]*models.Visit, 0)
+	if b.visitsStore != nil {
+		if visits, err = b.visitsStore.ExportOne(ctx, shortened); err != nil {
+			return models.Export{}, err
+		}
+	}
+
+	return models.Export{
+		Terse:  terse,
+		Visits: visits,
+	}, nil
+}
+
 // Import imports the given export. It will delete existing Terse and Visits data as instructed by the del argument, if
 // not nil. If the del argument is not present, data will be overwritten and unaffected data will be left alone. This
 // implementation has no network activity and ignores the given context.
@@ -230,9 +230,9 @@ func (b *BboltTerse) Import(ctx context.Context, del *models.Delete, export map[
 	return nil
 }
 
-// InsertTerse inserts the Terse into the TerseStore. It will fail if the Terse already exists. This implementation has
+// Insert inserts the Terse into the TerseStore. It will fail if the Terse already exists. This implementation has
 // no network activity and ignores the given context.
-func (b *BboltTerse) InsertTerse(_ context.Context, terse *models.Terse) (err error) {
+func (b *BboltTerse) Insert(_ context.Context, terse *models.Terse) (err error) {
 
 	// Determine if the Terse is already present.
 	if _, err = b.getTerseData(*terse.ShortenedURL); !errors.Is(err, ErrShortenedNotFound) {
@@ -251,15 +251,15 @@ func (b *BboltTerse) InsertTerse(_ context.Context, terse *models.Terse) (err er
 	return nil
 }
 
-// ReadTerse gets the Terse data for the given shortened URL. This implementation has no network activity and ignores
+// Read gets the Terse data for the given shortened URL. This implementation has no network activity and ignores
 // the given context.
-func (b *BboltTerse) ReadTerse(_ context.Context, shortened string, visit *models.Visit) (terse *models.Terse, err error) {
+func (b *BboltTerse) Read(_ context.Context, shortened string, visit *models.Visit) (terse *models.Terse, err error) {
 
 	// Track the visit to this shortened URL. Do this in a separate goroutine so the response is faster.
 	if visit != nil && b.visitsStore != nil {
 		ctx, cancel := b.createCtx()
 		go b.group.AddWorkItem(ctx, cancel, func(workCtx context.Context) (err error) {
-			return b.visitsStore.AddVisit(workCtx, shortened, visit)
+			return b.visitsStore.Add(workCtx, shortened, visit)
 		})
 	}
 
@@ -271,9 +271,9 @@ func (b *BboltTerse) ReadTerse(_ context.Context, shortened string, visit *model
 	return terse, nil
 }
 
-// UpdateTerse updates the Terse into the TerseStore. It will fail if the Terse does not exist. This implementation has
+// Update updates the Terse into the TerseStore. It will fail if the Terse does not exist. This implementation has
 // no network activity and ignores the given context.
-func (b *BboltTerse) UpdateTerse(_ context.Context, terse *models.Terse) (err error) {
+func (b *BboltTerse) Update(_ context.Context, terse *models.Terse) (err error) {
 
 	// Determine if the Terse is already present.
 	if _, err = b.getTerseData(*terse.ShortenedURL); err != nil {
@@ -288,9 +288,9 @@ func (b *BboltTerse) UpdateTerse(_ context.Context, terse *models.Terse) (err er
 	return nil
 }
 
-// UpsertTerse upserts the Terse into the TerseStore. This implementation has no network activity and ignores the given
+// Upsert upserts the Terse into the TerseStore. This implementation has no network activity and ignores the given
 // context.
-func (b *BboltTerse) UpsertTerse(_ context.Context, terse *models.Terse) (err error) {
+func (b *BboltTerse) Upsert(_ context.Context, terse *models.Terse) (err error) {
 
 	// Write the Terse to the bucket.
 	if err = b.writeTerse(terse); err != nil {

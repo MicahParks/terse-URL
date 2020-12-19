@@ -39,7 +39,7 @@ func HandleRedirect(logger *zap.SugaredLogger, terseStore storage.TerseStore) pu
 		}
 
 		// Get the Terse from the TerseStore.
-		terse, err := terseStore.ReadTerse(ctx, params.Shortened, visit)
+		terse, err := terseStore.Read(ctx, params.Shortened, visit)
 		if err != nil {
 
 			// Log at the appropriate level.

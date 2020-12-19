@@ -20,9 +20,9 @@ func NewMemVisits() (visitsStore VisitsStore) {
 	}
 }
 
-// AddVisit inserts the visit into the VisitsStore. This implementation has no network activity and ignores the given
+// Add inserts the visit into the VisitsStore. This implementation has no network activity and ignores the given
 // context.
-func (m *MemVisits) AddVisit(_ context.Context, shortened string, visit *models.Visit) (err error) {
+func (m *MemVisits) Add(_ context.Context, shortened string, visit *models.Visit) (err error) {
 
 	// Lock the Visits map for async safe use.
 	m.mux.Lock()
@@ -67,9 +67,9 @@ func (m *MemVisits) Delete(_ context.Context, del models.Delete) (err error) {
 	return nil
 }
 
-// DeleteVisits deletes all visits associated with the given shortened URL. This implementation has no network activity
+// DeleteOne deletes all visits associated with the given shortened URL. This implementation has no network activity
 // and ignores the given context.
-func (m *MemVisits) DeleteVisits(_ context.Context, del models.Delete, shortened string) (err error) {
+func (m *MemVisits) DeleteOne(_ context.Context, del models.Delete, shortened string) (err error) {
 
 	// Confirm the deletion of Visits data.
 	if del.Visits == nil || *del.Visits {
@@ -97,9 +97,9 @@ func (m *MemVisits) Export(_ context.Context) (allVisits map[string][]*models.Vi
 	return m.visits, nil
 }
 
-// ReadVisits gets all visits for the given shortened URL. This implementation has no network activity and ignores the
+// ExportOne gets all visits for the given shortened URL. This implementation has no network activity and ignores the
 // given context.
-func (m *MemVisits) ExportShortened(_ context.Context, shortened string) (visits []*models.Visit, err error) {
+func (m *MemVisits) ExportOne(_ context.Context, shortened string) (visits []*models.Visit, err error) {
 
 	// Lock the Visits map for async safe use.
 	m.mux.RLock()

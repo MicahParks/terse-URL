@@ -63,11 +63,11 @@ func HandleWrite(logger *zap.SugaredLogger, shortID *shortid.Shortid, terseStore
 		// Decide which operation to do.
 		switch params.Operation {
 		case "insert":
-			err = terseStore.InsertTerse(ctx, terse)
+			err = terseStore.Insert(ctx, terse)
 		case "update":
-			err = terseStore.UpdateTerse(ctx, terse)
+			err = terseStore.Update(ctx, terse)
 		case "upsert":
-			err = terseStore.UpsertTerse(ctx, terse)
+			err = terseStore.Upsert(ctx, terse)
 		}
 
 		// Check for an error when writing to the TerseStore.

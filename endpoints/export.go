@@ -25,7 +25,7 @@ func HandleExport(logger *zap.SugaredLogger, terseStore storage.TerseStore) api.
 		defer cancel()
 
 		// Get the data dump.
-		dump, err := terseStore.ExportAll(ctx)
+		dump, err := terseStore.Export(ctx)
 		if err != nil {
 
 			// Log at the appropriate level.
