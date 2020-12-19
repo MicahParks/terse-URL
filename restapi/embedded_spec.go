@@ -475,7 +475,6 @@ func init() {
           "type": "string"
         },
         "twitter": {
-          "type": "object",
           "$ref": "#/definitions/Twitter"
         },
         "type": {
@@ -1051,7 +1050,6 @@ func init() {
           "type": "string"
         },
         "twitter": {
-          "type": "object",
           "$ref": "#/definitions/Twitter"
         },
         "type": {
