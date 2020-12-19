@@ -178,7 +178,7 @@ paths:
         - "application/json"
       summary: "Read the Terse data for the given shortened URL."
       description: ""
-      operationId: "terseTerse" # TODO
+      operationId: "terseTerse"
       parameters:
         - description: "The shortened URL to get the Terse data for."
           in: "path"
