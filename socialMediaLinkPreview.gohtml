@@ -2,12 +2,12 @@
 <head>
     <title>{{.Title}}</title>
     <!--Insert traditional meta tags-->
-    <link href="{{.Favicon}}" rel="shortcut icon">
+    <link href="" rel="shortcut icon"> <!--TODO Add Favicon template.-->
     <meta name="description" content="{{.Description}}"/>
     <!--Insert OG Markup-->
     <!--https://ogp.me/-->
-    {{/* TODO Add templated checks to omit empty tags.*/}}
-    {{/* TODO Extra metadata stuff like structured properties and arrays?*/}}
+    <!--TODO Add templated checks to omit empty tags.-->
+    <!--TODO Extra metadata stuff like structured properties and arrays?-->
     {{- /*gotype: github.com/MicahParks/terse-URL/models.MediaPreview*/ -}}
     <meta prefix="og: http://ogp.me/ns#" property="og:image" content="{{.ImageURL}}"/>
     <meta prefix="og: http://ogp.me/ns#" property="og:title" content="{{.Title}}"/>
@@ -23,7 +23,7 @@
     <meta prefix="og: http://ogp.me/ns#" property="og:video" content="{{.VideoURL}}"/>
     <!--Insert Twitter Card Markup-->
     <!--https://developer.twitter.com/en/docs/twitter-for-websites/cards/overview/markup-->
-    {{/* TODO Need to add twitter:url and twitter:domain? */}}
+    <!--TODO Need to add twitter:url and twitter:domain?-->
     <meta name="twitter:card" content="{{.Twitter.Card}}"/>
     <meta name="twitter:creator" content="{{.Twitter.Creator}}"/>
     <meta name="twitter:description" content="{{.Twitter.Description}}"/>
@@ -33,11 +33,11 @@
     <meta name="twitter:title" content="{{.Twitter.Title}}"/>
 </head>
 <body>
-{{/*TODO Add link button.*/}}
-<script type="text/javascript">
+<!--TODO Add link button and templated redirect.-->
+<!-- <script type="text/javascript">
 
     // Immediate redirect.
-    window.location.replace('{{.Redirect}}');
-</script>
+    window.location.replace('');
+</script> -->
 </body>
 </html>
