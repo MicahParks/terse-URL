@@ -23,7 +23,7 @@ func NewBboltVisits(db *bbolt.DB, visitsBucket []byte) (visitsStore VisitsStore)
 	}
 }
 
-// Add inserts the visit into the VisitsStore. This implementation has no network activity and ignores the given
+// Add adds the visit to the visits store. This implementation has no network activity and ignores the given
 // context.
 func (b *BboltVisits) Add(_ context.Context, shortened string, visit *models.Visit) (err error) {
 
@@ -58,12 +58,14 @@ func (b *BboltVisits) Add(_ context.Context, shortened string, visit *models.Vis
 	return nil
 }
 
-// Close closes the bbolt database file. This implementation has no network activity and ignores the given context.
+// Close lets the garbage collector take care of the old Visits data. This implementation has no network activity and
+// ignores the given context.
 func (b *BboltVisits) Close(_ context.Context) (err error) {
 	return b.db.Close()
 }
 
-// Delete deletes Visits data as instructed by the del argument.
+// Delete deletes data according to the del argument. This implementation has no network activity and ignores the
+// given context.
 func (b *BboltVisits) Delete(_ context.Context, del models.Delete) (err error) {
 
 	// Confirm Visits data deletion.
@@ -91,8 +93,8 @@ func (b *BboltVisits) Delete(_ context.Context, del models.Delete) (err error) {
 	return nil
 }
 
-// DeleteOne deletes all visits associated with the given shortened URL, if instructed to by the del argument. This
-// implementation has no network activity and ignores the given context.
+// DeleteOne deletes data according to the del argument for the shortened URL. No error will be given if the shortened
+// URL is not found. This implementation has no network activity and ignores the given context.
 func (b *BboltVisits) DeleteOne(_ context.Context, del models.Delete, shortened string) (err error) {
 
 	// Confirm Visits data deletion.
@@ -115,7 +117,8 @@ func (b *BboltVisits) DeleteOne(_ context.Context, del models.Delete, shortened 
 	return nil
 }
 
-// Export exports all visits data.
+// Export exports all exports all visits data. This implementation has no network activity and ignores the given
+// context.
 func (b *BboltVisits) Export(_ context.Context) (allVisits map[string][]*models.Visit, err error) {
 
 	// Create the return map.
@@ -150,13 +153,15 @@ func (b *BboltVisits) Export(_ context.Context) (allVisits map[string][]*models.
 	return allVisits, nil
 }
 
-// ExportOne gets all visits for the given shortened URL. This implementation has no network activity and ignores the
-// given context.
+// ExportOne gets all visits to the shortened URL. The error storage.ErrShortenedNotFound will be given if the shortened
+// URL is not found. This implementation has no network activity and ignores the given context.
 func (b *BboltVisits) ExportOne(_ context.Context, shortened string) (visits []*models.Visit, err error) {
 	return b.exportShortened(shortened)
 }
 
-// Import TODO
+// Import imports the given export's data. If del is not nil, data will be deleted accordingly. If del is nil, data
+// may be overwritten, but unaffected data will be untouched. This implementation has no network activity and ignores
+// the given context.
 func (b *BboltVisits) Import(ctx context.Context, del *models.Delete, export map[string]models.Export) (err error) {
 
 	// Check if data needs to be deleted before importing.

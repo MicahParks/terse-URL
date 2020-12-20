@@ -14,15 +14,6 @@ type TerseStore interface {
 	// close the connection to the VisitsStore, depending on the configuration.
 	Close(ctx context.Context) (err error)
 
-	// Import imports the given export's data. If del is not nil, data will be deleted accordingly. If del is nil, data
-	// may be overwritten, but unaffected data will be untouched. If the VisitsStore is not nil, then the same method
-	// will be called for the associated VisitsStore.
-	Import(ctx context.Context, del *models.Delete, export map[string]models.Export) (err error)
-
-	// Insert adds a Terse to the TerseStore. The shortened URL will be active after this. The error must be
-	// storage.ErrShortenedExists if the shortened URL is already present.
-	Insert(ctx context.Context, terse *models.Terse) (err error)
-
 	// Delete deletes data according to the del argument. If the VisitsStore is not nil, then the same method will be
 	// called for the associated VisitsStore.
 	Delete(ctx context.Context, del models.Delete) (err error)
@@ -38,6 +29,15 @@ type TerseStore interface {
 	// ExportOne returns a export of Terse and Visit data for a given shortened URL. The error must be
 	// storage.ErrShortenedNotFound if the shortened URL is not found.
 	ExportOne(ctx context.Context, shortened string) (export models.Export, err error)
+
+	// Import imports the given export's data. If del is not nil, data will be deleted accordingly. If del is nil, data
+	// may be overwritten, but unaffected data will be untouched. If the VisitsStore is not nil, then the same method
+	// will be called for the associated VisitsStore.
+	Import(ctx context.Context, del *models.Delete, export map[string]models.Export) (err error)
+
+	// Insert adds a Terse to the TerseStore. The shortened URL will be active after this. The error must be
+	// storage.ErrShortenedExists if the shortened URL is already present.
+	Insert(ctx context.Context, terse *models.Terse) (err error)
 
 	// Read retrieves all non-Visit Terse data give its shortened URL. A nil visit may be passed in and the visit should
 	// not be recorded. The error must be storage.ErrShortenedNotFound if the shortened URL is not found.

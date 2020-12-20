@@ -20,7 +20,7 @@ func NewMemVisits() (visitsStore VisitsStore) {
 	}
 }
 
-// Add inserts the visit into the VisitsStore. This implementation has no network activity and ignores the given
+// Add adds the visit to the visits store. This implementation has no network activity and ignores the given
 // context.
 func (m *MemVisits) Add(_ context.Context, shortened string, visit *models.Visit) (err error) {
 
@@ -41,13 +41,14 @@ func (m *MemVisits) Add(_ context.Context, shortened string, visit *models.Visit
 	return nil
 }
 
-// Close lets the garbage collector take care of the old Visits data.
+// Close lets the garbage collector take care of the old Visits data. This implementation has no network activity and
+// ignores the given context.
 func (m *MemVisits) Close(_ context.Context) (err error) {
 	m.visits = make(map[string][]*models.Visit)
 	return nil
 }
 
-// Delete deletes visits data according to the del argument. This implementation has no network activity and ignores the
+// Delete deletes data according to the del argument. This implementation has no network activity and ignores the
 // given context.
 func (m *MemVisits) Delete(_ context.Context, del models.Delete) (err error) {
 
@@ -67,8 +68,8 @@ func (m *MemVisits) Delete(_ context.Context, del models.Delete) (err error) {
 	return nil
 }
 
-// DeleteOne deletes all visits associated with the given shortened URL. This implementation has no network activity
-// and ignores the given context.
+// DeleteOne deletes data according to the del argument for the shortened URL. No error will be given if the shortened
+// URL is not found. This implementation has no network activity and ignores the given context.
 func (m *MemVisits) DeleteOne(_ context.Context, del models.Delete, shortened string) (err error) {
 
 	// Confirm the deletion of Visits data.
@@ -87,7 +88,8 @@ func (m *MemVisits) DeleteOne(_ context.Context, del models.Delete, shortened st
 	return nil
 }
 
-// Export exports all visits data. This implementation has no network activity and ignores the given context.
+// Export exports all exports all visits data. This implementation has no network activity and ignores the given
+// context.
 func (m *MemVisits) Export(_ context.Context) (allVisits map[string][]*models.Visit, err error) {
 
 	// Lock the Visits map for async safe use.
@@ -97,8 +99,8 @@ func (m *MemVisits) Export(_ context.Context) (allVisits map[string][]*models.Vi
 	return m.visits, nil
 }
 
-// ExportOne gets all visits for the given shortened URL. This implementation has no network activity and ignores the
-// given context.
+// ExportOne gets all visits to the shortened URL. The error storage.ErrShortenedNotFound will be given if the shortened
+// URL is not found. This implementation has no network activity and ignores the given context.
 func (m *MemVisits) ExportOne(_ context.Context, shortened string) (visits []*models.Visit, err error) {
 
 	// Lock the Visits map for async safe use.
@@ -115,9 +117,9 @@ func (m *MemVisits) ExportOne(_ context.Context, shortened string) (visits []*mo
 	return visits, nil
 }
 
-// Import imports the given export's data. If del is not nil, data will be deleted accordingly. If del is nil, data may
-// be overwritten, but unaffected data will not be touched. This implementation has no network activity and ignores the
-// given context.
+// Import imports the given export's data. If del is not nil, data will be deleted accordingly. If del is nil, data
+// may be overwritten, but unaffected data will be untouched. This implementation has no network activity and ignores
+// the given context.
 func (m *MemVisits) Import(ctx context.Context, del *models.Delete, export map[string]models.Export) (err error) {
 
 	// Check if data needs to be deleted before importing.
