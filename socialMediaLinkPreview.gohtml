@@ -8,27 +8,28 @@
     <!--https://ogp.me/-->
     {{/* TODO Add templated checks to omit empty tags.*/}}
     {{/* TODO Extra metadata stuff like structured properties and arrays?*/}}
+    {{- /*gotype: github.com/MicahParks/terse-URL/models.MediaPreview*/ -}}
     <meta prefix="og: http://ogp.me/ns#" property="og:image" content="{{.ImageURL}}"/>
     <meta prefix="og: http://ogp.me/ns#" property="og:title" content="{{.Title}}"/>
     <meta prefix="og: http://ogp.me/ns#" property="og:type" content="{{.Type}}"/>
     <meta prefix="og: http://ogp.me/ns#" property="og:url" content="{{.CanonicalURL}}"/>
     <!--Insert Optional OG Markup-->
-    <meta prefix="og: http://ogp.me/ns#" property="og:audio" content="{{.Audio}}"/>
+    <meta prefix="og: http://ogp.me/ns#" property="og:audio" content="{{.AudioURL}}"/>
     <meta prefix="og: http://ogp.me/ns#" property="og:description" content="{{.Description}}"/>
     <meta prefix="og: http://ogp.me/ns#" property="og:determiner" content="{{.Determiner}}"/>
     <meta prefix="og: http://ogp.me/ns#" property="og:locale" content="{{.Locale}}"/>
     <meta prefix="og: http://ogp.me/ns#" property="og:locale:alternate" content="{{.LocaleAlt}}"/>
     <meta prefix="og: http://ogp.me/ns#" property="og:site_name" content="{{.SiteName}}"/>
-    <meta prefix="og: http://ogp.me/ns#" property="og:video" content="{{.Video}}"/>
+    <meta prefix="og: http://ogp.me/ns#" property="og:video" content="{{.VideoURL}}"/>
     <!--Insert Twitter Card Markup-->
     <!--https://developer.twitter.com/en/docs/twitter-for-websites/cards/overview/markup-->
-    <meta name="twitter:card" content="{{.TwitterCard}}"/>
-    <meta name="twitter:creator" content="{{.TwitterCreator}}"/>
-    <meta name="twitter:description" content="{{.TwitterDescription}}"/>
-    <meta name="twitter:image" content="{{.TwitterImage}}"/>
-    <meta name="twitter:site" content="{{.TwitterSite}}"/>
-    <meta name="twitter:stream" content="{{.TwitterStream}}"/>
-    <meta name="twitter:title" content="{{.TwitterTitle}}"/>
+    <meta name="twitter:card" content="{{.Twitter.Card}}"/>
+    <meta name="twitter:creator" content="{{.Twitter.Creator}}"/>
+    <meta name="twitter:description" content="{{.Twitter.Description}}"/>
+    <meta name="twitter:image" content="{{.Twitter.ImageURL}}"/>
+    <meta name="twitter:site" content="{{.Twitter.Site}}"/>
+    <meta name="twitter:stream" content="{{.Twitter.StreamURL}}"/>
+    <meta name="twitter:title" content="{{.Twitter.Title}}"/>
 </head>
 <body>
 {{/*TODO Add link button.*/}}
