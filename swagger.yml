@@ -278,6 +278,11 @@ paths:
           required: true
           type: "string"
       responses: # TODO Add 200 response for when social media link previews are enabled.
+        200:
+          description: "The HTML document containing a social media link preview and or JavaScript fingerprinting. Any
+          visitor will be automatically redirected to the original link with JavaScript."
+          schema:
+            type: "file"
         302:
           description: "An HTTP response that will redirect to the shortened URL's full URL."
           headers:
@@ -352,15 +357,12 @@ definitions:
         type: "string"
       twitter:
         $ref: "#/definitions/Twitter"
-    required:
-      - "imageURL"
-      - "title"
-      - "type"
-      - "canonicalURL"
 
   # Schema for a Terse URL, which represented a shortened URL and original pair plus metadata.
   Terse:
     properties:
+      javascriptTracking:
+        type: "boolean"
       originalURL:
         type: "string"
       mediaPreview:

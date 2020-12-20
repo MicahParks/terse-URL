@@ -13,6 +13,10 @@ const (
 
 	// defaultWorkerCount is the default amount of workers to have in the ctxerrgroup.
 	defaultWorkerCount = 4
+
+	// defaultTemplatePath is the default path in the file system to look for the HTML template that will be used for
+	// social media link previews and Javascript fingerprinting.
+	defaultTemplatePath = "socialMediaLinkPreview.gohtml"
 )
 
 var (
@@ -34,6 +38,7 @@ type configuration struct {
 	InvalidPaths    []string
 	ShortIDParanoid bool
 	ShortIDSeed     uint64
+	TemplatePath    string
 	TerseStoreJSON  string
 	VisitsStoreJSON string
 	WorkerCount     uint
@@ -101,6 +106,7 @@ func readEnvVars() (config *configuration, err error) {
 
 	// Assign the string value configurations.
 	config.ShortIDParanoid = len(os.Getenv("SHORTID_PARANOID")) != 0
+	config.TemplatePath = os.Getenv("TEMPLATE_PATH")
 	config.TerseStoreJSON = os.Getenv("TERSE_STORE_JSON")
 	config.VisitsStoreJSON = os.Getenv("VISITS_STORE_JSON")
 

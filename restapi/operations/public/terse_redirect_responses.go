@@ -6,10 +6,53 @@ package public
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"io"
 	"net/http"
 
 	"github.com/go-openapi/runtime"
 )
+
+// TerseRedirectOKCode is the HTTP code returned for type TerseRedirectOK
+const TerseRedirectOKCode int = 200
+
+/*TerseRedirectOK The HTML document containing a social media link preview and or JavaScript fingerprinting. Any visitor will be automatically redirected to the original link with JavaScript.
+
+swagger:response terseRedirectOK
+*/
+type TerseRedirectOK struct {
+
+	/*
+	  In: Body
+	*/
+	Payload io.ReadCloser `json:"body,omitempty"`
+}
+
+// NewTerseRedirectOK creates TerseRedirectOK with default headers values
+func NewTerseRedirectOK() *TerseRedirectOK {
+
+	return &TerseRedirectOK{}
+}
+
+// WithPayload adds the payload to the terse redirect o k response
+func (o *TerseRedirectOK) WithPayload(payload io.ReadCloser) *TerseRedirectOK {
+	o.Payload = payload
+	return o
+}
+
+// SetPayload sets the payload to the terse redirect o k response
+func (o *TerseRedirectOK) SetPayload(payload io.ReadCloser) {
+	o.Payload = payload
+}
+
+// WriteResponse to the client
+func (o *TerseRedirectOK) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+
+	rw.WriteHeader(200)
+	payload := o.Payload
+	if err := producer.Produce(rw, payload); err != nil {
+		panic(err) // let the recovery middleware deal with this
+	}
+}
 
 // TerseRedirectFoundCode is the HTTP code returned for type TerseRedirectFound
 const TerseRedirectFoundCode int = 302

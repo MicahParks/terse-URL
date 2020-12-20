@@ -17,6 +17,9 @@ import (
 // swagger:model Terse
 type Terse struct {
 
+	// javascript tracking
+	JavascriptTracking bool `json:"javascriptTracking,omitempty"`
+
 	// media preview
 	MediaPreview *MediaPreview `json:"mediaPreview,omitempty"`
 

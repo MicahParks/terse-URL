@@ -48,7 +48,7 @@ func configureAPI(api *operations.TerseURLAPI) http.Handler {
 	api.APITerseTerseHandler = endpoints.HandleTerse(logger.Named("/api/terse/{shortened}"), config.TerseStore)
 	api.APITerseVisitsHandler = endpoints.HandleVisits(logger.Named("/api/visits/{shortened}"), config.VisitsStore)
 	api.APITerseWriteHandler = endpoints.HandleWrite(logger.Named("/api/write/{operation}"), config.ShortID, config.TerseStore)
-	api.PublicTerseRedirectHandler = endpoints.HandleRedirect(logger.Named("/{shortened}"), config.TerseStore)
+	api.PublicTerseRedirectHandler = endpoints.HandleRedirect(logger.Named("/{shortened}"), config.Template, config.TerseStore)
 	api.SystemAliveHandler = endpoints.HandleAlive()
 
 	api.PreServerShutdown = func() {}

@@ -381,6 +381,12 @@ func init() {
           }
         ],
         "responses": {
+          "200": {
+            "description": "The HTML document containing a social media link preview and or JavaScript fingerprinting. Any visitor will be automatically redirected to the original link with JavaScript.",
+            "schema": {
+              "type": "file"
+            }
+          },
           "302": {
             "description": "An HTTP response that will redirect to the shortened URL's full URL.",
             "headers": {
@@ -440,12 +446,6 @@ func init() {
       }
     },
     "MediaPreview": {
-      "required": [
-        "imageURL",
-        "title",
-        "type",
-        "canonicalURL"
-      ],
       "properties": {
         "audioURL": {
           "type": "string"
@@ -491,6 +491,9 @@ func init() {
         "shortenedURL"
       ],
       "properties": {
+        "javascriptTracking": {
+          "type": "boolean"
+        },
         "mediaPreview": {
           "$ref": "#/definitions/MediaPreview"
         },
@@ -956,6 +959,12 @@ func init() {
           }
         ],
         "responses": {
+          "200": {
+            "description": "The HTML document containing a social media link preview and or JavaScript fingerprinting. Any visitor will be automatically redirected to the original link with JavaScript.",
+            "schema": {
+              "type": "file"
+            }
+          },
           "302": {
             "description": "An HTTP response that will redirect to the shortened URL's full URL.",
             "headers": {
@@ -1015,12 +1024,6 @@ func init() {
       }
     },
     "MediaPreview": {
-      "required": [
-        "imageURL",
-        "title",
-        "type",
-        "canonicalURL"
-      ],
       "properties": {
         "audioURL": {
           "type": "string"
@@ -1066,6 +1069,9 @@ func init() {
         "shortenedURL"
       ],
       "properties": {
+        "javascriptTracking": {
+          "type": "boolean"
+        },
         "mediaPreview": {
           "$ref": "#/definitions/MediaPreview"
         },

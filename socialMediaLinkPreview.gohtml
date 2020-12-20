@@ -24,13 +24,15 @@
     <!--Insert Twitter Card Markup-->
     <!--https://developer.twitter.com/en/docs/twitter-for-websites/cards/overview/markup-->
     <!--TODO Need to add twitter:url and twitter:domain?-->
-    <meta name="twitter:card" content="{{.Twitter.Card}}"/>
-    <meta name="twitter:creator" content="{{.Twitter.Creator}}"/>
-    <meta name="twitter:description" content="{{.Twitter.Description}}"/>
-    <meta name="twitter:image" content="{{.Twitter.ImageURL}}"/>
-    <meta name="twitter:site" content="{{.Twitter.Site}}"/>
-    <meta name="twitter:stream" content="{{.Twitter.StreamURL}}"/>
-    <meta name="twitter:title" content="{{.Twitter.Title}}"/>
+    {{- if .Twitter -}}
+        <meta name="twitter:card" content="{{.Twitter.Card}}"/>
+        <meta name="twitter:creator" content="{{.Twitter.Creator}}"/>
+        <meta name="twitter:description" content="{{.Twitter.Description}}"/>
+        <meta name="twitter:image" content="{{.Twitter.ImageURL}}"/>
+        <meta name="twitter:site" content="{{.Twitter.Site}}"/>
+        <meta name="twitter:stream" content="{{.Twitter.StreamURL}}"/>
+        <meta name="twitter:title" content="{{.Twitter.Title}}"/>
+    {{- end -}}
 </head>
 <body>
 <!--TODO Add link button and templated redirect.-->

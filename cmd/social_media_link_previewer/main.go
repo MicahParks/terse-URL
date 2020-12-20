@@ -15,14 +15,14 @@ func main() {
 	// Create the metadata.
 	meta := &models.MediaPreview{
 		AudioURL:     "",
-		CanonicalURL: &[]string{"https://socialmedialinkpreview.micahparks.com/preview"}[0],
+		CanonicalURL: "https://socialmedialinkpreview.micahparks.com/preview",
 		Description:  "This is a social media link preview description.",
 		Determiner:   "",
-		ImageURL:     &[]string{"https://wallpapercave.com/wp/wp314971.jpg"}[0],
+		ImageURL:     "https://wallpapercave.com/wp/wp314971.jpg",
 		Locale:       "",
 		LocaleAlt:    "",
 		SiteName:     "",
-		Title:        &[]string{"The Terse URL social media link preview prototype."}[0],
+		Title:        "The Terse URL social media link preview prototype.",
 		Twitter: &models.Twitter{
 			Card:        "summary_large_image",
 			Creator:     "",
@@ -33,7 +33,7 @@ func main() {
 			StreamURL:   "",
 			Title:       "The Terse URL social media link preview prototype. Twitter version.",
 		},
-		Type:     &[]string{"website"}[0],
+		Type:     "website",
 		VideoURL: "",
 	}
 

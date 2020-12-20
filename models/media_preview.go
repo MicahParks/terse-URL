@@ -9,7 +9,6 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
-	"github.com/go-openapi/validate"
 )
 
 // MediaPreview media preview
@@ -21,8 +20,7 @@ type MediaPreview struct {
 	AudioURL string `json:"audioURL,omitempty"`
 
 	// canonical URL
-	// Required: true
-	CanonicalURL *string `json:"canonicalURL"`
+	CanonicalURL string `json:"canonicalURL,omitempty"`
 
 	// description
 	Description string `json:"description,omitempty"`
@@ -31,8 +29,7 @@ type MediaPreview struct {
 	Determiner string `json:"determiner,omitempty"`
 
 	// image URL
-	// Required: true
-	ImageURL *string `json:"imageURL"`
+	ImageURL string `json:"imageURL,omitempty"`
 
 	// locale
 	Locale string `json:"locale,omitempty"`
@@ -44,15 +41,13 @@ type MediaPreview struct {
 	SiteName string `json:"siteName,omitempty"`
 
 	// title
-	// Required: true
-	Title *string `json:"title"`
+	Title string `json:"title,omitempty"`
 
 	// twitter
 	Twitter *Twitter `json:"twitter,omitempty"`
 
 	// type
-	// Required: true
-	Type *string `json:"type"`
+	Type string `json:"type,omitempty"`
 
 	// video URL
 	VideoURL string `json:"videoURL,omitempty"`
@@ -62,56 +57,13 @@ type MediaPreview struct {
 func (m *MediaPreview) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateCanonicalURL(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateImageURL(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateTitle(formats); err != nil {
-		res = append(res, err)
-	}
-
 	if err := m.validateTwitter(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateType(formats); err != nil {
 		res = append(res, err)
 	}
 
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
-	return nil
-}
-
-func (m *MediaPreview) validateCanonicalURL(formats strfmt.Registry) error {
-
-	if err := validate.Required("canonicalURL", "body", m.CanonicalURL); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *MediaPreview) validateImageURL(formats strfmt.Registry) error {
-
-	if err := validate.Required("imageURL", "body", m.ImageURL); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *MediaPreview) validateTitle(formats strfmt.Registry) error {
-
-	if err := validate.Required("title", "body", m.Title); err != nil {
-		return err
-	}
-
 	return nil
 }
 
@@ -128,15 +80,6 @@ func (m *MediaPreview) validateTwitter(formats strfmt.Registry) error {
 			}
 			return err
 		}
-	}
-
-	return nil
-}
-
-func (m *MediaPreview) validateType(formats strfmt.Registry) error {
-
-	if err := validate.Required("type", "body", m.Type); err != nil {
-		return err
 	}
 
 	return nil

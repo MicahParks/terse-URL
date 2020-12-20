@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"html/template"
 	"io/ioutil"
 	"os"
 
@@ -26,6 +27,7 @@ const (
 // Configuration is the Go structure that contains all needed configurations gathered on startup.
 type Configuration struct {
 	ErrChan         chan error
+	Template        *template.Template
 	Logger          *zap.SugaredLogger
 	InvalidPaths    []string
 	ShortID         *shortid.Shortid
@@ -53,6 +55,16 @@ func Configure() (config Configuration, err error) {
 			"error", err.Error(),
 		)
 		return Configuration{}, err // Should be unreachable.
+	}
+
+	// Figure out the path to the HTML template.
+	if rawConfig.TemplatePath == "" {
+		rawConfig.TemplatePath = defaultTemplatePath
+	}
+
+	// Create the HTML template.
+	if config.Template, err = createTemplate(rawConfig.TemplatePath, ""); err != nil {
+		return Configuration{}, err
 	}
 
 	// Set the database timeout.
@@ -110,7 +122,7 @@ func Configure() (config Configuration, err error) {
 	)
 
 	// Create the short ID generator.
-	if config.ShortID, err = shortid.New(1, shortid.DefaultABC, rawConfig.ShortIDSeed); err != nil {
+	if config.ShortID, err = shortid.New(1, shortid.DefaultABC, rawConfig.ShortIDSeed); err != nil { // TODO Configure worker count?
 		return Configuration{}, err
 	}
 
@@ -124,6 +136,19 @@ func Configure() (config Configuration, err error) {
 // DefaultCtx creates a context and its cancel function using the default timeout or one provided during configuration.
 func DefaultCtx() (ctx context.Context, cancel context.CancelFunc) {
 	return context.WithTimeout(context.Background(), defaultTimeout)
+}
+
+// createTemplate reads the template file at filePath and turns it into a Golang template with the given name.
+func createTemplate(filePath, name string) (tmpl *template.Template, err error) {
+
+	// Read the template file into memory.
+	var fileData []byte
+	if fileData, err = ioutil.ReadFile(filePath); err != nil {
+		return nil, err
+	}
+
+	// Create the Go template from the file.
+	return template.New(name).Parse(string(fileData))
 }
 
 // handleAsyncError logs errors asynchronously for an error channel.
