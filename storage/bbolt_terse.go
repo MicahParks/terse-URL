@@ -64,6 +64,11 @@ func (b *BboltTerse) Delete(ctx context.Context, del models.Delete) (err error) 
 				return err
 			}
 
+			// Create the bucket again.
+			if _, err = tx.CreateBucket(b.terseBucket); err != nil {
+				return err
+			}
+
 			return nil
 		}); err != nil {
 			return err

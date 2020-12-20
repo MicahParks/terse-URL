@@ -77,6 +77,11 @@ func (b *BboltVisits) Delete(_ context.Context, del models.Delete) (err error) {
 				return err
 			}
 
+			// Create the bucket again.
+			if _, err = tx.CreateBucket(b.visitsBucket); err != nil {
+				return err
+			}
+
 			return nil
 		}); err != nil {
 			return err

@@ -1,8 +1,6 @@
 package endpoints
 
 import (
-	"fmt"
-
 	"github.com/go-openapi/runtime/middleware"
 	"go.uber.org/zap"
 
@@ -18,8 +16,7 @@ func HandleDeleteOne(logger *zap.SugaredLogger, terseStore storage.TerseStore) a
 	return func(params api.TerseDeleteOneParams) middleware.Responder {
 
 		// Log the event.
-		logger.Infow("Deleting a shortened URL's assets.",
-			"delete", fmt.Sprintf("%+v", params.Delete),
+		logger.Infow("Deleting a shortened URL's assets.", // TODO Log delete info?
 			"shortened", params.Shortened,
 		)
 

@@ -1,8 +1,6 @@
 package endpoints
 
 import (
-	"fmt"
-
 	"github.com/go-openapi/runtime/middleware"
 	"go.uber.org/zap"
 
@@ -18,9 +16,7 @@ func HandleDelete(logger *zap.SugaredLogger, terseStore storage.TerseStore) api.
 	return func(params api.TerseDeleteParams) middleware.Responder {
 
 		// Log the event.
-		logger.Infow("Deleting Terse and or Visits data.",
-			"delete", fmt.Sprintf("%+v", params.Delete),
-		)
+		logger.Infow("Deleting Terse and or Visits data.") // TODO Log delete info?
 
 		// Create a new request context.
 		ctx, cancel := configure.DefaultCtx()

@@ -1,8 +1,6 @@
 package endpoints
 
 import (
-	"fmt"
-
 	"github.com/go-openapi/runtime/middleware"
 	"go.uber.org/zap"
 
@@ -18,9 +16,7 @@ func HandleImport(logger *zap.SugaredLogger, terseStore storage.TerseStore) api.
 	return func(params api.TerseImportParams) middleware.Responder {
 
 		// Log the event.
-		logger.Infow("Importing data.",
-			"delete", fmt.Sprintf("%+v", params.ImportDelete.Delete),
-		)
+		logger.Infow("Importing data.") // TODO Log delete info?
 
 		// Create a request context.
 		ctx, cancel := configure.DefaultCtx()
