@@ -27,6 +27,8 @@ TODO
 - [ ] Address TODOs.
 - [ ] Write a utility that will export `.bbolt` to JSON.
 - [ ] Implement `SHORTID_PARANOID`.
+- [ ] Allow for shortened URLs of the form `{owner}/{shortened}` in `/api/write/{operation}` endpoint.
+  - [ ] Only allow for random shortened URLs in top level.
 - [ ] Implement social media link previews.
 - [ ] Implement fingerprinting with fingerprintjs, but remove HTML canvas extraction. Embed minified in single HTML
   template.
