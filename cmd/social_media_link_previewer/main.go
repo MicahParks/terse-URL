@@ -49,7 +49,7 @@ func main() {
 	// Put the metadata into the template.
 	buf := bytes.NewBuffer(nil)
 	if err := tmpl.Execute(buf, meta); err != nil {
-		log.Fatalf("Failed to execute tempalte.\nError: %s", err.Error())
+		log.Fatalf("Failed to execute template.\nError: %s", err.Error())
 	}
 
 	// Server up the templated HTML with metadata on the /preview endpoint.

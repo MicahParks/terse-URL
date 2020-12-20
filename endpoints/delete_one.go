@@ -10,7 +10,7 @@ import (
 	"github.com/MicahParks/terse-URL/storage"
 )
 
-// HandleDelete creates a /api/delete/{shortened} endpoint handler via a closure. It can delete Terse and Visits data
+// HandleDeleteOne creates a /api/delete/{shortened} endpoint handler via a closure. It can delete Terse and Visits data
 // given the associated shortened URL.
 func HandleDeleteOne(logger *zap.SugaredLogger, terseStore storage.TerseStore) api.TerseDeleteOneHandlerFunc {
 	return func(params api.TerseDeleteOneParams) middleware.Responder {
