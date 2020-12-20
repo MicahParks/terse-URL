@@ -44,6 +44,7 @@ func configureAPI(api *operations.TerseURLAPI) http.Handler {
 	api.APITerseDeleteOneHandler = endpoints.HandleDeleteOne(logger.Named("/api/delete/{shortened}"), config.TerseStore)
 	api.APITerseExportHandler = endpoints.HandleExport(logger.Named("/api/export"), config.TerseStore)
 	api.APITerseExportOneHandler = endpoints.HandleExportOne(logger.Named("/api/export/{shortened}"), config.TerseStore)
+	api.APITerseImportHandler = endpoints.HandleImport(logger.Named("/api/import"), config.TerseStore)
 	api.APITerseTerseHandler = endpoints.HandleTerse(logger.Named("/api/terse/{shortened}"), config.TerseStore)
 	api.APITerseVisitsHandler = endpoints.HandleVisits(logger.Named("/api/visits/{shortened}"), config.VisitsStore)
 	api.APITerseWriteHandler = endpoints.HandleWrite(logger.Named("/api/write/{operation}"), config.ShortID, config.TerseStore)

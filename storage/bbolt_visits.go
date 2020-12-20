@@ -151,8 +151,8 @@ func (b *BboltVisits) ExportOne(_ context.Context, shortened string) (visits []*
 	return b.exportShortened(shortened)
 }
 
-// Import
-func (b *BboltVisits) Import(ctx context.Context, del *models.Delete, export map[string]*models.Export) (err error) {
+// Import TODO
+func (b *BboltVisits) Import(ctx context.Context, del *models.Delete, export map[string]models.Export) (err error) {
 
 	// Check if data needs to be deleted before importing.
 	if del != nil {
@@ -187,7 +187,7 @@ func (b *BboltVisits) Import(ctx context.Context, del *models.Delete, export map
 	return nil
 }
 
-// exportVisits gets all visits for the given shortened URL.
+// exportShortened gets all visits for the given shortened URL.
 func (b *BboltVisits) exportShortened(shortened string) (visits []*models.Visit, err error) {
 
 	// Open the bbolt database for reading.

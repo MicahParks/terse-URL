@@ -118,7 +118,7 @@ func (m *MemVisits) ExportOne(_ context.Context, shortened string) (visits []*mo
 // Import imports the given export's data. If del is not nil, data will be deleted accordingly. If del is nil, data may
 // be overwritten, but unaffected data will not be touched. This implementation has no network activity and ignores the
 // given context.
-func (m *MemVisits) Import(ctx context.Context, del *models.Delete, export map[string]*models.Export) (err error) {
+func (m *MemVisits) Import(ctx context.Context, del *models.Delete, export map[string]models.Export) (err error) {
 
 	// Check if data needs to be deleted before importing.
 	if del != nil {

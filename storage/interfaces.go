@@ -17,7 +17,7 @@ type TerseStore interface {
 	// Import imports the given export's data. If del is not nil, data will be deleted accordingly. If del is nil, data
 	// may be overwritten, but unaffected data will be untouched. If the VisitsStore is not nil, then the same method
 	// will be called for the associated VisitsStore.
-	Import(ctx context.Context, del *models.Delete, export map[string]*models.Export) (err error)
+	Import(ctx context.Context, del *models.Delete, export map[string]models.Export) (err error)
 
 	// Insert adds a Terse to the TerseStore. The shortened URL will be active after this. The error must be
 	// storage.ErrShortenedExists if the shortened URL is already present.
@@ -81,5 +81,5 @@ type VisitsStore interface {
 
 	// Import imports the given export's data. If del is not nil, data will be deleted accordingly. If del is nil, data
 	// may be overwritten, but unaffected data will be untouched.
-	Import(ctx context.Context, del *models.Delete, export map[string]*models.Export) (err error)
+	Import(ctx context.Context, del *models.Delete, export map[string]models.Export) (err error)
 }

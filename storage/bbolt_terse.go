@@ -186,7 +186,7 @@ func (b *BboltTerse) ExportOne(ctx context.Context, shortened string) (export mo
 // Import imports the given export. It will delete existing Terse and Visits data as instructed by the del argument, if
 // not nil. If the del argument is not present, data will be overwritten and unaffected data will be left alone. This
 // implementation has no network activity and ignores the given context.
-func (b *BboltTerse) Import(ctx context.Context, del *models.Delete, export map[string]*models.Export) (err error) {
+func (b *BboltTerse) Import(ctx context.Context, del *models.Delete, export map[string]models.Export) (err error) {
 
 	// Check if data needs to be deleted before importing.
 	if del != nil {

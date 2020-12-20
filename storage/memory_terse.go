@@ -159,7 +159,7 @@ func (m *MemTerse) ExportOne(ctx context.Context, shortened string) (export mode
 // may be overwritten, but unaffected data will be untouched. If the VisitsStore is not nil, then the same method
 // will be called for the associated VisitsStore. This implementation has no network activity and partially ignores the
 // given context.
-func (m *MemTerse) Import(ctx context.Context, del *models.Delete, export map[string]*models.Export) (err error) {
+func (m *MemTerse) Import(ctx context.Context, del *models.Delete, export map[string]models.Export) (err error) {
 
 	// Check if data needs to be deleted before importing.
 	if del != nil {
