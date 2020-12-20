@@ -21,4 +21,5 @@ ENV PORT 30000
 
 # Copy the executable from the builder container.
 COPY --from=builder /app/terseURL /terseURL
+COPY --from=builder /app/socialMediaLinkPreview.gohtml /socialMediaLinkPreview.gohtml
 CMD ["/terseURL"]
