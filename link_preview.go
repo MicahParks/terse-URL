@@ -4,8 +4,7 @@ import (
 	"github.com/MicahParks/terse-URL/models"
 )
 
-type LinkPreview struct {
-	Favicon             string `json:"favicon"` // TODO Figure out if this is possible.
+type LinkPreview struct { // TODO Add favicon info if possible.
 	models.MediaPreview `json:"mediaPreview"`
 	Redirect            string `json:"redirect"`
 }

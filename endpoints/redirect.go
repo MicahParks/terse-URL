@@ -11,6 +11,7 @@ import (
 	"github.com/go-openapi/strfmt"
 	"go.uber.org/zap"
 
+	terse_URL "github.com/MicahParks/terse-URL"
 	"github.com/MicahParks/terse-URL/configure"
 	"github.com/MicahParks/terse-URL/models"
 	"github.com/MicahParks/terse-URL/restapi/operations/public"
@@ -62,14 +63,31 @@ func HandleRedirect(logger *zap.SugaredLogger, tmpl *template.Template, terseSto
 			return &public.TerseRedirectNotFound{}
 		}
 
+		// Confirm the original link is present in the Terse data.
+		if terse.OriginalURL == nil {
+
+			// The Terse data did not contain an original URL. Log the event.
+			logger.Warnw("Terse data did not contain original URL. Returning 404.",
+				"shortened", params.Shortened,
+			) // TODO Different level?
+
+			return &public.TerseRedirectNotFound{}
+		}
+
 		// Check to see if an HTML file should be returned instead.
 		if terse.JavascriptTracking || terse.MediaPreview != nil {
 
 			// Create a buffer to write the populated HTML template with.
 			buf := bytes.NewBuffer(nil)
 
+			// Create the proper metadata for the HTML page.
+			meta := terse_URL.LinkPreview{
+				MediaPreview: models.MediaPreview{},
+				Redirect:     *terse.OriginalURL,
+			}
+
 			// If there is no error in populating the HTML template, return an HTML document to the client.
-			if err = tmpl.Execute(buf, terse.MediaPreview); err == nil {
+			if err = tmpl.Execute(buf, meta); err == nil {
 				return &public.TerseRedirectOK{Payload: ioutil.NopCloser(buf)}
 			}
 
@@ -82,17 +100,9 @@ func HandleRedirect(logger *zap.SugaredLogger, tmpl *template.Template, terseSto
 			err = nil
 		}
 
-		// If the Terse data has an original URL, issue a standard redirect.
-		if terse.OriginalURL != nil {
-			return &public.TerseRedirectFound{
-				Location: *terse.OriginalURL,
-			}
+		// Issue a standard redirect.
+		return &public.TerseRedirectFound{
+			Location: *terse.OriginalURL,
 		}
-
-		// Log the event.
-		logger.Warnw("Terse data did not contain original URL. Returning 404.",
-			"shortened", params.Shortened,
-		) // TODO Different level?
-		return &public.TerseRedirectNotFound{}
 	}
 }
