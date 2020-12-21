@@ -16,46 +16,23 @@ import (
 // swagger:model MediaPreview
 type MediaPreview struct {
 
-	// audio URL
-	AudioURL string `json:"audioURL,omitempty"`
-
-	// canonical URL
-	CanonicalURL string `json:"canonicalURL,omitempty"`
-
-	// description
-	Description string `json:"description,omitempty"`
-
-	// determiner
-	Determiner string `json:"determiner,omitempty"`
-
-	// image URL
-	ImageURL string `json:"imageURL,omitempty"`
-
-	// locale
-	Locale string `json:"locale,omitempty"`
-
-	// locale alt
-	LocaleAlt string `json:"localeAlt,omitempty"`
-
-	// site name
-	SiteName string `json:"siteName,omitempty"`
+	// og
+	Og OpenGraph `json:"og,omitempty"`
 
 	// title
 	Title string `json:"title,omitempty"`
 
 	// twitter
-	Twitter *Twitter `json:"twitter,omitempty"`
-
-	// type
-	Type string `json:"type,omitempty"`
-
-	// video URL
-	VideoURL string `json:"videoURL,omitempty"`
+	Twitter Twitter `json:"twitter,omitempty"`
 }
 
 // Validate validates this media preview
 func (m *MediaPreview) Validate(formats strfmt.Registry) error {
 	var res []error
+
+	if err := m.validateOg(formats); err != nil {
+		res = append(res, err)
+	}
 
 	if err := m.validateTwitter(formats); err != nil {
 		res = append(res, err)
@@ -67,19 +44,33 @@ func (m *MediaPreview) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
+func (m *MediaPreview) validateOg(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Og) { // not required
+		return nil
+	}
+
+	if err := m.Og.Validate(formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("og")
+		}
+		return err
+	}
+
+	return nil
+}
+
 func (m *MediaPreview) validateTwitter(formats strfmt.Registry) error {
 
 	if swag.IsZero(m.Twitter) { // not required
 		return nil
 	}
 
-	if m.Twitter != nil {
-		if err := m.Twitter.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("twitter")
-			}
-			return err
+	if err := m.Twitter.Validate(formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("twitter")
 		}
+		return err
 	}
 
 	return nil

@@ -26,7 +26,7 @@ TODO
 ## TODO
 
 - [ ] Address TODOs.
-- [ ] Social media link preview `auto` mode that gets the Original URL and uses the meta tags for that.
+- [ ] Social media link preview `inherit` mode that gets the Original URL and uses the meta tags for that.
 - [ ] Write a utility that will export `.bbolt` to JSON.
 - [ ] Implement `SHORTID_PARANOID`.
 - [ ] Allow for shortened URLs of the form `{owner}/{shortened}` in `/api/write/{operation}` endpoint.

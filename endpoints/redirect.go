@@ -11,8 +11,8 @@ import (
 	"github.com/go-openapi/strfmt"
 	"go.uber.org/zap"
 
-	terse_URL "github.com/MicahParks/terse-URL"
 	"github.com/MicahParks/terse-URL/configure"
+	"github.com/MicahParks/terse-URL/meta"
 	"github.com/MicahParks/terse-URL/models"
 	"github.com/MicahParks/terse-URL/restapi/operations/public"
 	"github.com/MicahParks/terse-URL/storage"
@@ -81,13 +81,13 @@ func HandleRedirect(logger *zap.SugaredLogger, tmpl *template.Template, terseSto
 			buf := bytes.NewBuffer(nil)
 
 			// Create the proper metadata for the HTML page.
-			meta := terse_URL.LinkPreview{
+			previewMeta := meta.Preview{
 				MediaPreview: models.MediaPreview{},
 				Redirect:     *terse.OriginalURL,
 			}
 
 			// If there is no error in populating the HTML template, return an HTML document to the client.
-			if err = tmpl.Execute(buf, meta); err == nil {
+			if err = tmpl.Execute(buf, previewMeta); err == nil {
 				return &public.TerseRedirectOK{Payload: ioutil.NopCloser(buf)}
 			}
 

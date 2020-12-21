@@ -447,42 +447,20 @@ func init() {
     },
     "MediaPreview": {
       "properties": {
-        "audioURL": {
-          "type": "string"
-        },
-        "canonicalURL": {
-          "type": "string"
-        },
-        "description": {
-          "type": "string"
-        },
-        "determiner": {
-          "type": "string"
-        },
-        "imageURL": {
-          "type": "string"
-        },
-        "locale": {
-          "type": "string"
-        },
-        "localeAlt": {
-          "type": "string"
-        },
-        "siteName": {
-          "type": "string"
+        "og": {
+          "$ref": "#/definitions/OpenGraph"
         },
         "title": {
           "type": "string"
         },
         "twitter": {
           "$ref": "#/definitions/Twitter"
-        },
-        "type": {
-          "type": "string"
-        },
-        "videoURL": {
-          "type": "string"
         }
+      }
+    },
+    "OpenGraph": {
+      "additionalProperties": {
+        "type": "string"
       }
     },
     "Terse": {
@@ -522,37 +500,8 @@ func init() {
       }
     },
     "Twitter": {
-      "properties": {
-        "card": {
-          "type": "string",
-          "enum": [
-            "app",
-            "player",
-            "summary",
-            "summary_large_image"
-          ]
-        },
-        "creator": {
-          "type": "string"
-        },
-        "description": {
-          "type": "string"
-        },
-        "imageURL": {
-          "type": "string"
-        },
-        "site": {
-          "type": "string"
-        },
-        "siteID": {
-          "type": "string"
-        },
-        "streamURL": {
-          "type": "string"
-        },
-        "title": {
-          "type": "string"
-        }
+      "additionalProperties": {
+        "type": "string"
       }
     },
     "Visit": {
@@ -1025,42 +974,20 @@ func init() {
     },
     "MediaPreview": {
       "properties": {
-        "audioURL": {
-          "type": "string"
-        },
-        "canonicalURL": {
-          "type": "string"
-        },
-        "description": {
-          "type": "string"
-        },
-        "determiner": {
-          "type": "string"
-        },
-        "imageURL": {
-          "type": "string"
-        },
-        "locale": {
-          "type": "string"
-        },
-        "localeAlt": {
-          "type": "string"
-        },
-        "siteName": {
-          "type": "string"
+        "og": {
+          "$ref": "#/definitions/OpenGraph"
         },
         "title": {
           "type": "string"
         },
         "twitter": {
           "$ref": "#/definitions/Twitter"
-        },
-        "type": {
-          "type": "string"
-        },
-        "videoURL": {
-          "type": "string"
         }
+      }
+    },
+    "OpenGraph": {
+      "additionalProperties": {
+        "type": "string"
       }
     },
     "Terse": {
@@ -1100,37 +1027,8 @@ func init() {
       }
     },
     "Twitter": {
-      "properties": {
-        "card": {
-          "type": "string",
-          "enum": [
-            "app",
-            "player",
-            "summary",
-            "summary_large_image"
-          ]
-        },
-        "creator": {
-          "type": "string"
-        },
-        "description": {
-          "type": "string"
-        },
-        "imageURL": {
-          "type": "string"
-        },
-        "site": {
-          "type": "string"
-        },
-        "siteID": {
-          "type": "string"
-        },
-        "streamURL": {
-          "type": "string"
-        },
-        "title": {
-          "type": "string"
-        }
+      "additionalProperties": {
+        "type": "string"
       }
     },
     "Visit": {

@@ -333,30 +333,17 @@ definitions:
   # Schema for social media previews.
   MediaPreview:
     properties:
-      imageURL:
-        type: "string"
+      og:
+        $ref: "#/definitions/OpenGraph"
       title:
-        type: "string"
-      type:
-        type: "string"
-      canonicalURL:
-        type: "string"
-      audioURL:
-        type: "string"
-      description:
-        type: "string"
-      determiner:
-        type: "string"
-      locale:
-        type: "string"
-      localeAlt:
-        type: "string"
-      siteName:
-        type: "string"
-      videoURL:
         type: "string"
       twitter:
         $ref: "#/definitions/Twitter"
+
+  # Schema for Open Graph protocol HTML meta tag info.
+  OpenGraph:
+    additionalProperties:
+      type: "string"
 
   # Schema for a Terse URL, which represented a shortened URL and original pair plus metadata.
   Terse:
@@ -385,30 +372,10 @@ definitions:
     required:
       - "originalURL"
 
-  # Schema for Twitter OG meta tags.
+  # Schema for Twitter HTML meta tags.
   Twitter:
-    properties:
-      card:
-        enum:
-          - "app"
-          - "player"
-          - "summary"
-          - "summary_large_image"
-        type: "string"
-      creator:
-        type: "string"
-      description:
-        type: "string"
-      imageURL:
-        type: "string"
-      site:
-        type: "string"
-      siteID:
-        type: "string"
-      streamURL:
-        type: "string"
-      title:
-        type: "string"
+    additionalProperties:
+      type: "string"
 
   # Schema for tracking visits to shortened links.
   Visit:

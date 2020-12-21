@@ -9,12 +9,12 @@ import (
 	"github.com/go-openapi/strfmt"
 )
 
-// Twitter twitter
+// OpenGraph open graph
 //
-// swagger:model Twitter
-type Twitter map[string]string
+// swagger:model OpenGraph
+type OpenGraph map[string]string
 
-// Validate validates this twitter
-func (m Twitter) Validate(formats strfmt.Registry) error {
+// Validate validates this open graph
+func (m OpenGraph) Validate(formats strfmt.Registry) error {
 	return nil
 }
