@@ -5,4 +5,13 @@
 </head>
 <body>
 </body>
+<script>
+    fetch("/api/export")
+        .then(function (response) {
+            return response.text();
+        })
+        .then(function (text) {
+            alert(text);
+        })
+</script>
 </html>
