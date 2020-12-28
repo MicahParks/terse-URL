@@ -1,0 +1,22 @@
+version: "3"
+services:
+  caddy:
+    container_name: "caddy"
+    image: "caddy:2"
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - "./static:/static"
+      - "./Caddyfile:/etc/caddy/Caddyfile"
+      - "caddy:/data"
+      - "caddyConfig:/config"
+  terseurl:
+    build:
+      context: "."
+      dockerfile: "Dockerfile"
+    container_name: "terseurl"
+    image: "micahparks/terseurl"
+volumes:
+  caddy:
+  caddyConfig:
