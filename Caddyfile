@@ -6,3 +6,6 @@ reverse_proxy /api/* http://terseurl:30000 {
     health_timeout 2s
     health_status 200
 }
+
+file_server
+root * /frontend

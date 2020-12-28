@@ -23,6 +23,12 @@ Environment variable table:
 
 TODO
 
+## Deployment
+```bash
+touch terse.bbolt visits.bbolt
+docker-compose up
+```
+
 ## TODO
 
 - [ ] Address TODOs.
