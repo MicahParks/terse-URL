@@ -17,6 +17,11 @@ services:
       dockerfile: "Dockerfile"
     container_name: "terseurl"
     image: "micahparks/terseurl"
+    volumes:
+      - "./terseStore.json:/terseStore.json:ro"
+      - "./terse.bbolt:/terse.bbolt"
+      - "./visitsStore.json:/visitsStore.json:ro"
+      - "./visits.bbolt:/visits.bbolt"
 volumes:
   caddy:
   caddyConfig:
