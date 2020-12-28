@@ -8,7 +8,6 @@ services:
       - "443:443"
     volumes:
       - "./frontend:/frontend"
-      - "./static:/static"
       - "./Caddyfile:/etc/caddy/Caddyfile"
       - "caddy:/data"
       - "caddyConfig:/config"
