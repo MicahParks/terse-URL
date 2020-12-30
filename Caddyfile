@@ -3,7 +3,13 @@ localhost
 file_server
 root * /frontend
 
-reverse_proxy /docs /swagger.json /api/* http://terseurl:30000 {
+@proxy {
+    path /api/*
+    path /docs
+    path /swagger.json
+}
+
+reverse_proxy @proxy http://terseurl:30000 {
     health_path /api/alive
     health_interval 5s
     health_timeout 2s
