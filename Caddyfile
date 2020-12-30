@@ -9,6 +9,11 @@ root * /frontend
     path /swagger.json
 }
 
+log {
+    output stdout
+    level DEBUG
+}
+
 reverse_proxy @proxy http://terseurl:30000 {
     health_path /api/alive
     health_interval 5s
