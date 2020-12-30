@@ -2,16 +2,11 @@
 <head>
     <title>Terse URL</title>
     <meta charset="utf-8">
+    <script src="export.js"></script>
 </head>
 <body>
 </body>
 <script>
-    fetch("/api/export")
-        .then(function (response) {
-            return response.text();
-        })
-        .then(function (text) {
-            alert(text);
-        })
+    exportOne("JHCumBxq9");
 </script>
 </html>
