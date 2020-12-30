@@ -9,5 +9,5 @@ async function exportOne(shortened) {
     return fetch(`/api/export/${shortened}`)
         .then(function (response) {
             return response.json();
-        })
+        });
 }

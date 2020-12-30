@@ -4,15 +4,13 @@ const Operation = {
     UPSERT: 2,
 }
 
-const writeInit = {
-    headers: {
-        "Content-Type": "application/json"
-    },
-    method: "POST"
+function WriteInit() {
+    this.headers = {"Content-Type": "application/json"};
+    this.method = "POST";
 }
 
 async function write(operation, terse) {
-    let init = writeInit;
+    let init = new WriteInit();
     init.body = JSON.stringify(terse);
-    return fetch(`/api/write/${operation}`, init)
+    return fetch(`/api/write/${operation}`, init);
 }
