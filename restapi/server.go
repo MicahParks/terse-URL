@@ -27,7 +27,7 @@ import (
 	"github.com/go-openapi/swag"
 	"golang.org/x/net/netutil"
 
-	"github.com/MicahParks/terse-URL/restapi/operations"
+	"github.com/MicahParks/terseurl/restapi/operations"
 )
 
 const (

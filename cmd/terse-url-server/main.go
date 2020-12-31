@@ -9,8 +9,8 @@ import (
 
 	"flag"
 
-	"github.com/MicahParks/terse-URL/restapi"
-	"github.com/MicahParks/terse-URL/restapi/operations"
+	"github.com/MicahParks/terseurl/restapi"
+	"github.com/MicahParks/terseurl/restapi/operations"
 	"github.com/go-openapi/loads"
 )
 

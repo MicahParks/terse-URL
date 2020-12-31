@@ -19,9 +19,9 @@ import (
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 
-	apiops "github.com/MicahParks/terse-URL/restapi/operations/api"
-	"github.com/MicahParks/terse-URL/restapi/operations/public"
-	"github.com/MicahParks/terse-URL/restapi/operations/system"
+	apiops "github.com/MicahParks/terseurl/restapi/operations/api"
+	"github.com/MicahParks/terseurl/restapi/operations/public"
+	"github.com/MicahParks/terseurl/restapi/operations/system"
 )
 
 // NewTerseURLAPI creates a new TerseURL instance

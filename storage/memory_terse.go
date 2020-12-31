@@ -6,7 +6,7 @@ import (
 
 	"github.com/MicahParks/ctxerrgroup"
 
-	"github.com/MicahParks/terse-URL/models"
+	"github.com/MicahParks/terseurl/models"
 )
 
 // MemTerse is a TerseStore implementation that stores all data in a Go map in memory.

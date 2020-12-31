@@ -1,4 +1,4 @@
-module github.com/MicahParks/terse-URL
+module github.com/MicahParks/terseurl
 
 go 1.15
 

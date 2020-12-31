@@ -14,7 +14,7 @@ import (
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/go-openapi/strfmt"
 
-	"github.com/MicahParks/terse-URL/models"
+	"github.com/MicahParks/terseurl/models"
 )
 
 // NewTerseDeleteOneParams creates a new TerseDeleteOneParams object

@@ -14,7 +14,7 @@ import (
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 
-	"github.com/MicahParks/terse-URL/models"
+	"github.com/MicahParks/terseurl/models"
 )
 
 // TerseImportHandlerFunc turns a function with the right signature into a terse import handler

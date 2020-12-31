@@ -15,7 +15,7 @@ import (
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/validate"
 
-	"github.com/MicahParks/terse-URL/models"
+	"github.com/MicahParks/terseurl/models"
 )
 
 // NewTerseWriteParams creates a new TerseWriteParams object

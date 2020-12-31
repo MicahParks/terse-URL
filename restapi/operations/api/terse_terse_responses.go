@@ -10,7 +10,7 @@ import (
 
 	"github.com/go-openapi/runtime"
 
-	"github.com/MicahParks/terse-URL/models"
+	"github.com/MicahParks/terseurl/models"
 )
 
 // TerseTerseOKCode is the HTTP code returned for type TerseTerseOK

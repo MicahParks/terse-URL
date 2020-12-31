@@ -13,9 +13,9 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 
-	"github.com/MicahParks/terse-URL/configure"
-	"github.com/MicahParks/terse-URL/endpoints"
-	"github.com/MicahParks/terse-URL/restapi/operations"
+	"github.com/MicahParks/terseurl/configure"
+	"github.com/MicahParks/terseurl/endpoints"
+	"github.com/MicahParks/terseurl/restapi/operations"
 )
 
 func configureFlags(api *operations.TerseURLAPI) {

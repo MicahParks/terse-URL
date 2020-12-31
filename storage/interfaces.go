@@ -3,7 +3,7 @@ package storage
 import (
 	"context"
 
-	"github.com/MicahParks/terse-URL/models"
+	"github.com/MicahParks/terseurl/models"
 )
 
 // TerseStore is the Terse storage interface. It allows for Terse storage operations without needing to know how

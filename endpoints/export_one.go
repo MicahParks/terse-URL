@@ -6,10 +6,10 @@ import (
 	"github.com/go-openapi/runtime/middleware"
 	"go.uber.org/zap"
 
-	"github.com/MicahParks/terse-URL/configure"
-	"github.com/MicahParks/terse-URL/models"
-	"github.com/MicahParks/terse-URL/restapi/operations/api"
-	"github.com/MicahParks/terse-URL/storage"
+	"github.com/MicahParks/terseurl/configure"
+	"github.com/MicahParks/terseurl/models"
+	"github.com/MicahParks/terseurl/restapi/operations/api"
+	"github.com/MicahParks/terseurl/storage"
 )
 
 // HandleExportOne creates and /api/export/{shortened} endpoint handler via a closure. It can perform exports of a

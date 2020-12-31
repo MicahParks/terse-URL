@@ -11,11 +11,11 @@ import (
 	"github.com/go-openapi/strfmt"
 	"go.uber.org/zap"
 
-	"github.com/MicahParks/terse-URL/configure"
-	"github.com/MicahParks/terse-URL/meta"
-	"github.com/MicahParks/terse-URL/models"
-	"github.com/MicahParks/terse-URL/restapi/operations/public"
-	"github.com/MicahParks/terse-URL/storage"
+	"github.com/MicahParks/terseurl/configure"
+	"github.com/MicahParks/terseurl/meta"
+	"github.com/MicahParks/terseurl/models"
+	"github.com/MicahParks/terseurl/restapi/operations/public"
+	"github.com/MicahParks/terseurl/storage"
 )
 
 // HandleRedirect creates and /{shortened} endpoint handler via a closure. It can perform redirects based on the

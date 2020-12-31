@@ -8,7 +8,7 @@ import (
 	"github.com/MicahParks/ctxerrgroup"
 	"go.etcd.io/bbolt"
 
-	"github.com/MicahParks/terse-URL/models"
+	"github.com/MicahParks/terseurl/models"
 )
 
 // BboltTerse is a TerseStore implementation that relies on a bbolt file for the backend storage.

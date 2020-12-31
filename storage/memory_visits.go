@@ -4,7 +4,7 @@ import (
 	"context"
 	"sync"
 
-	"github.com/MicahParks/terse-URL/models"
+	"github.com/MicahParks/terseurl/models"
 )
 
 // MemVisits is a VisitsStore implementation that stores all data in a Go map in memory.

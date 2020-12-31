@@ -6,7 +6,7 @@ import (
 
 	"golang.org/x/net/html"
 
-	"github.com/MicahParks/terse-URL/models"
+	"github.com/MicahParks/terseurl/models"
 )
 
 const (

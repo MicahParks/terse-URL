@@ -12,7 +12,7 @@ import (
 	"github.com/teris-io/shortid"
 	"go.uber.org/zap"
 
-	"github.com/MicahParks/terse-URL/storage"
+	"github.com/MicahParks/terseurl/storage"
 )
 
 const (
