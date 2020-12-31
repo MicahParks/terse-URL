@@ -1,6 +1,6 @@
 # terseurl
 
-[![Go Report Card](https://goreportcard.com/badge/github.com/MicahParks/terse-URL)](https://goreportcard.com/report/github.com/MicahParks/terse-URL) [![Go Reference](https://pkg.go.dev/badge/github.com/MicahParks/terse-URL.svg)](https://pkg.go.dev/github.com/MicahParks/terse-URL)
+[![Go Report Card](https://goreportcard.com/badge/github.com/MicahParks/terseurl)](https://goreportcard.com/report/github.com/MicahParks/terseurl) [![Go Reference](https://pkg.go.dev/badge/github.com/MicahParks/terseurl.svg)](https://pkg.go.dev/github.com/MicahParks/terseurl)
 
 Currently under development.
 
