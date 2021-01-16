@@ -372,6 +372,9 @@ definitions:
     required:
       - "originalURL"
 
+  # TODO Add summary data for specific shortened URL. Contains Visit count, redirect type, etc.
+  # Schema for summary data on a specific shortened URL.
+
   # Schema for Twitter HTML meta tags.
   Twitter:
     additionalProperties:
