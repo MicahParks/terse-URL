@@ -27,9 +27,15 @@ type Terse struct {
 	// Required: true
 	OriginalURL *string `json:"originalURL"`
 
+	// redirect type
+	RedirectType RedirectType `json:"redirectType,omitempty"`
+
 	// shortened URL
 	// Required: true
 	ShortenedURL *string `json:"shortenedURL"`
+
+	// visit count
+	VisitCount int64 `json:"visitCount,omitempty"`
 }
 
 // Validate validates this terse
@@ -41,6 +47,10 @@ func (m *Terse) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateOriginalURL(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateRedirectType(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -75,6 +85,22 @@ func (m *Terse) validateMediaPreview(formats strfmt.Registry) error {
 func (m *Terse) validateOriginalURL(formats strfmt.Registry) error {
 
 	if err := validate.Required("originalURL", "body", m.OriginalURL); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *Terse) validateRedirectType(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.RedirectType) { // not required
+		return nil
+	}
+
+	if err := m.RedirectType.Validate(formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("redirectType")
+		}
 		return err
 	}
 

@@ -291,7 +291,7 @@ paths:
           name: "terse"
           required: true
           schema:
-            $ref: "#/definitions/TerseOptionalShortened"
+            $ref: "#/definitions/TerseOptionalShortened" # TODO Does using the "Optional" version even matter here?
         - description: "The write operation to perform with the Terse data."
           in: "path"
           enum:
@@ -412,10 +412,14 @@ definitions:
         type: "string"
       mediaPreview:
         $ref: "#/definitions/MediaPreview"
+      redirectType:
+        $ref: "#/definitions/RedirectType"
       shortenedURL:
         type: "string"
+      visitCount: # TODO Add to "Optional" version of this schema?
+        type: "integer" # TODO Confirm cannot be set by frontend.
     required:
-      - "originalURL"
+      - "originalURL" # TODO If these are validated outside of the spec, the server won't have as many pointer issues.
       - "shortenedURL"
 
   # Schema for a Terse URL, with an optional shortened URL.

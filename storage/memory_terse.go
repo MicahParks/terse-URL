@@ -11,22 +11,24 @@ import (
 
 // MemTerse is a TerseStore implementation that stores all data in a Go map in memory.
 type MemTerse struct {
-	createCtx   ctxCreator
-	errChan     chan<- error
-	group       *ctxerrgroup.Group
-	mux         sync.RWMutex
-	terse       map[string]*models.Terse
-	visitsStore VisitsStore
+	createCtx    ctxCreator
+	errChan      chan<- error
+	group        *ctxerrgroup.Group
+	mux          sync.RWMutex
+	summaryStore SummaryStore
+	terse        map[string]*models.Terse
+	visitsStore  VisitsStore
 }
 
 // NewMemTerse creates a new MemTerse given the required assets.
-func NewMemTerse(createCtx ctxCreator, errChan chan<- error, group *ctxerrgroup.Group, visitsStore VisitsStore) (terseStore TerseStore) {
+func NewMemTerse(createCtx ctxCreator, errChan chan<- error, group *ctxerrgroup.Group, summaryStore SummaryStore, visitsStore VisitsStore) (terseStore TerseStore) {
 	return &MemTerse{
-		createCtx:   createCtx,
-		errChan:     errChan,
-		group:       group,
-		terse:       make(map[string]*models.Terse),
-		visitsStore: visitsStore,
+		createCtx:    createCtx,
+		errChan:      errChan,
+		group:        group,
+		terse:        make(map[string]*models.Terse),
+		summaryStore: summaryStore,
+		visitsStore:  visitsStore,
 	}
 }
 
@@ -221,6 +223,17 @@ func (m *MemTerse) Read(_ context.Context, shortened string, visit *models.Visit
 
 	// Track the visit to this shortened URL. Do this in a separate goroutine so the response is faster.
 	if visit != nil && m.visitsStore != nil {
+
+		// Increment the number of times the shortened URL has been visited.
+		//
+		// TODO Count all of the visits in the store on startup to set the initial value.
+		terseData, ok := m.terse[shortened]
+		if !ok {
+			return nil, ErrShortenedNotFound
+		}
+		terseData.VisitCount++
+
+		// Add the visit to the VisitsStore.
 		ctx, cancel := m.createCtx()
 		go m.group.AddWorkItem(ctx, cancel, func(workCtx context.Context) (err error) {
 			return m.visitsStore.Add(workCtx, shortened, visit)
@@ -239,6 +252,11 @@ func (m *MemTerse) Read(_ context.Context, shortened string, visit *models.Visit
 	}
 
 	return terse, nil
+}
+
+// SummaryStore returns the VisitsStore.
+func (m *MemTerse) SummaryStore() SummaryStore {
+	return m.summaryStore
 }
 
 // Update assumes the Terse already exists. It will override all of its values. The error must be

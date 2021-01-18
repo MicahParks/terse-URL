@@ -13,21 +13,23 @@ import (
 
 // BboltTerse is a TerseStore implementation that relies on a bbolt file for the backend storage.
 type BboltTerse struct {
-	db          *bbolt.DB
-	createCtx   ctxCreator
-	group       *ctxerrgroup.Group
-	terseBucket []byte
-	visitsStore VisitsStore
+	db           *bbolt.DB
+	createCtx    ctxCreator
+	group        *ctxerrgroup.Group
+	summaryStore SummaryStore
+	terseBucket  []byte
+	visitsStore  VisitsStore
 }
 
 // NewBboltTerse creates a new BboltTerse given the required assets.
-func NewBboltTerse(db *bbolt.DB, createCtx ctxCreator, group *ctxerrgroup.Group, terseBucket []byte, visitsStore VisitsStore) (terseStore TerseStore) {
+func NewBboltTerse(db *bbolt.DB, createCtx ctxCreator, group *ctxerrgroup.Group, summaryStore SummaryStore, terseBucket []byte, visitsStore VisitsStore) (terseStore TerseStore) {
 	return &BboltTerse{
-		db:          db,
-		createCtx:   createCtx,
-		group:       group,
-		terseBucket: terseBucket,
-		visitsStore: visitsStore,
+		db:           db,
+		createCtx:    createCtx,
+		group:        group,
+		terseBucket:  terseBucket,
+		summaryStore: summaryStore,
+		visitsStore:  visitsStore,
 	}
 }
 
@@ -280,6 +282,11 @@ func (b *BboltTerse) Read(_ context.Context, shortened string, visit *models.Vis
 	}
 
 	return terse, nil
+}
+
+// SummaryStore returns the VisitsStore.
+func (b *BboltTerse) SummaryStore() SummaryStore {
+	return b.summaryStore
 }
 
 // Update assumes the Terse already exists. It will override all of its values. The error must be

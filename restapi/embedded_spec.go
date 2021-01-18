@@ -553,8 +553,14 @@ func init() {
         "originalURL": {
           "type": "string"
         },
+        "redirectType": {
+          "$ref": "#/definitions/RedirectType"
+        },
         "shortenedURL": {
           "type": "string"
+        },
+        "visitCount": {
+          "type": "integer"
         }
       }
     },
@@ -1171,8 +1177,14 @@ func init() {
         "originalURL": {
           "type": "string"
         },
+        "redirectType": {
+          "$ref": "#/definitions/RedirectType"
+        },
         "shortenedURL": {
           "type": "string"
+        },
+        "visitCount": {
+          "type": "integer"
         }
       }
     },

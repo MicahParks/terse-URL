@@ -6,6 +6,20 @@ import (
 	"github.com/MicahParks/terseurl/models"
 )
 
+// SummaryStore is the Terse summary data storage interface. It allows for Terse summary storage operations without
+// needing to know how the Terse summary data is stored.
+type SummaryStore interface {
+
+	// TODO
+	IncrementVisitCount(ctx context.Context, shortened string) (err error)
+
+	// Summarize TODO
+	Summarize(ctx context.Context, shortenedURLs []string) (summaries map[string]*models.TerseSummary, err error)
+
+	// Upsert TODO
+	Upsert(ctx context.Context, shortened string, summary *models.TerseSummary) (err error)
+}
+
 // TerseStore is the Terse storage interface. It allows for Terse storage operations without needing to know how
 // the Terse data is stored.
 type TerseStore interface {
@@ -43,6 +57,10 @@ type TerseStore interface {
 	// not be recorded. The error must be storage.ErrShortenedNotFound if the shortened URL is not found.
 	Read(ctx context.Context, shortened string, visit *models.Visit) (terse *models.Terse, err error)
 
+	// SummaryStore returns the underlying SummaryStore, which holds the backend storage for tracking summary data for
+	// Terse.
+	SummaryStore() SummaryStore
+
 	// Update assumes the Terse already exists. It will override all of its values. The error must be
 	// storage.ErrShortenedNotFound if the shortened URL is not found.
 	Update(ctx context.Context, terse *models.Terse) (err error)
@@ -50,7 +68,7 @@ type TerseStore interface {
 	// Upsert will upsert the Terse into the backend storage.
 	Upsert(ctx context.Context, terse *models.Terse) (err error)
 
-	// VisitsStore returns the underlying VisitsStore, which hold the backend storage for tracking visits to shortened
+	// VisitsStore returns the underlying VisitsStore, which holds the backend storage for tracking visits to shortened
 	// URLs.
 	VisitsStore() VisitsStore
 }
