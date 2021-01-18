@@ -19,7 +19,7 @@ type SummaryStore interface {
 	Summarize(ctx context.Context, shortenedURLs []string) (summaries map[string]models.TerseSummary, err error)
 
 	// Upsert upserts the summary information for the given shortened URL.
-	Upsert(ctx context.Context, summaries map[string]*models.TerseSummary) (err error)
+	Upsert(ctx context.Context, summaries map[string]models.TerseSummary) (err error)
 }
 
 // TerseStore is the Terse storage interface. It allows for Terse storage operations without needing to know how
