@@ -45,10 +45,11 @@ func configureAPI(api *operations.TerseURLAPI) http.Handler {
 	api.APITerseExportHandler = endpoints.HandleExport(logger.Named("/api/export"), config.TerseStore)
 	api.APITerseExportOneHandler = endpoints.HandleExportOne(logger.Named("/api/export/{shortened}"), config.TerseStore)
 	api.APITerseImportHandler = endpoints.HandleImport(logger.Named("/api/import"), config.TerseStore)
+	api.APITersePrefixHandler = endpoints.HandlePrefix(logger.Named("/api/prefix"), config.Prefix)
+	api.APITerseSummaryHandler = endpoints.HandleSummary(logger.Named("/api/summary/{shortened}"))
 	api.APITerseTerseHandler = endpoints.HandleTerse(logger.Named("/api/terse/{shortened}"), config.TerseStore)
 	api.APITerseVisitsHandler = endpoints.HandleVisits(logger.Named("/api/visits/{shortened}"), config.VisitsStore)
 	api.APITerseWriteHandler = endpoints.HandleWrite(logger.Named("/api/write/{operation}"), config.ShortID, config.TerseStore)
-	api.PublicTersePrefixHandler = endpoints.HandlePrefix(logger.Named("/api/prefix"), config.Prefix)
 	api.PublicTerseRedirectHandler = endpoints.HandleRedirect(logger.Named("/{shortened}"), config.Template, config.TerseStore)
 	api.SystemAliveHandler = endpoints.HandleAlive()
 
