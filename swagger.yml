@@ -52,7 +52,7 @@ paths:
             $ref: "#/definitions/Delete"
       responses:
         200:
-          description: ""
+          description: "The deletion request was successfully fulfilled."
         default:
           description: "Unexpected error."
           schema:
@@ -119,7 +119,7 @@ paths:
       produces:
         - "application/json"
       summary: "Export Terse and Visits data for the given shortened URL."
-      description: "" # TODO
+      description: "Export Terse and Visits data for the given shortened URL."
       operationId: "terseExportOne"
       parameters:
         - description: "The shortened URL to get the export for."
@@ -164,7 +164,7 @@ paths:
                   $ref: "#/definitions/Export"
       responses:
         200:
-          description: "" # TODO
+          description: "The import request was successfully fulfilled."
         default:
           description: "Unexpected error."
           schema:
@@ -174,7 +174,7 @@ paths:
 
   /api/prefix:
     get:
-      summary: "Client's web browser is requesting what HTTP prefix all shortened URLs have." # TODO
+      summary: "Client's web browser is requesting what HTTP prefix all shortened URLs have."
       description: "Provides the HTTP prefix all shortened URLs have."
       operationId: "tersePrefix"
       responses:
@@ -195,11 +195,12 @@ paths:
         - "application/json"
       produces:
         - "application/json"
-      summary: "" # TODO
-      description: ""
+      summary: "Provide Terse summary data for the requested shortened URLs."
+      description: "Terse summary data includes the shortened URL, the original URL, the type of redirect, and the
+      number of visits."
       operationId: "terseSummary"
       parameters:
-        - description: "" # TODO
+        - description: "The array of shortened URLs to get Terse summary data for."
           in: "body"
           name: "shortened"
           required: true
@@ -209,7 +210,7 @@ paths:
               type: "string"
       responses:
         200:
-          description: "" # TODO
+          description: "The map of shortened URLs to Terse summary data."
           schema:
             additionalProperties:
               $ref: "#/definitions/TerseSummary"
@@ -226,7 +227,7 @@ paths:
       produces:
         - "application/json"
       summary: "Read the Terse data for the given shortened URL."
-      description: "" # TODO
+      description: "Read the Terse data for the given shortened URL."
       operationId: "terseTerse"
       parameters:
         - description: "The shortened URL to get the Terse data for."

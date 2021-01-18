@@ -145,7 +145,7 @@ func (b *BboltTerse) Export(ctx context.Context) (export map[string]models.Expor
 			}
 
 			// Get the visits.
-			var visits []*models.Visit // TODO Need to use make()?
+			var visits []*models.Visit
 			if b.visitsStore != nil {
 				visits = allVisits[string(shortened)]
 			}
