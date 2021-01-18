@@ -1,4 +1,6 @@
 async function getPrefix() {
-    let thing = fetch(`/api/prefix`);
-    return thing;
+    let response = await fetch(`/api/prefix`);
+    response.json().then(prefix => {
+        document.getElementById("httpPrefix").textContent = prefix;
+    });
 }

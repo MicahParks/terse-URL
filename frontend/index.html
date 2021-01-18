@@ -22,7 +22,7 @@
             <label for="shortenedURL">Shortened URL</label>
             <div class="input-group mb-3">
                 <div class="input-group-prepend">
-                    <span id="httpPrefix" class="input-group-text">https://terseurl.com/</span>
+                    <span id="httpPrefix" class="input-group-text">MISSING</span>
                 </div>
                 <input id="shortenedURL" type="text" class="form-control" aria-describedby="httpPrefix">
             </div>
@@ -42,12 +42,13 @@
 <script src="delete.js"></script>
 <script src="export.js"></script>
 <script src="form.js"></script>
+<script src="prefix.js"></script>
 <script src="table.js"></script>
 <script src="write.js"></script>
 <script>
 
     // Get the prefix for all shortened URLs.
-    let prefix =
+    getPrefix();
 
     // Set the handler for form submission.
     let formElem = document.getElementById("formElem");
