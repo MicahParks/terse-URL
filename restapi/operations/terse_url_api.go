@@ -64,6 +64,9 @@ func NewTerseURLAPI(spec *loads.Document) *TerseURLAPI {
 		APITerseImportHandler: apiops.TerseImportHandlerFunc(func(params apiops.TerseImportParams) middleware.Responder {
 			return middleware.NotImplemented("operation api.TerseImport has not yet been implemented")
 		}),
+		PublicTersePrefixHandler: public.TersePrefixHandlerFunc(func(params public.TersePrefixParams) middleware.Responder {
+			return middleware.NotImplemented("operation public.TersePrefix has not yet been implemented")
+		}),
 		PublicTerseRedirectHandler: public.TerseRedirectHandlerFunc(func(params public.TerseRedirectParams) middleware.Responder {
 			return middleware.NotImplemented("operation public.TerseRedirect has not yet been implemented")
 		}),
@@ -122,6 +125,8 @@ type TerseURLAPI struct {
 	APITerseExportOneHandler apiops.TerseExportOneHandler
 	// APITerseImportHandler sets the operation handler for the terse import operation
 	APITerseImportHandler apiops.TerseImportHandler
+	// PublicTersePrefixHandler sets the operation handler for the terse prefix operation
+	PublicTersePrefixHandler public.TersePrefixHandler
 	// PublicTerseRedirectHandler sets the operation handler for the terse redirect operation
 	PublicTerseRedirectHandler public.TerseRedirectHandler
 	// APITerseTerseHandler sets the operation handler for the terse terse operation
@@ -223,6 +228,9 @@ func (o *TerseURLAPI) Validate() error {
 	}
 	if o.APITerseImportHandler == nil {
 		unregistered = append(unregistered, "api.TerseImportHandler")
+	}
+	if o.PublicTersePrefixHandler == nil {
+		unregistered = append(unregistered, "public.TersePrefixHandler")
 	}
 	if o.PublicTerseRedirectHandler == nil {
 		unregistered = append(unregistered, "public.TerseRedirectHandler")
@@ -348,6 +356,10 @@ func (o *TerseURLAPI) initHandlerCache() {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
 	o.handlers["POST"]["/api/import"] = apiops.NewTerseImport(o.context, o.APITerseImportHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/api/prefix"] = public.NewTersePrefix(o.context, o.PublicTersePrefixHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}

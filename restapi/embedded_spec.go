@@ -31,7 +31,7 @@ func init() {
     },
     "version": "0.0.1"
   },
-  "host": "localhost:30000",
+  "host": "localhost",
   "basePath": "/",
   "paths": {
     "/api/alive": {
@@ -231,6 +231,21 @@ func init() {
             "description": "Unexpected error.",
             "schema": {
               "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/api/prefix": {
+      "get": {
+        "tags": [
+          "public"
+        ],
+        "operationId": "tersePrefix",
+        "responses": {
+          "200": {
+            "schema": {
+              "type": "string"
             }
           }
         }
@@ -558,7 +573,7 @@ func init() {
     },
     "version": "0.0.1"
   },
-  "host": "localhost:30000",
+  "host": "localhost",
   "basePath": "/",
   "paths": {
     "/api/alive": {
@@ -758,6 +773,21 @@ func init() {
             "description": "Unexpected error.",
             "schema": {
               "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/api/prefix": {
+      "get": {
+        "tags": [
+          "public"
+        ],
+        "operationId": "tersePrefix",
+        "responses": {
+          "200": {
+            "schema": {
+              "type": "string"
             }
           }
         }

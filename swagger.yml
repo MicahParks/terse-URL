@@ -172,6 +172,19 @@ paths:
       tags:
         - "api"
 
+  /api/prefix:
+    get:
+      summary: "" # TODO
+      description: ""
+      operationId: "tersePrefix"
+      responses:
+        200:
+          description: ""
+          schema:
+            type: "string"
+      tags:
+        - "public"
+
   /api/terse/{shortened}:
     get:
       produces:
