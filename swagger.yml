@@ -174,12 +174,12 @@ paths:
 
   /api/prefix:
     get:
-      summary: "" # TODO
-      description: ""
+      summary: "Client's web browser is requesting what HTTP prefix all shortened URLs have." # TODO
+      description: "Provides the HTTP prefix all shortened URLs have."
       operationId: "tersePrefix"
       responses:
         200:
-          description: ""
+          description: "The HTTP prefix all shortened URLs have."
           schema:
             type: "string"
       tags:

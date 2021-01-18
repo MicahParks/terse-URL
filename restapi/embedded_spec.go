@@ -238,12 +238,15 @@ func init() {
     },
     "/api/prefix": {
       "get": {
+        "description": "Provides the HTTP prefix all shortened URLs have.",
         "tags": [
           "public"
         ],
+        "summary": "Client's web browser is requesting what HTTP prefix all shortened URLs have.",
         "operationId": "tersePrefix",
         "responses": {
           "200": {
+            "description": "The HTTP prefix all shortened URLs have.",
             "schema": {
               "type": "string"
             }
@@ -780,12 +783,15 @@ func init() {
     },
     "/api/prefix": {
       "get": {
+        "description": "Provides the HTTP prefix all shortened URLs have.",
         "tags": [
           "public"
         ],
+        "summary": "Client's web browser is requesting what HTTP prefix all shortened URLs have.",
         "operationId": "tersePrefix",
         "responses": {
           "200": {
+            "description": "The HTTP prefix all shortened URLs have.",
             "schema": {
               "type": "string"
             }
