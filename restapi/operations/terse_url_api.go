@@ -64,11 +64,14 @@ func NewTerseURLAPI(spec *loads.Document) *TerseURLAPI {
 		APITerseImportHandler: apiops.TerseImportHandlerFunc(func(params apiops.TerseImportParams) middleware.Responder {
 			return middleware.NotImplemented("operation api.TerseImport has not yet been implemented")
 		}),
-		PublicTersePrefixHandler: public.TersePrefixHandlerFunc(func(params public.TersePrefixParams) middleware.Responder {
-			return middleware.NotImplemented("operation public.TersePrefix has not yet been implemented")
+		APITersePrefixHandler: apiops.TersePrefixHandlerFunc(func(params apiops.TersePrefixParams) middleware.Responder {
+			return middleware.NotImplemented("operation api.TersePrefix has not yet been implemented")
 		}),
 		PublicTerseRedirectHandler: public.TerseRedirectHandlerFunc(func(params public.TerseRedirectParams) middleware.Responder {
 			return middleware.NotImplemented("operation public.TerseRedirect has not yet been implemented")
+		}),
+		APITerseSummaryHandler: apiops.TerseSummaryHandlerFunc(func(params apiops.TerseSummaryParams) middleware.Responder {
+			return middleware.NotImplemented("operation api.TerseSummary has not yet been implemented")
 		}),
 		APITerseTerseHandler: apiops.TerseTerseHandlerFunc(func(params apiops.TerseTerseParams) middleware.Responder {
 			return middleware.NotImplemented("operation api.TerseTerse has not yet been implemented")
@@ -125,10 +128,12 @@ type TerseURLAPI struct {
 	APITerseExportOneHandler apiops.TerseExportOneHandler
 	// APITerseImportHandler sets the operation handler for the terse import operation
 	APITerseImportHandler apiops.TerseImportHandler
-	// PublicTersePrefixHandler sets the operation handler for the terse prefix operation
-	PublicTersePrefixHandler public.TersePrefixHandler
+	// APITersePrefixHandler sets the operation handler for the terse prefix operation
+	APITersePrefixHandler apiops.TersePrefixHandler
 	// PublicTerseRedirectHandler sets the operation handler for the terse redirect operation
 	PublicTerseRedirectHandler public.TerseRedirectHandler
+	// APITerseSummaryHandler sets the operation handler for the terse summary operation
+	APITerseSummaryHandler apiops.TerseSummaryHandler
 	// APITerseTerseHandler sets the operation handler for the terse terse operation
 	APITerseTerseHandler apiops.TerseTerseHandler
 	// APITerseVisitsHandler sets the operation handler for the terse visits operation
@@ -229,11 +234,14 @@ func (o *TerseURLAPI) Validate() error {
 	if o.APITerseImportHandler == nil {
 		unregistered = append(unregistered, "api.TerseImportHandler")
 	}
-	if o.PublicTersePrefixHandler == nil {
-		unregistered = append(unregistered, "public.TersePrefixHandler")
+	if o.APITersePrefixHandler == nil {
+		unregistered = append(unregistered, "api.TersePrefixHandler")
 	}
 	if o.PublicTerseRedirectHandler == nil {
 		unregistered = append(unregistered, "public.TerseRedirectHandler")
+	}
+	if o.APITerseSummaryHandler == nil {
+		unregistered = append(unregistered, "api.TerseSummaryHandler")
 	}
 	if o.APITerseTerseHandler == nil {
 		unregistered = append(unregistered, "api.TerseTerseHandler")
@@ -359,11 +367,15 @@ func (o *TerseURLAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/api/prefix"] = public.NewTersePrefix(o.context, o.PublicTersePrefixHandler)
+	o.handlers["GET"]["/api/prefix"] = apiops.NewTersePrefix(o.context, o.APITersePrefixHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/{shortened}"] = public.NewTerseRedirect(o.context, o.PublicTerseRedirectHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/api/summary/{shortened}"] = apiops.NewTerseSummary(o.context, o.APITerseSummaryHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}

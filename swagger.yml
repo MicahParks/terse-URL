@@ -182,15 +182,47 @@ paths:
           description: "The HTTP prefix all shortened URLs have."
           schema:
             type: "string"
+        default:
+          description: "Unexpected error."
+          schema:
+            $ref: "#/definitions/Error"
       tags:
-        - "public"
+        - "api"
+
+  /api/summary/{shortened}:
+    get:
+      produces:
+        - "application/json"
+      summary: "" # TODO
+      description: ""
+      operationId: "terseSummary"
+      parameters:
+        - description: ""
+          in: "path"
+          name: "shortened"
+          required: true
+          type: "string"
+      responses:
+        200:
+          description: ""
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/TerseSummary"
+        default:
+          description: "Unexpected error."
+          schema:
+            $ref: "#/definitions/Error"
+      tags:
+        - "api"
+
 
   /api/terse/{shortened}:
     get:
       produces:
         - "application/json"
       summary: "Read the Terse data for the given shortened URL."
-      description: ""
+      description: "" # TODO
       operationId: "terseTerse"
       parameters:
         - description: "The shortened URL to get the Terse data for."
@@ -358,6 +390,14 @@ definitions:
     additionalProperties:
       type: "string"
 
+  #Enum for shortened URL redirect types.
+  RedirectType:
+    enum:
+      - "301"
+      - "302"
+      - "metaTags"
+      - "js"
+
   # Schema for a Terse URL, which represented a shortened URL and original pair plus metadata.
   Terse:
     properties:
@@ -385,8 +425,17 @@ definitions:
     required:
       - "originalURL"
 
-  # TODO Add summary data for specific shortened URL. Contains Visit count, redirect type, etc.
   # Schema for summary data on a specific shortened URL.
+  TerseSummary:
+    properties:
+      originalURL:
+        type: "string"
+      shortenedURL:
+        type: "string"
+      visitCount:
+        type: "integer"
+      redirectType:
+        $ref: "#/definitions/RedirectType"
 
   # Schema for Twitter HTML meta tags.
   Twitter:

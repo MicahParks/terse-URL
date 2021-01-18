@@ -240,7 +240,7 @@ func init() {
       "get": {
         "description": "Provides the HTTP prefix all shortened URLs have.",
         "tags": [
-          "public"
+          "api"
         ],
         "summary": "Client's web browser is requesting what HTTP prefix all shortened URLs have.",
         "operationId": "tersePrefix",
@@ -249,6 +249,47 @@ func init() {
             "description": "The HTTP prefix all shortened URLs have.",
             "schema": {
               "type": "string"
+            }
+          },
+          "default": {
+            "description": "Unexpected error.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/api/summary/{shortened}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "api"
+        ],
+        "operationId": "terseSummary",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "shortened",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/TerseSummary"
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error.",
+            "schema": {
+              "$ref": "#/definitions/Error"
             }
           }
         }
@@ -481,6 +522,14 @@ func init() {
         "type": "string"
       }
     },
+    "RedirectType": {
+      "enum": [
+        "301",
+        "302",
+        "metaTags",
+        "js"
+      ]
+    },
     "Terse": {
       "required": [
         "originalURL",
@@ -514,6 +563,22 @@ func init() {
         },
         "shortenedURL": {
           "type": "string"
+        }
+      }
+    },
+    "TerseSummary": {
+      "properties": {
+        "originalURL": {
+          "type": "string"
+        },
+        "redirectType": {
+          "$ref": "#/definitions/RedirectType"
+        },
+        "shortenedURL": {
+          "type": "string"
+        },
+        "visitCount": {
+          "type": "integer"
         }
       }
     },
@@ -785,7 +850,7 @@ func init() {
       "get": {
         "description": "Provides the HTTP prefix all shortened URLs have.",
         "tags": [
-          "public"
+          "api"
         ],
         "summary": "Client's web browser is requesting what HTTP prefix all shortened URLs have.",
         "operationId": "tersePrefix",
@@ -794,6 +859,47 @@ func init() {
             "description": "The HTTP prefix all shortened URLs have.",
             "schema": {
               "type": "string"
+            }
+          },
+          "default": {
+            "description": "Unexpected error.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/api/summary/{shortened}": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "api"
+        ],
+        "operationId": "terseSummary",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "shortened",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/TerseSummary"
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error.",
+            "schema": {
+              "$ref": "#/definitions/Error"
             }
           }
         }
@@ -1026,6 +1132,14 @@ func init() {
         "type": "string"
       }
     },
+    "RedirectType": {
+      "enum": [
+        "301",
+        "302",
+        "metaTags",
+        "js"
+      ]
+    },
     "Terse": {
       "required": [
         "originalURL",
@@ -1059,6 +1173,22 @@ func init() {
         },
         "shortenedURL": {
           "type": "string"
+        }
+      }
+    },
+    "TerseSummary": {
+      "properties": {
+        "originalURL": {
+          "type": "string"
+        },
+        "redirectType": {
+          "$ref": "#/definitions/RedirectType"
+        },
+        "shortenedURL": {
+          "type": "string"
+        },
+        "visitCount": {
+          "type": "integer"
         }
       }
     },
