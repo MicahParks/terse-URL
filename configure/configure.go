@@ -30,6 +30,7 @@ type Configuration struct {
 	Template        *template.Template
 	Logger          *zap.SugaredLogger
 	InvalidPaths    []string
+	Prefix          string
 	ShortID         *shortid.Shortid
 	ShortIDParanoid bool
 	TerseStore      storage.TerseStore
@@ -129,6 +130,7 @@ func Configure() (config Configuration, err error) {
 	// Copy over any other needed raw config info.
 	config.InvalidPaths = rawConfig.InvalidPaths
 	config.ShortIDParanoid = rawConfig.ShortIDParanoid
+	config.Prefix = rawConfig.Prefix
 
 	return config, nil
 }

@@ -11,12 +11,15 @@ import (
 
 const (
 
-	// defaultWorkerCount is the default amount of workers to have in the ctxerrgroup.
-	defaultWorkerCount = 4
+	// defaultPrefix is the default HTTP prefix for all shortened URLs.
+	defaultPrefix = "https://terseurl.com/"
 
 	// defaultTemplatePath is the default path in the file system to look for the HTML template that will be used for
 	// social media link previews and Javascript fingerprinting.
 	defaultTemplatePath = "socialMediaLinkPreview.gohtml"
+
+	// defaultWorkerCount is the default amount of workers to have in the ctxerrgroup.
+	defaultWorkerCount = 4
 )
 
 var (
@@ -36,6 +39,7 @@ var (
 type configuration struct {
 	DefaultTimeout  time.Duration
 	InvalidPaths    []string
+	Prefix          string
 	ShortIDParanoid bool
 	ShortIDSeed     uint64
 	TemplatePath    string
@@ -105,6 +109,10 @@ func readEnvVars() (config *configuration, err error) {
 	config.InvalidPaths = invalidPathsParse(os.Getenv("INVALID_PATHS"))
 
 	// Assign the string value configurations.
+	config.Prefix = os.Getenv("HTTP_PREFIX")
+	if config.Prefix == "" {
+		config.Prefix = defaultPrefix
+	}
 	config.ShortIDParanoid = len(os.Getenv("SHORTID_PARANOID")) != 0
 	config.TemplatePath = os.Getenv("TEMPLATE_PATH")
 	config.TerseStoreJSON = os.Getenv("TERSE_STORE_JSON")
