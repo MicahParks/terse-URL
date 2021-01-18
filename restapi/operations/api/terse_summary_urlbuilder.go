@@ -9,16 +9,11 @@ import (
 	"errors"
 	"net/url"
 	golangswaggerpaths "path"
-	"strings"
 )
 
 // TerseSummaryURL generates an URL for the terse summary operation
 type TerseSummaryURL struct {
-	Shortened string
-
 	_basePath string
-	// avoid unkeyed usage
-	_ struct{}
 }
 
 // WithBasePath sets the base path for this url builder, only required when it's different from the
@@ -40,14 +35,7 @@ func (o *TerseSummaryURL) SetBasePath(bp string) {
 func (o *TerseSummaryURL) Build() (*url.URL, error) {
 	var _result url.URL
 
-	var _path = "/api/summary/{shortened}"
-
-	shortened := o.Shortened
-	if shortened != "" {
-		_path = strings.Replace(_path, "{shortened}", shortened, -1)
-	} else {
-		return nil, errors.New("shortened is required on TerseSummaryURL")
-	}
+	var _path = "/api/summary"
 
 	_basePath := o._basePath
 	if _basePath == "" {

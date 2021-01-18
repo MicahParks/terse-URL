@@ -25,7 +25,7 @@ type TerseSummaryOK struct {
 	/*
 	  In: Body
 	*/
-	Payload []*models.TerseSummary `json:"body,omitempty"`
+	Payload map[string]models.TerseSummary `json:"body,omitempty"`
 }
 
 // NewTerseSummaryOK creates TerseSummaryOK with default headers values
@@ -35,13 +35,13 @@ func NewTerseSummaryOK() *TerseSummaryOK {
 }
 
 // WithPayload adds the payload to the terse summary o k response
-func (o *TerseSummaryOK) WithPayload(payload []*models.TerseSummary) *TerseSummaryOK {
+func (o *TerseSummaryOK) WithPayload(payload map[string]models.TerseSummary) *TerseSummaryOK {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the terse summary o k response
-func (o *TerseSummaryOK) SetPayload(payload []*models.TerseSummary) {
+func (o *TerseSummaryOK) SetPayload(payload map[string]models.TerseSummary) {
 	o.Payload = payload
 }
 
@@ -51,8 +51,8 @@ func (o *TerseSummaryOK) WriteResponse(rw http.ResponseWriter, producer runtime.
 	rw.WriteHeader(200)
 	payload := o.Payload
 	if payload == nil {
-		// return empty array
-		payload = make([]*models.TerseSummary, 0, 50)
+		// return empty map
+		payload = make(map[string]models.TerseSummary, 50)
 	}
 
 	if err := producer.Produce(rw, payload); err != nil {

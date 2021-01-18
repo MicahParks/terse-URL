@@ -260,8 +260,11 @@ func init() {
         }
       }
     },
-    "/api/summary/{shortened}": {
-      "get": {
+    "/api/summary": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
         "produces": [
           "application/json"
         ],
@@ -271,17 +274,21 @@ func init() {
         "operationId": "terseSummary",
         "parameters": [
           {
-            "type": "string",
             "name": "shortened",
-            "in": "path",
-            "required": true
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
           }
         ],
         "responses": {
           "200": {
             "schema": {
-              "type": "array",
-              "items": {
+              "additionalProperties": {
                 "$ref": "#/definitions/TerseSummary"
               }
             }
@@ -523,6 +530,7 @@ func init() {
       }
     },
     "RedirectType": {
+      "type": "string",
       "enum": [
         "301",
         "302",
@@ -870,8 +878,11 @@ func init() {
         }
       }
     },
-    "/api/summary/{shortened}": {
-      "get": {
+    "/api/summary": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
         "produces": [
           "application/json"
         ],
@@ -881,17 +892,21 @@ func init() {
         "operationId": "terseSummary",
         "parameters": [
           {
-            "type": "string",
             "name": "shortened",
-            "in": "path",
-            "required": true
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
           }
         ],
         "responses": {
           "200": {
             "schema": {
-              "type": "array",
-              "items": {
+              "additionalProperties": {
                 "$ref": "#/definitions/TerseSummary"
               }
             }
@@ -1133,6 +1148,7 @@ func init() {
       }
     },
     "RedirectType": {
+      "type": "string",
       "enum": [
         "301",
         "302",

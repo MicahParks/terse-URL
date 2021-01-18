@@ -6,6 +6,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 )
@@ -30,6 +31,31 @@ type TerseSummary struct {
 
 // Validate validates this terse summary
 func (m *TerseSummary) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateRedirectType(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *TerseSummary) validateRedirectType(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.RedirectType) { // not required
+		return nil
+	}
+
+	if err := m.RedirectType.Validate(formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("redirectType")
+		}
+		return err
+	}
+
 	return nil
 }
 

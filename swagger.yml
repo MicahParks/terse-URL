@@ -119,7 +119,7 @@ paths:
       produces:
         - "application/json"
       summary: "Export Terse and Visits data for the given shortened URL."
-      description: ""
+      description: "" # TODO
       operationId: "terseExportOne"
       parameters:
         - description: "The shortened URL to get the export for."
@@ -189,25 +189,29 @@ paths:
       tags:
         - "api"
 
-  /api/summary/{shortened}:
-    get:
+  /api/summary:
+    post:
+      consumes:
+        - "application/json"
       produces:
         - "application/json"
       summary: "" # TODO
       description: ""
       operationId: "terseSummary"
       parameters:
-        - description: ""
-          in: "path"
+        - description: "" # TODO
+          in: "body"
           name: "shortened"
           required: true
-          type: "string"
-      responses:
-        200:
-          description: ""
           schema:
             type: "array"
             items:
+              type: "string"
+      responses:
+        200:
+          description: "" # TODO
+          schema:
+            additionalProperties:
               $ref: "#/definitions/TerseSummary"
         default:
           description: "Unexpected error."
@@ -392,6 +396,7 @@ definitions:
 
   #Enum for shortened URL redirect types.
   RedirectType:
+    type: "string"
     enum:
       - "301"
       - "302"

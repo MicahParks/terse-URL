@@ -6,11 +6,12 @@ package api
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"io"
 	"net/http"
 
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
-	"github.com/go-openapi/strfmt"
 )
 
 // NewTerseSummaryParams creates a new TerseSummaryParams object
@@ -31,9 +32,9 @@ type TerseSummaryParams struct {
 
 	/*
 	  Required: true
-	  In: path
+	  In: body
 	*/
-	Shortened string
+	Shortened []string
 }
 
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
@@ -45,28 +46,24 @@ func (o *TerseSummaryParams) BindRequest(r *http.Request, route *middleware.Matc
 
 	o.HTTPRequest = r
 
-	rShortened, rhkShortened, _ := route.Params.GetOK("shortened")
-	if err := o.bindShortened(rShortened, rhkShortened, route.Formats); err != nil {
-		res = append(res, err)
+	if runtime.HasBody(r) {
+		defer r.Body.Close()
+		var body []string
+		if err := route.Consumer.Consume(r.Body, &body); err != nil {
+			if err == io.EOF {
+				res = append(res, errors.Required("shortened", "body", ""))
+			} else {
+				res = append(res, errors.NewParseError("shortened", "body", "", err))
+			}
+		} else {
+			// no validation required on inline body
+			o.Shortened = body
+		}
+	} else {
+		res = append(res, errors.Required("shortened", "body", ""))
 	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
-	return nil
-}
-
-// bindShortened binds and validates parameter Shortened from path.
-func (o *TerseSummaryParams) bindShortened(rawData []string, hasKey bool, formats strfmt.Registry) error {
-	var raw string
-	if len(rawData) > 0 {
-		raw = rawData[len(rawData)-1]
-	}
-
-	// Required: true
-	// Parameter is provided by construction from the route
-
-	o.Shortened = raw
-
 	return nil
 }

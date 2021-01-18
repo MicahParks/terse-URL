@@ -29,7 +29,7 @@ func NewTerseSummary(ctx *middleware.Context, handler TerseSummaryHandler) *Ters
 	return &TerseSummary{Context: ctx, Handler: handler}
 }
 
-/*TerseSummary swagger:route GET /api/summary/{shortened} api terseSummary
+/*TerseSummary swagger:route POST /api/summary api terseSummary
 
 TerseSummary terse summary API
 

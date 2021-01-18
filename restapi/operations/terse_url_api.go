@@ -372,10 +372,10 @@ func (o *TerseURLAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/{shortened}"] = public.NewTerseRedirect(o.context, o.PublicTerseRedirectHandler)
-	if o.handlers["GET"] == nil {
-		o.handlers["GET"] = make(map[string]http.Handler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/api/summary/{shortened}"] = apiops.NewTerseSummary(o.context, o.APITerseSummaryHandler)
+	o.handlers["POST"]["/api/summary"] = apiops.NewTerseSummary(o.context, o.APITerseSummaryHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
