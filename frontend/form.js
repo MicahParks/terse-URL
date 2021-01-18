@@ -10,5 +10,7 @@ async function submitForm(e) {
     terse.originalURL = document.getElementById("originalURL").value;
     terse.shortenedURL = document.getElementById("shortenedURL").value;
 
-    console.log(JSON.stringify(terse));
+    let operation = document.getElementById("writeOperation").value;
+
+    await write(operation, terse);
 }

@@ -1,12 +1,10 @@
 localhost
 
 file_server
-root * /frontend
+root /frontend/* /frontend/
 
 @proxy {
-    path /api/*
-    path /docs
-    path /swagger.json
+    not path /frontend/*
 }
 
 log {
