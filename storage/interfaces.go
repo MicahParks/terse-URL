@@ -10,14 +10,16 @@ import (
 // needing to know how the Terse summary data is stored.
 type SummaryStore interface {
 
-	// TODO
+	// IncrementVisitCount increments the visit count for the given shortened URL. It is called in separate goroutine.
+	// The error must be storage.ErrShortenedNotFound if the shortened URL is not found.
 	IncrementVisitCount(ctx context.Context, shortened string) (err error)
 
-	// Summarize TODO
-	Summarize(ctx context.Context, shortenedURLs []string) (summaries map[string]*models.TerseSummary, err error)
+	// Summarize provides the summary information for the given shortened URLs. The error must be
+	// storage.ErrShortenedNotFound if the shortened URL is not found.
+	Summarize(ctx context.Context, shortenedURLs []string) (summaries map[string]models.TerseSummary, err error)
 
-	// Upsert TODO
-	Upsert(ctx context.Context, shortened string, summary *models.TerseSummary) (err error)
+	// Upsert upserts the summary information for the given shortened URL.
+	Upsert(ctx context.Context, summaries map[string]*models.TerseSummary) (err error)
 }
 
 // TerseStore is the Terse storage interface. It allows for Terse storage operations without needing to know how
@@ -87,14 +89,14 @@ type VisitsStore interface {
 	Delete(ctx context.Context, del models.Delete) (err error)
 
 	// DeleteOne deletes data according to the del argument for the shortened URL. No error should be given if the
-	// shortened URL is not found.
+	// shortened URL is not found. TODO Make shortened a slice.
 	DeleteOne(ctx context.Context, del models.Delete, shortened string) (err error)
 
 	// Export exports all exports all visits data.
 	Export(ctx context.Context) (allVisits map[string][]*models.Visit, err error)
 
 	// ExportOne gets all visits to the shortened URL. The error must be storage.ErrShortenedNotFound if the shortened
-	// URL is not found.
+	// URL is not found. TODO Make shortened a slice.
 	ExportOne(ctx context.Context, shortened string) (visits []*models.Visit, err error)
 
 	// Import imports the given export's data. If del is not nil, data will be deleted accordingly. If del is nil, data
