@@ -79,5 +79,5 @@ func (m *MemSummary) Upsert(_ context.Context, summaries map[string]models.Terse
 		m.summaries[shortened] = summary
 	}
 
-	return
+	return nil
 }
