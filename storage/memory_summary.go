@@ -2,6 +2,7 @@ package storage
 
 import (
 	"context"
+	"sync"
 
 	"github.com/MicahParks/terseurl/models"
 )
@@ -9,6 +10,7 @@ import (
 // TODO
 type MemSummary struct {
 	summaries map[string]*models.TerseSummary
+	mux       sync.RWMutex
 }
 
 // TODO
@@ -21,6 +23,10 @@ func NewMemSummary(visitsStore VisitsStore) SummaryStore {
 
 // TODO
 func (m *MemSummary) IncrementVisitCount(_ context.Context, shortened string) (err error) {
+
+	// TODO
+	m.mux.Lock()
+	defer m.mux.Unlock()
 
 	// Get the summary.
 	summary, ok := m.summaries[shortened]
@@ -36,6 +42,10 @@ func (m *MemSummary) IncrementVisitCount(_ context.Context, shortened string) (e
 
 // TODO
 func (m *MemSummary) Summarize(_ context.Context, shortenedURLs []string) (summaries map[string]*models.TerseSummary, err error) {
+
+	// TODO
+	m.mux.RLock()
+	defer m.mux.RUnlock()
 
 	// Make a map of summaries.
 	summaries = make(map[string]*models.TerseSummary)
