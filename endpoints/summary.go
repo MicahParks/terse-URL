@@ -15,6 +15,11 @@ import (
 func HandleSummary(logger *zap.SugaredLogger, summaryStore storage.SummaryStore) api.TerseSummaryHandlerFunc {
 	return func(params api.TerseSummaryParams) middleware.Responder {
 
+		// Debug info.
+		logger.Debugw("Requested summary data.",
+			"shortened", params.Shortened,
+		)
+
 		// Create a new request context.
 		ctx, cancel := configure.DefaultCtx()
 		defer cancel()
