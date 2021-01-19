@@ -45,6 +45,7 @@ docker-compose up
     - [ ] Only allow for random shortened URLs in top level.
 - [ ] Implement fingerprinting with fingerprintjs, but remove HTML canvas extraction. Embed minified in single HTML
   template.
+- [ ] Implement a redirect for / to /frontend/ or something...
 - [ ] Find all potential nil pointer dereferences due to data being stored in backend storage that does not conform to
   swagger spec.
 - [ ] Implement Redis storage backend?
