@@ -34,6 +34,7 @@ docker-compose up
 ## TODO
 
 - [ ] Address TODOs.
+- [ ] Deleting in SummaryStore.
 - [ ] Social media link preview `inherit` mode that gets the Original URL and uses the meta tags for that.
 - [ ] Write a utility that will export `.bbolt` to JSON.
 - [ ] Implement `SHORTID_PARANOID`.

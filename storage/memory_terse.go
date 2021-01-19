@@ -110,14 +110,14 @@ func (m *MemTerse) Delete(ctx context.Context, del models.Delete) (err error) {
 	return nil
 }
 
-// DeleteOne deletes data according to the del argument for the given shortened URL. No error should be given if
+// DeleteSome deletes data according to the del argument for the given shortened URL. No error should be given if
 // the shortened URL is not found. If the VisitsStore is not nil, then the same method will be called for the
 // associated VisitsStore. This implementation has no network activity and ignores the given context.
-func (m *MemTerse) DeleteOne(ctx context.Context, del models.Delete, shortened string) (err error) {
+func (m *MemTerse) DeleteSome(ctx context.Context, del models.Delete, shortenedURLs []string) (err error) {
 
 	// Delete Visits data if required.
 	if del.Visits == nil || *del.Visits && m.visitsStore != nil {
-		if err = m.visitsStore.DeleteOne(ctx, del, shortened); err != nil {
+		if err = m.visitsStore.DeleteSome(ctx, del, shortenedURLs); err != nil {
 			return err
 		}
 	}
@@ -128,8 +128,12 @@ func (m *MemTerse) DeleteOne(ctx context.Context, del models.Delete, shortened s
 		// Lock the Terse map for async safe use.
 		m.mux.Lock()
 
-		// Delete the Terse from the Terse map.
-		delete(m.terse, shortened)
+		// Iterate through the shortened URLs.
+		for _, shortened := range shortenedURLs {
+
+			// Delete the Terse from the Terse map.
+			delete(m.terse, shortened)
+		}
 
 		// Unlock the Terse map. The write operation is over.
 		m.mux.Unlock()
@@ -142,61 +146,77 @@ func (m *MemTerse) DeleteOne(ctx context.Context, del models.Delete, shortened s
 // given context.
 func (m *MemTerse) Export(ctx context.Context) (export map[string]models.Export, err error) {
 
-	// Lock the Terse map for async safe use.
-	m.mux.RLock()
-	defer m.mux.RUnlock()
-
 	// Create the export map.
 	export = make(map[string]models.Export)
+
+	// Create the slice of shortened URLs. Preallocate the memory for faster insertion.
+	shortenedURLs := make([]string, len(m.terse))
+	index := 0
+	for shortened := range m.terse {
+		shortenedURLs[index] = shortened
+		index++
+	}
+
+	// Create the slice map of Visits.
+	var visits map[string][]*models.Visit
+	if visits, err = m.visitsStore.Export(ctx); err != nil {
+		return nil, err
+	}
+
+	// Lock the Terse map for async safe use.
+	m.mux.RLock()
 
 	// Iterate through the shortened URLs and add them to the map.
 	for shortened, terse := range m.terse {
 
-		// Get the visits for the Terse.
-		visits := make([]*models.Visit, 0)
-		if m.visitsStore != nil {
-			if visits, err = m.visitsStore.ExportSome(ctx, *terse.ShortenedURL); err != nil {
-				return nil, err
-			}
-		}
-
 		// Add the shortened URL and its visits to the data export.
 		export[shortened] = models.Export{
 			Terse:  terse,
-			Visits: visits,
+			Visits: visits[shortened], // TODO Check if ok?
 		}
 	}
+
+	// Unlock the Terse map for async safe use.
+	m.mux.RUnlock()
 
 	return export, nil
 }
 
-// ExportOne returns a export of Terse and Visit data for a given shortened URL. The error must be
+// ExportSome returns a export of Terse and Visit data for a given shortened URL. The error must be
 // storage.ErrShortenedNotFound if the shortened URL is not found. This implementation has no network activity and
 // ignores the given context.
-func (m *MemTerse) ExportOne(ctx context.Context, shortened string) (export models.Export, err error) {
+func (m *MemTerse) ExportSome(ctx context.Context, shortenedURLs []string) (export map[string]models.Export, err error) {
+
+	// Create the return map.
+	export = make(map[string]models.Export)
+
+	// Create the slice map of Visits.
+	var visits map[string][]*models.Visit
+	if visits, err = m.visitsStore.ExportSome(ctx, shortenedURLs); err != nil {
+		return nil, err
+	}
 
 	// Lock the Terse map for async safe use.
 	m.mux.RLock()
 	defer m.mux.RUnlock()
 
-	// Get the Terse.
-	terse, ok := m.terse[shortened]
-	if !ok {
-		return models.Export{}, ErrShortenedNotFound
-	}
+	// Iterate through the shortened URLs.
+	for _, shortened := range shortenedURLs {
 
-	// Get the visits for the Terse.
-	visits := make([]*models.Visit, 0)
-	if m.visitsStore != nil {
-		if visits, err = m.visitsStore.ExportSome(ctx, shortened); err != nil {
-			return models.Export{}, err
+		// Get the Terse.
+		terse, ok := m.terse[shortened]
+		if !ok {
+			return nil, ErrShortenedNotFound
+		}
+
+		// Combine the data and add to the return slice.
+		export[shortened] = models.Export{
+			Terse:  terse,
+			Visits: visits[shortened], // TODO Check if ok?
 		}
 	}
 
-	return models.Export{
-		Terse:  terse,
-		Visits: visits,
-	}, nil
+	return export, nil
 }
 
 // Import imports the given export's data. If del is not nil, data will be deleted accordingly. If del is nil, data

@@ -37,17 +37,17 @@ type TerseStore interface {
 	// called for the associated VisitsStore.
 	Delete(ctx context.Context, del models.Delete) (err error)
 
-	// DeleteOne deletes data according to the del argument for the given shortened URL. No error should be given if
+	// DeleteSome deletes data according to the del argument for the given shortened URL. No error should be given if
 	// the shortened URL is not found. If the VisitsStore is not nil, then the same method will be called for the
 	// associated VisitsStore.
-	DeleteOne(ctx context.Context, del models.Delete, shortened string) (err error)
+	DeleteSome(ctx context.Context, del models.Delete, shortenedURLs []string) (err error)
 
 	// Export returns a map of shortened URLs to export data.
 	Export(ctx context.Context) (export map[string]models.Export, err error)
 
-	// ExportOne returns a export of Terse and Visit data for a given shortened URL. The error must be
+	// ExportSome returns a export of Terse and Visit data for a given shortened URL. The error must be
 	// storage.ErrShortenedNotFound if the shortened URL is not found.
-	ExportOne(ctx context.Context, shortened string) (export models.Export, err error)
+	ExportSome(ctx context.Context, shortenedURLs []string) (export map[string]models.Export, err error)
 
 	// Import imports the given export's data. If del is not nil, data will be deleted accordingly. If del is nil, data
 	// may be overwritten, but unaffected data will be untouched. If the VisitsStore is not nil, then the same method
@@ -91,9 +91,9 @@ type VisitsStore interface {
 	// Delete deletes data according to the del argument.
 	Delete(ctx context.Context, del models.Delete) (err error)
 
-	// DeleteOne deletes data according to the del argument for the shortened URL. No error should be given if the
+	// DeleteSome deletes data according to the del argument for the shortened URL. No error should be given if the
 	// shortened URL is not found.
-	DeleteOne(ctx context.Context, del models.Delete, shortenedURLs []string) (err error)
+	DeleteSome(ctx context.Context, del models.Delete, shortenedURLs []string) (err error)
 
 	// Export exports all exports all visits data.
 	Export(ctx context.Context) (allVisits map[string][]*models.Visit, err error)

@@ -2,6 +2,7 @@ package endpoints
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/go-openapi/runtime/middleware"
 	"go.uber.org/zap"
@@ -12,14 +13,14 @@ import (
 	"github.com/MicahParks/terseurl/storage"
 )
 
-// HandleExportOne creates and /api/export/{shortened} endpoint handler via a closure. It can perform exports of a
+// HandleExportSome creates and /api/export/some endpoint handler via a closure. It can perform exports of a
 // single shortened URL's Terse and Visits data.
-func HandleExportOne(logger *zap.SugaredLogger, terseStore storage.TerseStore) api.TerseExportOneHandlerFunc {
-	return func(params api.TerseExportOneParams) middleware.Responder {
+func HandleExportSome(logger *zap.SugaredLogger, terseStore storage.TerseStore) api.TerseExportSomeHandlerFunc {
+	return func(params api.TerseExportSomeParams) middleware.Responder {
 
 		// Log the event.
 		logger.Infow("Exporting a shortened URL's Terse and Visits data.",
-			"shortened", params.Shortened,
+			"shortened", fmt.Sprintf("%v", params.ShortenedURLs),
 		)
 
 		// Create a request context.
@@ -27,7 +28,7 @@ func HandleExportOne(logger *zap.SugaredLogger, terseStore storage.TerseStore) a
 		defer cancel()
 
 		// Get the data dump.
-		dump, err := terseStore.ExportOne(ctx, params.Shortened)
+		dump, err := terseStore.ExportSome(ctx, params.ShortenedURLs)
 		if err != nil {
 
 			// Log at the appropriate level. Assign the response code and message.
@@ -37,20 +38,20 @@ func HandleExportOne(logger *zap.SugaredLogger, terseStore storage.TerseStore) a
 				code = 400
 				message = "Shortened URL not found."
 				logger.Infow(message,
-					"shortened", params.Shortened,
+					"shortened", fmt.Sprintf("%v", params.ShortenedURLs),
 					"error", err.Error(),
 				)
 			} else {
 				code = 500
 				message = "Failed to dump data for shortened URL."
 				logger.Errorw(message,
-					"shortened", params.Shortened,
+					"shortened", fmt.Sprintf("%v", params.ShortenedURLs),
 					"error", err.Error(),
 				)
 			}
 
 			// Report the error to the client.
-			resp := &api.TerseExportOneDefault{Payload: &models.Error{
+			resp := &api.TerseExportSomeDefault{Payload: &models.Error{
 				Code:    &code,
 				Message: &message,
 			}}
@@ -58,8 +59,8 @@ func HandleExportOne(logger *zap.SugaredLogger, terseStore storage.TerseStore) a
 			return resp
 		}
 
-		return &api.TerseExportOneOK{
-			Payload: &dump,
+		return &api.TerseExportSomeOK{
+			Payload: dump,
 		}
 	}
 }

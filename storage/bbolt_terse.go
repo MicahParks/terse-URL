@@ -130,14 +130,14 @@ func (b *BboltTerse) Delete(ctx context.Context, del models.Delete) (err error) 
 	return nil
 }
 
-// DeleteOne deletes data according to the del argument for the given shortened URL. No error should be given if
+// DeleteSome deletes data according to the del argument for the given shortened URL. No error should be given if
 // the shortened URL is not found. If the VisitsStore is not nil, then the same method will be called for the
 // associated VisitsStore. This implementation has no network activity and ignores the given context.
-func (b *BboltTerse) DeleteOne(ctx context.Context, del models.Delete, shortened string) (err error) {
+func (b *BboltTerse) DeleteSome(ctx context.Context, del models.Delete, shortenedURLs []string) (err error) {
 
 	// Delete Visits data if required.
 	if del.Visits == nil || *del.Visits && b.visitsStore != nil {
-		if err = b.visitsStore.DeleteOne(ctx, del, shortened); err != nil {
+		if err = b.visitsStore.DeleteSome(ctx, del, shortenedURLs); err != nil {
 			return err
 		}
 	}
@@ -148,9 +148,13 @@ func (b *BboltTerse) DeleteOne(ctx context.Context, del models.Delete, shortened
 		// Open the bbolt database for writing.
 		if err = b.db.Update(func(tx *bbolt.Tx) error {
 
-			// Delete the Terse from the bucket.
-			if err = tx.Bucket(b.terseBucket).Delete([]byte(shortened)); err != nil {
-				return err
+			// Iterate through the shortened URLs.
+			for _, shortened := range shortenedURLs {
+
+				// Delete the Terse from the bucket.
+				if err = tx.Bucket(b.terseBucket).Delete([]byte(shortened)); err != nil {
+					return err
+				}
 			}
 
 			return nil
@@ -167,13 +171,13 @@ func (b *BboltTerse) DeleteOne(ctx context.Context, del models.Delete, shortened
 func (b *BboltTerse) Export(ctx context.Context) (export map[string]models.Export, err error) {
 
 	// Create the map for all visits.
-	allVisits := make(map[string][]*models.Visit)
+	visits := make(map[string][]*models.Visit)
 
 	// Only get visits if there is a visits store.
 	if b.visitsStore != nil {
 
 		// Get all the visits.
-		if allVisits, err = b.visitsStore.Export(ctx); err != nil {
+		if visits, err = b.visitsStore.Export(ctx); err != nil {
 			return nil, err
 		}
 	}
@@ -193,16 +197,10 @@ func (b *BboltTerse) Export(ctx context.Context) (export map[string]models.Expor
 				return err
 			}
 
-			// Get the visits.
-			var visits []*models.Visit
-			if b.visitsStore != nil {
-				visits = allVisits[string(shortened)]
-			}
-
 			// Add the Terse and Visits export to the export map.
 			export[string(shortened)] = models.Export{
 				Terse:  terse,
-				Visits: visits,
+				Visits: visits[string(shortened)], // TODO Check if ok?
 			}
 
 			return nil
@@ -217,29 +215,39 @@ func (b *BboltTerse) Export(ctx context.Context) (export map[string]models.Expor
 	return export, nil
 }
 
-// ExportOne returns a export of Terse and Visit data for a given shortened URL. The error must be
+// ExportSome returns a export of Terse and Visit data for a given shortened URL. The error must be
 // storage.ErrShortenedNotFound if the shortened URL is not found. This implementation has no network activity and
 // ignores the given context.
-func (b *BboltTerse) ExportOne(ctx context.Context, shortened string) (export models.Export, err error) {
+func (b *BboltTerse) ExportSome(ctx context.Context, shortenedURLs []string) (export map[string]models.Export, err error) {
 
-	// Get the Terse from the bucket.
-	var terse *models.Terse
-	if terse, err = b.getTerse(shortened); err != nil {
-		return models.Export{}, err
-	}
+	// Create the return map.
+	export = make(map[string]models.Export)
 
 	// Get the visits.
-	visits := make([]*models.Visit, 0)
+	var visits map[string][]*models.Visit
 	if b.visitsStore != nil {
-		if visits, err = b.visitsStore.ExportSome(ctx, shortened); err != nil {
-			return models.Export{}, err
+		if visits, err = b.visitsStore.ExportSome(ctx, shortenedURLs); err != nil {
+			return nil, err
 		}
 	}
 
-	return models.Export{
-		Terse:  terse,
-		Visits: visits,
-	}, nil
+	// Iterate through the shortened URLs.
+	for _, shortened := range shortenedURLs {
+
+		// Get the Terse from the bucket.
+		var terse *models.Terse
+		if terse, err = b.getTerse(shortened); err != nil {
+			return nil, err
+		}
+
+		// Combine the data and add to the return slice.
+		export[shortened] = models.Export{
+			Terse:  terse,
+			Visits: visits[shortened], // TODO Check if ok?
+		}
+	}
+
+	return export, nil
 }
 
 // Import imports the given export's data. If del is not nil, data will be deleted accordingly. If del is nil, data

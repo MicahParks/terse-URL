@@ -84,7 +84,7 @@ func init() {
         }
       }
     },
-    "/api/delete/{shortened}": {
+    "/api/delete/some": {
       "delete": {
         "description": "If only Terse data is deleted, the API user is responsible for cleaning up its Visits data before adding new Terse data under the same shortened URL.",
         "consumes": [
@@ -97,23 +97,28 @@ func init() {
           "api"
         ],
         "summary": "Delete Terse and or Visits data for the given shortened URL.",
-        "operationId": "terseDeleteOne",
+        "operationId": "terseDeleteSome",
         "parameters": [
           {
-            "description": "Indicate if Terse and or Visits data should be deleted.",
-            "name": "delete",
+            "description": "Indicate if Terse and or Visits data should be deleted and for which shortened URLs.",
+            "name": "info",
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/Delete"
+              "type": "object",
+              "properties": {
+                "delete": {
+                  "description": "Indicate if Terse and or Visits data should be deleted.",
+                  "$ref": "#/definitions/Delete"
+                },
+                "shortenedURLs": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
             }
-          },
-          {
-            "type": "string",
-            "description": "The shortened URL whose data should be deleted.",
-            "name": "shortened",
-            "in": "path",
-            "required": true
           }
         ],
         "responses": {
@@ -160,9 +165,12 @@ func init() {
         }
       }
     },
-    "/api/export/{shortened}": {
-      "get": {
+    "/api/export/some": {
+      "post": {
         "description": "Export Terse and Visits data for the given shortened URL.",
+        "consumes": [
+          "application/json"
+        ],
         "produces": [
           "application/json"
         ],
@@ -170,21 +178,27 @@ func init() {
           "api"
         ],
         "summary": "Export Terse and Visits data for the given shortened URL.",
-        "operationId": "terseExportOne",
+        "operationId": "terseExportSome",
         "parameters": [
           {
-            "type": "string",
-            "description": "The shortened URL to get the export for.",
-            "name": "shortened",
-            "in": "path",
-            "required": true
+            "description": "The shortened URLs to get the export for.",
+            "name": "shortenedURLs",
+            "in": "body",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
           }
         ],
         "responses": {
           "200": {
             "description": "The export was successfully retrieved.",
             "schema": {
-              "$ref": "#/definitions/Export"
+              "additionalProperties": {
+                "$ref": "#/definitions/Export"
+              }
             }
           },
           "default": {
@@ -715,7 +729,7 @@ func init() {
         }
       }
     },
-    "/api/delete/{shortened}": {
+    "/api/delete/some": {
       "delete": {
         "description": "If only Terse data is deleted, the API user is responsible for cleaning up its Visits data before adding new Terse data under the same shortened URL.",
         "consumes": [
@@ -728,23 +742,28 @@ func init() {
           "api"
         ],
         "summary": "Delete Terse and or Visits data for the given shortened URL.",
-        "operationId": "terseDeleteOne",
+        "operationId": "terseDeleteSome",
         "parameters": [
           {
-            "description": "Indicate if Terse and or Visits data should be deleted.",
-            "name": "delete",
+            "description": "Indicate if Terse and or Visits data should be deleted and for which shortened URLs.",
+            "name": "info",
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/Delete"
+              "type": "object",
+              "properties": {
+                "delete": {
+                  "description": "Indicate if Terse and or Visits data should be deleted.",
+                  "$ref": "#/definitions/Delete"
+                },
+                "shortenedURLs": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
             }
-          },
-          {
-            "type": "string",
-            "description": "The shortened URL whose data should be deleted.",
-            "name": "shortened",
-            "in": "path",
-            "required": true
           }
         ],
         "responses": {
@@ -791,9 +810,12 @@ func init() {
         }
       }
     },
-    "/api/export/{shortened}": {
-      "get": {
+    "/api/export/some": {
+      "post": {
         "description": "Export Terse and Visits data for the given shortened URL.",
+        "consumes": [
+          "application/json"
+        ],
         "produces": [
           "application/json"
         ],
@@ -801,21 +823,27 @@ func init() {
           "api"
         ],
         "summary": "Export Terse and Visits data for the given shortened URL.",
-        "operationId": "terseExportOne",
+        "operationId": "terseExportSome",
         "parameters": [
           {
-            "type": "string",
-            "description": "The shortened URL to get the export for.",
-            "name": "shortened",
-            "in": "path",
-            "required": true
+            "description": "The shortened URLs to get the export for.",
+            "name": "shortenedURLs",
+            "in": "body",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
           }
         ],
         "responses": {
           "200": {
             "description": "The export was successfully retrieved.",
             "schema": {
-              "$ref": "#/definitions/Export"
+              "additionalProperties": {
+                "$ref": "#/definitions/Export"
+              }
             }
           },
           "default": {

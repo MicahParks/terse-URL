@@ -69,9 +69,9 @@ func (m *MemVisits) Delete(_ context.Context, del models.Delete) (err error) {
 	return nil
 }
 
-// DeleteOne deletes data according to the del argument for the shortened URL. No error will be given if the shortened
+// DeleteSome deletes data according to the del argument for the shortened URL. No error will be given if the shortened
 // URL is not found. This implementation has no network activity and ignores the given context.
-func (m *MemVisits) DeleteOne(_ context.Context, del models.Delete, shortenedURLs []string) (err error) {
+func (m *MemVisits) DeleteSome(_ context.Context, del models.Delete, shortenedURLs []string) (err error) {
 
 	// Confirm the deletion of Visits data.
 	if del.Visits == nil || *del.Visits {
@@ -122,7 +122,7 @@ func (m *MemVisits) ExportCounts(_ context.Context) (counts map[string]uint, err
 	return counts, nil
 }
 
-// ExportOne gets all visits to the shortened URL. The error storage.ErrShortenedNotFound will be given if the shortened
+// ExportSome gets all visits to the shortened URL. The error storage.ErrShortenedNotFound will be given if the shortened
 // URL is not found. This implementation has no network activity and ignores the given context.
 func (m *MemVisits) ExportSome(_ context.Context, shortenedURLs []string) (visits map[string][]*models.Visit, err error) {
 

@@ -1,6 +1,8 @@
 package endpoints
 
 import (
+	"fmt"
+
 	"github.com/go-openapi/runtime/middleware"
 	"go.uber.org/zap"
 
@@ -10,14 +12,14 @@ import (
 	"github.com/MicahParks/terseurl/storage"
 )
 
-// HandleDeleteOne creates a /api/delete/{shortened} endpoint handler via a closure. It can delete Terse and Visits data
+// HandleDeleteSome creates a /api/delete/some endpoint handler via a closure. It can delete Terse and Visits data
 // given the associated shortened URL.
-func HandleDeleteOne(logger *zap.SugaredLogger, terseStore storage.TerseStore) api.TerseDeleteOneHandlerFunc {
-	return func(params api.TerseDeleteOneParams) middleware.Responder {
+func HandleDeleteSome(logger *zap.SugaredLogger, terseStore storage.TerseStore) api.TerseDeleteSomeHandlerFunc {
+	return func(params api.TerseDeleteSomeParams) middleware.Responder {
 
 		// Log the event.
 		logger.Infow("Deleting a shortened URL's assets.", // TODO Log delete info?
-			"shortened", params.Shortened,
+			"shortened", fmt.Sprintf("%v", params.Info.ShortenedURLs),
 		)
 
 		// Create a new request context.
@@ -25,18 +27,18 @@ func HandleDeleteOne(logger *zap.SugaredLogger, terseStore storage.TerseStore) a
 		defer cancel()
 
 		// Delete the shortened URL's Terse pair from storage.
-		if err := terseStore.DeleteOne(ctx, *params.Delete, params.Shortened); err != nil {
+		if err := terseStore.DeleteSome(ctx, *params.Info.Delete, params.Info.ShortenedURLs); err != nil {
 
 			// Log at the appropriate level.
 			message := "Failed to delete Terse or Visits data."
 			logger.Warnw(message,
-				"shortened", params.Shortened,
+				"shortened", fmt.Sprintf("%v", params.Info.ShortenedURLs),
 				"error", err.Error(),
 			)
 
 			// Report the error to the client.
 			code := int64(500)
-			resp := &api.TerseDeleteOneDefault{Payload: &models.Error{
+			resp := &api.TerseDeleteSomeDefault{Payload: &models.Error{
 				Code:    &code,
 				Message: &message,
 			}}
@@ -44,6 +46,6 @@ func HandleDeleteOne(logger *zap.SugaredLogger, terseStore storage.TerseStore) a
 			return resp
 		}
 
-		return &api.TerseDeleteOneOK{}
+		return &api.TerseDeleteSomeOK{}
 	}
 }
