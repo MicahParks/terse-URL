@@ -36,6 +36,7 @@ docker-compose up
 
 - [ ] Address TODOs.
 - [ ] Deleting in SummaryStore.
+- [ ] Make endpoints for reading multiple Terse/Visits.
 - [ ] Change endpoints like `/api/delete` to `/api/delete/all`.
 - [ ] Social media link preview `inherit` mode that gets the Original URL and uses the meta tags for that.
 - [ ] Write a utility that will export `.bbolt` to JSON.
