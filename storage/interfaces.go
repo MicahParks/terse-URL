@@ -31,7 +31,7 @@ type TerseStore interface {
 	Close(ctx context.Context) (err error)
 
 	// CreateSummaryStore creates the SummaryStore based on the existing VisitsStore data.
-	CreateSummaryStore() (summaries map[string]models.TerseSummary, err error)
+	CreateSummaryStore(ctx context.Context) (summaries map[string]models.TerseSummary, err error)
 
 	// Delete deletes data according to the del argument. If the VisitsStore is not nil, then the same method will be
 	// called for the associated VisitsStore.

@@ -46,7 +46,7 @@ func (m *MemTerse) Close(_ context.Context) (err error) {
 }
 
 // CreateSummaryStore creates the SummaryStore based on the existing VisitsStore data.
-func (m *MemTerse) CreateSummaryStore() (summaries map[string]models.TerseSummary, err error) {
+func (m *MemTerse) CreateSummaryStore(ctx context.Context) (summaries map[string]models.TerseSummary, err error) {
 
 	// Create the return map.
 	summaries = make(map[string]models.TerseSummary)
@@ -56,7 +56,7 @@ func (m *MemTerse) CreateSummaryStore() (summaries map[string]models.TerseSummar
 
 		// Get the map of counts.
 		var counts map[string]uint
-		counts, err = m.visitsStore.ExportCounts()
+		counts, err = m.visitsStore.ExportCounts(ctx)
 		if err != nil {
 			return nil, err
 		}
