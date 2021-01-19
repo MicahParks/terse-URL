@@ -26,6 +26,7 @@ Environment variable table:
 TODO
 
 ## Deployment
+
 ```bash
 touch terse.bbolt visits.bbolt
 docker-compose up
@@ -35,11 +36,12 @@ docker-compose up
 
 - [ ] Address TODOs.
 - [ ] Deleting in SummaryStore.
+- [ ] Change endpoints like `/api/delete` to `/api/delete/all`.
 - [ ] Social media link preview `inherit` mode that gets the Original URL and uses the meta tags for that.
 - [ ] Write a utility that will export `.bbolt` to JSON.
 - [ ] Implement `SHORTID_PARANOID`.
 - [ ] Allow for shortened URLs of the form `{owner}/{shortened}` in `/api/write/{operation}` endpoint.
-  - [ ] Only allow for random shortened URLs in top level.
+    - [ ] Only allow for random shortened URLs in top level.
 - [ ] Implement fingerprinting with fingerprintjs, but remove HTML canvas extraction. Embed minified in single HTML
   template.
 - [ ] Find all potential nil pointer dereferences due to data being stored in backend storage that does not conform to

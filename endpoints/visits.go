@@ -28,9 +28,9 @@ func HandleVisits(logger *zap.SugaredLogger, visitsStore storage.VisitsStore) ap
 
 		// Get the visits from storage.
 		var err error
-		visits := make([]*models.Visit, 0)
+		visits := make(map[string][]*models.Visit, 0)
 		if visitsStore != nil {
-			if visits, err = visitsStore.ExportSome(ctx, params.Shortened); err != nil {
+			if visits, err = visitsStore.ExportSome(ctx, []string{params.Shortened}); err != nil {
 
 				// Log at the appropriate level. Assign the response code and message.
 				var code int64
@@ -62,7 +62,7 @@ func HandleVisits(logger *zap.SugaredLogger, visitsStore storage.VisitsStore) ap
 		}
 
 		return &api.TerseVisitsOK{
-			Payload: visits,
+			Payload: visits[params.Shortened], // TODO Check if okay.
 		}
 	}
 }
