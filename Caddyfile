@@ -3,6 +3,8 @@ localhost
 file_server
 root /frontend/* /frontend/
 
+redir / /frontend/ permanent # TODO Is this how it should be handled long term?
+
 @proxy {
     not path /frontend/*
 }
