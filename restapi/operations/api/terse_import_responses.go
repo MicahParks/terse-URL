@@ -16,7 +16,7 @@ import (
 // TerseImportOKCode is the HTTP code returned for type TerseImportOK
 const TerseImportOKCode int = 200
 
-/*TerseImportOK terse import o k
+/*TerseImportOK The import request was successfully fulfilled.
 
 swagger:response terseImportOK
 */

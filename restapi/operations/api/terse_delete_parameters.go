@@ -6,18 +6,21 @@ package api
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"io"
 	"net/http"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
+	"github.com/go-openapi/validate"
 
 	"github.com/MicahParks/terseurl/models"
 )
 
 // NewTerseDeleteParams creates a new TerseDeleteParams object
-// no default values defined in spec.
+//
+// There are no default values defined in the spec.
 func NewTerseDeleteParams() TerseDeleteParams {
 
 	return TerseDeleteParams{}
@@ -60,6 +63,11 @@ func (o *TerseDeleteParams) BindRequest(r *http.Request, route *middleware.Match
 		} else {
 			// validate body object
 			if err := body.Validate(route.Formats); err != nil {
+				res = append(res, err)
+			}
+
+			ctx := validate.WithOperationRequest(context.Background())
+			if err := body.ContextValidate(ctx, route.Formats); err != nil {
 				res = append(res, err)
 			}
 

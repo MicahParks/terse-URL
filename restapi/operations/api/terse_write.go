@@ -29,7 +29,7 @@ func NewTerseWrite(ctx *middleware.Context, handler TerseWriteHandler) *TerseWri
 	return &TerseWrite{Context: ctx, Handler: handler}
 }
 
-/*TerseWrite swagger:route POST /api/write/{operation} api terseWrite
+/* TerseWrite swagger:route POST /api/write/{operation} api terseWrite
 
 Perform a write operation on Terse data for a given shortened URL.
 
@@ -47,14 +47,12 @@ func (o *TerseWrite) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 		r = rCtx
 	}
 	var Params = NewTerseWriteParams()
-
 	if err := o.Context.BindValidRequest(r, route, &Params); err != nil { // bind params
 		o.Context.Respond(rw, r, route.Produces, route, err)
 		return
 	}
 
 	res := o.Handler.Handle(Params) // actually handle the request
-
 	o.Context.Respond(rw, r, route.Produces, route, res)
 
 }

@@ -29,7 +29,7 @@ func NewAlive(ctx *middleware.Context, handler AliveHandler) *Alive {
 	return &Alive{Context: ctx, Handler: handler}
 }
 
-/*Alive swagger:route GET /api/alive system alive
+/* Alive swagger:route GET /api/alive system alive
 
 Used by Caddy or other reverse proxy to determine if the service is alive.
 
@@ -47,14 +47,12 @@ func (o *Alive) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 		r = rCtx
 	}
 	var Params = NewAliveParams()
-
 	if err := o.Context.BindValidRequest(r, route, &Params); err != nil { // bind params
 		o.Context.Respond(rw, r, route.Produces, route, err)
 		return
 	}
 
 	res := o.Handler.Handle(Params) // actually handle the request
-
 	o.Context.Respond(rw, r, route.Produces, route, res)
 
 }

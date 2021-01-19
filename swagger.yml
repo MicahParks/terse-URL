@@ -385,6 +385,8 @@ definitions:
     properties:
       og:
         $ref: "#/definitions/OpenGraph"
+      redirectType: # TODO Actually populate.
+        $ref: "#/definitions/RedirectType"
       title:
         type: "string"
       twitter:
@@ -413,12 +415,8 @@ definitions:
         type: "string"
       mediaPreview:
         $ref: "#/definitions/MediaPreview"
-      redirectType:
-        $ref: "#/definitions/RedirectType"
       shortenedURL:
         type: "string"
-      visitCount: # TODO Add to "Optional" version of this schema?
-        type: "integer" # TODO Confirm cannot be set by frontend.
     required:
       - "originalURL" # TODO If these are validated outside of the spec, the server won't have as many pointer issues.
       - "shortenedURL"

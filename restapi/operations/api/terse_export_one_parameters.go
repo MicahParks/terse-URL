@@ -14,7 +14,8 @@ import (
 )
 
 // NewTerseExportOneParams creates a new TerseExportOneParams object
-// no default values defined in spec.
+//
+// There are no default values defined in the spec.
 func NewTerseExportOneParams() TerseExportOneParams {
 
 	return TerseExportOneParams{}
@@ -49,7 +50,6 @@ func (o *TerseExportOneParams) BindRequest(r *http.Request, route *middleware.Ma
 	if err := o.bindShortened(rShortened, rhkShortened, route.Formats); err != nil {
 		res = append(res, err)
 	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -65,7 +65,6 @@ func (o *TerseExportOneParams) bindShortened(rawData []string, hasKey bool, form
 
 	// Required: true
 	// Parameter is provided by construction from the route
-
 	o.Shortened = raw
 
 	return nil

@@ -6,6 +6,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
@@ -27,15 +29,9 @@ type Terse struct {
 	// Required: true
 	OriginalURL *string `json:"originalURL"`
 
-	// redirect type
-	RedirectType RedirectType `json:"redirectType,omitempty"`
-
 	// shortened URL
 	// Required: true
 	ShortenedURL *string `json:"shortenedURL"`
-
-	// visit count
-	VisitCount int64 `json:"visitCount,omitempty"`
 }
 
 // Validate validates this terse
@@ -50,10 +46,6 @@ func (m *Terse) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateRedirectType(formats); err != nil {
-		res = append(res, err)
-	}
-
 	if err := m.validateShortenedURL(formats); err != nil {
 		res = append(res, err)
 	}
@@ -65,7 +57,6 @@ func (m *Terse) Validate(formats strfmt.Registry) error {
 }
 
 func (m *Terse) validateMediaPreview(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.MediaPreview) { // not required
 		return nil
 	}
@@ -91,26 +82,38 @@ func (m *Terse) validateOriginalURL(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *Terse) validateRedirectType(formats strfmt.Registry) error {
+func (m *Terse) validateShortenedURL(formats strfmt.Registry) error {
 
-	if swag.IsZero(m.RedirectType) { // not required
-		return nil
-	}
-
-	if err := m.RedirectType.Validate(formats); err != nil {
-		if ve, ok := err.(*errors.Validation); ok {
-			return ve.ValidateName("redirectType")
-		}
+	if err := validate.Required("shortenedURL", "body", m.ShortenedURL); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (m *Terse) validateShortenedURL(formats strfmt.Registry) error {
+// ContextValidate validate this terse based on the context it is used
+func (m *Terse) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
 
-	if err := validate.Required("shortenedURL", "body", m.ShortenedURL); err != nil {
-		return err
+	if err := m.contextValidateMediaPreview(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *Terse) contextValidateMediaPreview(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.MediaPreview != nil {
+		if err := m.MediaPreview.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("mediaPreview")
+			}
+			return err
+		}
 	}
 
 	return nil

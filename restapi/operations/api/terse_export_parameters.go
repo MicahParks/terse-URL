@@ -13,7 +13,8 @@ import (
 )
 
 // NewTerseExportParams creates a new TerseExportParams object
-// no default values defined in spec.
+//
+// There are no default values defined in the spec.
 func NewTerseExportParams() TerseExportParams {
 
 	return TerseExportParams{}

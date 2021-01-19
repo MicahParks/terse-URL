@@ -14,7 +14,8 @@ import (
 )
 
 // NewTerseVisitsParams creates a new TerseVisitsParams object
-// no default values defined in spec.
+//
+// There are no default values defined in the spec.
 func NewTerseVisitsParams() TerseVisitsParams {
 
 	return TerseVisitsParams{}
@@ -49,7 +50,6 @@ func (o *TerseVisitsParams) BindRequest(r *http.Request, route *middleware.Match
 	if err := o.bindShortened(rShortened, rhkShortened, route.Formats); err != nil {
 		res = append(res, err)
 	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -65,7 +65,6 @@ func (o *TerseVisitsParams) bindShortened(rawData []string, hasKey bool, formats
 
 	// Required: true
 	// Parameter is provided by construction from the route
-
 	o.Shortened = raw
 
 	return nil

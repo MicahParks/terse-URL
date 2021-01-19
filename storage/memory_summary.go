@@ -15,8 +15,7 @@ type MemSummary struct {
 }
 
 // NewMemSummary creates a new MemSummary.
-func NewMemSummary(visitsStore VisitsStore) (summaryStore SummaryStore) {
-	// TODO Count all visits in VisitsStore. Maybe make a method for it.
+func NewMemSummary() (summaryStore SummaryStore) {
 	return &MemSummary{
 		summaries: make(map[string]models.TerseSummary),
 	}

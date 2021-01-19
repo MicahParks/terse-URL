@@ -6,6 +6,7 @@ package api
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"io"
 	"net/http"
 
@@ -19,7 +20,8 @@ import (
 )
 
 // NewTerseWriteParams creates a new TerseWriteParams object
-// no default values defined in spec.
+//
+// There are no default values defined in the spec.
 func NewTerseWriteParams() TerseWriteParams {
 
 	return TerseWriteParams{}
@@ -75,6 +77,11 @@ func (o *TerseWriteParams) BindRequest(r *http.Request, route *middleware.Matche
 				res = append(res, err)
 			}
 
+			ctx := validate.WithOperationRequest(context.Background())
+			if err := body.ContextValidate(ctx, route.Formats); err != nil {
+				res = append(res, err)
+			}
+
 			if len(res) == 0 {
 				o.Terse = &body
 			}
@@ -97,7 +104,6 @@ func (o *TerseWriteParams) bindOperation(rawData []string, hasKey bool, formats 
 
 	// Required: true
 	// Parameter is provided by construction from the route
-
 	o.Operation = raw
 
 	if err := o.validateOperation(formats); err != nil {

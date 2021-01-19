@@ -30,7 +30,7 @@ func HandleVisits(logger *zap.SugaredLogger, visitsStore storage.VisitsStore) ap
 		var err error
 		visits := make([]*models.Visit, 0)
 		if visitsStore != nil {
-			if visits, err = visitsStore.ExportOne(ctx, params.Shortened); err != nil {
+			if visits, err = visitsStore.ExportSome(ctx, params.Shortened); err != nil {
 
 				// Log at the appropriate level. Assign the response code and message.
 				var code int64

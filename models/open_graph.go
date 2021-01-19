@@ -6,6 +6,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/strfmt"
 )
 
@@ -16,5 +18,10 @@ type OpenGraph map[string]string
 
 // Validate validates this open graph
 func (m OpenGraph) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this open graph based on context it is used
+func (m OpenGraph) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }

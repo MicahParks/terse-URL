@@ -29,7 +29,7 @@ func NewTerseDelete(ctx *middleware.Context, handler TerseDeleteHandler) *TerseD
 	return &TerseDelete{Context: ctx, Handler: handler}
 }
 
-/*TerseDelete swagger:route DELETE /api/delete api terseDelete
+/* TerseDelete swagger:route DELETE /api/delete api terseDelete
 
 Delete all Terse and or Visits data.
 
@@ -47,14 +47,12 @@ func (o *TerseDelete) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 		r = rCtx
 	}
 	var Params = NewTerseDeleteParams()
-
 	if err := o.Context.BindValidRequest(r, route, &Params); err != nil { // bind params
 		o.Context.Respond(rw, r, route.Produces, route, err)
 		return
 	}
 
 	res := o.Handler.Handle(Params) // actually handle the request
-
 	o.Context.Respond(rw, r, route.Produces, route, res)
 
 }

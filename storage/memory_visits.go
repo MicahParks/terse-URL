@@ -2,6 +2,7 @@ package storage
 
 import (
 	"context"
+	"fmt"
 	"sync"
 
 	"github.com/MicahParks/terseurl/models"
@@ -70,7 +71,7 @@ func (m *MemVisits) Delete(_ context.Context, del models.Delete) (err error) {
 
 // DeleteOne deletes data according to the del argument for the shortened URL. No error will be given if the shortened
 // URL is not found. This implementation has no network activity and ignores the given context.
-func (m *MemVisits) DeleteOne(_ context.Context, del models.Delete, shortened string) (err error) {
+func (m *MemVisits) DeleteOne(_ context.Context, del models.Delete, shortenedURLs []string) (err error) {
 
 	// Confirm the deletion of Visits data.
 	if del.Visits == nil || *del.Visits {
@@ -78,8 +79,12 @@ func (m *MemVisits) DeleteOne(_ context.Context, del models.Delete, shortened st
 		// Lock the Visits map for async safe use.
 		m.mux.Lock()
 
-		// Delete all visits for the shortened URL.
-		delete(m.visits, shortened)
+		// Iterate through the shortened URLs.
+		for _, shortened := range shortenedURLs {
+
+			// Delete all visits for the shortened URL.
+			delete(m.visits, shortened)
+		}
 
 		// Unlock the Visits map. The write operation is over.
 		m.mux.Unlock()
@@ -99,18 +104,43 @@ func (m *MemVisits) Export(_ context.Context) (allVisits map[string][]*models.Vi
 	return m.visits, nil
 }
 
-// ExportOne gets all visits to the shortened URL. The error storage.ErrShortenedNotFound will be given if the shortened
-// URL is not found. This implementation has no network activity and ignores the given context.
-func (m *MemVisits) ExportOne(_ context.Context, shortened string) (visits []*models.Visit, err error) {
+// ExportCounts creates a map of shortened URLs to count of Visits.
+func (m *MemVisits) ExportCounts(_ context.Context) (counts map[string]uint, err error) {
+
+	// Create the return map.
+	counts = make(map[string]uint)
 
 	// Lock the Visits map for async safe use.
 	m.mux.RLock()
 	defer m.mux.RUnlock()
 
-	// Confirm the shortened URL is a key in the map.
-	var ok bool
-	if visits, ok = m.visits[shortened]; !ok {
-		return nil, ErrShortenedNotFound
+	// Iterate through the shortened URLs and count the visits.
+	for shortened, visits := range m.visits {
+		counts[shortened] = uint(len(visits))
+	}
+
+	return counts, nil
+}
+
+// ExportOne gets all visits to the shortened URL. The error storage.ErrShortenedNotFound will be given if the shortened
+// URL is not found. This implementation has no network activity and ignores the given context.
+func (m *MemVisits) ExportSome(_ context.Context, shortenedURLs []string) (visits map[string][]*models.Visit, err error) {
+
+	// Create the return map.
+	visits = make(map[string][]*models.Visit)
+
+	// Lock the Visits map for async safe use.
+	m.mux.RLock()
+	defer m.mux.RUnlock()
+
+	// Iterate through the shortened URLs.
+	for _, shortened := range shortenedURLs {
+
+		// Confirm the shortened URL is a key in the map.
+		var ok bool
+		if visits[shortened], ok = m.visits[shortened]; !ok {
+			return nil, fmt.Errorf("%w: %s", ErrShortenedNotFound, shortened)
+		}
 	}
 
 	// Return the visits.

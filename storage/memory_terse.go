@@ -45,6 +45,43 @@ func (m *MemTerse) Close(_ context.Context) (err error) {
 	return nil
 }
 
+// CreateSummaryStore creates the SummaryStore based on the existing VisitsStore data.
+func (m *MemTerse) CreateSummaryStore() (summaries map[string]models.TerseSummary, err error) {
+
+	// Create the return map.
+	summaries = make(map[string]models.TerseSummary)
+
+	// Confirm the visitsStore is not nil.
+	if m.visitsStore != nil {
+
+		// Get the map of counts.
+		var counts map[string]uint
+		counts, err = m.visitsStore.ExportCounts()
+		if err != nil {
+			return nil, err
+		}
+
+		// Lock the Terse map for async safe use.
+		m.mux.RLock()
+
+		// Create the summary store by combining Visits counts and Terse data.
+		for shortened, count := range counts {
+			terse := m.terse[shortened]
+			summaries[shortened] = models.TerseSummary{
+				OriginalURL:  *terse.OriginalURL,              // TODO Pointer.
+				RedirectType: terse.MediaPreview.RedirectType, // TODO Populate.
+				ShortenedURL: *terse.ShortenedURL,             // TODO Pointer.
+				VisitCount:   int64(count),                    // TODO uint conversion. Potential data loss.
+			}
+		}
+
+		// Unlock the Terse map for async safe use.
+		m.mux.RUnlock()
+	}
+
+	return summaries, nil
+}
+
 // Delete deletes data according to the del argument. If the VisitsStore is not nil, then the same method will be
 // called for the associated VisitsStore. This implementation has no network activity and ignores the given
 // context.
@@ -118,7 +155,7 @@ func (m *MemTerse) Export(ctx context.Context) (export map[string]models.Export,
 		// Get the visits for the Terse.
 		visits := make([]*models.Visit, 0)
 		if m.visitsStore != nil {
-			if visits, err = m.visitsStore.ExportOne(ctx, *terse.ShortenedURL); err != nil {
+			if visits, err = m.visitsStore.ExportSome(ctx, *terse.ShortenedURL); err != nil {
 				return nil, err
 			}
 		}
@@ -151,7 +188,7 @@ func (m *MemTerse) ExportOne(ctx context.Context, shortened string) (export mode
 	// Get the visits for the Terse.
 	visits := make([]*models.Visit, 0)
 	if m.visitsStore != nil {
-		if visits, err = m.visitsStore.ExportOne(ctx, shortened); err != nil {
+		if visits, err = m.visitsStore.ExportSome(ctx, shortened); err != nil {
 			return models.Export{}, err
 		}
 	}
@@ -221,17 +258,20 @@ func (m *MemTerse) Insert(_ context.Context, terse *models.Terse) (err error) {
 // implementation has no network activity and ignores the given context.
 func (m *MemTerse) Read(_ context.Context, shortened string, visit *models.Visit) (terse *models.Terse, err error) {
 
+	// TODO Combine SummaryStore and VisitsStore work items?
+	// TODO Figure out how to make implementation of these methods more generic. Maybe add some functions that accept TerseStore.
+
+	// Increment the number of times the shortened URL has been visited. Do this in a separate goroutine so the response
+	// is faster.
+	if m.summaryStore != nil {
+		ctx, cancel := m.createCtx()
+		go m.group.AddWorkItem(ctx, cancel, func(workCtx context.Context) (err error) {
+			return m.summaryStore.IncrementVisitCount(ctx, shortened)
+		})
+	}
+
 	// Track the visit to this shortened URL. Do this in a separate goroutine so the response is faster.
 	if visit != nil && m.visitsStore != nil {
-
-		// Increment the number of times the shortened URL has been visited.
-		//
-		// TODO Count all of the visits in the store on startup to set the initial value.
-		terseData, ok := m.terse[shortened]
-		if !ok {
-			return nil, ErrShortenedNotFound
-		}
-		terseData.VisitCount++
 
 		// Add the visit to the VisitsStore.
 		ctx, cancel := m.createCtx()

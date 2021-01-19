@@ -16,7 +16,7 @@ import (
 // TerseSummaryOKCode is the HTTP code returned for type TerseSummaryOK
 const TerseSummaryOKCode int = 200
 
-/*TerseSummaryOK terse summary o k
+/*TerseSummaryOK The map of shortened URLs to Terse summary data.
 
 swagger:response terseSummaryOK
 */

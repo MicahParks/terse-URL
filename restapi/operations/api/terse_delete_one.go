@@ -29,7 +29,7 @@ func NewTerseDeleteOne(ctx *middleware.Context, handler TerseDeleteOneHandler) *
 	return &TerseDeleteOne{Context: ctx, Handler: handler}
 }
 
-/*TerseDeleteOne swagger:route DELETE /api/delete/{shortened} api terseDeleteOne
+/* TerseDeleteOne swagger:route DELETE /api/delete/{shortened} api terseDeleteOne
 
 Delete Terse and or Visits data for the given shortened URL.
 
@@ -47,14 +47,12 @@ func (o *TerseDeleteOne) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 		r = rCtx
 	}
 	var Params = NewTerseDeleteOneParams()
-
 	if err := o.Context.BindValidRequest(r, route, &Params); err != nil { // bind params
 		o.Context.Respond(rw, r, route.Produces, route, err)
 		return
 	}
 
 	res := o.Handler.Handle(Params) // actually handle the request
-
 	o.Context.Respond(rw, r, route.Produces, route, res)
 
 }

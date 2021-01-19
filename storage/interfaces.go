@@ -30,6 +30,9 @@ type TerseStore interface {
 	// close the connection to the VisitsStore, depending on the configuration.
 	Close(ctx context.Context) (err error)
 
+	// CreateSummaryStore creates the SummaryStore based on the existing VisitsStore data.
+	CreateSummaryStore() (summaries map[string]models.TerseSummary, err error)
+
 	// Delete deletes data according to the del argument. If the VisitsStore is not nil, then the same method will be
 	// called for the associated VisitsStore.
 	Delete(ctx context.Context, del models.Delete) (err error)
@@ -89,15 +92,18 @@ type VisitsStore interface {
 	Delete(ctx context.Context, del models.Delete) (err error)
 
 	// DeleteOne deletes data according to the del argument for the shortened URL. No error should be given if the
-	// shortened URL is not found. TODO Make shortened a slice.
-	DeleteOne(ctx context.Context, del models.Delete, shortened string) (err error)
+	// shortened URL is not found.
+	DeleteOne(ctx context.Context, del models.Delete, shortenedURLs []string) (err error)
 
 	// Export exports all exports all visits data.
 	Export(ctx context.Context) (allVisits map[string][]*models.Visit, err error)
 
-	// ExportOne gets all visits to the shortened URL. The error must be storage.ErrShortenedNotFound if the shortened
-	// URL is not found. TODO Make shortened a slice.
-	ExportOne(ctx context.Context, shortened string) (visits []*models.Visit, err error)
+	// ExportCounts creates a map of shortened URLs to count of Visits.
+	ExportCounts(ctx context.Context) (counts map[string]uint, err error)
+
+	// ExportSome gets all visits to the shortened URL. The error must be storage.ErrShortenedNotFound if the shortened
+	// URL is not found.
+	ExportSome(ctx context.Context, shortenedURLs []string) (visits map[string][]*models.Visit, err error)
 
 	// Import imports the given export's data. If del is not nil, data will be deleted accordingly. If del is nil, data
 	// may be overwritten, but unaffected data will be untouched.

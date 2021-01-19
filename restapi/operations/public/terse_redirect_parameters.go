@@ -14,7 +14,8 @@ import (
 )
 
 // NewTerseRedirectParams creates a new TerseRedirectParams object
-// no default values defined in spec.
+//
+// There are no default values defined in the spec.
 func NewTerseRedirectParams() TerseRedirectParams {
 
 	return TerseRedirectParams{}
@@ -49,7 +50,6 @@ func (o *TerseRedirectParams) BindRequest(r *http.Request, route *middleware.Mat
 	if err := o.bindShortened(rShortened, rhkShortened, route.Formats); err != nil {
 		res = append(res, err)
 	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -65,7 +65,6 @@ func (o *TerseRedirectParams) bindShortened(rawData []string, hasKey bool, forma
 
 	// Required: true
 	// Parameter is provided by construction from the route
-
 	o.Shortened = raw
 
 	return nil

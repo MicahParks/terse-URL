@@ -29,7 +29,9 @@ func NewTerseTerse(ctx *middleware.Context, handler TerseTerseHandler) *TerseTer
 	return &TerseTerse{Context: ctx, Handler: handler}
 }
 
-/*TerseTerse swagger:route GET /api/terse/{shortened} api terseTerse
+/* TerseTerse swagger:route GET /api/terse/{shortened} api terseTerse
+
+Read the Terse data for the given shortened URL.
 
 Read the Terse data for the given shortened URL.
 
@@ -45,14 +47,12 @@ func (o *TerseTerse) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 		r = rCtx
 	}
 	var Params = NewTerseTerseParams()
-
 	if err := o.Context.BindValidRequest(r, route, &Params); err != nil { // bind params
 		o.Context.Respond(rw, r, route.Produces, route, err)
 		return
 	}
 
 	res := o.Handler.Handle(Params) // actually handle the request
-
 	o.Context.Respond(rw, r, route.Produces, route, res)
 
 }

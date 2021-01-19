@@ -37,15 +37,16 @@ var (
 
 // configuration holds all the necessary information for
 type configuration struct {
-	DefaultTimeout  time.Duration
-	InvalidPaths    []string
-	Prefix          string
-	ShortIDParanoid bool
-	ShortIDSeed     uint64
-	TemplatePath    string
-	TerseStoreJSON  string
-	VisitsStoreJSON string
-	WorkerCount     uint
+	DefaultTimeout   time.Duration
+	InvalidPaths     []string
+	Prefix           string
+	ShortIDParanoid  bool
+	ShortIDSeed      uint64
+	TemplatePath     string
+	SummaryStoreJSON string
+	TerseStoreJSON   string
+	VisitsStoreJSON  string
+	WorkerCount      uint
 }
 
 // invalidPathsParse parses a comma separated string into a slice of strings. It adds in paths that are always invalid
@@ -117,6 +118,7 @@ func readEnvVars() (config *configuration, err error) {
 	config.TemplatePath = os.Getenv("TEMPLATE_PATH")
 	config.TerseStoreJSON = os.Getenv("TERSE_STORE_JSON")
 	config.VisitsStoreJSON = os.Getenv("VISITS_STORE_JSON")
+	config.SummaryStoreJSON = os.Getenv("SUMMARY_STORE_JSON")
 
 	return config, nil
 }

@@ -29,7 +29,7 @@ func NewTerseVisits(ctx *middleware.Context, handler TerseVisitsHandler) *TerseV
 	return &TerseVisits{Context: ctx, Handler: handler}
 }
 
-/*TerseVisits swagger:route GET /api/visits/{shortened} api terseVisits
+/* TerseVisits swagger:route GET /api/visits/{shortened} api terseVisits
 
 Get the Visits data for the given shortened URL.
 
@@ -45,14 +45,12 @@ func (o *TerseVisits) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 		r = rCtx
 	}
 	var Params = NewTerseVisitsParams()
-
 	if err := o.Context.BindValidRequest(r, route, &Params); err != nil { // bind params
 		o.Context.Respond(rw, r, route.Produces, route, err)
 		return
 	}
 
 	res := o.Handler.Handle(Params) // actually handle the request
-
 	o.Context.Respond(rw, r, route.Produces, route, res)
 
 }

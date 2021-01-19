@@ -95,7 +95,7 @@ func (b *BboltVisits) Delete(_ context.Context, del models.Delete) (err error) {
 
 // DeleteOne deletes data according to the del argument for the shortened URL. No error will be given if the shortened
 // URL is not found. This implementation has no network activity and ignores the given context.
-func (b *BboltVisits) DeleteOne(_ context.Context, del models.Delete, shortened string) (err error) {
+func (b *BboltVisits) DeleteOne(_ context.Context, del models.Delete, shortenedURLs []string) (err error) {
 
 	// Confirm Visits data deletion.
 	if del.Visits == nil || *del.Visits {
@@ -103,9 +103,13 @@ func (b *BboltVisits) DeleteOne(_ context.Context, del models.Delete, shortened 
 		// Open the bbolt database for writing, batch if possible.
 		if err = b.db.Batch(func(tx *bbolt.Tx) error {
 
-			// Delete all of this shortened URL's visits from the bucket.
-			if err = tx.Bucket(b.visitsBucket).Delete([]byte(shortened)); err != nil {
-				return err
+			// Iterate through the shortened URLs.
+			for _, shortened := range shortenedURLs {
+
+				// Delete all of this shortened URL's visits from the bucket.
+				if err = tx.Bucket(b.visitsBucket).Delete([]byte(shortened)); err != nil {
+					return err
+				}
 			}
 
 			return nil
@@ -153,10 +157,80 @@ func (b *BboltVisits) Export(_ context.Context) (allVisits map[string][]*models.
 	return allVisits, nil
 }
 
+// ExportCounts creates a map of shortened URLs to count of Visits.
+func (b *BboltVisits) ExportCounts(_ context.Context) (counts map[string]uint, err error) {
+
+	// Create the return map.
+	counts = make(map[string]uint)
+
+	// Open the bbolt database for viewing.
+	if err = b.db.View(func(tx *bbolt.Tx) error {
+
+		// Iterate through all the keys.
+		if err = tx.Bucket(b.visitsBucket).ForEach(func(shortened, value []byte) error {
+
+			// Create the visits.
+			visits := make([]*models.Visit, 0)
+
+			// Unmarshal the visit.
+			if err = json.Unmarshal(value, &visits); err != nil {
+				return err
+			}
+
+			// Assign the number of visits to the map.
+			counts[string(shortened)] = uint(len(visits))
+
+			return nil
+		}); err != nil {
+			return err
+		}
+		return nil
+	}); err != nil {
+		return nil, err
+	}
+
+	return counts, nil
+}
+
 // ExportOne gets all visits to the shortened URL. The error storage.ErrShortenedNotFound will be given if the shortened
 // URL is not found. This implementation has no network activity and ignores the given context.
-func (b *BboltVisits) ExportOne(_ context.Context, shortened string) (visits []*models.Visit, err error) {
-	return b.exportShortened(shortened)
+func (b *BboltVisits) ExportSome(_ context.Context, shortenedURLs []string) (visits map[string][]*models.Visit, err error) {
+
+	// Create the return map.
+	visits = make(map[string][]*models.Visit)
+
+	// Open the bbolt database for reading.
+	var data []byte
+	if err = b.db.View(func(tx *bbolt.Tx) error {
+
+		// Iterate through the shortened URLs.
+		for _, shortened := range shortenedURLs {
+
+			// Get the Visits from the bucket.
+			data = tx.Bucket(b.visitsBucket).Get([]byte(shortened))
+
+			// Only unmarshal data if there was any.
+			var v []*models.Visit
+			if data != nil {
+
+				// Turn the JSON data into the Go structure.
+				if err = json.Unmarshal(data, &v); err != nil {
+					return err // TODO Check for if shortened URL is not found and confirm same for other methods.
+				}
+			} else {
+				// TODO Missing shortened URL?
+			}
+
+			// Add the visits to the return map.
+			visits[shortened] = v
+		}
+
+		return nil
+	}); err != nil {
+		return nil, err
+	}
+
+	return visits, nil
 }
 
 // Import imports the given export's data. If del is not nil, data will be deleted accordingly. If del is nil, data

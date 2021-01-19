@@ -29,7 +29,7 @@ func NewTerseExport(ctx *middleware.Context, handler TerseExportHandler) *TerseE
 	return &TerseExport{Context: ctx, Handler: handler}
 }
 
-/*TerseExport swagger:route GET /api/export api terseExport
+/* TerseExport swagger:route GET /api/export api terseExport
 
 Export all Terse and Visits data from the backend.
 
@@ -47,14 +47,12 @@ func (o *TerseExport) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 		r = rCtx
 	}
 	var Params = NewTerseExportParams()
-
 	if err := o.Context.BindValidRequest(r, route, &Params); err != nil { // bind params
 		o.Context.Respond(rw, r, route.Produces, route, err)
 		return
 	}
 
 	res := o.Handler.Handle(Params) // actually handle the request
-
 	o.Context.Respond(rw, r, route.Produces, route, res)
 
 }

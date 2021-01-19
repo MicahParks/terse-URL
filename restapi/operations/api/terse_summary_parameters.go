@@ -15,7 +15,8 @@ import (
 )
 
 // NewTerseSummaryParams creates a new TerseSummaryParams object
-// no default values defined in spec.
+//
+// There are no default values defined in the spec.
 func NewTerseSummaryParams() TerseSummaryParams {
 
 	return TerseSummaryParams{}
@@ -30,7 +31,7 @@ type TerseSummaryParams struct {
 	// HTTP Request Object
 	HTTPRequest *http.Request `json:"-"`
 
-	/*
+	/*The array of shortened URLs to get Terse summary data for.
 	  Required: true
 	  In: body
 	*/

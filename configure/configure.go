@@ -22,6 +22,9 @@ const (
 
 	// configPathVisitsStore is the location to find the VisitsStore JSON configuration file.
 	configPathVisitsStore = "visitsStore.json"
+
+	// configPathSummaryStore is the location to find the SummaryStore JSON configuration file.
+	configPathSummaryStore = "summaryStore.json"
 )
 
 // Configuration is the Go structure that contains all needed configurations gathered on startup.
@@ -33,6 +36,7 @@ type Configuration struct {
 	Prefix          string
 	ShortID         *shortid.Shortid
 	ShortIDParanoid bool
+	SummaryStore    storage.SummaryStore
 	TerseStore      storage.TerseStore
 	VisitsStore     storage.VisitsStore
 }
@@ -84,6 +88,25 @@ func Configure() (config Configuration, err error) {
 		)
 	})
 
+	// Get the SummaryStore configuration.
+	var summaryConfig json.RawMessage
+	if summaryConfig, err = readStorageConfig(rawConfig.SummaryStoreJSON, logger, configPathSummaryStore); err != nil {
+		return Configuration{}, err
+	}
+
+	// Create the SummaryStore.
+	var summaryStoreType string
+	if config.SummaryStore, summaryStoreType, err = storage.NewSummaryStore(summaryConfig, config.VisitsStore); err != nil {
+		logger.Fatalw("Failed to create SummaryStore.",
+			"type", summaryStoreType,
+			"error", err.Error(),
+		)
+		return Configuration{}, err
+	}
+	logger.Infow("Created SummaryStore.",
+		"type", summaryStoreType,
+	)
+
 	// Get the VisitsStore configuration.
 	var visitsConfig json.RawMessage
 	if visitsConfig, err = readStorageConfig(rawConfig.VisitsStoreJSON, logger, configPathVisitsStore); err != nil {
@@ -111,7 +134,7 @@ func Configure() (config Configuration, err error) {
 
 	// Create the TerseStore.
 	var terseStoreType string
-	if config.TerseStore, terseStoreType, err = storage.NewTerseStore(terseConfig, DefaultCtx, config.ErrChan, &group, config.VisitsStore); err != nil {
+	if config.TerseStore, terseStoreType, err = storage.NewTerseStore(terseConfig, DefaultCtx, config.ErrChan, &group, config.SummaryStore, config.VisitsStore); err != nil {
 		logger.Fatalw("Failed to create TerseStore.",
 			"type", terseStoreType,
 			"error", err.Error(),
@@ -121,6 +144,8 @@ func Configure() (config Configuration, err error) {
 	logger.Infow("Created TerseStore.",
 		"type", terseStoreType,
 	)
+
+	// TODO Populate SummaryStore.
 
 	// Create the short ID generator.
 	if config.ShortID, err = shortid.New(1, shortid.DefaultABC, rawConfig.ShortIDSeed); err != nil { // TODO Configure worker count?

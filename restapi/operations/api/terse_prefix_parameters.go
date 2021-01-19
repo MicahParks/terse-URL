@@ -13,7 +13,8 @@ import (
 )
 
 // NewTersePrefixParams creates a new TersePrefixParams object
-// no default values defined in spec.
+//
+// There are no default values defined in the spec.
 func NewTersePrefixParams() TersePrefixParams {
 
 	return TersePrefixParams{}

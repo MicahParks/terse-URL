@@ -44,6 +44,55 @@ func (b *BboltTerse) Close(_ context.Context) (err error) {
 	return b.db.Close()
 }
 
+// CreateSummaryStore creates the SummaryStore based on the existing VisitsStore data.
+func (b *BboltTerse) CreateSummaryStore() (summaries map[string]models.TerseSummary, err error) {
+
+	// Create the return map.
+	summaries = make(map[string]models.TerseSummary)
+
+	// Confirm the visitsStore is not nil.
+	if b.visitsStore != nil {
+
+		// Get the map of counts.
+		var counts map[string]uint
+		counts, err = b.visitsStore.ExportCounts()
+		if err != nil {
+			return nil, err
+		}
+
+		// Open the bbolt database for viewing.
+		if err = b.db.View(func(tx *bbolt.Tx) error {
+
+			// Iterate through all the keys.
+			if err = tx.Bucket(b.terseBucket).ForEach(func(shortened, value []byte) error {
+
+				// Create the terse.
+				summary := models.TerseSummary{}
+
+				// Unmarshal the visit.
+				if err = json.Unmarshal(value, &summary); err != nil {
+					return err
+				}
+
+				// Complete the summary info by adding the Visits count.
+				summary.VisitCount = int64(counts[string(shortened)]) // TODO uint conversion. Potential data loss.
+
+				// Add the summary to the return map.
+				summaries[string(shortened)] = summary
+
+				return nil
+			}); err != nil {
+				return err
+			}
+			return nil
+		}); err != nil {
+			return nil, err
+		}
+	}
+
+	return summaries, nil
+}
+
 // Delete deletes data according to the del argument. If the VisitsStore is not nil, then the same method will be
 // called for the associated VisitsStore. This implementation has no network activity and ignores the given
 // context.
@@ -182,7 +231,7 @@ func (b *BboltTerse) ExportOne(ctx context.Context, shortened string) (export mo
 	// Get the visits.
 	visits := make([]*models.Visit, 0)
 	if b.visitsStore != nil {
-		if visits, err = b.visitsStore.ExportOne(ctx, shortened); err != nil {
+		if visits, err = b.visitsStore.ExportSome(ctx, shortened); err != nil {
 			return models.Export{}, err
 		}
 	}
@@ -267,6 +316,15 @@ func (b *BboltTerse) Insert(_ context.Context, terse *models.Terse) (err error) 
 // not be recorded. The error must be storage.ErrShortenedNotFound if the shortened URL is not found. This
 // implementation has no network activity and ignores the given context.
 func (b *BboltTerse) Read(_ context.Context, shortened string, visit *models.Visit) (terse *models.Terse, err error) {
+
+	// Increment the number of times the shortened URL has been visited. Do this in a separate goroutine so the response
+	// is faster.
+	if b.summaryStore != nil {
+		ctx, cancel := b.createCtx()
+		go b.group.AddWorkItem(ctx, cancel, func(workCtx context.Context) (err error) {
+			return b.summaryStore.IncrementVisitCount(ctx, shortened)
+		})
+	}
 
 	// Track the visit to this shortened URL. Do this in a separate goroutine so the response is faster.
 	if visit != nil && b.visitsStore != nil {

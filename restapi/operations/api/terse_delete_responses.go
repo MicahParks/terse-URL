@@ -16,7 +16,7 @@ import (
 // TerseDeleteOKCode is the HTTP code returned for type TerseDeleteOK
 const TerseDeleteOKCode int = 200
 
-/*TerseDeleteOK terse delete o k
+/*TerseDeleteOK The deletion request was successfully fulfilled.
 
 swagger:response terseDeleteOK
 */

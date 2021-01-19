@@ -6,6 +6,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/strfmt"
 )
 
@@ -16,5 +18,10 @@ type Twitter map[string]string
 
 // Validate validates this twitter
 func (m Twitter) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this twitter based on context it is used
+func (m Twitter) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }

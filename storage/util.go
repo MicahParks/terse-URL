@@ -45,8 +45,37 @@ type configuration struct {
 // ctxCreator is a function signature that creates a context and its cancel function.
 type ctxCreator func() (ctx context.Context, cancel context.CancelFunc)
 
+// NewSummaryStore creates a new SummaryStore from the given configJSON. The storeType return value is used for logging.
+func NewSummaryStore(configJSON json.RawMessage, visitsStore VisitsStore) (summaryStore SummaryStore, storeType string, err error) {
+
+	// Create the configuration.
+	config := &configuration{}
+
+	// If no JSON was given, use an in memory implementation.
+	if len(configJSON) == 0 {
+		config.Type = storageMemory
+	} else {
+
+		// Turn the configuration JSON into a Go structure.
+		if err = json.Unmarshal(configJSON, config); err != nil {
+			return nil, "", err
+		}
+	}
+
+	// Create the appropriate SummaryStore.
+	switch config.Type {
+
+	// Use and in memory implementation of the SummaryStore by default.
+	default:
+		config.Type = storageMemory
+		summaryStore = NewMemSummary()
+	}
+
+	return summaryStore, config.Type, nil
+}
+
 // NewTerseStore creates a new TerseStore from the given configJSON. The storeType return value is used for logging.
-func NewTerseStore(configJSON json.RawMessage, createCtx ctxCreator, errChan chan<- error, group *ctxerrgroup.Group, visitsStore VisitsStore) (terseStore TerseStore, storeType string, err error) {
+func NewTerseStore(configJSON json.RawMessage, createCtx ctxCreator, errChan chan<- error, group *ctxerrgroup.Group, summaryStore SummaryStore, visitsStore VisitsStore) (terseStore TerseStore, storeType string, err error) {
 
 	// Create the configuration.
 	config := &configuration{}
@@ -80,12 +109,12 @@ func NewTerseStore(configJSON json.RawMessage, createCtx ctxCreator, errChan cha
 		}
 
 		// Assign the interface implementation.
-		terseStore = NewBboltTerse(db, createCtx, group, bboltTerseBucket, visitsStore)
+		terseStore = NewBboltTerse(db, createCtx, group, summaryStore, bboltTerseBucket, visitsStore)
 
 	// Use and in memory implementation of the TerseStore by default.
 	default:
 		config.Type = storageMemory
-		terseStore = NewMemTerse(createCtx, errChan, group, visitsStore)
+		terseStore = NewMemTerse(createCtx, errChan, group, summaryStore, visitsStore)
 	}
 
 	return terseStore, config.Type, nil

@@ -6,6 +6,7 @@ package api
 // Editing this file might prove futile when you re-run the generate command
 
 import (
+	"context"
 	"net/http"
 
 	"github.com/go-openapi/errors"
@@ -35,7 +36,7 @@ func NewTerseImport(ctx *middleware.Context, handler TerseImportHandler) *TerseI
 	return &TerseImport{Context: ctx, Handler: handler}
 }
 
-/*TerseImport swagger:route POST /api/import api terseImport
+/* TerseImport swagger:route POST /api/import api terseImport
 
 Import existing Terse and Visits data for the given shortened URLs.
 
@@ -53,14 +54,12 @@ func (o *TerseImport) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 		r = rCtx
 	}
 	var Params = NewTerseImportParams()
-
 	if err := o.Context.BindValidRequest(r, route, &Params); err != nil { // bind params
 		o.Context.Respond(rw, r, route.Produces, route, err)
 		return
 	}
 
 	res := o.Handler.Handle(Params) // actually handle the request
-
 	o.Context.Respond(rw, r, route.Produces, route, res)
 
 }
@@ -96,7 +95,6 @@ func (o *TerseImportBody) Validate(formats strfmt.Registry) error {
 }
 
 func (o *TerseImportBody) validateDelete(formats strfmt.Registry) error {
-
 	if swag.IsZero(o.Delete) { // not required
 		return nil
 	}
@@ -114,7 +112,6 @@ func (o *TerseImportBody) validateDelete(formats strfmt.Registry) error {
 }
 
 func (o *TerseImportBody) validateImport(formats strfmt.Registry) error {
-
 	if swag.IsZero(o.Import) { // not required
 		return nil
 	}
@@ -126,6 +123,53 @@ func (o *TerseImportBody) validateImport(formats strfmt.Registry) error {
 		}
 		if val, ok := o.Import[k]; ok {
 			if err := val.Validate(formats); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// ContextValidate validate this terse import body based on the context it is used
+func (o *TerseImportBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.contextValidateDelete(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.contextValidateImport(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *TerseImportBody) contextValidateDelete(ctx context.Context, formats strfmt.Registry) error {
+
+	if o.Delete != nil {
+		if err := o.Delete.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("importDelete" + "." + "delete")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (o *TerseImportBody) contextValidateImport(ctx context.Context, formats strfmt.Registry) error {
+
+	for k := range o.Import {
+
+		if val, ok := o.Import[k]; ok {
+			if err := val.ContextValidate(ctx, formats); err != nil {
 				return err
 			}
 		}

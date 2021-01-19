@@ -29,7 +29,7 @@ func NewTerseRedirect(ctx *middleware.Context, handler TerseRedirectHandler) *Te
 	return &TerseRedirect{Context: ctx, Handler: handler}
 }
 
-/*TerseRedirect swagger:route GET /{shortened} public terseRedirect
+/* TerseRedirect swagger:route GET /{shortened} public terseRedirect
 
 Typically a web browser would visit this endpoint, then get redirected.
 
@@ -47,14 +47,12 @@ func (o *TerseRedirect) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 		r = rCtx
 	}
 	var Params = NewTerseRedirectParams()
-
 	if err := o.Context.BindValidRequest(r, route, &Params); err != nil { // bind params
 		o.Context.Respond(rw, r, route.Produces, route, err)
 		return
 	}
 
 	res := o.Handler.Handle(Params) // actually handle the request
-
 	o.Context.Respond(rw, r, route.Produces, route, res)
 
 }

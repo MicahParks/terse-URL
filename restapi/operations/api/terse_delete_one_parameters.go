@@ -6,6 +6,7 @@ package api
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"io"
 	"net/http"
 
@@ -13,12 +14,14 @@ import (
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/go-openapi/strfmt"
+	"github.com/go-openapi/validate"
 
 	"github.com/MicahParks/terseurl/models"
 )
 
 // NewTerseDeleteOneParams creates a new TerseDeleteOneParams object
-// no default values defined in spec.
+//
+// There are no default values defined in the spec.
 func NewTerseDeleteOneParams() TerseDeleteOneParams {
 
 	return TerseDeleteOneParams{}
@@ -69,6 +72,11 @@ func (o *TerseDeleteOneParams) BindRequest(r *http.Request, route *middleware.Ma
 				res = append(res, err)
 			}
 
+			ctx := validate.WithOperationRequest(context.Background())
+			if err := body.ContextValidate(ctx, route.Formats); err != nil {
+				res = append(res, err)
+			}
+
 			if len(res) == 0 {
 				o.Delete = &body
 			}
@@ -76,11 +84,11 @@ func (o *TerseDeleteOneParams) BindRequest(r *http.Request, route *middleware.Ma
 	} else {
 		res = append(res, errors.Required("delete", "body", ""))
 	}
+
 	rShortened, rhkShortened, _ := route.Params.GetOK("shortened")
 	if err := o.bindShortened(rShortened, rhkShortened, route.Formats); err != nil {
 		res = append(res, err)
 	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -96,7 +104,6 @@ func (o *TerseDeleteOneParams) bindShortened(rawData []string, hasKey bool, form
 
 	// Required: true
 	// Parameter is provided by construction from the route
-
 	o.Shortened = raw
 
 	return nil

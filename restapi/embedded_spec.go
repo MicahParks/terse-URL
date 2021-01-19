@@ -72,7 +72,9 @@ func init() {
           }
         ],
         "responses": {
-          "200": {},
+          "200": {
+            "description": "The deletion request was successfully fulfilled."
+          },
           "default": {
             "description": "Unexpected error.",
             "schema": {
@@ -160,6 +162,7 @@ func init() {
     },
     "/api/export/{shortened}": {
       "get": {
+        "description": "Export Terse and Visits data for the given shortened URL.",
         "produces": [
           "application/json"
         ],
@@ -226,7 +229,9 @@ func init() {
           }
         ],
         "responses": {
-          "200": {},
+          "200": {
+            "description": "The import request was successfully fulfilled."
+          },
           "default": {
             "description": "Unexpected error.",
             "schema": {
@@ -262,6 +267,7 @@ func init() {
     },
     "/api/summary": {
       "post": {
+        "description": "Terse summary data includes the shortened URL, the original URL, the type of redirect, and the number of visits.",
         "consumes": [
           "application/json"
         ],
@@ -271,9 +277,11 @@ func init() {
         "tags": [
           "api"
         ],
+        "summary": "Provide Terse summary data for the requested shortened URLs.",
         "operationId": "terseSummary",
         "parameters": [
           {
+            "description": "The array of shortened URLs to get Terse summary data for.",
             "name": "shortened",
             "in": "body",
             "required": true,
@@ -287,6 +295,7 @@ func init() {
         ],
         "responses": {
           "200": {
+            "description": "The map of shortened URLs to Terse summary data.",
             "schema": {
               "additionalProperties": {
                 "$ref": "#/definitions/TerseSummary"
@@ -304,6 +313,7 @@ func init() {
     },
     "/api/terse/{shortened}": {
       "get": {
+        "description": "Read the Terse data for the given shortened URL.",
         "produces": [
           "application/json"
         ],
@@ -516,6 +526,9 @@ func init() {
         "og": {
           "$ref": "#/definitions/OpenGraph"
         },
+        "redirectType": {
+          "$ref": "#/definitions/RedirectType"
+        },
         "title": {
           "type": "string"
         },
@@ -553,14 +566,8 @@ func init() {
         "originalURL": {
           "type": "string"
         },
-        "redirectType": {
-          "$ref": "#/definitions/RedirectType"
-        },
         "shortenedURL": {
           "type": "string"
-        },
-        "visitCount": {
-          "type": "integer"
         }
       }
     },
@@ -696,7 +703,9 @@ func init() {
           }
         ],
         "responses": {
-          "200": {},
+          "200": {
+            "description": "The deletion request was successfully fulfilled."
+          },
           "default": {
             "description": "Unexpected error.",
             "schema": {
@@ -784,6 +793,7 @@ func init() {
     },
     "/api/export/{shortened}": {
       "get": {
+        "description": "Export Terse and Visits data for the given shortened URL.",
         "produces": [
           "application/json"
         ],
@@ -850,7 +860,9 @@ func init() {
           }
         ],
         "responses": {
-          "200": {},
+          "200": {
+            "description": "The import request was successfully fulfilled."
+          },
           "default": {
             "description": "Unexpected error.",
             "schema": {
@@ -886,6 +898,7 @@ func init() {
     },
     "/api/summary": {
       "post": {
+        "description": "Terse summary data includes the shortened URL, the original URL, the type of redirect, and the number of visits.",
         "consumes": [
           "application/json"
         ],
@@ -895,9 +908,11 @@ func init() {
         "tags": [
           "api"
         ],
+        "summary": "Provide Terse summary data for the requested shortened URLs.",
         "operationId": "terseSummary",
         "parameters": [
           {
+            "description": "The array of shortened URLs to get Terse summary data for.",
             "name": "shortened",
             "in": "body",
             "required": true,
@@ -911,6 +926,7 @@ func init() {
         ],
         "responses": {
           "200": {
+            "description": "The map of shortened URLs to Terse summary data.",
             "schema": {
               "additionalProperties": {
                 "$ref": "#/definitions/TerseSummary"
@@ -928,6 +944,7 @@ func init() {
     },
     "/api/terse/{shortened}": {
       "get": {
+        "description": "Read the Terse data for the given shortened URL.",
         "produces": [
           "application/json"
         ],
@@ -1140,6 +1157,9 @@ func init() {
         "og": {
           "$ref": "#/definitions/OpenGraph"
         },
+        "redirectType": {
+          "$ref": "#/definitions/RedirectType"
+        },
         "title": {
           "type": "string"
         },
@@ -1177,14 +1197,8 @@ func init() {
         "originalURL": {
           "type": "string"
         },
-        "redirectType": {
-          "$ref": "#/definitions/RedirectType"
-        },
         "shortenedURL": {
           "type": "string"
-        },
-        "visitCount": {
-          "type": "integer"
         }
       }
     },

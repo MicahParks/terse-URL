@@ -6,6 +6,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -44,7 +45,6 @@ func (m *Export) Validate(formats strfmt.Registry) error {
 }
 
 func (m *Export) validateTerse(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Terse) { // not required
 		return nil
 	}
@@ -62,7 +62,6 @@ func (m *Export) validateTerse(formats strfmt.Registry) error {
 }
 
 func (m *Export) validateVisits(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Visits) { // not required
 		return nil
 	}
@@ -74,6 +73,56 @@ func (m *Export) validateVisits(formats strfmt.Registry) error {
 
 		if m.Visits[i] != nil {
 			if err := m.Visits[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("visits" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// ContextValidate validate this export based on the context it is used
+func (m *Export) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateTerse(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateVisits(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *Export) contextValidateTerse(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Terse != nil {
+		if err := m.Terse.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("terse")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *Export) contextValidateVisits(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.Visits); i++ {
+
+		if m.Visits[i] != nil {
+			if err := m.Visits[i].ContextValidate(ctx, formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("visits" + "." + strconv.Itoa(i))
 				}

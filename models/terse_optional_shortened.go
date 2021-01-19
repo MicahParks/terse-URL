@@ -6,6 +6,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
@@ -47,7 +49,6 @@ func (m *TerseOptionalShortened) Validate(formats strfmt.Registry) error {
 }
 
 func (m *TerseOptionalShortened) validateMediaPreview(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.MediaPreview) { // not required
 		return nil
 	}
@@ -68,6 +69,34 @@ func (m *TerseOptionalShortened) validateOriginalURL(formats strfmt.Registry) er
 
 	if err := validate.Required("originalURL", "body", m.OriginalURL); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validate this terse optional shortened based on the context it is used
+func (m *TerseOptionalShortened) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateMediaPreview(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *TerseOptionalShortened) contextValidateMediaPreview(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.MediaPreview != nil {
+		if err := m.MediaPreview.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("mediaPreview")
+			}
+			return err
+		}
 	}
 
 	return nil

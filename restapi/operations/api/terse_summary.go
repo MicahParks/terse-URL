@@ -29,9 +29,11 @@ func NewTerseSummary(ctx *middleware.Context, handler TerseSummaryHandler) *Ters
 	return &TerseSummary{Context: ctx, Handler: handler}
 }
 
-/*TerseSummary swagger:route POST /api/summary api terseSummary
+/* TerseSummary swagger:route POST /api/summary api terseSummary
 
-TerseSummary terse summary API
+Provide Terse summary data for the requested shortened URLs.
+
+Terse summary data includes the shortened URL, the original URL, the type of redirect, and the number of visits.
 
 */
 type TerseSummary struct {
@@ -45,14 +47,12 @@ func (o *TerseSummary) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 		r = rCtx
 	}
 	var Params = NewTerseSummaryParams()
-
 	if err := o.Context.BindValidRequest(r, route, &Params); err != nil { // bind params
 		o.Context.Respond(rw, r, route.Produces, route, err)
 		return
 	}
 
 	res := o.Handler.Handle(Params) // actually handle the request
-
 	o.Context.Respond(rw, r, route.Produces, route, res)
 
 }
