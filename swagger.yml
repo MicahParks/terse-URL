@@ -229,7 +229,6 @@ paths:
       tags:
         - "api"
 
-
   /api/terse/{shortened}:
     get:
       produces:
