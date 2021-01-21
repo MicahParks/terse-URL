@@ -12,6 +12,7 @@ import (
 	"github.com/teris-io/shortid"
 	"go.uber.org/zap"
 
+	"github.com/MicahParks/terseurl/models"
 	"github.com/MicahParks/terseurl/storage"
 )
 
@@ -145,7 +146,20 @@ func Configure() (config Configuration, err error) {
 		"type", terseStoreType,
 	)
 
-	// TODO Populate SummaryStore.
+	// TODO ctxCreator
+	var summaries map[string]models.TerseSummary
+	if summaries, err = storage.InitializeSummaries(ctx, config.TerseStore, config.VisitsStore); err != nil {
+		logger.Fatalw("Failed to initialize the summaries for the SummaryStore.",
+			"error", err.Error(),
+		) // TODO Not fatal.
+	}
+
+	// TODO ctxCreator
+	if err = config.SummaryStore.Import(ctx, summaries); err != nil {
+		logger.Fatalw("Failed to import the initial summaries into the SummaryStore.",
+			"error", err.Error(),
+		) // TODO Not fatal?
+	}
 
 	// Create the short ID generator.
 	if config.ShortID, err = shortid.New(1, shortid.DefaultABC, rawConfig.ShortIDSeed); err != nil { // TODO Configure worker count?

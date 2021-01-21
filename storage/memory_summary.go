@@ -21,6 +21,19 @@ func NewMemSummary() (summaryStore SummaryStore) {
 	}
 }
 
+// Import TODO
+func (m *MemSummary) Import(_ context.Context, summaries map[string]models.TerseSummary) (err error) {
+
+	// Lock the Terse summary data for async safe use.
+	m.mux.Lock()
+	defer m.mux.Unlock()
+
+	// Reassign the summaries map.
+	m.summaries = summaries
+
+	return nil
+}
+
 // IncrementVisitCount increments the visit count for the given shortened URL. It is called in separate goroutine. This
 // implementation has no network activity and ignores the given context.
 func (m *MemSummary) IncrementVisitCount(_ context.Context, shortened string) (err error) {
