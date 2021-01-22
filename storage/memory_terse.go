@@ -219,6 +219,16 @@ func (m *MemTerse) ExportSome(ctx context.Context, shortenedURLs []string) (expo
 	return export, nil
 }
 
+// TODO
+func (m *MemTerse) ExportTerse(_ context.Context) (terse map[string]*models.Terse, err error) {
+
+	// Lock the Terse map for async safe use.
+	m.mux.RLock()
+	defer m.mux.RUnlock()
+
+	return m.terse, nil
+}
+
 // Import imports the given export's data. If del is not nil, data will be deleted accordingly. If del is nil, data
 // may be overwritten, but unaffected data will be untouched. If the VisitsStore is not nil, then the same method
 // will be called for the associated VisitsStore. This implementation has no network activity and ignores the given

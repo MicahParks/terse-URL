@@ -232,6 +232,8 @@ func (b *BboltTerse) ExportSome(ctx context.Context, shortenedURLs []string) (ex
 	}
 
 	// Iterate through the shortened URLs.
+	//
+	// TODO This loop should be inside of a transaction. Check for more like this.
 	for _, shortened := range shortenedURLs {
 
 		// Get the Terse from the bucket.
@@ -248,6 +250,39 @@ func (b *BboltTerse) ExportSome(ctx context.Context, shortenedURLs []string) (ex
 	}
 
 	return export, nil
+}
+
+// TODO
+func (b *BboltTerse) ExportTerse(_ context.Context) (terse map[string]*models.Terse, err error) {
+
+	// Create the export map.
+	terse = make(map[string]*models.Terse)
+
+	// Open the bbolt database for reading.
+	if err = b.db.View(func(tx *bbolt.Tx) error {
+
+		// For every key in the bucket, add it to the export.
+		if err = tx.Bucket(b.terseBucket).ForEach(func(shortened, data []byte) error {
+
+			// Turn the Terse data into a Terse Go structure.
+			var t *models.Terse
+			if t, err = unmarshalTerseData(data); err != nil {
+				return err
+			}
+
+			// Add the Terse the return map.
+			terse[string(shortened)] = t
+
+			return nil
+		}); err != nil {
+			return err
+		}
+		return nil
+	}); err != nil {
+		return nil, err
+	}
+
+	return terse, nil
 }
 
 // Import imports the given export's data. If del is not nil, data will be deleted accordingly. If del is nil, data
