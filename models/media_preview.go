@@ -21,9 +21,6 @@ type MediaPreview struct {
 	// og
 	Og OpenGraph `json:"og,omitempty"`
 
-	// redirect type
-	RedirectType RedirectType `json:"redirectType,omitempty"`
-
 	// title
 	Title string `json:"title,omitempty"`
 
@@ -36,10 +33,6 @@ func (m *MediaPreview) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateOg(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateRedirectType(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -70,21 +63,6 @@ func (m *MediaPreview) validateOg(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *MediaPreview) validateRedirectType(formats strfmt.Registry) error {
-	if swag.IsZero(m.RedirectType) { // not required
-		return nil
-	}
-
-	if err := m.RedirectType.Validate(formats); err != nil {
-		if ve, ok := err.(*errors.Validation); ok {
-			return ve.ValidateName("redirectType")
-		}
-		return err
-	}
-
-	return nil
-}
-
 func (m *MediaPreview) validateTwitter(formats strfmt.Registry) error {
 	if swag.IsZero(m.Twitter) { // not required
 		return nil
@@ -110,10 +88,6 @@ func (m *MediaPreview) ContextValidate(ctx context.Context, formats strfmt.Regis
 		res = append(res, err)
 	}
 
-	if err := m.contextValidateRedirectType(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
 	if err := m.contextValidateTwitter(ctx, formats); err != nil {
 		res = append(res, err)
 	}
@@ -129,18 +103,6 @@ func (m *MediaPreview) contextValidateOg(ctx context.Context, formats strfmt.Reg
 	if err := m.Og.ContextValidate(ctx, formats); err != nil {
 		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("og")
-		}
-		return err
-	}
-
-	return nil
-}
-
-func (m *MediaPreview) contextValidateRedirectType(ctx context.Context, formats strfmt.Registry) error {
-
-	if err := m.RedirectType.ContextValidate(ctx, formats); err != nil {
-		if ve, ok := err.(*errors.Validation); ok {
-			return ve.ValidateName("redirectType")
 		}
 		return err
 	}

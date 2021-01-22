@@ -392,8 +392,6 @@ definitions:
     properties:
       og:
         $ref: "#/definitions/OpenGraph"
-      redirectType: # TODO Actually populate.
-        $ref: "#/definitions/RedirectType"
       title:
         type: "string"
       twitter:
@@ -410,7 +408,7 @@ definitions:
     enum:
       - "301"
       - "302"
-      - "metaTags"
+      - "meta"
       - "js"
 
   # Schema for a Terse URL, which represented a shortened URL and original pair plus metadata.
@@ -422,6 +420,8 @@ definitions:
         type: "string"
       mediaPreview:
         $ref: "#/definitions/MediaPreview"
+      redirectType:
+        $ref: "#/definitions/RedirectType" # TODO Populate.
       shortenedURL:
         type: "string"
     required:

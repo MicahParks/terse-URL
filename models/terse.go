@@ -29,6 +29,9 @@ type Terse struct {
 	// Required: true
 	OriginalURL *string `json:"originalURL"`
 
+	// redirect type
+	RedirectType RedirectType `json:"redirectType,omitempty"`
+
 	// shortened URL
 	// Required: true
 	ShortenedURL *string `json:"shortenedURL"`
@@ -43,6 +46,10 @@ func (m *Terse) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateOriginalURL(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateRedirectType(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -82,6 +89,21 @@ func (m *Terse) validateOriginalURL(formats strfmt.Registry) error {
 	return nil
 }
 
+func (m *Terse) validateRedirectType(formats strfmt.Registry) error {
+	if swag.IsZero(m.RedirectType) { // not required
+		return nil
+	}
+
+	if err := m.RedirectType.Validate(formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("redirectType")
+		}
+		return err
+	}
+
+	return nil
+}
+
 func (m *Terse) validateShortenedURL(formats strfmt.Registry) error {
 
 	if err := validate.Required("shortenedURL", "body", m.ShortenedURL); err != nil {
@@ -96,6 +118,10 @@ func (m *Terse) ContextValidate(ctx context.Context, formats strfmt.Registry) er
 	var res []error
 
 	if err := m.contextValidateMediaPreview(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateRedirectType(ctx, formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -114,6 +140,18 @@ func (m *Terse) contextValidateMediaPreview(ctx context.Context, formats strfmt.
 			}
 			return err
 		}
+	}
+
+	return nil
+}
+
+func (m *Terse) contextValidateRedirectType(ctx context.Context, formats strfmt.Registry) error {
+
+	if err := m.RedirectType.ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("redirectType")
+		}
+		return err
 	}
 
 	return nil

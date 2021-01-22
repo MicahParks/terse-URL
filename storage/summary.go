@@ -38,7 +38,7 @@ func InitializeSummaries(ctx context.Context, terseStore TerseStore, visitsStore
 		// TODO
 		summaries[shortened] = models.TerseSummary{
 			OriginalURL:  *t.OriginalURL, // TODO Pointers
-			RedirectType: t.MediaPreview.RedirectType,
+			RedirectType: t.RedirectType,
 			ShortenedURL: *t.ShortenedURL, // TODO Pointers.
 			VisitCount:   int64(count),    // TODO Int conversion.
 		}

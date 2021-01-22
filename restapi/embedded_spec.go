@@ -540,9 +540,6 @@ func init() {
         "og": {
           "$ref": "#/definitions/OpenGraph"
         },
-        "redirectType": {
-          "$ref": "#/definitions/RedirectType"
-        },
         "title": {
           "type": "string"
         },
@@ -561,7 +558,7 @@ func init() {
       "enum": [
         "301",
         "302",
-        "metaTags",
+        "meta",
         "js"
       ]
     },
@@ -579,6 +576,9 @@ func init() {
         },
         "originalURL": {
           "type": "string"
+        },
+        "redirectType": {
+          "$ref": "#/definitions/RedirectType"
         },
         "shortenedURL": {
           "type": "string"
@@ -1185,9 +1185,6 @@ func init() {
         "og": {
           "$ref": "#/definitions/OpenGraph"
         },
-        "redirectType": {
-          "$ref": "#/definitions/RedirectType"
-        },
         "title": {
           "type": "string"
         },
@@ -1206,7 +1203,7 @@ func init() {
       "enum": [
         "301",
         "302",
-        "metaTags",
+        "meta",
         "js"
       ]
     },
@@ -1224,6 +1221,9 @@ func init() {
         },
         "originalURL": {
           "type": "string"
+        },
+        "redirectType": {
+          "$ref": "#/definitions/RedirectType"
         },
         "shortenedURL": {
           "type": "string"

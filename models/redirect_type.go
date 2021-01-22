@@ -27,8 +27,8 @@ const (
 	// RedirectTypeNr302 captures enum value "302"
 	RedirectTypeNr302 RedirectType = "302"
 
-	// RedirectTypeMetaTags captures enum value "metaTags"
-	RedirectTypeMetaTags RedirectType = "metaTags"
+	// RedirectTypeMeta captures enum value "meta"
+	RedirectTypeMeta RedirectType = "meta"
 
 	// RedirectTypeJs captures enum value "js"
 	RedirectTypeJs RedirectType = "js"
@@ -39,7 +39,7 @@ var redirectTypeEnum []interface{}
 
 func init() {
 	var res []RedirectType
-	if err := json.Unmarshal([]byte(`["301","302","metaTags","js"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["301","302","meta","js"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {

@@ -68,10 +68,10 @@ func (m *MemTerse) CreateSummaryStore(ctx context.Context) (summaries map[string
 		for shortened, count := range counts {
 			terse := m.terse[shortened]
 			summaries[shortened] = models.TerseSummary{
-				OriginalURL:  *terse.OriginalURL,              // TODO Pointer.
-				RedirectType: terse.MediaPreview.RedirectType, // TODO Populate.
-				ShortenedURL: *terse.ShortenedURL,             // TODO Pointer.
-				VisitCount:   int64(count),                    // TODO uint conversion. Potential data loss.
+				OriginalURL:  *terse.OriginalURL,  // TODO Pointer.
+				RedirectType: terse.RedirectType,  // TODO Populate.
+				ShortenedURL: *terse.ShortenedURL, // TODO Pointer.
+				VisitCount:   int64(count),        // TODO uint conversion. Potential data loss.
 			}
 		}
 
