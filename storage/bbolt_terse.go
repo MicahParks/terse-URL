@@ -343,7 +343,7 @@ func (b *BboltTerse) Import(ctx context.Context, del *models.Delete, export map[
 
 // Insert adds a Terse to the TerseStore. The shortened URL will be active after this. The error will be
 // storage.ErrShortenedExists if the shortened URL is already present.
-func (b *BboltTerse) Insert(_ context.Context, terse *models.Terse) (err error) {
+func (b *BboltTerse) Insert(ctx context.Context, terse *models.Terse) (err error) {
 
 	// Determine if the Terse is already present.
 	if _, err = b.getTerseData(terse.ShortenedURL); !errors.Is(err, ErrShortenedNotFound) {
@@ -355,7 +355,7 @@ func (b *BboltTerse) Insert(_ context.Context, terse *models.Terse) (err error) 
 	err = nil
 
 	// Write the Terse to the bucket.
-	if err = b.writeTerse(terse); err != nil {
+	if err = b.writeTerse(ctx, terse); err != nil {
 		return err
 	}
 
@@ -398,7 +398,7 @@ func (b *BboltTerse) SummaryStore() SummaryStore {
 
 // Update assumes the Terse already exists. It will override all of its values. The error must be
 // storage.ErrShortenedNotFound if the shortened URL is not found.
-func (b *BboltTerse) Update(_ context.Context, terse *models.Terse) (err error) {
+func (b *BboltTerse) Update(ctx context.Context, terse *models.Terse) (err error) {
 
 	// Determine if the Terse is already present.
 	if _, err = b.getTerseData(terse.ShortenedURL); err != nil {
@@ -406,7 +406,7 @@ func (b *BboltTerse) Update(_ context.Context, terse *models.Terse) (err error) 
 	}
 
 	// Write the Terse to the bucket.
-	if err = b.writeTerse(terse); err != nil {
+	if err = b.writeTerse(ctx, terse); err != nil {
 		return err
 	}
 
@@ -414,10 +414,10 @@ func (b *BboltTerse) Update(_ context.Context, terse *models.Terse) (err error) 
 }
 
 // Upsert will upsert the Terse into the backend storage.
-func (b *BboltTerse) Upsert(_ context.Context, terse *models.Terse) (err error) {
+func (b *BboltTerse) Upsert(ctx context.Context, terse *models.Terse) (err error) {
 
 	// Write the Terse to the bucket.
-	if err = b.writeTerse(terse); err != nil {
+	if err = b.writeTerse(ctx, terse); err != nil {
 		return err
 	}
 
@@ -478,7 +478,20 @@ func unmarshalTerseData(data []byte) (terse *models.Terse, err error) {
 }
 
 // writeTerse writes the Terse data to the bbolt database.
-func (b *BboltTerse) writeTerse(terse *models.Terse) (err error) {
+func (b *BboltTerse) writeTerse(ctx context.Context, terse *models.Terse) (err error) {
+
+	// Upsert the Terse data into the SummaryStore.
+	if b.summaryStore != nil {
+		summaries := make(map[string]models.TerseSummary)
+		summaries[terse.ShortenedURL] = models.TerseSummary{
+			OriginalURL:  terse.OriginalURL,
+			RedirectType: terse.RedirectType,
+			ShortenedURL: terse.ShortenedURL,
+		}
+		if err = b.summaryStore.Upsert(ctx, summaries); err != nil {
+			return err
+		}
+	}
 
 	// Turn the Terse into JSON bytes.
 	var value []byte

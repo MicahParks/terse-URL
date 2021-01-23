@@ -75,7 +75,7 @@ func (m *MemSummary) Summarize(_ context.Context, shortenedURLs []string) (summa
 	return summaries, nil
 }
 
-// Upsert upserts the summary information for the given shortened URL.
+// Upsert upserts the summary information for the given shortened URL, but preserves the Visists count. TODO
 func (m *MemSummary) Upsert(_ context.Context, summaries map[string]models.TerseSummary) (err error) {
 
 	// Lock the Terse summary data for async safe use.
@@ -84,6 +84,15 @@ func (m *MemSummary) Upsert(_ context.Context, summaries map[string]models.Terse
 
 	// Upsert the summaries into the Terse summary data map.
 	for shortened, summary := range summaries {
+
+		// Use the old count of Visits, or start at zero.
+		var count int64
+		if sum, ok := m.summaries[shortened]; ok {
+			count = sum.VisitCount
+		}
+		summary.VisitCount = count
+
+		// Upsert the Terse summary data into the map.
 		m.summaries[shortened] = summary
 	}
 
