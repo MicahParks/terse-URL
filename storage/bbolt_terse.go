@@ -368,7 +368,7 @@ func (b *BboltTerse) Read(_ context.Context, shortened string, visit *models.Vis
 
 	// Only update the SummaryStore and VisitsStore if there wasn't an error.
 	defer func() {
-		if err != nil {
+		if err == nil {
 
 			// Increment the number of times the shortened URL has been visited. Do this in a separate goroutine so the response
 			// is faster.
