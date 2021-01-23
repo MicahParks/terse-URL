@@ -50,6 +50,7 @@ paths:
           required: true
           schema:
             $ref: "#/definitions/Delete"
+          x-nullable: false
       responses:
         200:
           description: "The deletion request was successfully fulfilled."
@@ -81,6 +82,7 @@ paths:
               delete:
                 description: "Indicate if Terse and or Visits data should be deleted."
                 $ref: "#/definitions/Delete"
+                x-nullable: false
               shortenedURLs:
                 type: "array"
                 items:
@@ -167,6 +169,7 @@ paths:
             properties:
               delete:
                 $ref: "#/definitions/Delete"
+                x-nullable: false
               import:
                 additionalProperties:
                   $ref: "#/definitions/Export"
@@ -299,7 +302,8 @@ paths:
           name: "terse"
           required: true
           schema:
-            $ref: "#/definitions/TerseOptionalShortened" # TODO Does using the "Optional" version even matter here?
+            $ref: "#/definitions/TerseInput"
+          x-nullable: false
         - description: "The write operation to perform with the Terse data."
           in: "path"
           enum:
@@ -380,8 +384,10 @@ definitions:
     properties:
       code:
         type: "integer"
+        x-nullable: false
       message:
         type: "string"
+        x-nullable: false
     required:
       - "code"
       - "message"
@@ -418,23 +424,28 @@ definitions:
         type: "boolean"
       originalURL:
         type: "string"
+        x-nullable: false
       mediaPreview:
         $ref: "#/definitions/MediaPreview"
       redirectType:
         $ref: "#/definitions/RedirectType" # TODO Populate.
       shortenedURL:
         type: "string"
+        x-nullable: false
     required:
       - "originalURL" # TODO If these are validated outside of the spec, the server won't have as many pointer issues.
       - "shortenedURL"
 
-  # Schema for a Terse URL, with an optional shortened URL.
-  TerseOptionalShortened:
+  # Schema for input Terse data. The shortened URL is optional.
+  TerseInput:
     properties:
       originalURL:
+        x-nullable: false
         type: "string"
       mediaPreview:
         $ref: "#/definitions/MediaPreview"
+      redirectType:
+        $ref: "#/definitions/RedirectType" # TODO Populate.
       shortenedURL:
         type: "string"
     required:

@@ -45,7 +45,7 @@ type TerseWriteParams struct {
 	  Required: true
 	  In: body
 	*/
-	Terse *models.TerseOptionalShortened
+	Terse *models.TerseInput
 }
 
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
@@ -64,7 +64,7 @@ func (o *TerseWriteParams) BindRequest(r *http.Request, route *middleware.Matche
 
 	if runtime.HasBody(r) {
 		defer r.Body.Close()
-		var body models.TerseOptionalShortened
+		var body models.TerseInput
 		if err := route.Consumer.Consume(r.Body, &body); err != nil {
 			if err == io.EOF {
 				res = append(res, errors.Required("terse", "body", ""))

@@ -14,24 +14,27 @@ import (
 	"github.com/go-openapi/validate"
 )
 
-// TerseOptionalShortened terse optional shortened
+// TerseInput terse input
 //
-// swagger:model TerseOptionalShortened
-type TerseOptionalShortened struct {
+// swagger:model TerseInput
+type TerseInput struct {
 
 	// media preview
 	MediaPreview *MediaPreview `json:"mediaPreview,omitempty"`
 
 	// original URL
 	// Required: true
-	OriginalURL *string `json:"originalURL"`
+	OriginalURL string `json:"originalURL"`
+
+	// redirect type
+	RedirectType RedirectType `json:"redirectType,omitempty"`
 
 	// shortened URL
 	ShortenedURL string `json:"shortenedURL,omitempty"`
 }
 
-// Validate validates this terse optional shortened
-func (m *TerseOptionalShortened) Validate(formats strfmt.Registry) error {
+// Validate validates this terse input
+func (m *TerseInput) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateMediaPreview(formats); err != nil {
@@ -42,13 +45,17 @@ func (m *TerseOptionalShortened) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateRedirectType(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
 	return nil
 }
 
-func (m *TerseOptionalShortened) validateMediaPreview(formats strfmt.Registry) error {
+func (m *TerseInput) validateMediaPreview(formats strfmt.Registry) error {
 	if swag.IsZero(m.MediaPreview) { // not required
 		return nil
 	}
@@ -65,20 +72,39 @@ func (m *TerseOptionalShortened) validateMediaPreview(formats strfmt.Registry) e
 	return nil
 }
 
-func (m *TerseOptionalShortened) validateOriginalURL(formats strfmt.Registry) error {
+func (m *TerseInput) validateOriginalURL(formats strfmt.Registry) error {
 
-	if err := validate.Required("originalURL", "body", m.OriginalURL); err != nil {
+	if err := validate.RequiredString("originalURL", "body", m.OriginalURL); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-// ContextValidate validate this terse optional shortened based on the context it is used
-func (m *TerseOptionalShortened) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+func (m *TerseInput) validateRedirectType(formats strfmt.Registry) error {
+	if swag.IsZero(m.RedirectType) { // not required
+		return nil
+	}
+
+	if err := m.RedirectType.Validate(formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("redirectType")
+		}
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validate this terse input based on the context it is used
+func (m *TerseInput) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.contextValidateMediaPreview(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateRedirectType(ctx, formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -88,7 +114,7 @@ func (m *TerseOptionalShortened) ContextValidate(ctx context.Context, formats st
 	return nil
 }
 
-func (m *TerseOptionalShortened) contextValidateMediaPreview(ctx context.Context, formats strfmt.Registry) error {
+func (m *TerseInput) contextValidateMediaPreview(ctx context.Context, formats strfmt.Registry) error {
 
 	if m.MediaPreview != nil {
 		if err := m.MediaPreview.ContextValidate(ctx, formats); err != nil {
@@ -102,8 +128,20 @@ func (m *TerseOptionalShortened) contextValidateMediaPreview(ctx context.Context
 	return nil
 }
 
+func (m *TerseInput) contextValidateRedirectType(ctx context.Context, formats strfmt.Registry) error {
+
+	if err := m.RedirectType.ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("redirectType")
+		}
+		return err
+	}
+
+	return nil
+}
+
 // MarshalBinary interface implementation
-func (m *TerseOptionalShortened) MarshalBinary() ([]byte, error) {
+func (m *TerseInput) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -111,8 +149,8 @@ func (m *TerseOptionalShortened) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *TerseOptionalShortened) UnmarshalBinary(b []byte) error {
-	var res TerseOptionalShortened
+func (m *TerseInput) UnmarshalBinary(b []byte) error {
+	var res TerseInput
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}
