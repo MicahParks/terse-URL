@@ -3,4 +3,5 @@ async function getPrefix() { // TODO Use local storage for this?
     response.json().then(prefix => {
         document.getElementById("httpPrefix").textContent = prefix;
     });
+    // TODO Put into session storage.
 }
