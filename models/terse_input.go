@@ -19,6 +19,9 @@ import (
 // swagger:model TerseInput
 type TerseInput struct {
 
+	// javascript tracking
+	JavascriptTracking bool `json:"javascriptTracking,omitempty"`
+
 	// media preview
 	MediaPreview *MediaPreview `json:"mediaPreview,omitempty"`
 

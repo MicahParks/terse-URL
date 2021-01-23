@@ -33,11 +33,18 @@ func HandleWrite(logger *zap.SugaredLogger, shortID *shortid.Shortid, terseStore
 		ctx, cancel := configure.DefaultCtx()
 		defer cancel()
 
+		// If no redirect type was give, use 302 as the default.
+		if params.Terse.RedirectType == "" {
+			params.Terse.RedirectType = models.RedirectTypeNr302
+		}
+
 		// Create the Terse data structure.
 		terse := &models.Terse{
-			MediaPreview: params.Terse.MediaPreview,
-			OriginalURL:  params.Terse.OriginalURL,
-			ShortenedURL: params.Terse.ShortenedURL,
+			JavascriptTracking: params.Terse.JavascriptTracking,
+			MediaPreview:       params.Terse.MediaPreview,
+			OriginalURL:        params.Terse.OriginalURL,
+			RedirectType:       params.Terse.RedirectType,
+			ShortenedURL:       params.Terse.ShortenedURL,
 		}
 
 		// If no shortened URL was given, create one.

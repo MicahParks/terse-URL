@@ -416,7 +416,7 @@ func init() {
         "operationId": "terseWrite",
         "parameters": [
           {
-            "description": "The Terse data, with an optional shortened URL. If no shortened URL is given, one will be generated randomly and returned in the response.",
+            "description": "The Terse data, with an optional shortened URL. If no shortened URL is given, one will be generated randomly and returned in the response. If no redirect type is given, 302 is used.",
             "name": "terse",
             "in": "body",
             "required": true,
@@ -594,6 +594,9 @@ func init() {
         "originalURL"
       ],
       "properties": {
+        "javascriptTracking": {
+          "type": "boolean"
+        },
         "mediaPreview": {
           "$ref": "#/definitions/MediaPreview"
         },
@@ -1069,7 +1072,7 @@ func init() {
         "operationId": "terseWrite",
         "parameters": [
           {
-            "description": "The Terse data, with an optional shortened URL. If no shortened URL is given, one will be generated randomly and returned in the response.",
+            "description": "The Terse data, with an optional shortened URL. If no shortened URL is given, one will be generated randomly and returned in the response. If no redirect type is given, 302 is used.",
             "name": "terse",
             "in": "body",
             "required": true,
@@ -1247,6 +1250,9 @@ func init() {
         "originalURL"
       ],
       "properties": {
+        "javascriptTracking": {
+          "type": "boolean"
+        },
         "mediaPreview": {
           "$ref": "#/definitions/MediaPreview"
         },

@@ -41,7 +41,7 @@ type TerseWriteParams struct {
 	  In: path
 	*/
 	Operation string
-	/*The Terse data, with an optional shortened URL. If no shortened URL is given, one will be generated randomly and returned in the response.
+	/*The Terse data, with an optional shortened URL. If no shortened URL is given, one will be generated randomly and returned in the response. If no redirect type is given, 302 is used.
 	  Required: true
 	  In: body
 	*/

@@ -294,7 +294,7 @@ paths:
       operationId: "terseWrite"
       parameters:
         - description: "The Terse data, with an optional shortened URL. If no shortened URL is given, one will be
-        generated randomly and returned in the response."
+        generated randomly and returned in the response. If no redirect type is given, 302 is used."
           in: "body"
           name: "terse"
           required: true
@@ -406,12 +406,12 @@ definitions:
 
   #Enum for shortened URL redirect types.
   RedirectType:
-    type: "string"
     enum:
       - "301"
       - "302"
       - "meta"
       - "js"
+    type: "string"
 
   # Schema for a Terse URL, which represented a shortened URL and original pair plus metadata.
   Terse:
@@ -424,7 +424,7 @@ definitions:
       mediaPreview:
         $ref: "#/definitions/MediaPreview"
       redirectType:
-        $ref: "#/definitions/RedirectType" # TODO Populate.
+        $ref: "#/definitions/RedirectType"
       shortenedURL:
         type: "string"
         x-nullable: false
@@ -435,13 +435,15 @@ definitions:
   # Schema for input Terse data. The shortened URL is optional.
   TerseInput:
     properties:
+      javascriptTracking:
+        type: "boolean"
       originalURL:
         x-nullable: false
         type: "string"
       mediaPreview:
         $ref: "#/definitions/MediaPreview"
       redirectType:
-        $ref: "#/definitions/RedirectType" # TODO Populate.
+        $ref: "#/definitions/RedirectType"
       shortenedURL:
         type: "string"
     required:
