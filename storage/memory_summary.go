@@ -75,7 +75,7 @@ func (m *MemSummary) Summarize(_ context.Context, shortenedURLs []string) (summa
 	return summaries, nil
 }
 
-// // Upsert upserts the summary information for the given shortened URL.
+// Upsert upserts the summary information for the given shortened URL.
 func (m *MemSummary) Upsert(_ context.Context, summaries map[string]models.TerseSummary) (err error) {
 
 	// Lock the Terse summary data for async safe use.
