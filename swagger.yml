@@ -50,7 +50,6 @@ paths:
           required: true
           schema:
             $ref: "#/definitions/Delete"
-          x-nullable: false
       responses:
         200:
           description: "The deletion request was successfully fulfilled."
@@ -82,7 +81,6 @@ paths:
               delete:
                 description: "Indicate if Terse and or Visits data should be deleted."
                 $ref: "#/definitions/Delete"
-                x-nullable: false
               shortenedURLs:
                 type: "array"
                 items:
@@ -169,7 +167,6 @@ paths:
             properties:
               delete:
                 $ref: "#/definitions/Delete"
-                x-nullable: false
               import:
                 additionalProperties:
                   $ref: "#/definitions/Export"
@@ -303,7 +300,6 @@ paths:
           required: true
           schema:
             $ref: "#/definitions/TerseInput"
-          x-nullable: false
         - description: "The write operation to perform with the Terse data."
           in: "path"
           enum:

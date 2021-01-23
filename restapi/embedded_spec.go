@@ -62,7 +62,6 @@ func init() {
         "operationId": "terseDelete",
         "parameters": [
           {
-            "x-nullable": false,
             "description": "A JSON object containing the deletion information. If Terse or Visits data is marked for deletion, it will all be deleted.",
             "name": "delete",
             "in": "body",
@@ -110,7 +109,6 @@ func init() {
               "properties": {
                 "delete": {
                   "description": "Indicate if Terse and or Visits data should be deleted.",
-                  "x-nullable": false,
                   "$ref": "#/definitions/Delete"
                 },
                 "shortenedURLs": {
@@ -233,7 +231,6 @@ func init() {
               "type": "object",
               "properties": {
                 "delete": {
-                  "x-nullable": false,
                   "$ref": "#/definitions/Delete"
                 },
                 "import": {
@@ -419,7 +416,6 @@ func init() {
         "operationId": "terseWrite",
         "parameters": [
           {
-            "x-nullable": false,
             "description": "The Terse data, with an optional shortened URL. If no shortened URL is given, one will be generated randomly and returned in the response.",
             "name": "terse",
             "in": "body",
@@ -719,7 +715,6 @@ func init() {
         "operationId": "terseDelete",
         "parameters": [
           {
-            "x-nullable": false,
             "description": "A JSON object containing the deletion information. If Terse or Visits data is marked for deletion, it will all be deleted.",
             "name": "delete",
             "in": "body",
@@ -767,7 +762,6 @@ func init() {
               "properties": {
                 "delete": {
                   "description": "Indicate if Terse and or Visits data should be deleted.",
-                  "x-nullable": false,
                   "$ref": "#/definitions/Delete"
                 },
                 "shortenedURLs": {
@@ -890,7 +884,6 @@ func init() {
               "type": "object",
               "properties": {
                 "delete": {
-                  "x-nullable": false,
                   "$ref": "#/definitions/Delete"
                 },
                 "import": {
@@ -1076,7 +1069,6 @@ func init() {
         "operationId": "terseWrite",
         "parameters": [
           {
-            "x-nullable": false,
             "description": "The Terse data, with an optional shortened URL. If no shortened URL is given, one will be generated randomly and returned in the response.",
             "name": "terse",
             "in": "body",

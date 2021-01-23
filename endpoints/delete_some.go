@@ -18,7 +18,8 @@ func HandleDeleteSome(logger *zap.SugaredLogger, terseStore storage.TerseStore) 
 	return func(params api.TerseDeleteSomeParams) middleware.Responder {
 
 		// Log the event.
-		logger.Infow("Deleting a shortened URL's assets.", // TODO Log delete info?
+		logger.Infow("Deleting a shortened URL's assets.",
+			"delete", fmt.Sprintf("%+v", params.Info.Delete),
 			"shortened", fmt.Sprintf("%v", params.Info.ShortenedURLs),
 		)
 
