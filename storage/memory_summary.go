@@ -72,7 +72,6 @@ func (m *MemSummary) Summarize(_ context.Context, shortenedURLs []string) (summa
 			return nil, fmt.Errorf("%w: %s", ErrShortenedNotFound, shortened)
 		}
 		summaries[shortened] = summary
-		// TODO Should there be pointers for a lot of these underlying data types?
 	}
 
 	return summaries, nil

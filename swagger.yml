@@ -433,7 +433,7 @@ definitions:
         type: "string"
         x-nullable: false
     required:
-      - "originalURL" # TODO If these are validated outside of the spec, the server won't have as many pointer issues.
+      - "originalURL"
       - "shortenedURL"
 
   # Schema for input Terse data. The shortened URL is optional.
