@@ -204,17 +204,14 @@ func (b *BboltVisits) ExportSome(_ context.Context, shortenedURLs []string) (vis
 
 			// Get the Visits from the bucket.
 			data = tx.Bucket(b.visitsBucket).Get([]byte(shortened))
+			if data == nil {
+				return ErrShortenedNotFound
+			}
 
-			// Only unmarshal data if there was any.
+			// Turn the JSON data into the Go structure.
 			var v []*models.Visit
-			if data != nil {
-
-				// Turn the JSON data into the Go structure.
-				if err = json.Unmarshal(data, &v); err != nil {
-					return err // TODO Check for if shortened URL is not found and confirm same for other methods.
-				}
-			} else {
-				// TODO Missing shortened URL?
+			if err = json.Unmarshal(data, &v); err != nil {
+				return err
 			}
 
 			// Add the visits to the return map.

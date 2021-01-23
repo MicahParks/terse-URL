@@ -87,7 +87,7 @@ func HandleRedirect(logger *zap.SugaredLogger, tmpl *template.Template, terseSto
 			logger.Warnw("Failed to execute template. Attempting to perform standard redirect.",
 				"shortened", params.Shortened,
 				"error", err.Error(),
-			) // TODO Different level?
+			)
 			err = nil
 		}
 

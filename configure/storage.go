@@ -13,7 +13,7 @@ import (
 	"github.com/MicahParks/terseurl/storage"
 )
 
-// TODO
+// createStores handles the process of creating the SummaryStore, TerseStore, and VisitsStore.
 func createStores(config *Configuration, group *ctxerrgroup.Group, logger *zap.SugaredLogger, rawConfig *configuration) (err error) {
 
 	// Get the SummaryStore configuration.
@@ -79,7 +79,7 @@ func createStores(config *Configuration, group *ctxerrgroup.Group, logger *zap.S
 	if summaries, err = storage.InitializeSummaries(ctx, config.TerseStore, config.VisitsStore); err != nil {
 		logger.Fatalw("Failed to initialize the summaries for the SummaryStore.",
 			"error", err.Error(),
-		) // TODO Not fatal.
+		)
 	}
 	cancel()
 
@@ -88,7 +88,7 @@ func createStores(config *Configuration, group *ctxerrgroup.Group, logger *zap.S
 	if err = config.SummaryStore.Import(ctx, summaries); err != nil {
 		logger.Fatalw("Failed to import the initial summaries into the SummaryStore.",
 			"error", err.Error(),
-		) // TODO Not fatal?
+		)
 	}
 	cancel()
 
