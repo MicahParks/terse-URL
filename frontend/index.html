@@ -36,7 +36,7 @@
             <div class="collapse mb-3" id="advanced">
                 <hr/>
                 <div class="form-check form-switch mb-3">
-                    <input id="jsTracking" class="form-check-input" type="checkbox">
+                    <input id="jsTracking" class="form-check-input" type="checkbox" onclick="trackingCheckbox()">
                     <label class="form-check-label" for="jsTracking">JavaScript Tracking</label>
                 </div>
                 <label for="redirectType">Redirect Type</label>
@@ -91,7 +91,30 @@
 
     // Set the handler for form submission.
     let formElem = document.getElementById("formElem");
-    formElem.onsubmit = submitForm
+    formElem.onsubmit = submitForm;
+</script>
+<script>
+
+    function trackingCheckbox() {
+
+        let elem = document.getElementById("jsTracking");
+
+        if (elem.checked) {
+            let redir301 = document.getElementById("301Redirect")
+            let redir302 = document.getElementById("302Redirect")
+            redir301.disabled = true;
+            redir302.disabled = true;
+            if (redir301.checked || redir302.checked) {
+                redir301.checked = false;
+                redir302.checked = false;
+                document.getElementById("metaRedirect").checked = false;
+                document.getElementById("jsRedirect").checked = true;
+            }
+        } else {
+            document.getElementById("301Redirect").disabled = false;
+            document.getElementById("302Redirect").disabled = false;
+        }
+    }
 </script>
 </body>
 </html>
