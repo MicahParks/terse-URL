@@ -29,7 +29,7 @@ var (
 	ErrCantBeZeroOrNegative = errors.New("integer cannot be negative")
 
 	// alwaysInvalidPaths
-	alwaysInvalidPaths = []string{"api", "docs", "swagger.json", "frontend", "favicon.ico"}
+	alwaysInvalidPaths = []string{"api", "docs", "frontend", "favicon.ico", "swagger.json", "robots.txt"}
 
 	// defaultTimeout is the default timeout for any incoming (from clients) and outgoing (to databases) requests.
 	defaultTimeout = time.Minute
