@@ -35,9 +35,23 @@
             </div>
             <div class="collapse mb-3" id="advanced">
                 <hr/>
-                <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" id="jsTracking">
+                <div class="form-check form-switch mb-3">
+                    <input id="jsTracking" class="form-check-input" type="checkbox">
                     <label class="form-check-label" for="jsTracking">JavaScript Tracking</label>
+                </div>
+                <label for="redirectType">Redirect Type</label>
+                <div class="mb-3">
+                    <div id="redirectType" class="btn-group" role="group" aria-label="Basic radio toggle button group">
+                        <input type="radio" class="btn-check" name="btnradio" id="301Redirect" autocomplete="off"
+                               checked>
+                        <label class="btn btn-outline-primary" for="301Redirect">HTTP 301</label>
+                        <input type="radio" class="btn-check" name="btnradio" id="302Redirect" autocomplete="off">
+                        <label class="btn btn-outline-primary" for="302Redirect">HTTP 302</label>
+                        <input type="radio" class="btn-check" name="btnradio" id="metaRedirect" autocomplete="off">
+                        <label class="btn btn-outline-primary" for="metaRedirect">HTML &lt;meta&gt;</label>
+                        <input type="radio" class="btn-check" name="btnradio" id="jsRedirect" autocomplete="off">
+                        <label class="btn btn-outline-primary" for="jsRedirect">JavaScript</label>
+                    </div>
                 </div>
             </div>
         </div>
