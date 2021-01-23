@@ -42,13 +42,19 @@
                 <label for="redirectType">Redirect Type</label>
                 <div class="mb-3">
                     <div id="redirectType" class="btn-group" role="group" aria-label="Basic radio toggle button group">
+
+                        <!--TODO Disable if JavaScript tracking is true.-->
                         <input type="radio" class="btn-check" name="btnradio" id="301Redirect" autocomplete="off"
                                checked>
                         <label class="btn btn-outline-primary" for="301Redirect">HTTP 301</label>
+
+                        <!--TODO Disable if JavaScript tracking is true.-->
                         <input type="radio" class="btn-check" name="btnradio" id="302Redirect" autocomplete="off">
                         <label class="btn btn-outline-primary" for="302Redirect">HTTP 302</label>
+
                         <input type="radio" class="btn-check" name="btnradio" id="metaRedirect" autocomplete="off">
                         <label class="btn btn-outline-primary" for="metaRedirect">HTML &lt;meta&gt;</label>
+
                         <input type="radio" class="btn-check" name="btnradio" id="jsRedirect" autocomplete="off">
                         <label class="btn btn-outline-primary" for="jsRedirect">JavaScript</label>
                     </div>
