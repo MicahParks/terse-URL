@@ -75,7 +75,7 @@ func (b *BboltTerse) CreateSummaryStore(ctx context.Context) (summaries map[stri
 				}
 
 				// Complete the summary info by adding the Visits count.
-				summary.VisitCount = int64(counts[string(shortened)]) // TODO uint conversion. Potential data loss.
+				summary.VisitCount = int64(counts[string(shortened)]) // TODO Conversion may cause data loss.
 
 				// Add the summary to the return map.
 				summaries[string(shortened)] = summary
@@ -249,7 +249,7 @@ func (b *BboltTerse) ExportSome(ctx context.Context, shortenedURLs []string) (ex
 	return export, nil
 }
 
-// TODO
+// ExportTerse exports all Terse data as a map of shortened URLs to Terse data.
 func (b *BboltTerse) ExportTerse(_ context.Context) (terse map[string]*models.Terse, err error) {
 
 	// Create the export map.
