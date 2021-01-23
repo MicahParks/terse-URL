@@ -366,22 +366,28 @@ func (b *BboltTerse) Insert(ctx context.Context, terse *models.Terse) (err error
 // not be recorded. The error must be storage.ErrShortenedNotFound if the shortened URL is not found.
 func (b *BboltTerse) Read(_ context.Context, shortened string, visit *models.Visit) (terse *models.Terse, err error) {
 
-	// Increment the number of times the shortened URL has been visited. Do this in a separate goroutine so the response
-	// is faster.
-	if b.summaryStore != nil {
-		ctx, cancel := b.createCtx()
-		go b.group.AddWorkItem(ctx, cancel, func(workCtx context.Context) (err error) {
-			return b.summaryStore.IncrementVisitCount(ctx, shortened)
-		})
-	}
+	// Only update the SummaryStore and VisitsStore if there wasn't an error.
+	defer func() {
+		if err != nil {
 
-	// Track the visit to this shortened URL. Do this in a separate goroutine so the response is faster.
-	if visit != nil && b.visitsStore != nil {
-		ctx, cancel := b.createCtx()
-		go b.group.AddWorkItem(ctx, cancel, func(workCtx context.Context) (err error) {
-			return b.visitsStore.Add(workCtx, shortened, visit)
-		})
-	}
+			// Increment the number of times the shortened URL has been visited. Do this in a separate goroutine so the response
+			// is faster.
+			if b.summaryStore != nil {
+				ctx, cancel := b.createCtx()
+				go b.group.AddWorkItem(ctx, cancel, func(workCtx context.Context) (err error) {
+					return b.summaryStore.IncrementVisitCount(ctx, shortened)
+				})
+			}
+
+			// Track the visit to this shortened URL. Do this in a separate goroutine so the response is faster.
+			if visit != nil && b.visitsStore != nil {
+				ctx, cancel := b.createCtx()
+				go b.group.AddWorkItem(ctx, cancel, func(workCtx context.Context) (err error) {
+					return b.visitsStore.Add(workCtx, shortened, visit)
+				})
+			}
+		}
+	}()
 
 	// Get the Terse from the bucket.
 	if terse, err = b.getTerse(shortened); err != nil {

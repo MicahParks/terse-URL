@@ -285,24 +285,28 @@ func (m *MemTerse) Read(_ context.Context, shortened string, visit *models.Visit
 	// TODO Combine SummaryStore and VisitsStore work items?
 	// TODO Figure out how to make implementation of these methods more generic. Maybe add some functions that accept TerseStore.
 
-	// Increment the number of times the shortened URL has been visited. Do this in a separate goroutine so the response
-	// is faster.
-	if m.summaryStore != nil {
-		ctx, cancel := m.createCtx()
-		go m.group.AddWorkItem(ctx, cancel, func(workCtx context.Context) (err error) {
-			return m.summaryStore.IncrementVisitCount(ctx, shortened)
-		})
-	}
+	// Only update the SummaryStore and VisitsStore if there wasn't an error.
+	defer func() {
+		if err != nil {
 
-	// Track the visit to this shortened URL. Do this in a separate goroutine so the response is faster.
-	if visit != nil && m.visitsStore != nil {
+			// Increment the number of times the shortened URL has been visited. Do this in a separate goroutine so the response
+			// is faster.
+			if m.summaryStore != nil {
+				ctx, cancel := m.createCtx()
+				go m.group.AddWorkItem(ctx, cancel, func(workCtx context.Context) (err error) {
+					return m.summaryStore.IncrementVisitCount(ctx, shortened)
+				})
+			}
 
-		// Add the visit to the VisitsStore.
-		ctx, cancel := m.createCtx()
-		go m.group.AddWorkItem(ctx, cancel, func(workCtx context.Context) (err error) {
-			return m.visitsStore.Add(workCtx, shortened, visit)
-		})
-	}
+			// Track the visit to this shortened URL. Do this in a separate goroutine so the response is faster.
+			if visit != nil && m.visitsStore != nil {
+				ctx, cancel := m.createCtx()
+				go m.group.AddWorkItem(ctx, cancel, func(workCtx context.Context) (err error) {
+					return m.visitsStore.Add(workCtx, shortened, visit)
+				})
+			}
+		}
+	}()
 
 	// Lock the Terse map for async safe use.
 	m.mux.RLock()
