@@ -32,14 +32,23 @@
                 <option value="upsert">Upsert</option>
             </select>
         </div>
-        <div class="collapse" id="collapseExample">
-            <div class="card card-body">
+        <div class="row mb-3">
+            <div class="collapse" id="advanced">
+                <div class="btn-group" role="group" aria-label="Basic checkbox toggle button group">
+                    <input type="checkbox" class="btn-check" id="btncheck1" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="btncheck1">Checkbox 1</label>
 
+                    <input type="checkbox" class="btn-check" id="btncheck2" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="btncheck2">Checkbox 2</label>
+
+                    <input type="checkbox" class="btn-check" id="btncheck3" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="btncheck3">Checkbox 3</label>
+                </div>
             </div>
         </div>
-        <div class="row justify-content-between">
+        <div class="row mb-3 justify-content-between">
             <div class="col-md-auto">
-                <a class="btn btn-secondary" data-bs-toggle="collapse" href="#collapseExample" role="button"
+                <a class="btn btn-secondary" data-bs-toggle="collapse" href="#advanced" role="button"
                    aria-expanded="false" aria-controls="collapseExample">
                     Advanced
                 </a>
