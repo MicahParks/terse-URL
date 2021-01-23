@@ -14,7 +14,7 @@ import (
 )
 
 // TODO
-func createStores(config Configuration, group *ctxerrgroup.Group, logger *zap.SugaredLogger, rawConfig *configuration) (err error) {
+func createStores(config *Configuration, group *ctxerrgroup.Group, logger *zap.SugaredLogger, rawConfig *configuration) (err error) {
 
 	// Get the SummaryStore configuration.
 	var summaryConfig json.RawMessage

@@ -86,7 +86,7 @@ func Configure() (config Configuration, err error) {
 	})
 
 	// Create the Terse, Visits, and Terse summary data stores.
-	if err = createStores(config, &group, logger, rawConfig); err != nil {
+	if err = createStores(&config, &group, logger, rawConfig); err != nil {
 		logger.Fatalw("Failed to create data store.",
 			"error", err.Error(),
 		)
