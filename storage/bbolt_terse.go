@@ -230,7 +230,7 @@ func (b *BboltTerse) ExportSome(ctx context.Context, shortenedURLs []string) (ex
 
 	// Iterate through the shortened URLs.
 	//
-	// TODO This loop should be inside of a transaction. Check for more like this.
+	// TODO This loop should be inside of a transaction.
 	for _, shortened := range shortenedURLs {
 
 		// Get the Terse from the bucket.
@@ -303,11 +303,11 @@ func (b *BboltTerse) Import(ctx context.Context, del *models.Delete, export map[
 		}
 	}
 
-	// Write every shortened URL's Terse data to the bbolt database.
-	for shortened, exp := range export {
+	// Open the bbolt database for writing, batch if possible.
+	if err = b.db.Batch(func(tx *bbolt.Tx) error {
 
-		// Open the bbolt database for writing, batch if possible.
-		if err = b.db.Batch(func(tx *bbolt.Tx) error {
+		// Write every shortened URL's Terse data to the bbolt database.
+		for shortened, exp := range export {
 
 			// Turn the Terse into JSON bytes.
 			var value []byte
@@ -319,11 +319,11 @@ func (b *BboltTerse) Import(ctx context.Context, del *models.Delete, export map[
 			if err = tx.Bucket(b.terseBucket).Put([]byte(shortened), value); err != nil {
 				return err
 			}
-
-			return nil
-		}); err != nil {
-			return err
 		}
+
+		return nil
+	}); err != nil {
+		return err
 	}
 
 	return nil
