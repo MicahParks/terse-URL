@@ -37,13 +37,13 @@ func HandleWrite(logger *zap.SugaredLogger, shortID *shortid.Shortid, terseStore
 		terse := &models.Terse{
 			MediaPreview: params.Terse.MediaPreview,
 			OriginalURL:  params.Terse.OriginalURL,
-			ShortenedURL: &params.Terse.ShortenedURL,
+			ShortenedURL: params.Terse.ShortenedURL,
 		}
 
 		// If no shortened URL was given, create one.
 		var err error
 		if params.Terse.ShortenedURL == "" {
-			if *terse.ShortenedURL, err = shortID.Generate(); err != nil { // TODO Loop this in paranoid mode?
+			if terse.ShortenedURL, err = shortID.Generate(); err != nil { // TODO Loop this in paranoid mode?
 
 				// Log at the appropriate level.
 				message := "Failed to create random shortened URL."
@@ -54,8 +54,8 @@ func HandleWrite(logger *zap.SugaredLogger, shortID *shortid.Shortid, terseStore
 				// Report the error to the client.
 				code := int64(500)
 				return &api.TerseWriteDefault{Payload: &models.Error{
-					Code:    &code,
-					Message: &message,
+					Code:    code,
+					Message: message,
 				}}
 			}
 		}
@@ -94,22 +94,22 @@ func HandleWrite(logger *zap.SugaredLogger, shortID *shortid.Shortid, terseStore
 				code = 500
 				message = "Failed to write Terse."
 				logger.Errorw(message,
-					"shortened", *terse.ShortenedURL,
+					"shortened", terse.ShortenedURL,
 					"error", err.Error(),
 				)
 			}
 
 			// Report the error to the client.
 			resp := &api.TerseWriteDefault{Payload: &models.Error{
-				Code:    &code,
-				Message: &message,
+				Code:    code,
+				Message: message,
 			}}
 			resp.SetStatusCode(int(code))
 			return resp
 		}
 
 		return &api.TerseWriteOK{
-			Payload: *terse.ShortenedURL,
+			Payload: terse.ShortenedURL,
 		}
 	}
 }

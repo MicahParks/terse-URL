@@ -34,8 +34,8 @@ func HandleImport(logger *zap.SugaredLogger, terseStore storage.TerseStore) api.
 			// Report the error to the client.
 			code := int64(500)
 			resp := &api.TerseImportDefault{Payload: &models.Error{
-				Code:    &code,
-				Message: &message,
+				Code:    code,
+				Message: message,
 			}}
 			resp.SetStatusCode(int(code))
 			return resp

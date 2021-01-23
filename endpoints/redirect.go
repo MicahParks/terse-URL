@@ -63,16 +63,7 @@ func HandleRedirect(logger *zap.SugaredLogger, tmpl *template.Template, terseSto
 			return &public.TerseRedirectNotFound{}
 		}
 
-		// Confirm the original link is present in the Terse data.
-		if terse.OriginalURL == nil {
-
-			// The Terse data did not contain an original URL. Log the event.
-			logger.Warnw("Terse data did not contain original URL. Returning 404.",
-				"shortened", params.Shortened,
-			) // TODO Different level?
-
-			return &public.TerseRedirectNotFound{}
-		}
+		// TODO Validate OriginalURL, if needed. Like if empty.
 
 		// Check to see if an HTML file should be returned instead.
 		if terse.JavascriptTracking || terse.MediaPreview != nil {
@@ -83,7 +74,7 @@ func HandleRedirect(logger *zap.SugaredLogger, tmpl *template.Template, terseSto
 			// Create the proper metadata for the HTML page.
 			previewMeta := meta.Preview{
 				MediaPreview: models.MediaPreview{},
-				Redirect:     *terse.OriginalURL,
+				Redirect:     terse.OriginalURL,
 			}
 
 			// If there is no error in populating the HTML template, return an HTML document to the client.
@@ -102,7 +93,7 @@ func HandleRedirect(logger *zap.SugaredLogger, tmpl *template.Template, terseSto
 
 		// Issue a standard redirect.
 		return &public.TerseRedirectFound{
-			Location: *terse.OriginalURL,
+			Location: terse.OriginalURL,
 		}
 	}
 }

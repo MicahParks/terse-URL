@@ -68,10 +68,10 @@ func (m *MemTerse) CreateSummaryStore(ctx context.Context) (summaries map[string
 		for shortened, count := range counts {
 			terse := m.terse[shortened]
 			summaries[shortened] = models.TerseSummary{
-				OriginalURL:  *terse.OriginalURL,  // TODO Pointer.
-				RedirectType: terse.RedirectType,  // TODO Populate.
-				ShortenedURL: *terse.ShortenedURL, // TODO Pointer.
-				VisitCount:   int64(count),        // TODO uint conversion. Potential data loss.
+				OriginalURL:  terse.OriginalURL,  // TODO Pointer.
+				RedirectType: terse.RedirectType, // TODO Populate.
+				ShortenedURL: terse.ShortenedURL, // TODO Pointer.
+				VisitCount:   int64(count),       // TODO uint conversion. Potential data loss.
 			}
 		}
 
@@ -273,12 +273,12 @@ func (m *MemTerse) Insert(_ context.Context, terse *models.Terse) (err error) {
 	defer m.mux.Unlock()
 
 	// Check to see if the shortened URL already exists.
-	if _, ok := m.terse[*terse.ShortenedURL]; ok {
+	if _, ok := m.terse[terse.ShortenedURL]; ok {
 		return ErrShortenedExists
 	}
 
 	// Add the shortened URL to the Terse map.
-	m.terse[*terse.ShortenedURL] = terse
+	m.terse[terse.ShortenedURL] = terse
 
 	return nil
 }
@@ -339,12 +339,12 @@ func (m *MemTerse) Update(_ context.Context, terse *models.Terse) (err error) {
 	defer m.mux.Unlock()
 
 	// Check to see if the shortened URL already exists.
-	if _, ok := m.terse[*terse.ShortenedURL]; !ok {
+	if _, ok := m.terse[terse.ShortenedURL]; !ok {
 		return ErrShortenedNotFound
 	}
 
 	// Update the Terse value in the Terse map.
-	m.terse[*terse.ShortenedURL] = terse
+	m.terse[terse.ShortenedURL] = terse
 
 	return nil
 }
@@ -358,7 +358,7 @@ func (m *MemTerse) Upsert(_ context.Context, terse *models.Terse) (err error) {
 	defer m.mux.Unlock()
 
 	// Upsert the Terse into the Terse map.
-	m.terse[*terse.ShortenedURL] = terse
+	m.terse[terse.ShortenedURL] = terse
 
 	return nil
 }

@@ -339,7 +339,7 @@ func (b *BboltTerse) Import(ctx context.Context, del *models.Delete, export map[
 func (b *BboltTerse) Insert(_ context.Context, terse *models.Terse) (err error) {
 
 	// Determine if the Terse is already present.
-	if _, err = b.getTerseData(*terse.ShortenedURL); !errors.Is(err, ErrShortenedNotFound) {
+	if _, err = b.getTerseData(terse.ShortenedURL); !errors.Is(err, ErrShortenedNotFound) {
 		if err != nil {
 			return err
 		}
@@ -396,7 +396,7 @@ func (b *BboltTerse) SummaryStore() SummaryStore {
 func (b *BboltTerse) Update(_ context.Context, terse *models.Terse) (err error) {
 
 	// Determine if the Terse is already present.
-	if _, err = b.getTerseData(*terse.ShortenedURL); err != nil {
+	if _, err = b.getTerseData(terse.ShortenedURL); err != nil {
 		return err
 	}
 
@@ -486,7 +486,7 @@ func (b *BboltTerse) writeTerse(terse *models.Terse) (err error) {
 	if err = b.db.Batch(func(tx *bbolt.Tx) error {
 
 		// Write the Terse to the bucket.
-		if err = tx.Bucket(b.terseBucket).Put([]byte(*terse.ShortenedURL), value); err != nil {
+		if err = tx.Bucket(b.terseBucket).Put([]byte(terse.ShortenedURL), value); err != nil {
 			return err
 		}
 

@@ -37,8 +37,8 @@ func HandleExport(logger *zap.SugaredLogger, terseStore storage.TerseStore) api.
 			code := int64(500)
 			message := "Failed to perform data dump."
 			resp := &api.TerseExportDefault{Payload: &models.Error{
-				Code:    &code,
-				Message: &message,
+				Code:    code,
+				Message: message,
 			}}
 			resp.SetStatusCode(int(code))
 			return resp

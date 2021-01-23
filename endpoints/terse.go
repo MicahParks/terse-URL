@@ -51,8 +51,8 @@ func HandleTerse(logger *zap.SugaredLogger, terseStore storage.TerseStore) api.T
 
 			// Report the error to the client.
 			resp := &api.TerseTerseDefault{Payload: &models.Error{
-				Code:    &code,
-				Message: &message,
+				Code:    code,
+				Message: message,
 			}}
 			resp.SetStatusCode(int(code))
 			return resp

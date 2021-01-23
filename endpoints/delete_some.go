@@ -39,8 +39,8 @@ func HandleDeleteSome(logger *zap.SugaredLogger, terseStore storage.TerseStore) 
 			// Report the error to the client.
 			code := int64(500)
 			resp := &api.TerseDeleteSomeDefault{Payload: &models.Error{
-				Code:    &code,
-				Message: &message,
+				Code:    code,
+				Message: message,
 			}}
 			resp.SetStatusCode(int(code))
 			return resp

@@ -52,8 +52,8 @@ func HandleExportSome(logger *zap.SugaredLogger, terseStore storage.TerseStore) 
 
 			// Report the error to the client.
 			resp := &api.TerseExportSomeDefault{Payload: &models.Error{
-				Code:    &code,
-				Message: &message,
+				Code:    code,
+				Message: message,
 			}}
 			resp.SetStatusCode(int(code))
 			return resp

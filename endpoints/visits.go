@@ -53,8 +53,8 @@ func HandleVisits(logger *zap.SugaredLogger, visitsStore storage.VisitsStore) ap
 
 				// Report the error to the client.
 				resp := &api.TerseVisitsDefault{Payload: &models.Error{
-					Code:    &code,
-					Message: &message,
+					Code:    code,
+					Message: message,
 				}}
 				resp.SetStatusCode(int(code))
 				return resp

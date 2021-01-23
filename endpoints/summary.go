@@ -37,8 +37,8 @@ func HandleSummary(logger *zap.SugaredLogger, summaryStore storage.SummaryStore)
 			// Report the error to the client.
 			code := int64(500)
 			resp := &api.TerseSummaryDefault{Payload: &models.Error{
-				Code:    &code,
-				Message: &message,
+				Code:    code,
+				Message: message,
 			}}
 			resp.SetStatusCode(int(code))
 			return resp
