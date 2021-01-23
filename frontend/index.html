@@ -102,11 +102,11 @@
     function hideShowHTMLForm() {
         let meta = document.getElementById("metaRedirect");
         let js = document.getElementById("jsRedirect");
-        let htmlForm = document.getElementById("htmlForm");
+        let htmlForm = $("#htmlForm");
         if (meta.checked || js.checked) {
-            $("#htmlForm").collapse("show");
+            htmlForm.collapse("show");
         } else {
-            $("#htmlForm").collapse("hide");
+            htmlForm.collapse("hide");
         }
     }
 </script>
