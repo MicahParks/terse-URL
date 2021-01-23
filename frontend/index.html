@@ -71,10 +71,9 @@
         </div>
         <div class="row mb-3 justify-content-between">
             <div class="col-md-auto">
-                <a class="btn btn-secondary" data-bs-toggle="collapse" href="#advanced" role="button"
-                   aria-expanded="false" aria-controls="collapseExample">
-                    Advanced
-                </a>
+                <input id="advancedToggle" aria-expanded="false" type="checkbox" class="btn-check"
+                       data-bs-toggle="collapse" autocomplete="off" onclick="$('#advanced').collapse('toggle');">
+                <label class="btn btn-secondary" for="advancedToggle">Advanced</label>
             </div>
             <div class="col-md-auto">
                 <button id="submitButton" type="submit" class="btn btn-primary">Shorten</button>
