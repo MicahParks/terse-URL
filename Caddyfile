@@ -9,11 +9,6 @@ redir / /frontend/ permanent # TODO Is this how it should be handled long term?
     not path /frontend/*
 }
 
-log {
-    output stdout
-    level DEBUG
-}
-
 reverse_proxy @proxy http://terseurl:30000 {
     health_path /api/alive
     health_interval 5s
