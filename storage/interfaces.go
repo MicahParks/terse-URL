@@ -10,7 +10,7 @@ import (
 // needing to know how the Terse summary data is stored.
 type SummaryStore interface {
 
-	// Import TODO
+	// Import deletes all of the existing Terse summary data and replaces it with the given summaries.
 	Import(ctx context.Context, summaries map[string]models.TerseSummary) (err error)
 
 	// IncrementVisitCount increments the visit count for the given shortened URL. It is called in separate goroutine.
@@ -52,7 +52,8 @@ type TerseStore interface {
 	// storage.ErrShortenedNotFound if the shortened URL is not found.
 	ExportSome(ctx context.Context, shortenedURLs []string) (export map[string]models.Export, err error)
 
-	// ExportTerse TODO
+	// ExportTerse exports all Terse data as a map of shortened URLs to Terse data.
+	//
 	// TODO And ExportSomeTerse?
 	ExportTerse(ctx context.Context) (terse map[string]*models.Terse, err error)
 

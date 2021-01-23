@@ -34,7 +34,7 @@ func NewBboltTerse(db *bbolt.DB, createCtx ctxCreator, group *ctxerrgroup.Group,
 }
 
 // Close closes the connection to the underlying storage. The ctxerrgroup will be killed. This will not close the
-// connection to the VisitsStore. This implementation has no network activity and ignores the given context.
+// connection to the VisitsStore.
 func (b *BboltTerse) Close(_ context.Context) (err error) {
 
 	// Kill the worker pool.
@@ -94,8 +94,7 @@ func (b *BboltTerse) CreateSummaryStore(ctx context.Context) (summaries map[stri
 }
 
 // Delete deletes data according to the del argument. If the VisitsStore is not nil, then the same method will be
-// called for the associated VisitsStore. This implementation has no network activity and ignores the given
-// context.
+// called for the associated VisitsStore.
 func (b *BboltTerse) Delete(ctx context.Context, del models.Delete) (err error) {
 
 	// Delete Visits data if required.
@@ -132,7 +131,7 @@ func (b *BboltTerse) Delete(ctx context.Context, del models.Delete) (err error) 
 
 // DeleteSome deletes data according to the del argument for the given shortened URL. No error should be given if
 // the shortened URL is not found. If the VisitsStore is not nil, then the same method will be called for the
-// associated VisitsStore. This implementation has no network activity and ignores the given context.
+// associated VisitsStore.
 func (b *BboltTerse) DeleteSome(ctx context.Context, del models.Delete, shortenedURLs []string) (err error) {
 
 	// Delete Visits data if required.
@@ -166,8 +165,7 @@ func (b *BboltTerse) DeleteSome(ctx context.Context, del models.Delete, shortene
 	return nil
 }
 
-// Export returns a map of shortened URLs to export data. This implementation has no network activity and ignores the
-// given context.
+// Export returns a map of shortened URLs to export data.
 func (b *BboltTerse) Export(ctx context.Context) (export map[string]models.Export, err error) {
 
 	// Create the map for all visits.
@@ -216,8 +214,7 @@ func (b *BboltTerse) Export(ctx context.Context) (export map[string]models.Expor
 }
 
 // ExportSome returns a export of Terse and Visit data for a given shortened URL. The error must be
-// storage.ErrShortenedNotFound if the shortened URL is not found. This implementation has no network activity and
-// ignores the given context.
+// storage.ErrShortenedNotFound if the shortened URL is not found.
 func (b *BboltTerse) ExportSome(ctx context.Context, shortenedURLs []string) (export map[string]models.Export, err error) {
 
 	// Create the return map.
@@ -287,8 +284,7 @@ func (b *BboltTerse) ExportTerse(_ context.Context) (terse map[string]*models.Te
 
 // Import imports the given export's data. If del is not nil, data will be deleted accordingly. If del is nil, data
 // may be overwritten, but unaffected data will be untouched. If the VisitsStore is not nil, then the same method
-// will be called for the associated VisitsStore. This implementation has no network activity and ignores the given
-// context.
+// will be called for the associated VisitsStore.
 func (b *BboltTerse) Import(ctx context.Context, del *models.Delete, export map[string]models.Export) (err error) {
 
 	// Check if data needs to be deleted before importing.
@@ -334,8 +330,7 @@ func (b *BboltTerse) Import(ctx context.Context, del *models.Delete, export map[
 }
 
 // Insert adds a Terse to the TerseStore. The shortened URL will be active after this. The error will be
-// storage.ErrShortenedExists if the shortened URL is already present. This implementation has no network activity and
-// ignores the given context.
+// storage.ErrShortenedExists if the shortened URL is already present.
 func (b *BboltTerse) Insert(_ context.Context, terse *models.Terse) (err error) {
 
 	// Determine if the Terse is already present.
@@ -356,8 +351,7 @@ func (b *BboltTerse) Insert(_ context.Context, terse *models.Terse) (err error) 
 }
 
 // Read retrieves all non-Visit Terse data give its shortened URL. A nil visit may be passed in and the visit should
-// not be recorded. The error must be storage.ErrShortenedNotFound if the shortened URL is not found. This
-// implementation has no network activity and ignores the given context.
+// not be recorded. The error must be storage.ErrShortenedNotFound if the shortened URL is not found.
 func (b *BboltTerse) Read(_ context.Context, shortened string, visit *models.Visit) (terse *models.Terse, err error) {
 
 	// Increment the number of times the shortened URL has been visited. Do this in a separate goroutine so the response
@@ -391,8 +385,7 @@ func (b *BboltTerse) SummaryStore() SummaryStore {
 }
 
 // Update assumes the Terse already exists. It will override all of its values. The error must be
-// storage.ErrShortenedNotFound if the shortened URL is not found. This implementation has no network activity and
-// ignores the given context.
+// storage.ErrShortenedNotFound if the shortened URL is not found.
 func (b *BboltTerse) Update(_ context.Context, terse *models.Terse) (err error) {
 
 	// Determine if the Terse is already present.
@@ -408,8 +401,7 @@ func (b *BboltTerse) Update(_ context.Context, terse *models.Terse) (err error) 
 	return nil
 }
 
-// Upsert will upsert the Terse into the backend storage. This implementation has no network activity and ignores the
-// given context.
+// Upsert will upsert the Terse into the backend storage.
 func (b *BboltTerse) Upsert(_ context.Context, terse *models.Terse) (err error) {
 
 	// Write the Terse to the bucket.

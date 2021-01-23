@@ -21,7 +21,7 @@ func NewMemSummary() (summaryStore SummaryStore) {
 	}
 }
 
-// Import TODO
+// Import deletes all of the existing Terse summary data and replaces it with the given summaries.
 func (m *MemSummary) Import(_ context.Context, summaries map[string]models.TerseSummary) (err error) {
 
 	// Lock the Terse summary data for async safe use.
@@ -34,8 +34,7 @@ func (m *MemSummary) Import(_ context.Context, summaries map[string]models.Terse
 	return nil
 }
 
-// IncrementVisitCount increments the visit count for the given shortened URL. It is called in separate goroutine. This
-// implementation has no network activity and ignores the given context.
+// IncrementVisitCount increments the visit count for the given shortened URL. It is called in separate goroutine.
 func (m *MemSummary) IncrementVisitCount(_ context.Context, shortened string) (err error) {
 
 	// Lock the Terse summary data for async safe use.
@@ -54,8 +53,7 @@ func (m *MemSummary) IncrementVisitCount(_ context.Context, shortened string) (e
 	return nil
 }
 
-// Summarize provides the summary information for the given shortened URLs. This implementation has no network activity
-// and ignores the given context.
+// Summarize provides the summary information for the given shortened URLs.
 func (m *MemSummary) Summarize(_ context.Context, shortenedURLs []string) (summaries map[string]models.TerseSummary, err error) {
 
 	// Lock the Terse summary data for async safe use.
@@ -77,8 +75,7 @@ func (m *MemSummary) Summarize(_ context.Context, shortenedURLs []string) (summa
 	return summaries, nil
 }
 
-// // Upsert upserts the summary information for the given shortened URL. This implementation has no network activity
-// and ignores the given context.
+// // Upsert upserts the summary information for the given shortened URL.
 func (m *MemSummary) Upsert(_ context.Context, summaries map[string]models.TerseSummary) (err error) {
 
 	// Lock the Terse summary data for async safe use.
