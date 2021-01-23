@@ -26,23 +26,18 @@
                 </div>
                 <input id="shortenedURL" type="text" class="form-control" aria-describedby="httpPrefix">
             </div>
-            <select id="writeOperation" class="form-select" aria-label="Default select example">
-                <option selected value="insert">Insert</option>
-                <option value="update">Update</option>
-                <option value="upsert">Upsert</option>
-            </select>
-        </div>
-        <div class="row mb-3">
-            <div class="collapse" id="advanced">
-                <div class="btn-group" role="group" aria-label="Basic checkbox toggle button group">
-                    <input type="checkbox" class="btn-check" id="btncheck1" autocomplete="off">
-                    <label class="btn btn-outline-primary" for="btncheck1">Checkbox 1</label>
-
-                    <input type="checkbox" class="btn-check" id="btncheck2" autocomplete="off">
-                    <label class="btn btn-outline-primary" for="btncheck2">Checkbox 2</label>
-
-                    <input type="checkbox" class="btn-check" id="btncheck3" autocomplete="off">
-                    <label class="btn btn-outline-primary" for="btncheck3">Checkbox 3</label>
+            <div class="mb-3">
+                <select id="writeOperation" class="form-select" aria-label="Default select example">
+                    <option selected value="insert">Insert</option>
+                    <option value="update">Update</option>
+                    <option value="upsert">Upsert</option>
+                </select>
+            </div>
+            <div class="collapse mb-3" id="advanced">
+                <hr/>
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="jsTracking">
+                    <label class="form-check-label" for="jsTracking">JavaScript Tracking</label>
                 </div>
             </div>
         </div>
