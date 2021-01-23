@@ -21,6 +21,8 @@ const (
 	metaProperty = "property"
 )
 
+// Preview represents the data structure placed into the Go HTML template when doing a redirect through JavaScript or
+// HTML meta tags.
 type Preview struct { // TODO Add favicon info if possible.
 	models.MediaPreview `json:"mediaPreview"`
 	Redirect            string `json:"redirect"`
