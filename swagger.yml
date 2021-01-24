@@ -437,11 +437,11 @@ definitions:
     properties:
       javascriptTracking:
         type: "boolean"
+      mediaPreview:
+        $ref: "#/definitions/MediaPreview"
       originalURL:
         x-nullable: false
         type: "string"
-      mediaPreview:
-        $ref: "#/definitions/MediaPreview"
       redirectType:
         $ref: "#/definitions/RedirectType"
       shortenedURL:

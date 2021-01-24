@@ -12,9 +12,9 @@ async function submitForm(e) {
 
     let operation = document.getElementById("writeOperation").value;
 
-    let redirectType = $("input[name=redirectType]:checked", "#redirectType").val();
+    terse.redirectType = $("input[name=redirectType]:checked", "#redirectType").val();
 
-    if (redirectType === "meta" || redirectType === "js") {
+    if (terse.redirectType === "meta" || terse.redirectType === "js") {
 
         let htmlTitle = $("#htmlTitle").val();
 

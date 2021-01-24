@@ -1,7 +1,8 @@
-function Terse(javascriptTracking, mediaPreview, original, shortened) {
+function Terse(javascriptTracking, mediaPreview, original, redirectType, shortened) {
     this.javascriptTracking = javascriptTracking;
     this.mediaPreview = mediaPreview;
     this.originalURL = original;
+    this.redirectType = redirectType;
     this.shortenedURL = shortened;
 }
 
