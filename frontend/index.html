@@ -65,6 +65,11 @@
                     </div> <!--TODO Make child nodes expand to fill row-->
                 </div>
                 <div class="collapse mb-3" id="htmlForm">
+                    <div class="input-group mb-3">
+                        <span class="input-group-text" id="basic-addon1">HTML Title</span>
+                        <input id="htmlTitle" type="text" class="form-control" aria-label="Username"
+                               aria-describedby="basic-addon1">
+                    </div>
                     <div class="form-check form-switch mb-3">
                         <input id="jsTracking" class="form-check-input" type="checkbox">
                         <label class="form-check-label" for="jsTracking">JavaScript Tracking</label>
@@ -81,9 +86,9 @@
                     </div>
                     <div id="ogMeta" class="row mb-3">
                         <div id="ogInput" class="input-group mb-1">
-                            <input type="text" class="form-control" placeholder="property=&quot;&quot;"
+                            <input type="text" class="form-control" placeholder="property"
                                    aria-label="property">
-                            <input type="text" class="form-control" placeholder="content=&quot;&quot;"
+                            <input type="text" class="form-control" placeholder="content"
                                    aria-label="content">
                             <button type="button" class="btn btn-danger"
                                     onclick="this.parentNode.remove();">
@@ -101,11 +106,12 @@
                             </button>
                         </div>
                     </div>
+                    <!--TODO Add OG and Twitter meta tags docs links.-->
                     <div id="twitterMeta" class="row mb-3">
                         <div id="twitterInput" class="input-group mb-1">
-                            <input type="text" class="form-control" placeholder="name=&quot;&quot;"
+                            <input type="text" class="form-control" placeholder="name"
                                    aria-label="name">
-                            <input type="text" class="form-control" placeholder="content=&quot;&quot;"
+                            <input type="text" class="form-control" placeholder="content"
                                    aria-label="content">
                             <button type="button" class="btn btn-danger"
                                     onclick="this.parentNode.remove();">
@@ -114,7 +120,6 @@
                         </div>
                     </div>
                 </div>
-                <!--TODO Add OG and Twitter dynamic meta tag input fields.-->
             </div>
         </div>
         <div class="row mb-3 justify-content-between">
