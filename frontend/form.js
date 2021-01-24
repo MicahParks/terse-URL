@@ -12,5 +12,34 @@ async function submitForm(e) {
 
     let operation = document.getElementById("writeOperation").value;
 
+    let redirectType = $("input[name=redirectType]:checked", "#redirectType").val();
+
+    if (redirectType === "meta" || redirectType === "js") {
+
+        let htmlTitle = $("#htmlTitle").val();
+
+        let og = makeMetaMap("#ogMeta :input");
+        let twitter = makeMetaMap("#twitterMeta :input");
+
+        terse.mediaPreview = new MediaPreview(og, htmlTitle, twitter);
+    }
+
     await write(operation, terse);
+}
+
+function makeMetaMap(query) {
+    let metaMap = new Map();
+    let index = 0;
+    let key = "";
+    for (let child of $(query)) {
+        if (child.type === "text") {
+            if (index % 2 === 0) {
+                key = child.value;
+            } else {
+                metaMap[key] = child.value;
+            }
+            index++;
+        }
+    }
+    return metaMap;
 }
