@@ -456,10 +456,10 @@ definitions:
         type: "string"
       shortenedURL:
         type: "string"
-      visitCount:
-        type: "integer"
       redirectType:
         $ref: "#/definitions/RedirectType"
+      visitCount:
+        type: "integer"
 
   # Schema for Twitter HTML meta tags.
   Twitter:

@@ -26,7 +26,7 @@
     </thead>
     <tbody id="terseTableBody">
     <tr id="templateTerseRow">
-        <th scope="row"></th>
+        <td title="bob"></td>
         <td></td>
         <td></td>
         <td></td>
@@ -36,7 +36,7 @@
             </button>
             <button type="button" class="btn btn-secondary" onclick="">
                 <i class="fas fa-download"></i>
-            </button>
+            </button> <!--TODO Make this a modal where they can choose what kind of data to export?-->
             <button type="button" class="btn btn-danger" onclick="">
                 <i class="fas fa-trash"></i>
             </button>
@@ -49,17 +49,38 @@
 <script src="export.js"></script>
 <script src="form.js"></script>
 <script src="prefix.js"></script>
+<script src="summary.js"></script>
 <script src="table.js"></script>
 <script src="write.js"></script>
 <script>
 
     let originalTemplate = document.getElementById("templateTerseRow");
     let template = originalTemplate.cloneNode(true);
-    document.getElementById("terseTableBody").removeChild(originalTemplate);
-    template.id = "0";
+    let table = document.getElementById("terseTableBody");
+    // table.removeChild(originalTemplate);
+    template.id = "summaryData";
 
     function buildTable() {
+        let index = 0;
+        let summaries = summaryAll(null);
+        for (let summary of summaries) {
 
+            let row = template.cloneNode(true);
+            row.id = template.id + index;
+            index++;
+
+            row.cells[0].innerHTML = summary.shortenedURL;
+            row.cells[1].innerHTML = summary.originalURL;
+            row.cells[2].innerHTML = summary.redirectType;
+            row.cells[3].innerHTML = summary.visitCount;
+
+            table.appendChild(template);
+
+            // table.rows[index].cells[0].innerHTML = summary.shortenedURL;
+            // table.rows[index].cells[1].innerHTML = summary.originalURL;
+            // table.rows[index].cells[2].innerHTML = summary.redirectType;
+            // table.rows[index].cells[3].innerHTML = summary.visitCount;
+        }
     }
 </script>
 </body>

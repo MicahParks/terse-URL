@@ -1,13 +1,20 @@
-function Terse(javascriptTracking, mediaPreview, original, redirectType, shortened) {
+function Terse(javascriptTracking, mediaPreview, originalURL, redirectType, shortenedURL) {
     this.javascriptTracking = javascriptTracking;
     this.mediaPreview = mediaPreview;
-    this.originalURL = original;
+    this.originalURL = originalURL;
     this.redirectType = redirectType;
-    this.shortenedURL = shortened;
+    this.shortenedURL = shortenedURL;
 }
 
 function MediaPreview(og, title, twitter) {
     this.title = title;
     this.twitter = twitter;
     this.og = og;
+}
+
+function TerseSummary(originalURL, shortenedURL, redirectType, visitCount) {
+    this.originalURL = originalURL;
+    this.redirectType = redirectType;
+    this.shortenedURL = shortenedURL;
+    this.visitCount = visitCount;
 }
