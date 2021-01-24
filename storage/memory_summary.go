@@ -53,7 +53,8 @@ func (m *MemSummary) IncrementVisitCount(_ context.Context, shortened string) (e
 	return nil
 }
 
-// Summarize provides the summary information for the given shortened URLs.
+// Summarize provides the summary information for the given shortened URLs. If shortenedURLs is nil, all summaries will
+// be returned.
 func (m *MemSummary) Summarize(_ context.Context, shortenedURLs []string) (summaries map[string]models.TerseSummary, err error) {
 
 	// Lock the Terse summary data for async safe use.
