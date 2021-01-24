@@ -18,7 +18,10 @@ type SummaryStore interface {
 	IncrementVisitCount(ctx context.Context, shortened string) (err error)
 
 	// Summarize provides the summary information for the given shortened URLs. The error must be
-	// storage.ErrShortenedNotFound if the shortened URL is not found.
+	// storage.ErrShortenedNotFound if the shortened URL is not found. If shortenedURLs is nil, all summaries will be
+	// returned.
+	//
+	// TODO Apply this nil pattern to other endpoints?
 	Summarize(ctx context.Context, shortenedURLs []string) (summaries map[string]models.TerseSummary, err error)
 
 	// Upsert upserts the summary information for the given shortened URL.

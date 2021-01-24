@@ -208,10 +208,10 @@ paths:
       number of visits."
       operationId: "terseSummary"
       parameters:
-        - description: "The array of shortened URLs to get Terse summary data for."
+        - description: "The array of shortened URLs to get Terse summary data for. If none is provided, all will
+        summaries will be returned."
           in: "body"
           name: "shortened"
-          required: true
           schema:
             type: "array"
             items:

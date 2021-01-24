@@ -63,13 +63,21 @@ func (m *MemSummary) Summarize(_ context.Context, shortenedURLs []string) (summa
 	// Make a map of summaries.
 	summaries = make(map[string]models.TerseSummary)
 
-	// Iterate through the shortened URLs. Add their summaries to the map.
-	for _, shortened := range shortenedURLs {
-		summary, ok := m.summaries[shortened]
-		if !ok {
-			return nil, fmt.Errorf("%w: %s", ErrShortenedNotFound, shortened)
+	// Return all for the nil case.
+	if shortenedURLs == nil {
+		for shortened, summary := range m.summaries {
+			summaries[shortened] = summary
 		}
-		summaries[shortened] = summary
+	} else {
+
+		// Iterate through the shortened URLs. Add their summaries to the map.
+		for _, shortened := range shortenedURLs {
+			summary, ok := m.summaries[shortened]
+			if !ok {
+				return nil, fmt.Errorf("%w: %s", ErrShortenedNotFound, shortened)
+			}
+			summaries[shortened] = summary
+		}
 	}
 
 	return summaries, nil

@@ -295,10 +295,9 @@ func init() {
         "operationId": "terseSummary",
         "parameters": [
           {
-            "description": "The array of shortened URLs to get Terse summary data for.",
+            "description": "The array of shortened URLs to get Terse summary data for. If none is provided, all will summaries will be returned.",
             "name": "shortened",
             "in": "body",
-            "required": true,
             "schema": {
               "type": "array",
               "items": {
@@ -951,10 +950,9 @@ func init() {
         "operationId": "terseSummary",
         "parameters": [
           {
-            "description": "The array of shortened URLs to get Terse summary data for.",
+            "description": "The array of shortened URLs to get Terse summary data for. If none is provided, all will summaries will be returned.",
             "name": "shortened",
             "in": "body",
-            "required": true,
             "schema": {
               "type": "array",
               "items": {

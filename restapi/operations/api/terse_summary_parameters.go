@@ -6,7 +6,6 @@ package api
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"io"
 	"net/http"
 
 	"github.com/go-openapi/errors"
@@ -31,8 +30,7 @@ type TerseSummaryParams struct {
 	// HTTP Request Object
 	HTTPRequest *http.Request `json:"-"`
 
-	/*The array of shortened URLs to get Terse summary data for.
-	  Required: true
+	/*The array of shortened URLs to get Terse summary data for. If none is provided, all will summaries will be returned.
 	  In: body
 	*/
 	Shortened []string
@@ -51,17 +49,11 @@ func (o *TerseSummaryParams) BindRequest(r *http.Request, route *middleware.Matc
 		defer r.Body.Close()
 		var body []string
 		if err := route.Consumer.Consume(r.Body, &body); err != nil {
-			if err == io.EOF {
-				res = append(res, errors.Required("shortened", "body", ""))
-			} else {
-				res = append(res, errors.NewParseError("shortened", "body", "", err))
-			}
+			res = append(res, errors.NewParseError("shortened", "body", "", err))
 		} else {
 			// no validation required on inline body
 			o.Shortened = body
 		}
-	} else {
-		res = append(res, errors.Required("shortened", "body", ""))
 	}
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
