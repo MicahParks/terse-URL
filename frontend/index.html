@@ -91,6 +91,28 @@
                             </button>
                         </div>
                     </div>
+                    <div class="row justify-content-between align-items-end mb-1">
+                        <div class="col-md-auto">
+                            <label for="ogMeta">Twitter &lt;meta&gt;</label>
+                        </div>
+                        <div class="col-md-auto">
+                            <button type="button" class="btn btn-primary" onclick="addTwitterInput();">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div id="twitterMeta" class="row mb-3">
+                        <div id="twitterInput" class="input-group mb-1">
+                            <input type="text" class="form-control" placeholder="name=&quot;&quot;"
+                                   aria-label="name">
+                            <input type="text" class="form-control" placeholder="content=&quot;&quot;"
+                                   aria-label="content">
+                            <button type="button" class="btn btn-danger"
+                                    onclick="this.parentNode.remove();">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
                 </div>
                 <!--TODO Add OG and Twitter dynamic meta tag input fields.-->
             </div>
@@ -136,17 +158,31 @@
     }
 </script>
 <script>
-    let counter = 0;
-    let clone = document.getElementById("ogInput").cloneNode(true);
-    for (let child of clone.childNodes) {
+    let ogInputCounter = 0;
+    let ogInput = document.getElementById("ogInput").cloneNode(true);
+    for (let child of ogInput.childNodes) {
         child.value = "";
     }
 
     function addOGInput() {
-        let clone2 = clone.cloneNode(true);
-        clone2.id = clone.id + counter;
-        counter++;
+        let clone2 = ogInput.cloneNode(true);
+        clone2.id = ogInput.id + ogInputCounter;
+        ogInputCounter++;
         document.getElementById("ogMeta").appendChild(clone2);
+    }
+</script>
+<script>
+    let twitterInputCounter = 0;
+    let twitterInput = document.getElementById("twitterInput").cloneNode(true);
+    for (let child of twitterInput.childNodes) {
+        child.value = "";
+    }
+
+    function addTwitterInput() {
+        let clone = twitterInput.cloneNode(true);
+        clone.id = twitterInput.id + twitterInputCounter;
+        twitterInputCounter++;
+        document.getElementById("twitterMeta").appendChild(clone);
     }
 </script>
 </body>
