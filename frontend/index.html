@@ -74,13 +74,13 @@
                             <label for="ogMeta">Open Graph &lt;meta&gt;</label>
                         </div>
                         <div class="col-md-auto">
-                            <button type="button" class="btn btn-primary" onclick="">
+                            <button type="button" class="btn btn-primary" onclick="addOGInput();">
                                 <i class="fas fa-plus"></i>
                             </button>
                         </div>
                     </div>
                     <div id="ogMeta" class="row mb-3">
-                        <div class="input-group">
+                        <div id="ogInput" class="input-group">
                             <input type="text" class="form-control" placeholder="property=&quot;&quot;"
                                    aria-label="property">
                             <input type="text" class="form-control" placeholder="content=&quot;&quot;"
@@ -136,7 +136,10 @@
     }
 </script>
 <script>
-
+    function addOGInput() {
+        let clone = document.getElementById("ogInput").cloneNode(true);
+        document.getElementById("ogMeta").appendChild(clone);
+    }
 </script>
 </body>
 </html>
