@@ -65,7 +65,7 @@
     function buildTable() {
 
         let index = 0;
-        summaryAll(null).then(function (summaries) {
+        summarize(null).then(function (summaries) {
             for (const [_, summary] of Object.entries(summaries)) { // TODO Using _ as blank identifier...
 
                 let row = template.cloneNode(true);
