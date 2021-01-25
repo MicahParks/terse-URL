@@ -35,6 +35,7 @@ docker-compose up
 ## TODO
 
 - [ ] Address TODOs.
+- [ ] Outgoing validation of spec with model methods?
 - [ ] Deleting in SummaryStore.
 - [ ] Make endpoints for reading multiple Terse/Visits.
 - [ ] Change endpoints like `/api/delete` to `/api/delete/all`.

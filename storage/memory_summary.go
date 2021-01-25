@@ -49,6 +49,7 @@ func (m *MemSummary) IncrementVisitCount(_ context.Context, shortened string) (e
 
 	// Increment the visit counter.
 	summary.VisitCount++
+	m.summaries[shortened] = summary
 
 	return nil
 }
