@@ -404,7 +404,7 @@ definitions:
     additionalProperties:
       type: "string"
 
-  #Enum for shortened URL redirect types.
+  # Enum for shortened URL redirect types.
   RedirectType:
     enum:
       - "301"
