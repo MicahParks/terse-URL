@@ -4,7 +4,7 @@
     <title>{{.MediaPreview.Title}}</title>
     <!--Insert traditional meta tags-->
     <link href="" rel="shortcut icon"> <!--TODO Add Favicon template.-->
-    <meta name="description" content="{{.}}"/>
+{{/*    <meta name="description" content="{{.}}"/>*/}}
     {{- if eq .RedirectType "meta" -}}
         <meta http-equiv="Refresh" content="0; url='{{.Redirect}}'"/>
     {{- end -}}

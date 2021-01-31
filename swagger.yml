@@ -329,6 +329,8 @@ paths:
       summary: "Typically a web browser would visit this endpoint, then get redirected."
       description: "Use the shortened URL. It will redirect to the full URL if it has not expired."
       operationId: "terseRedirect"
+      produces:
+        - "text/html"
       parameters:
         - in: "path"
           name: "shortened"

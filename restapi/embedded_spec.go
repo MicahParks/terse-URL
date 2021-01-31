@@ -456,6 +456,9 @@ func init() {
     "/{shortened}": {
       "get": {
         "description": "Use the shortened URL. It will redirect to the full URL if it has not expired.",
+        "produces": [
+          "text/html"
+        ],
         "tags": [
           "public"
         ],
@@ -1111,6 +1114,9 @@ func init() {
     "/{shortened}": {
       "get": {
         "description": "Use the shortened URL. It will redirect to the full URL if it has not expired.",
+        "produces": [
+          "text/html"
+        ],
         "tags": [
           "public"
         ],

@@ -7,6 +7,7 @@ package operations
 
 import (
 	"fmt"
+	"io"
 	"net/http"
 	"strings"
 
@@ -44,6 +45,9 @@ func NewTerseURLAPI(spec *loads.Document) *TerseURLAPI {
 
 		JSONConsumer: runtime.JSONConsumer(),
 
+		HTMLProducer: runtime.ProducerFunc(func(w io.Writer, data interface{}) error {
+			return errors.NotImplemented("html producer has not yet been implemented")
+		}),
 		JSONProducer: runtime.JSONProducer(),
 
 		SystemAliveHandler: system.AliveHandlerFunc(func(params system.AliveParams) middleware.Responder {
@@ -114,6 +118,9 @@ type TerseURLAPI struct {
 	//   - application/json
 	JSONConsumer runtime.Consumer
 
+	// HTMLProducer registers a producer for the following mime types:
+	//   - text/html
+	HTMLProducer runtime.Producer
 	// JSONProducer registers a producer for the following mime types:
 	//   - application/json
 	JSONProducer runtime.Producer
@@ -215,6 +222,9 @@ func (o *TerseURLAPI) Validate() error {
 		unregistered = append(unregistered, "JSONConsumer")
 	}
 
+	if o.HTMLProducer == nil {
+		unregistered = append(unregistered, "HTMLProducer")
+	}
 	if o.JSONProducer == nil {
 		unregistered = append(unregistered, "JSONProducer")
 	}
@@ -301,6 +311,8 @@ func (o *TerseURLAPI) ProducersFor(mediaTypes []string) map[string]runtime.Produ
 	result := make(map[string]runtime.Producer, len(mediaTypes))
 	for _, mt := range mediaTypes {
 		switch mt {
+		case "text/html":
+			result["text/html"] = o.HTMLProducer
 		case "application/json":
 			result["application/json"] = o.JSONProducer
 		}
