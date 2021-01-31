@@ -73,8 +73,9 @@ func HandleRedirect(logger *zap.SugaredLogger, tmpl *template.Template, terseSto
 
 			// Create the proper metadata for the HTML page.
 			previewMeta := meta.Preview{
-				MediaPreview: models.MediaPreview{},
+				MediaPreview: *terse.MediaPreview,
 				Redirect:     terse.OriginalURL,
+				RedirectType: terse.RedirectType,
 			}
 
 			// If there is no error in populating the HTML template, return an HTML document to the client.

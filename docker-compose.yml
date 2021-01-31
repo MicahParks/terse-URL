@@ -22,6 +22,7 @@ services:
       - "./terse.bbolt:/terse.bbolt"
       - "./visitsStore.json:/visitsStore.json:ro"
       - "./visits.bbolt:/visits.bbolt"
+      - "./socialMediaLinkPreview.gohtml:/socialMediaLinkPreview.gohtml"
 volumes:
   caddy:
   caddyConfig:

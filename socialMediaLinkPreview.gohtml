@@ -1,10 +1,13 @@
 <html lang="en">
 <head>
-    {{- /*gotype: github.com/MicahParks/terse-URL/meta.Preview*/ -}}
+    {{- /*gotype: github.com/MicahParks/terseurl/meta.Preview*/ -}}
     <title>{{.MediaPreview.Title}}</title>
     <!--Insert traditional meta tags-->
     <link href="" rel="shortcut icon"> <!--TODO Add Favicon template.-->
-    <meta name="description" content="{{.Description}}"/>
+    <meta name="description" content="{{.}}"/>
+    {{- if eq .RedirectType "meta" -}}
+        <meta http-equiv="Refresh" content="0; url='{{.Redirect}}'"/>
+    {{- end -}}
     <!--Insert OG Markup-->
     <!--https://ogp.me/-->
     <!--TODO Add templated checks to omit empty tags.-->
@@ -24,10 +27,12 @@
 </head>
 <body>
 <!--TODO Add link button and templated redirect.-->
-<!-- <script type="text/javascript">
+{{- if eq .RedirectType "js" -}}
+    <script type="text/javascript">
 
-    // Immediate redirect.
-    window.location.replace('{{.Redirect}}');
-</script> -->
+        // Immediate redirect.
+        window.location.replace('{{.Redirect}}');
+    </script>
+{{- end -}}
 </body>
 </html>

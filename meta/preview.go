@@ -25,7 +25,8 @@ const (
 // HTML meta tags.
 type Preview struct { // TODO Add favicon info if possible.
 	models.MediaPreview `json:"mediaPreview"`
-	Redirect            string `json:"redirect"`
+	Redirect            string              `json:"redirect"`
+	RedirectType        models.RedirectType `json:"redirectType"`
 }
 
 // PreviewTagInfo parses the given HTML io.Reader and returns the social media link preview meta tag information.
