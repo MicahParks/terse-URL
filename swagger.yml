@@ -342,8 +342,14 @@ paths:
           visitor will be automatically redirected to the original link with JavaScript."
           schema:
             type: "file"
+        301:
+          description: "An HTTP response that will server as a permanent redirect to the shortened URL's full URL."
+          headers:
+            Location:
+              description: "The full URL that the redirect leads to."
+              type: "string"
         302:
-          description: "An HTTP response that will redirect to the shortened URL's full URL."
+          description: "An HTTP response that will serve as a temporary redirect to the shortened URL's full URL."
           headers:
             Location:
               description: "The full URL that the redirect leads to."

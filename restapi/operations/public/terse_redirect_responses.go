@@ -54,10 +54,56 @@ func (o *TerseRedirectOK) WriteResponse(rw http.ResponseWriter, producer runtime
 	}
 }
 
+// TerseRedirectMovedPermanentlyCode is the HTTP code returned for type TerseRedirectMovedPermanently
+const TerseRedirectMovedPermanentlyCode int = 301
+
+/*TerseRedirectMovedPermanently An HTTP response that will server as a permanent redirect to the shortened URL's full URL.
+
+swagger:response terseRedirectMovedPermanently
+*/
+type TerseRedirectMovedPermanently struct {
+	/*The full URL that the redirect leads to.
+
+	 */
+	Location string `json:"Location"`
+}
+
+// NewTerseRedirectMovedPermanently creates TerseRedirectMovedPermanently with default headers values
+func NewTerseRedirectMovedPermanently() *TerseRedirectMovedPermanently {
+
+	return &TerseRedirectMovedPermanently{}
+}
+
+// WithLocation adds the location to the terse redirect moved permanently response
+func (o *TerseRedirectMovedPermanently) WithLocation(location string) *TerseRedirectMovedPermanently {
+	o.Location = location
+	return o
+}
+
+// SetLocation sets the location to the terse redirect moved permanently response
+func (o *TerseRedirectMovedPermanently) SetLocation(location string) {
+	o.Location = location
+}
+
+// WriteResponse to the client
+func (o *TerseRedirectMovedPermanently) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+
+	// response header Location
+
+	location := o.Location
+	if location != "" {
+		rw.Header().Set("Location", location)
+	}
+
+	rw.Header().Del(runtime.HeaderContentType) //Remove Content-Type on empty responses
+
+	rw.WriteHeader(301)
+}
+
 // TerseRedirectFoundCode is the HTTP code returned for type TerseRedirectFound
 const TerseRedirectFoundCode int = 302
 
-/*TerseRedirectFound An HTTP response that will redirect to the shortened URL's full URL.
+/*TerseRedirectFound An HTTP response that will serve as a temporary redirect to the shortened URL's full URL.
 
 swagger:response terseRedirectFound
 */

@@ -479,8 +479,17 @@ func init() {
               "type": "file"
             }
           },
+          "301": {
+            "description": "An HTTP response that will server as a permanent redirect to the shortened URL's full URL.",
+            "headers": {
+              "Location": {
+                "type": "string",
+                "description": "The full URL that the redirect leads to."
+              }
+            }
+          },
           "302": {
-            "description": "An HTTP response that will redirect to the shortened URL's full URL.",
+            "description": "An HTTP response that will serve as a temporary redirect to the shortened URL's full URL.",
             "headers": {
               "Location": {
                 "type": "string",
@@ -1137,8 +1146,17 @@ func init() {
               "type": "file"
             }
           },
+          "301": {
+            "description": "An HTTP response that will server as a permanent redirect to the shortened URL's full URL.",
+            "headers": {
+              "Location": {
+                "type": "string",
+                "description": "The full URL that the redirect leads to."
+              }
+            }
+          },
           "302": {
-            "description": "An HTTP response that will redirect to the shortened URL's full URL.",
+            "description": "An HTTP response that will serve as a temporary redirect to the shortened URL's full URL.",
             "headers": {
               "Location": {
                 "type": "string",

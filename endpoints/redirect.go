@@ -65,8 +65,13 @@ func HandleRedirect(logger *zap.SugaredLogger, tmpl *template.Template, terseSto
 
 		// TODO Validate OriginalURL, if needed. Like if empty.
 
+		// Check to see if a 301 redirect needs to be issued.
+		if terse.RedirectType == models.RedirectTypeNr301 {
+			return &public.TerseRedirectMovedPermanently{Location: terse.OriginalURL}
+		}
+
 		// Check to see if an HTML file should be returned instead.
-		if terse.JavascriptTracking || terse.MediaPreview != nil {
+		if terse.MediaPreview != nil && terse.JavascriptTracking || terse.RedirectType == models.RedirectTypeJs || terse.RedirectType == models.RedirectTypeMeta { // TODO Verify logic behind this if statement.
 
 			// Create a buffer to write the populated HTML template with.
 			buf := bytes.NewBuffer(nil)
@@ -85,11 +90,18 @@ func HandleRedirect(logger *zap.SugaredLogger, tmpl *template.Template, terseSto
 
 			// Failed to execute HTML template. Log the event. Reassign the error to nil. Attempt to issue standard
 			// redirect.
-			logger.Warnw("Failed to execute template. Attempting to perform standard redirect.",
+			logger.Warnw("Failed to execute template.",
 				"shortened", params.Shortened,
 				"error", err.Error(),
 			)
 			err = nil
+		}
+
+		// Check if a 302 was desired. If not, log.
+		if terse.RedirectType != models.RedirectTypeNr302 {
+			logger.Warnw("The desired type couldn't be formed. A 302 will be issued instead.",
+				"redirectType", terse.RedirectType,
+			)
 		}
 
 		// Issue a standard redirect.
