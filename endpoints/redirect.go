@@ -88,8 +88,7 @@ func HandleRedirect(logger *zap.SugaredLogger, tmpl *template.Template, terseSto
 				return &public.TerseRedirectOK{Payload: ioutil.NopCloser(buf)}
 			}
 
-			// Failed to execute HTML template. Log the event. Reassign the error to nil. Attempt to issue standard
-			// redirect.
+			// Failed to execute HTML template. Log the event. Reassign the error to nil. Perform the default redirect.
 			logger.Warnw("Failed to execute template.",
 				"shortened", params.Shortened,
 				"error", err.Error(),
@@ -104,7 +103,7 @@ func HandleRedirect(logger *zap.SugaredLogger, tmpl *template.Template, terseSto
 			)
 		}
 
-		// Issue a standard redirect.
+		// Issue a standard temporary redirect.
 		return &public.TerseRedirectFound{
 			Location: terse.OriginalURL,
 		}
