@@ -35,6 +35,7 @@ docker-compose up
 ## TODO
 
 - [ ] Address TODOs.
+- [ ] Add button on form page that will get OG and Twitter meta for page and populate the form.
 - [ ] SummaryStore not used when VisitsStore is `nil`?
 - [ ] Outgoing validation of spec with model methods?
 - [ ] Deleting in SummaryStore.
