@@ -29,17 +29,15 @@ type Preview struct { // TODO Add favicon info if possible.
 	RedirectType        models.RedirectType `json:"redirectType"`
 }
 
-// PreviewTagInfo parses the given HTML io.Reader and returns the social media link preview meta tag information.
-func PreviewTagInfo(body io.Reader) (tagInfo models.MediaPreview, err error) {
+// previewTagInfo parses the given HTML io.Reader and returns the social media link preview meta tag information.
+func previewTagInfo(body io.Reader) (og models.OpenGraph, twitter models.Twitter, err error) {
+
+	// TODO Verify not needed.
+	//og = models.OpenGraph{}
+	//twitter = models.Twitter{}
 
 	// Create an HTML tokenizer.
 	tokenizer := html.NewTokenizer(body)
-
-	// Make the HTML meta tag info data structure.
-	tagInfo = models.MediaPreview{
-		Og:      make(map[string]string),
-		Twitter: make(map[string]string),
-	}
 
 	// Iterate through the HTML tokens and find the meta tags, extract the social media link preview info, and put it
 	// into a map.
@@ -51,10 +49,10 @@ func PreviewTagInfo(body io.Reader) (tagInfo models.MediaPreview, err error) {
 
 		switch tokenType {
 		case html.ErrorToken:
-			return tagInfo, tokenizer.Err()
+			return nil, nil, tokenizer.Err()
 		case html.EndTagToken:
 			if token.Data == "head" {
-				return tagInfo, nil
+				return nil, nil, nil
 			}
 		}
 
@@ -72,9 +70,9 @@ func PreviewTagInfo(body io.Reader) (tagInfo models.MediaPreview, err error) {
 
 				// Keep track of Open Graph protocol and Twitter social media link preview key value pairs.
 				if strings.HasPrefix(attributes[metaProperty], "og:") {
-					tagInfo.Og[attributes[metaProperty]] = attributes[metaContent]
+					og[attributes[metaProperty]] = attributes[metaContent]
 				} else if strings.HasPrefix(attributes[metaName], "twitter:") {
-					tagInfo.Twitter[attributes[metaName]] = attributes[metaContent]
+					twitter[attributes[metaName]] = attributes[metaContent]
 				}
 			}
 		}

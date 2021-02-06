@@ -8,6 +8,7 @@ import (
 	"go.uber.org/zap"
 
 	"github.com/MicahParks/terseurl/configure"
+	"github.com/MicahParks/terseurl/meta"
 	"github.com/MicahParks/terseurl/models"
 	"github.com/MicahParks/terseurl/restapi/operations/api"
 	"github.com/MicahParks/terseurl/storage"
@@ -38,6 +39,22 @@ func HandleWrite(logger *zap.SugaredLogger, shortID *shortid.Shortid, terseStore
 			params.Terse.RedirectType = models.RedirectTypeNr302
 		}
 
+		// Check to see if HTML meta tags for social media link  previews should be inherited.
+		var err error
+		if params.Terse.MediaPreview != nil && params.Terse.MediaPreview.Inherit {
+
+			// Inherit the relevant HTML meta from the original URL.
+			var og models.OpenGraph
+			var twitter models.Twitter
+			og, twitter, err = meta.GetMeta(params.Terse.OriginalURL)
+			if err != nil {
+				err = nil // Ignore any error and don't assign.
+			} else {
+				params.Terse.MediaPreview.Og = og
+				params.Terse.MediaPreview.Twitter = twitter
+			}
+		}
+
 		// Create the Terse data structure.
 		terse := &models.Terse{
 			JavascriptTracking: params.Terse.JavascriptTracking,
@@ -48,7 +65,6 @@ func HandleWrite(logger *zap.SugaredLogger, shortID *shortid.Shortid, terseStore
 		}
 
 		// If no shortened URL was given, create one.
-		var err error
 		if params.Terse.ShortenedURL == "" {
 			if terse.ShortenedURL, err = shortID.Generate(); err != nil { // TODO Loop this in paranoid mode?
 
