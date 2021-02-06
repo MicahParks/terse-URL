@@ -28,5 +28,5 @@ function createTable(selector, tableData) {
 
 function createTerseList() {
     let list = document.getElementById("terseList");
-    list.
+    // list.
 }

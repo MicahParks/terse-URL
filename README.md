@@ -35,6 +35,7 @@ docker-compose up
 ## TODO
 
 - [ ] Address TODOs.
+- [ ] SummaryStore not used when VisitsStore is `nil`?
 - [ ] Outgoing validation of spec with model methods?
 - [ ] Deleting in SummaryStore.
 - [ ] Make endpoints for reading multiple Terse/Visits.

@@ -18,11 +18,11 @@ services:
     container_name: "terseurl"
     image: "micahparks/terseurl"
     volumes:
-      - "./terseStore.json:/terseStore.json:ro"
-      - "./terse.bbolt:/terse.bbolt"
-      - "./visitsStore.json:/visitsStore.json:ro"
-      - "./visits.bbolt:/visits.bbolt"
-      - "./socialMediaLinkPreview.gohtml:/socialMediaLinkPreview.gohtml"
+      - "./terseStore.json:/terseurl/terseStore.json:ro"
+      - "./terse.bbolt:/terseurl/terse.bbolt"
+      - "./visitsStore.json:/terseurl/visitsStore.json:ro"
+      - "./visits.bbolt:/terseurl/visits.bbolt"
+      - "./socialMediaLinkPreview.gohtml:/terseurl/socialMediaLinkPreview.gohtml"
 volumes:
   caddy:
   caddyConfig:
