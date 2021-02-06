@@ -9,6 +9,7 @@ async function submitForm(e) {
     let terse = new Terse();
     terse.originalURL = document.getElementById("originalURL").value;
     terse.shortenedURL = document.getElementById("shortenedURL").value;
+    terse.javascriptTracking = document.getElementById("jsTracking").checked;
 
     let operation = document.getElementById("writeOperation").value;
 
@@ -18,10 +19,10 @@ async function submitForm(e) {
 
         let htmlTitle = $("#htmlTitle").val();
 
+        let inherit = document.getElementById("inheritPreview").checked;
+
         let og = makeMetaMap("#ogMeta :input");
         let twitter = makeMetaMap("#twitterMeta :input");
-
-        let inherit = true; // TODO
 
         terse.mediaPreview = new MediaPreview(inherit, og, htmlTitle, twitter);
     }
