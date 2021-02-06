@@ -6,7 +6,8 @@ function Terse(javascriptTracking, mediaPreview, originalURL, redirectType, shor
     this.shortenedURL = shortenedURL;
 }
 
-function MediaPreview(og, title, twitter) {
+function MediaPreview(inherit, og, title, twitter) {
+    this.inherit = inherit
     this.title = title;
     this.twitter = twitter;
     this.og = og;

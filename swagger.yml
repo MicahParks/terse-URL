@@ -400,6 +400,8 @@ definitions:
   # Schema for social media previews.
   MediaPreview:
     properties:
+      inherit:
+        type: "boolean"
       og:
         $ref: "#/definitions/OpenGraph"
       title:

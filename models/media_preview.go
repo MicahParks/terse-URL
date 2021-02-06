@@ -18,6 +18,9 @@ import (
 // swagger:model MediaPreview
 type MediaPreview struct {
 
+	// inherit
+	Inherit bool `json:"inherit,omitempty"`
+
 	// og
 	Og OpenGraph `json:"og,omitempty"`
 

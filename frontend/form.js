@@ -21,7 +21,9 @@ async function submitForm(e) {
         let og = makeMetaMap("#ogMeta :input");
         let twitter = makeMetaMap("#twitterMeta :input");
 
-        terse.mediaPreview = new MediaPreview(og, htmlTitle, twitter);
+        let inherit = true; // TODO
+
+        terse.mediaPreview = new MediaPreview(inherit, og, htmlTitle, twitter);
     }
 
     await write(operation, terse);

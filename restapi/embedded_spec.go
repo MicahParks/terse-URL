@@ -550,6 +550,9 @@ func init() {
     },
     "MediaPreview": {
       "properties": {
+        "inherit": {
+          "type": "boolean"
+        },
         "og": {
           "$ref": "#/definitions/OpenGraph"
         },
@@ -1217,6 +1220,9 @@ func init() {
     },
     "MediaPreview": {
       "properties": {
+        "inherit": {
+          "type": "boolean"
+        },
         "og": {
           "$ref": "#/definitions/OpenGraph"
         },
