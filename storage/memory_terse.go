@@ -319,7 +319,7 @@ func (m *MemTerse) Read(_ context.Context, shortened string, visit *models.Visit
 	}
 
 	// Unlock the Terse map for async safe use.
-	m.mux.Unlock()
+	m.mux.RUnlock()
 
 	return terse, nil
 }

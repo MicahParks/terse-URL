@@ -13,14 +13,14 @@
     <!--TODO Add templated checks to omit empty tags.-->
     <!--TODO Extra metadata stuff like structured properties and arrays?-->
     {{- if .Og -}}
-        {{- range $property, $content := .MediaPreview.Og -}}
+        {{- range $property, $content := .Og -}}
             <meta prefix="og: http://ogp.me/ns#" property="{{$property}}" content="{{$content}}"/>
         {{- end -}}
     {{- end -}}
     <!--Insert Twitter Card Markup-->
     <!--https://developer.twitter.com/en/docs/twitter-for-websites/cards/overview/markup-->
     {{- if .Twitter -}}
-        {{- range $name, $content := .MediaPreview.Twitter -}}
+        {{- range $name, $content := .Twitter -}}
             <meta name="{{$name}}" content="{{$content}}"/>
         {{- end -}}
     {{- end -}}

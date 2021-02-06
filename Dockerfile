@@ -9,17 +9,18 @@ RUN go mod download
 COPY . .
 
 # Build the code.
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -ldflags "-s -w" -o terseURL cmd/terse-url-server/main.go
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -ldflags "-s -w" -o terseurl cmd/terse-url-server/main.go
 
 
 # The actual image being produced.
-FROM scratch
+FROM alpine
 
 # Set some defaults for the host to bind to and the port to make it easier for people.
 ENV HOST 0.0.0.0
 ENV PORT 30000
 
 # Copy the executable from the builder container.
-COPY --from=builder /app/terseURL /terseURL
-COPY --from=builder /app/socialMediaLinkPreview.gohtml /socialMediaLinkPreview.gohtml
-CMD ["/terseURL"]
+WORKDIR /terseurl
+COPY --from=builder /app/terseurl terseurl
+COPY --from=builder /app/socialMediaLinkPreview.gohtml socialMediaLinkPreview.gohtml
+CMD ["/terseurl/terseurl"]

@@ -32,9 +32,9 @@ type Preview struct { // TODO Add favicon info if possible.
 // previewTagInfo parses the given HTML io.Reader and returns the social media link preview meta tag information.
 func previewTagInfo(body io.Reader) (og models.OpenGraph, twitter models.Twitter, err error) {
 
-	// TODO Verify not needed.
-	//og = models.OpenGraph{}
-	//twitter = models.Twitter{}
+	// Initialize the return values.
+	og = models.OpenGraph{}
+	twitter = models.Twitter{}
 
 	// Create an HTML tokenizer.
 	tokenizer := html.NewTokenizer(body)

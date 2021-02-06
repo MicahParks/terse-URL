@@ -3,6 +3,7 @@ package endpoints
 import (
 	"bytes"
 	"errors"
+	"fmt"
 	"html/template"
 	"io/ioutil"
 	"time"
@@ -82,6 +83,11 @@ func HandleRedirect(logger *zap.SugaredLogger, tmpl *template.Template, terseSto
 				Redirect:     terse.OriginalURL,
 				RedirectType: terse.RedirectType,
 			}
+
+			logger.Debugw("",
+				"og", fmt.Sprintf("%+v", terse.MediaPreview.Og),
+				"twitter", fmt.Sprintf("%+v", terse.MediaPreview.Twitter),
+			)
 
 			// If there is no error in populating the HTML template, return an HTML document to the client.
 			if err = tmpl.Execute(buf, previewMeta); err == nil {

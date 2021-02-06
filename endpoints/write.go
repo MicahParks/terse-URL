@@ -48,7 +48,14 @@ func HandleWrite(logger *zap.SugaredLogger, shortID *shortid.Shortid, terseStore
 			var twitter models.Twitter
 			og, twitter, err = meta.GetMeta(params.Terse.OriginalURL)
 			if err != nil {
-				err = nil // Ignore any error and don't assign.
+
+				// Log at the appropriate level.
+				logger.Infow("Failed to get the original URL for social media link preview inheritance.",
+					"original", params.Terse.OriginalURL,
+					"error", err.Error(),
+				)
+
+				err = nil
 			} else {
 				params.Terse.MediaPreview.Og = og
 				params.Terse.MediaPreview.Twitter = twitter
