@@ -52,7 +52,7 @@ func previewTagInfo(body io.Reader) (og models.OpenGraph, twitter models.Twitter
 			return nil, nil, tokenizer.Err()
 		case html.EndTagToken:
 			if token.Data == "head" {
-				return nil, nil, nil
+				return og, twitter, nil
 			}
 		}
 

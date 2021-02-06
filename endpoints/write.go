@@ -40,6 +40,9 @@ func HandleWrite(logger *zap.SugaredLogger, shortID *shortid.Shortid, terseStore
 		}
 
 		// Check to see if HTML meta tags for social media link  previews should be inherited.
+		//
+		// TODO Do this in a separate goroutine?
+		// TODO Report a failure to the user?
 		var err error
 		if params.Terse.MediaPreview != nil && params.Terse.MediaPreview.Inherit {
 
