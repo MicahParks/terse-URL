@@ -310,6 +310,7 @@ func (m *MemTerse) Read(_ context.Context, shortened string, visit *models.Visit
 
 	// Lock the Terse map for async safe use.
 	m.mux.RLock()
+	defer m.mux.RUnlock()
 
 	// Check to see if the shortened URL already exists.
 	var ok bool
@@ -317,9 +318,6 @@ func (m *MemTerse) Read(_ context.Context, shortened string, visit *models.Visit
 	if !ok {
 		return nil, ErrShortenedNotFound
 	}
-
-	// Unlock the Terse map for async safe use.
-	m.mux.RUnlock()
 
 	return terse, nil
 }
