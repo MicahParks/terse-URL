@@ -53,6 +53,9 @@ func NewTerseURLAPI(spec *loads.Document) *TerseURLAPI {
 		SystemAliveHandler: system.AliveHandlerFunc(func(params system.AliveParams) middleware.Responder {
 			return middleware.NotImplemented("operation system.Alive has not yet been implemented")
 		}),
+		APIFrontendMetaHandler: apiops.FrontendMetaHandlerFunc(func(params apiops.FrontendMetaParams) middleware.Responder {
+			return middleware.NotImplemented("operation api.FrontendMeta has not yet been implemented")
+		}),
 		APITerseDeleteHandler: apiops.TerseDeleteHandlerFunc(func(params apiops.TerseDeleteParams) middleware.Responder {
 			return middleware.NotImplemented("operation api.TerseDelete has not yet been implemented")
 		}),
@@ -127,6 +130,8 @@ type TerseURLAPI struct {
 
 	// SystemAliveHandler sets the operation handler for the alive operation
 	SystemAliveHandler system.AliveHandler
+	// APIFrontendMetaHandler sets the operation handler for the frontend meta operation
+	APIFrontendMetaHandler apiops.FrontendMetaHandler
 	// APITerseDeleteHandler sets the operation handler for the terse delete operation
 	APITerseDeleteHandler apiops.TerseDeleteHandler
 	// APITerseDeleteSomeHandler sets the operation handler for the terse delete some operation
@@ -231,6 +236,9 @@ func (o *TerseURLAPI) Validate() error {
 
 	if o.SystemAliveHandler == nil {
 		unregistered = append(unregistered, "system.AliveHandler")
+	}
+	if o.APIFrontendMetaHandler == nil {
+		unregistered = append(unregistered, "api.FrontendMetaHandler")
 	}
 	if o.APITerseDeleteHandler == nil {
 		unregistered = append(unregistered, "api.TerseDeleteHandler")
@@ -359,6 +367,10 @@ func (o *TerseURLAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/api/alive"] = system.NewAlive(o.context, o.SystemAliveHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/api/frontend/meta"] = apiops.NewFrontendMeta(o.context, o.APIFrontendMetaHandler)
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}

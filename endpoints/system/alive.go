@@ -1,4 +1,4 @@
-package endpoints
+package system
 
 import (
 	"github.com/go-openapi/runtime/middleware"

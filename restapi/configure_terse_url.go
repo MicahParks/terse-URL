@@ -15,6 +15,9 @@ import (
 
 	"github.com/MicahParks/terseurl/configure"
 	"github.com/MicahParks/terseurl/endpoints"
+	"github.com/MicahParks/terseurl/endpoints/frontend"
+	"github.com/MicahParks/terseurl/endpoints/public"
+	"github.com/MicahParks/terseurl/endpoints/system"
 	"github.com/MicahParks/terseurl/restapi/operations"
 )
 
@@ -44,6 +47,7 @@ func configureAPI(api *operations.TerseURLAPI) http.Handler {
 	api.HTMLProducer = configure.HTMLProducer(logger)
 
 	// Assign the endpoint handlers.
+	api.APIFrontendMetaHandler = frontend.HandleMeta(logger.Named("/api/frontend/meta"))
 	api.APITerseDeleteHandler = endpoints.HandleDelete(logger.Named("/api/delete"), config.TerseStore)
 	api.APITerseDeleteSomeHandler = endpoints.HandleDeleteSome(logger.Named("/api/delete/some"), config.TerseStore)
 	api.APITerseExportHandler = endpoints.HandleExport(logger.Named("/api/export"), config.TerseStore)
@@ -54,8 +58,8 @@ func configureAPI(api *operations.TerseURLAPI) http.Handler {
 	api.APITerseTerseHandler = endpoints.HandleTerse(logger.Named("/api/terse/{shortened}"), config.TerseStore)
 	api.APITerseVisitsHandler = endpoints.HandleVisits(logger.Named("/api/visits/{shortened}"), config.VisitsStore)
 	api.APITerseWriteHandler = endpoints.HandleWrite(logger.Named("/api/write/{operation}"), config.ShortID, config.TerseStore)
-	api.PublicTerseRedirectHandler = endpoints.HandleRedirect(logger.Named("/{shortened}"), config.Template, config.TerseStore)
-	api.SystemAliveHandler = endpoints.HandleAlive()
+	api.PublicTerseRedirectHandler = public.HandleRedirect(logger.Named("/{shortened}"), config.Template, config.TerseStore)
+	api.SystemAliveHandler = system.HandleAlive()
 
 	api.PreServerShutdown = func() {}
 

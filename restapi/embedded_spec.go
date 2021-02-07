@@ -210,6 +210,52 @@ func init() {
         }
       }
     },
+    "/api/frontend/meta": {
+      "post": {
+        "description": "This endpoint is intended for use only by the frontend. It will perform an HTTP GET request to the originalURL, extract all meta tag information for social media link previews, then return it.",
+        "consumes": [
+          "application/json"
+        ],
+        "tags": [
+          "api"
+        ],
+        "summary": "Used by the frontend to inherit HTML meta for social media link previews.",
+        "operationId": "frontendMeta",
+        "parameters": [
+          {
+            "description": "The original URL to HTTP GET and extract the relevant HTML meta from for social media link previews.",
+            "name": "originalURL",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The relevant HTML meta tag information.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "og": {
+                  "$ref": "#/definitions/OpenGraph"
+                },
+                "twitter": {
+                  "$ref": "#/definitions/Twitter"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
     "/api/import": {
       "post": {
         "description": "Any imported data will overwrite existing data. Unless deletion information is specified. In that case all Terse or Visits data can be deleted before importing the new data.",
@@ -550,9 +596,6 @@ func init() {
     },
     "MediaPreview": {
       "properties": {
-        "inherit": {
-          "type": "boolean"
-        },
         "og": {
           "$ref": "#/definitions/OpenGraph"
         },
@@ -880,6 +923,52 @@ func init() {
         }
       }
     },
+    "/api/frontend/meta": {
+      "post": {
+        "description": "This endpoint is intended for use only by the frontend. It will perform an HTTP GET request to the originalURL, extract all meta tag information for social media link previews, then return it.",
+        "consumes": [
+          "application/json"
+        ],
+        "tags": [
+          "api"
+        ],
+        "summary": "Used by the frontend to inherit HTML meta for social media link previews.",
+        "operationId": "frontendMeta",
+        "parameters": [
+          {
+            "description": "The original URL to HTTP GET and extract the relevant HTML meta from for social media link previews.",
+            "name": "originalURL",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The relevant HTML meta tag information.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "og": {
+                  "$ref": "#/definitions/OpenGraph"
+                },
+                "twitter": {
+                  "$ref": "#/definitions/Twitter"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
     "/api/import": {
       "post": {
         "description": "Any imported data will overwrite existing data. Unless deletion information is specified. In that case all Terse or Visits data can be deleted before importing the new data.",
@@ -1220,9 +1309,6 @@ func init() {
     },
     "MediaPreview": {
       "properties": {
-        "inherit": {
-          "type": "boolean"
-        },
         "og": {
           "$ref": "#/definitions/OpenGraph"
         },

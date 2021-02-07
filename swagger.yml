@@ -147,6 +147,39 @@ paths:
       tags:
         - "api"
 
+  /api/frontend/meta:
+    post:
+      consumes:
+        - "application/json"
+      summary: "Used by the frontend to inherit HTML meta for social media link previews."
+      description: "This endpoint is intended for use only by the frontend. It will perform an HTTP GET request to the
+      originalURL, extract all meta tag information for social media link previews, then return it."
+      operationId: "frontendMeta"
+      parameters:
+        - description: "The original URL to HTTP GET and extract the relevant HTML meta from for social media link
+        previews."
+          in: "body"
+          name: "originalURL"
+          required: true
+          schema:
+            type: "string"
+      responses:
+        200:
+          description: "The relevant HTML meta tag information."
+          schema:
+            type: "object"
+            properties:
+              og:
+                $ref: "#/definitions/OpenGraph"
+              twitter:
+                $ref: "#/definitions/Twitter"
+        default:
+          description: "Unexpected error."
+          schema:
+            $ref: "#/definitions/Error"
+      tags:
+        - "api"
+
   /api/import:
     post:
       consumes:
@@ -400,8 +433,6 @@ definitions:
   # Schema for social media previews.
   MediaPreview:
     properties:
-      inherit:
-        type: "boolean"
       og:
         $ref: "#/definitions/OpenGraph"
       title:
