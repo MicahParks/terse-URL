@@ -72,9 +72,8 @@
                         <input id="jsTracking" class="form-check-input" type="checkbox">
                         <label class="form-check-label" for="jsTracking">JavaScript Tracking</label>
                     </div>
-                    <div class="form-check form-switch mb-3">
-                        <input id="inheritPreview" class="form-check-input" type="checkbox">
-                        <label class="form-check-label" for="inheritPreview">Inherit Social Media Link Preview</label>
+                    <div class="mb-1"> <!--TODO Make this button look better.-->
+                        <button type="button" class="btn btn-primary" onclick="inheritPreview()">Inherit</button>
                     </div>
                     <div class="row justify-content-between align-items-end mb-1">
                         <div class="col-md-auto">
@@ -140,6 +139,7 @@
 <script src="delete.js"></script>
 <script src="export.js"></script>
 <script src="form.js"></script>
+<script src="meta.js"></script>
 <script src="prefix.js"></script>
 <script src="summary.js"></script>
 <script src="table.js"></script>
@@ -191,6 +191,38 @@
         clone.id = twitterInput.id + twitterInputCounter;
         twitterInputCounter++;
         document.getElementById("twitterMeta").appendChild(clone);
+    }
+</script>
+<script>
+    function inheritPreview() {
+
+        // TODO Delete all existing OG and Twitter key value pairs.
+
+        let originalURL = document.getElementById("originalURL").value;
+        console.log(originalURL);
+        getMeta(originalURL).then(function (response) {
+            for (let key in response.og) {
+                let clone = ogInput.cloneNode(true);
+                clone.id = ogInput.id + ogInputCounter;
+                ogInputCounter++;
+
+                clone.childNodes[1].value = key;
+                clone.childNodes[3].value = response.og[key];
+
+                document.getElementById("ogMeta").appendChild(clone);
+            }
+
+            for (let key in response.twitter) {
+                let clone = twitterInput.cloneNode(true);
+                clone.id = twitterInput.id + twitterInputCounter;
+                twitterInputCounter++;
+
+                clone.childNodes[1].value = key;
+                clone.childNodes[3].value = response.og[key];
+
+                document.getElementById("twitterMeta").appendChild(clone);
+            }
+        });
     }
 </script>
 </body>
