@@ -22,5 +22,5 @@ ENV PORT 30000
 # Copy the executable from the builder container.
 WORKDIR /terseurl
 COPY --from=builder /app/terseurl terseurl
-COPY --from=builder /app/socialMediaLinkPreview.gohtml socialMediaLinkPreview.gohtml
+COPY --from=builder /app/redirect.gohtml redirect.gohtml
 CMD ["/terseurl/terseurl"]

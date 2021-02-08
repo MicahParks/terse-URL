@@ -15,8 +15,8 @@ const (
 	defaultPrefix = "https://terseurl.com/"
 
 	// defaultTemplatePath is the default path in the file system to look for the HTML template that will be used for
-	// social media link previews and Javascript fingerprinting.
-	defaultTemplatePath = "socialMediaLinkPreview.gohtml"
+	// JavaScript and HTML meta tag redirects, along with Javascript fingerprinting.
+	defaultTemplatePath = "redirect.gohtml"
 
 	// defaultWorkerCount is the default amount of workers to have in the ctxerrgroup.
 	defaultWorkerCount = 4

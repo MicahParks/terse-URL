@@ -15,7 +15,7 @@ Environment variable table:
 |`INVALID_PATHS`     |A comma separated list of paths that cannot be assigned to a shortened URL. Whitespace prefixes and suffixes are trimmed. All swagger endpoints like `api` are invalid.            |swagger endpoints and frontend |`ready ,live, v2`                            |
 |`SHORTID_PARANOID`  |Indicate whether randomly generated short URLs should be checked to see if they are already in use. Any value sets the boolean to true. Empty for false.                           |blank                          |`true`                                       |
 |`SHORTID_SEED`      |The seed to give the random shortened URL generator. Unsigned 64 bit integer. It is recommend to set this in a production setting.                                                 |System clock                   |`2301015`                                    |
-|`TEMPLATE_PATH`     |The full or relative path to the HTML template to use when a shortened URL is requested and JavaScript fingerprinting or social media link previews are on.                        |`socialMediaLinkPreview.gohtml`|`customTemplate.gohtml`                      |
+|`TEMPLATE_PATH`     |The full or relative path to the HTML template to use when a shortened URL is requested and JavaScript fingerprinting or social media link previews are on.                        |`redirect.gohtml`              |`customTemplate.gohtml`                      |
 |`SUMMARY_STORE_JSON`|The JSON formatted storage configuration for the SummaryStore. If empty, it will try to read the file at `summaryStore.json`. If not found it will use an in memory implementation.|blank                          |`{"type":"memory"}`                          |
 |`TERSE_STORE_JSON`  |The JSON formatted storage configuration for the TerseStore. If empty, it will try to read the file at `terseStore.json`. If not found it will use an in memory implementation.    |blank                          |`{"type":"bbolt","bboltPath":"terse.bbolt"}` |
 |`VISITS_STORE_JSON` |The JSON formatted storage configuration for the VisitsStore. If empty, it will try to read the file at `visitsStore.json`. If not found, visits will not be tracked.              |blank                          |`{"type":"bbolt","bboltPath":"visits.bbolt"}`|
@@ -35,7 +35,6 @@ docker-compose up
 ## TODO
 
 - [ ] Address TODOs.
-- [ ] Add a button on form page that will get OG and Twitter meta for a page and populate the form.
 - [ ] SummaryStore not used when VisitsStore is `nil`?
 - [ ] Outgoing validation of spec with model methods?
 - [ ] Deleting in SummaryStore.
@@ -54,6 +53,7 @@ docker-compose up
 - [ ] Write a good README.md.
 - [ ] Move frontend to another repo.
 - [ ] Implement JWT + JWKS authentication?
+- [x] Add a button on form page that will get OG and Twitter meta for a page and populate the form.
 - [x] Visit counts in TerseStore.
 - [x] Social media link preview `inherit` mode that gets the Original URL and uses the meta tags for that.
 - [x] Implement social media link previews.

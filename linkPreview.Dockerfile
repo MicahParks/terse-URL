@@ -17,5 +17,5 @@ FROM scratch
 
 # Copy the executable from the builder container.
 COPY --from=builder /app/linkPreview /linkPreview
-COPY --from=builder /app/socialMediaLinkPreview.gohtml /
+COPY --from=builder /app/redirect.gohtml /
 CMD ["/linkPreview"]
