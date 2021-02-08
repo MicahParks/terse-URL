@@ -192,11 +192,11 @@
         twitterInputCounter++;
         document.getElementById("twitterMeta").appendChild(clone);
     }
-</script>
-<script>
+
     function inheritPreview() {
 
-        // TODO Delete all existing OG and Twitter key value pairs.
+        removeAllChildNodes(document.getElementById("ogMeta"));
+        removeAllChildNodes(document.getElementById("twitterMeta"));
 
         let originalURL = document.getElementById("originalURL").value;
         console.log(originalURL);
@@ -223,6 +223,12 @@
                 document.getElementById("twitterMeta").appendChild(clone);
             }
         });
+    }
+
+    function removeAllChildNodes(parent) {
+        while (parent.firstChild) {
+            parent.removeChild(parent.firstChild);
+        }
     }
 </script>
 </body>
