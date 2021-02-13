@@ -8,7 +8,6 @@ import (
 	"go.uber.org/zap"
 
 	"github.com/MicahParks/terseurl/configure"
-	"github.com/MicahParks/terseurl/models"
 	"github.com/MicahParks/terseurl/restapi/operations/api"
 	"github.com/MicahParks/terseurl/storage"
 )
@@ -51,12 +50,7 @@ func HandleExportSome(logger *zap.SugaredLogger, terseStore storage.TerseStore) 
 			}
 
 			// Report the error to the client.
-			resp := &api.TerseExportSomeDefault{Payload: &models.Error{
-				Code:    int64(code),
-				Message: message,
-			}}
-			resp.SetStatusCode(code)
-			return resp
+			return ErrorResponse(code, message, &api.TerseExportSomeDefault{})
 		}
 
 		return &api.TerseExportSomeOK{

@@ -5,7 +5,6 @@ import (
 	"go.uber.org/zap"
 
 	"github.com/MicahParks/terseurl/configure"
-	"github.com/MicahParks/terseurl/models"
 	"github.com/MicahParks/terseurl/restapi/operations/api"
 	"github.com/MicahParks/terseurl/storage"
 )
@@ -29,19 +28,13 @@ func HandleExport(logger *zap.SugaredLogger, terseStore storage.TerseStore) api.
 		if err != nil {
 
 			// Log at the appropriate level.
-			logger.Errorw("Failed to perform data dump.",
+			message := "Failed to perform data dump."
+			logger.Errorw(message,
 				"error", err.Error(),
 			)
 
 			// Report the error to the client.
-			code := 500
-			message := "Failed to perform data dump."
-			resp := &api.TerseExportDefault{Payload: &models.Error{
-				Code:    int64(code),
-				Message: message,
-			}}
-			resp.SetStatusCode(code)
-			return resp
+			return ErrorResponse(500, message, &api.TerseExportDefault{})
 		}
 
 		return &api.TerseExportOK{

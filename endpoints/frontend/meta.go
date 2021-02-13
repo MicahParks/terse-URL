@@ -5,8 +5,8 @@ import (
 	"go.uber.org/zap"
 
 	"github.com/MicahParks/terseurl/configure"
+	"github.com/MicahParks/terseurl/endpoints"
 	"github.com/MicahParks/terseurl/meta"
-	"github.com/MicahParks/terseurl/models"
 	"github.com/MicahParks/terseurl/restapi/operations/api"
 )
 
@@ -36,13 +36,7 @@ func HandleMeta(logger *zap.SugaredLogger) api.FrontendMetaHandlerFunc {
 			)
 
 			// Report the error to the client.
-			code := 500
-			resp := &api.FrontendMetaDefault{Payload: &models.Error{
-				Code:    int64(code),
-				Message: message,
-			}}
-			resp.SetStatusCode(code)
-			return resp
+			return endpoints.ErrorResponse(500, message, &api.FrontendMetaDefault{})
 		}
 
 		return &api.FrontendMetaOK{

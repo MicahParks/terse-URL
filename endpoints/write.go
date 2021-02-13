@@ -59,13 +59,7 @@ func HandleWrite(logger *zap.SugaredLogger, shortID *shortid.Shortid, terseStore
 				)
 
 				// Report the error to the client.
-				code := 500
-				resp := &api.TerseWriteDefault{Payload: &models.Error{
-					Code:    int64(code),
-					Message: message,
-				}}
-				resp.SetStatusCode(500)
-				return resp
+				return ErrorResponse(500, message, &api.TerseWriteDefault{})
 			}
 		}
 
@@ -109,12 +103,7 @@ func HandleWrite(logger *zap.SugaredLogger, shortID *shortid.Shortid, terseStore
 			}
 
 			// Report the error to the client.
-			resp := &api.TerseWriteDefault{Payload: &models.Error{
-				Code:    int64(code),
-				Message: message,
-			}}
-			resp.SetStatusCode(code)
-			return resp
+			return ErrorResponse(code, message, &api.TerseWriteDefault{})
 		}
 
 		return &api.TerseWriteOK{

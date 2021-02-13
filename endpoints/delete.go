@@ -7,7 +7,6 @@ import (
 	"go.uber.org/zap"
 
 	"github.com/MicahParks/terseurl/configure"
-	"github.com/MicahParks/terseurl/models"
 	"github.com/MicahParks/terseurl/restapi/operations/api"
 	"github.com/MicahParks/terseurl/storage"
 )
@@ -36,13 +35,7 @@ func HandleDelete(logger *zap.SugaredLogger, terseStore storage.TerseStore) api.
 			)
 
 			// Report the error to the client.
-			code := 500
-			resp := &api.TerseDeleteDefault{Payload: &models.Error{
-				Code:    int64(code),
-				Message: message,
-			}}
-			resp.SetStatusCode(code)
-			return resp
+			return ErrorResponse(500, message, &api.TerseDeleteDefault{})
 		}
 
 		return &api.TerseDeleteOK{}
