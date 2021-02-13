@@ -96,7 +96,7 @@ func init() {
         "tags": [
           "api"
         ],
-        "summary": "Delete Terse and or Visits data for the given shortened URL.",
+        "summary": "Delete Terse and or Visits data for the given shortened URLs.",
         "operationId": "terseDeleteSome",
         "parameters": [
           {
@@ -167,7 +167,7 @@ func init() {
     },
     "/api/export/some": {
       "post": {
-        "description": "Export Terse and Visits data for the given shortened URL.",
+        "description": "Export Terse and Visits data for the given shortened URLs.",
         "consumes": [
           "application/json"
         ],
@@ -177,7 +177,7 @@ func init() {
         "tags": [
           "api"
         ],
-        "summary": "Export Terse and Visits data for the given shortened URL.",
+        "summary": "Export Terse and Visits data for the given shortened URLs.",
         "operationId": "terseExportSome",
         "parameters": [
           {
@@ -809,7 +809,7 @@ func init() {
         "tags": [
           "api"
         ],
-        "summary": "Delete Terse and or Visits data for the given shortened URL.",
+        "summary": "Delete Terse and or Visits data for the given shortened URLs.",
         "operationId": "terseDeleteSome",
         "parameters": [
           {
@@ -880,7 +880,7 @@ func init() {
     },
     "/api/export/some": {
       "post": {
-        "description": "Export Terse and Visits data for the given shortened URL.",
+        "description": "Export Terse and Visits data for the given shortened URLs.",
         "consumes": [
           "application/json"
         ],
@@ -890,7 +890,7 @@ func init() {
         "tags": [
           "api"
         ],
-        "summary": "Export Terse and Visits data for the given shortened URL.",
+        "summary": "Export Terse and Visits data for the given shortened URLs.",
         "operationId": "terseExportSome",
         "parameters": [
           {

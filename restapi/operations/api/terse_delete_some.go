@@ -37,7 +37,7 @@ func NewTerseDeleteSome(ctx *middleware.Context, handler TerseDeleteSomeHandler)
 
 /* TerseDeleteSome swagger:route DELETE /api/delete/some api terseDeleteSome
 
-Delete Terse and or Visits data for the given shortened URL.
+Delete Terse and or Visits data for the given shortened URLs.
 
 If only Terse data is deleted, the API user is responsible for cleaning up its Visits data before adding new Terse data under the same shortened URL.
 

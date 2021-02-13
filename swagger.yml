@@ -66,7 +66,7 @@ paths:
         - "application/json"
       produces:
         - "application/json"
-      summary: "Delete Terse and or Visits data for the given shortened URL."
+      summary: "Delete Terse and or Visits data for the given shortened URLs."
       description: "If only Terse data is deleted, the API user is responsible for cleaning up its Visits data before
       adding new Terse data under the same shortened URL."
       operationId: "terseDeleteSome"
@@ -123,8 +123,8 @@ paths:
         - "application/json"
       produces:
         - "application/json"
-      summary: "Export Terse and Visits data for the given shortened URL."
-      description: "Export Terse and Visits data for the given shortened URL."
+      summary: "Export Terse and Visits data for the given shortened URLs."
+      description: "Export Terse and Visits data for the given shortened URLs."
       operationId: "terseExportSome"
       parameters:
         - description: "The shortened URLs to get the export for."
