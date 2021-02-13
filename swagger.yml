@@ -9,7 +9,7 @@ info:
   license:
     name: "MIT"
     url: "https://opensource.org/licenses/MIT"
-  title: "Terse URL"
+  title: "terseurl"
   version: "0.0.1"
 
 tags:

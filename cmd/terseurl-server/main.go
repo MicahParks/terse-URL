@@ -23,12 +23,12 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	api := operations.NewTerseURLAPI(swaggerSpec)
+	api := operations.NewTerseurlAPI(swaggerSpec)
 	server := restapi.NewServer(api)
 	defer server.Shutdown()
 
 	parser := flags.NewParser(server, flags.Default)
-	parser.ShortDescription = "Terse URL"
+	parser.ShortDescription = "terseurl"
 	parser.LongDescription = "The Terse URL shortener."
 	server.ConfigureFlags()
 	for _, optsGroup := range api.CommandLineOptionsGroups {

@@ -23,11 +23,11 @@ import (
 
 //go:generate swagger generate server --target ../../terseurl --name TerseURL --spec ../swagger.yml --principal interface{}
 
-func configureFlags(api *operations.TerseURLAPI) {
+func configureFlags(api *operations.TerseurlAPI) {
 	// api.CommandLineOptionsGroups = []swag.CommandLineOptionsGroup{ ... }
 }
 
-func configureAPI(api *operations.TerseURLAPI) http.Handler {
+func configureAPI(api *operations.TerseurlAPI) http.Handler {
 	// configure the api here
 	api.ServeError = errors.ServeError
 

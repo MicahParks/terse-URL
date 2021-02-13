@@ -24,7 +24,7 @@ func init() {
   "swagger": "2.0",
   "info": {
     "description": "The Terse URL shortener.",
-    "title": "Terse URL",
+    "title": "terseurl",
     "license": {
       "name": "MIT",
       "url": "https://opensource.org/licenses/MIT"
@@ -737,7 +737,7 @@ func init() {
   "swagger": "2.0",
   "info": {
     "description": "The Terse URL shortener.",
-    "title": "Terse URL",
+    "title": "terseurl",
     "license": {
       "name": "MIT",
       "url": "https://opensource.org/licenses/MIT"

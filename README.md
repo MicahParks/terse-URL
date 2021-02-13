@@ -4,6 +4,68 @@
 
 Currently under development.
 
+## Terms
+
+* *client*: Something using editor access to an instance of terseurl through the REST API.
+* *user*: Something visiting an instance of terseurl with a web browser without any special access.
+* *Visits data*: Data about *users* that have visited a particular shortened URL.
+* *Terse data*: Data that describes the process of how to get from a shortened URL to an original URL. This data
+  includes the shortened URL and original URL.
+
+## Features
+
+#### Redirection with shortened URLs
+
+Create web browser redirections to original URLs through shortened URLs. Shortened URLs are unique URL safe strings. A
+*client* may provide one, or the server can generate one.
+
+*Example:* A *client* created *Terse data* with the shortened URL, `myblog`. The *Terse data* has the original URL of
+`http://example.com/blogs/my/1`. The link `https://terseurl.com/myblog` is shared with other *users*. When a *user*
+visits `https://terseurl.com/myblog`, their web browser will redirect them to `http://example.com/blogs/my/1`.
+
+#### Multiple redirection types
+
+Currently, the project supports the following redirection types:
+
+* HTTP 301
+* HTTP 302
+* HTML `<meta>`
+* JavaScript
+
+If there are more redirection types (that are widely accepted by web browsers) suggest them to the developers.
+
+#### Social media link previews
+
+If *Terse data* is configured to perform a redirect via HTML `<meta>` tags or JavaScript, there is the option to add
+social media link previews. This is done by adding HTML `<meta>` tags for [Open Graph](https://ogp.me) and
+[Twitter](https://developer.twitter.com/en/docs/twitter-for-websites/cards/overview/markup).
+
+This can be added manually to *Terse data*. It can also be inherited from the original URL by using an API endpoint, or
+a button on the frontend.
+
+#### *Visits data*
+
+By default, the project will not keep track of *Visits data*. If the project is configured to, it can track visits to
+shortened URLs. All gathered *Visits data* is placed in backend storage and accessible via the web frontend or API.
+
+The types of *Visits data* collected can vary. It can include IP address, HTTP headers, and information gathered form
+JavaScript.
+
+#### Control *Terse data* and *Visits data*
+
+*Terse data* and *Visits data* is accessible through the web interface and API. Data can easily be imported and exported
+in JSON format via the frontend and API endpoints. Data can also be interacted with directly via the frontend or other
+API endpoints.
+
+#### Customizable storage options
+
+Currently, the project natively supports these storage backends:
+
+* memory
+* bbolt (file on disk)
+
+However, the project can support any storage backend that implements its respective storage interface. TODO
+
 ## Configuration
 
 Environment variable table:
@@ -34,7 +96,14 @@ docker-compose up
 
 ## TODO
 
-- [ ] Address TODOs.
+- [ ] Address source code TODOs.
+- [ ] Implement `SHORTID_PARANOID` environment variable.
+- [ ] Make buttons work on `table.html`.
+- [ ] Implement JavaScript tracking.
+- [ ] Implement JavaScript fingerprinting.
+- [ ] Create HTML navigation.
+- [ ] Customizable visit data tracking.
+- [ ] Visit data middleware for data purging or whatever before it goes to backend storage.
 - [ ] SummaryStore not used when VisitsStore is `nil`?
 - [ ] Outgoing validation of spec with model methods?
 - [ ] Deleting in SummaryStore.
@@ -43,7 +112,7 @@ docker-compose up
 - [ ] Write a utility that will export `.bbolt` to JSON.
 - [ ] Implement `SHORTID_PARANOID`.
 - [ ] Allow for shortened URLs of the form `{owner}/{shortened}` in `/api/write/{operation}` endpoint.
-    - [ ] Only allow for random shortened URLs in top level.
+  - [ ] Only allow for random shortened URLs in top level.
 - [ ] Implement fingerprinting with fingerprintjs, but remove HTML canvas extraction. Embed minified in single HTML
   template.
 - [ ] Implement Redis storage backend?
@@ -51,18 +120,4 @@ docker-compose up
 - [ ] Reimplement Mongo storage.
 - [ ] Write tests.
 - [ ] Write a good README.md.
-- [ ] Move frontend to another repo.
 - [ ] Implement JWT + JWKS authentication?
-- [x] Add a button on form page that will get OG and Twitter meta for a page and populate the form.
-- [x] Visit counts in TerseStore.
-- [x] Social media link preview `inherit` mode that gets the Original URL and uses the meta tags for that.
-- [x] Implement social media link previews.
-- [x] Implement `/api/import` endpoints.
-- [x] Flag strategy.
-- [x] Implement bbolt storage backend.
-- [x] Configure storage backends via config files?
-- [x] Change user created warnings to info.
-- [x] Take away auth.
-- [x] Move things to `/api`.
-- [x] Add an `/upsert` endpoint.
-- [x] Add an `/randomUltraSafe` endpoint.
