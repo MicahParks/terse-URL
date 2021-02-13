@@ -108,7 +108,6 @@ func init() {
               "type": "object",
               "properties": {
                 "delete": {
-                  "description": "Indicate if Terse and or Visits data should be deleted.",
                   "$ref": "#/definitions/Delete"
                 },
                 "shortenedURLs": {
@@ -821,7 +820,6 @@ func init() {
               "type": "object",
               "properties": {
                 "delete": {
-                  "description": "Indicate if Terse and or Visits data should be deleted.",
                   "$ref": "#/definitions/Delete"
                 },
                 "shortenedURLs": {

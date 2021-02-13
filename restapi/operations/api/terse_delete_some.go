@@ -68,7 +68,7 @@ func (o *TerseDeleteSome) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 // swagger:model TerseDeleteSomeBody
 type TerseDeleteSomeBody struct {
 
-	// Indicate if Terse and or Visits data should be deleted.
+	// delete
 	Delete *models.Delete `json:"delete,omitempty"`
 
 	// shortened u r ls

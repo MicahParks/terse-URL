@@ -79,7 +79,6 @@ paths:
             type: "object"
             properties:
               delete:
-                description: "Indicate if Terse and or Visits data should be deleted."
                 $ref: "#/definitions/Delete"
               shortenedURLs:
                 type: "array"
