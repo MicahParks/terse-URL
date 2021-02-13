@@ -14,7 +14,7 @@ Currently under development.
 
 ## Features
 
-#### Redirection with shortened URLs
+### Redirection with shortened URLs
 
 Create web browser redirections to original URLs through shortened URLs. Shortened URLs are unique URL safe strings. A
 *client* may provide one, or the server can generate one.
@@ -23,7 +23,7 @@ Create web browser redirections to original URLs through shortened URLs. Shorten
 `http://example.com/blogs/my/1`. The link `https://terseurl.com/myblog` is shared with other *users*. When a *user*
 visits `https://terseurl.com/myblog`, their web browser will redirect them to `http://example.com/blogs/my/1`.
 
-#### Multiple redirection types
+### Multiple redirection types
 
 Currently, the project supports the following redirection types:
 
