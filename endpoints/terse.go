@@ -31,7 +31,7 @@ func HandleTerse(logger *zap.SugaredLogger, terseStore storage.TerseStore) api.T
 		if err != nil {
 
 			// Log at the appropriate level. Assign the response code and message.
-			var code int64
+			var code int
 			var message string
 			if errors.Is(err, storage.ErrShortenedNotFound) {
 				code = 400
@@ -51,10 +51,10 @@ func HandleTerse(logger *zap.SugaredLogger, terseStore storage.TerseStore) api.T
 
 			// Report the error to the client.
 			resp := &api.TerseTerseDefault{Payload: &models.Error{
-				Code:    code,
+				Code:    int64(code),
 				Message: message,
 			}}
-			resp.SetStatusCode(int(code))
+			resp.SetStatusCode(code)
 			return resp
 		}
 

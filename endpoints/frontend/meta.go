@@ -36,11 +36,13 @@ func HandleMeta(logger *zap.SugaredLogger) api.FrontendMetaHandlerFunc {
 			)
 
 			// Report the error to the client.
-			code := int64(500)
-			return &api.FrontendMetaDefault{Payload: &models.Error{
-				Code:    code,
+			code := 500
+			resp := &api.FrontendMetaDefault{Payload: &models.Error{
+				Code:    int64(code),
 				Message: message,
 			}}
+			resp.SetStatusCode(code)
+			return resp
 		}
 
 		return &api.FrontendMetaOK{

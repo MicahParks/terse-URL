@@ -33,7 +33,7 @@ func HandleVisits(logger *zap.SugaredLogger, visitsStore storage.VisitsStore) ap
 			if visits, err = visitsStore.ExportSome(ctx, []string{params.Shortened}); err != nil {
 
 				// Log at the appropriate level. Assign the response code and message.
-				var code int64
+				var code int
 				var message string
 				if errors.Is(err, storage.ErrShortenedNotFound) {
 					code = 400
@@ -53,10 +53,10 @@ func HandleVisits(logger *zap.SugaredLogger, visitsStore storage.VisitsStore) ap
 
 				// Report the error to the client.
 				resp := &api.TerseVisitsDefault{Payload: &models.Error{
-					Code:    code,
+					Code:    int64(code),
 					Message: message,
 				}}
-				resp.SetStatusCode(int(code))
+				resp.SetStatusCode(code)
 				return resp
 			}
 		}

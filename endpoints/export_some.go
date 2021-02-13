@@ -32,7 +32,7 @@ func HandleExportSome(logger *zap.SugaredLogger, terseStore storage.TerseStore) 
 		if err != nil {
 
 			// Log at the appropriate level. Assign the response code and message.
-			var code int64
+			var code int
 			var message string
 			if errors.Is(err, storage.ErrShortenedNotFound) {
 				code = 400
@@ -52,10 +52,10 @@ func HandleExportSome(logger *zap.SugaredLogger, terseStore storage.TerseStore) 
 
 			// Report the error to the client.
 			resp := &api.TerseExportSomeDefault{Payload: &models.Error{
-				Code:    code,
+				Code:    int64(code),
 				Message: message,
 			}}
-			resp.SetStatusCode(int(code))
+			resp.SetStatusCode(code)
 			return resp
 		}
 
