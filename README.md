@@ -34,7 +34,7 @@ Currently, the project supports the following redirection types:
 
 If there are more redirection types (that are widely accepted by web browsers) suggest them to the developers.
 
-#### Social media link previews
+### Social media link previews
 
 If *Terse data* is configured to perform a redirect via HTML `<meta>` tags or JavaScript, there is the option to add
 social media link previews. This is done by adding HTML `<meta>` tags for [Open Graph](https://ogp.me) and
@@ -43,7 +43,7 @@ social media link previews. This is done by adding HTML `<meta>` tags for [Open 
 This can be added manually to *Terse data*. It can also be inherited from the original URL by using an API endpoint, or
 a button on the frontend.
 
-#### *Visits data*
+### *Visits data*
 
 By default, the project will not keep track of *Visits data*. If the project is configured to, it can track visits to
 shortened URLs. All gathered *Visits data* is placed in backend storage and accessible via the web frontend or API.
@@ -51,13 +51,13 @@ shortened URLs. All gathered *Visits data* is placed in backend storage and acce
 The types of *Visits data* collected can vary. It can include IP address, HTTP headers, and information gathered form
 JavaScript.
 
-#### Control *Terse data* and *Visits data*
+### Control *Terse data* and *Visits data*
 
 *Terse data* and *Visits data* is accessible through the web interface and API. Data can easily be imported and exported
 in JSON format via the frontend and API endpoints. Data can also be interacted with directly via the frontend or other
 API endpoints.
 
-#### Customizable storage options
+### Customizable storage options
 
 Currently, the project natively supports these storage backends:
 
