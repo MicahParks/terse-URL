@@ -1,7 +1,10 @@
-function DeleteInit() {
+function DeleteInit(shortenedURLs) {
     this.body = JSON.stringify({
-        terse: true, // TODO Configurable?
-        visits: true
+        "delete": {
+            terse: true, // TODO Configurable?
+            visits: true
+        },
+        "shortenedURLs": shortenedURLs
     });
     this.headers = {
         "Content-Type": "application/json"
@@ -16,9 +19,6 @@ async function deleteAll() {
         });
 }
 
-async function deleteOne(shortened) {
-    return fetch(`/api/delete/${shortened}`, new DeleteInit())
-        .then(function (response) {
-            return response.json();
-        });
+async function deleteSome(shortenedURLs) {
+    return fetch(`/api/delete/some`, new DeleteInit(shortenedURLs));
 }

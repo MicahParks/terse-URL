@@ -38,7 +38,8 @@
                     data-bs-shortened="">
                 <i class="fas fa-download"></i>
             </button> <!--TODO Make this a modal where they can choose what kind of data to export?-->
-            <button type="button" class="btn btn-danger">
+            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal"
+                    data-bs-shortened="">
                 <i class="fas fa-trash"></i>
             </button>
         </td>
@@ -54,14 +55,37 @@
             </div>
             <div class="modal-body">
                 <div class="d-flex justify-content-between">
-                    <button type="button" class="btn-lg btn-primary"
+                    <button type="button" class="btn-lg btn-outline-primary"
                             onclick="downloadExport('terse', $(this).attr('data-bs-shortened'))">Terse
                     </button>
-                    <button type="button" class="btn-lg btn-primary"
+                    <button type="button" class="btn-lg btn-outline-primary"
                             onclick="downloadExport('visits', $(this).attr('data-bs-shortened'))">Visits
                     </button>
                     <button type="button" class="btn-lg btn-primary"
-                            onclick="downloadExport('all', $(this).attr('data-bs-shortened'))">All
+                            onclick="downloadExport('both', $(this).attr('data-bs-shortened'))">Both
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="d-flex justify-content-between">
+                    <button type="button" class="btn-lg btn-outline-danger"
+                            onclick="deleteShortened('terse', $(this).attr('data-bs-shortened'))">Terse
+                    </button>
+                    <button type="button" class="btn-lg btn-outline-danger"
+                            onclick="deleteShortened('visits', $(this).attr('data-bs-shortened'))">Visits
+                    </button>
+                    <button type="button" class="btn-lg btn-danger"
+                            onclick="deleteShortened('both', $(this).attr('data-bs-shortened'))">Both
                     </button>
                 </div>
             </div>
@@ -112,8 +136,8 @@
     }
 </script>
 <script>
-    let exampleModal = document.getElementById('downloadModal')
-    exampleModal.addEventListener('show.bs.modal', function (event) {
+    let downloadModal = document.getElementById('downloadModal')
+    downloadModal.addEventListener('show.bs.modal', function (event) {
         // Button that triggered the modal
         let button = event.relatedTarget;
         // Extract info from data-bs-* attributes
@@ -122,11 +146,10 @@
         // and then do the updating in a callback.
         //
         // Update the modal's content.
-        let modalTitle = exampleModal.querySelector('.modal-title');
+        let modalTitle = downloadModal.querySelector('.modal-title');
 
         modalTitle.textContent = 'Export ' + currentShortened;
-    })
-
+    });
 </script>
 <script>
 
@@ -135,9 +158,38 @@
     function downloadExport(type) {
 
         switch (type) {
-            case "all":
+            case "both":
                 exportSome([currentShortened]).then(function (response) {
                     download(currentShortened + ".json", JSON.stringify(response));
+                });
+        }
+    }
+</script>
+
+<script>
+    let deleteModal = document.getElementById('deleteModal')
+    deleteModal.addEventListener('show.bs.modal', function (event) {
+        // Button that triggered the modal
+        let button = event.relatedTarget;
+        // Extract info from data-bs-* attributes
+        currentShortened = button.getAttribute('data-bs-shortened');
+        // If necessary, you could initiate an AJAX request here
+        // and then do the updating in a callback.
+        //
+        // Update the modal's content.
+        let modalTitle = deleteModal.querySelector('.modal-title');
+
+        modalTitle.textContent = 'Delete ' + currentShortened;
+    });
+</script>
+<script>
+
+    function deleteShortened(type) {
+
+        switch (type) {
+            case "both":
+                deleteSome([currentShortened]).then(function () {
+                    // TODO Delete from table.
                 });
         }
     }
