@@ -31,21 +31,44 @@
         <td></td>
         <td></td>
         <td>
-            <button type="button" class="btn btn-primary" onclick="">
+            <button type="button" class="btn btn-primary">
                 <i class="far fa-edit"></i>
             </button>
-            <button type="button" class="btn btn-secondary" onclick="">
+            <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#downloadModal"
+                    data-bs-shortened="">
                 <i class="fas fa-download"></i>
             </button> <!--TODO Make this a modal where they can choose what kind of data to export?-->
-            <button type="button" class="btn btn-danger" onclick="">
+            <button type="button" class="btn btn-danger">
                 <i class="fas fa-trash"></i>
             </button>
         </td>
     </tr>
     </tbody>
 </table>
+<div class="modal fade" id="downloadModal" tabindex="-1" aria-labelledby="downloadModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="downloadModalLabel"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <button type="button" class="btn-lg btn-primary"
+                        onclick="downloadExport('terse', $(this).attr('data-bs-shortened'))">Terse
+                </button>
+                <button type="button" class="btn-lg btn-primary"
+                        onclick="downloadExport('visits', $(this).attr('data-bs-shortened'))">Visits
+                </button>
+                <button type="button" class="btn-lg btn-primary"
+                        onclick="downloadExport('all', $(this).attr('data-bs-shortened'))">All
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 <script src="data.js"></script>
 <script src="delete.js"></script>
+<script src="browserDownload.js"></script>
 <script src="export.js"></script>
 <script src="form.js"></script>
 <script src="prefix.js"></script>
@@ -78,8 +101,43 @@
                 row.cells[3].innerHTML = summary.visitCount;
 
                 table.appendChild(row);
+
+                for (let button of $('#' + row.id + ' :button')) {
+                    button.setAttribute('data-bs-shortened', summary.shortenedURL);
+                }
             }
         });
+    }
+</script>
+<script>
+    let exampleModal = document.getElementById('downloadModal')
+    exampleModal.addEventListener('show.bs.modal', function (event) {
+        // Button that triggered the modal
+        let button = event.relatedTarget;
+        // Extract info from data-bs-* attributes
+        currentShortened = button.getAttribute('data-bs-shortened');
+        // If necessary, you could initiate an AJAX request here
+        // and then do the updating in a callback.
+        //
+        // Update the modal's content.
+        let modalTitle = exampleModal.querySelector('.modal-title');
+
+        modalTitle.textContent = 'Export ' + currentShortened;
+    })
+
+</script>
+<script>
+
+    let currentShortened = "";
+
+    function downloadExport(type) {
+
+        switch (type) {
+            case "all":
+                exportSome([currentShortened]).then(function (response) {
+                    download(currentShortened + ".json", JSON.stringify(response));
+                });
+        }
     }
 </script>
 </body>
