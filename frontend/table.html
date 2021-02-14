@@ -53,15 +53,17 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <button type="button" class="btn-lg btn-primary"
-                        onclick="downloadExport('terse', $(this).attr('data-bs-shortened'))">Terse
-                </button>
-                <button type="button" class="btn-lg btn-primary"
-                        onclick="downloadExport('visits', $(this).attr('data-bs-shortened'))">Visits
-                </button>
-                <button type="button" class="btn-lg btn-primary"
-                        onclick="downloadExport('all', $(this).attr('data-bs-shortened'))">All
-                </button>
+                <div class="d-flex justify-content-between">
+                    <button type="button" class="btn-lg btn-primary"
+                            onclick="downloadExport('terse', $(this).attr('data-bs-shortened'))">Terse
+                    </button>
+                    <button type="button" class="btn-lg btn-primary"
+                            onclick="downloadExport('visits', $(this).attr('data-bs-shortened'))">Visits
+                    </button>
+                    <button type="button" class="btn-lg btn-primary"
+                            onclick="downloadExport('all', $(this).attr('data-bs-shortened'))">All
+                    </button>
+                </div>
             </div>
         </div>
     </div>
