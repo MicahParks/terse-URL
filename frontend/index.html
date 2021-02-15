@@ -8,247 +8,328 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css"
           integrity="sha512-HK5fgLBL+xu6dm/Ii3z4xhlSUyZgTT9tuc/hSrtw6uzJOvgRr2a9jyxxT1ely+B+xFAmJKVSTbpM/CuL7qxO8w=="
           crossorigin="anonymous"/>
+    <link href="sidebar.css" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"
             integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW"
             crossorigin="anonymous"></script>
 </head>
 <body>
-<table class="table table-striped" id="terseTable">
-    <thead>
-    <tr>
-        <th scope="col">
-            <input class="form-check-input" id="checkAll" onchange="checkAll();" type="checkbox" value="">
-            <label class="form-check-label" for="checkAll"></label>
-        </th>
-        <th scope="col">Shortened URL</th>
-        <th scope="col">Original URL</th>
-        <th scope="col">Redirect Type</th>
-        <th scope="col">Visit Count</th>
-        <th scope="col">Actions</th>
-    </tr>
-    </thead>
-    <tbody id="terseTableBody">
-    <tr id="templateTerseRow">
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td>
-            <button class="btn btn-primary" data-bs-shortened="" data-bs-target="#formModal" data-bs-toggle="modal"
-                    type="button">
-                <i class="far fa-edit"></i>
-            </button>
-            <button class="btn btn-secondary" data-bs-shortened="" data-bs-target="#downloadModal"
-                    data-bs-toggle="modal"
-                    type="button">
-                <i class="fas fa-download"></i>
-            </button> <!--TODO Make this a modal where they can choose what kind of data to export?-->
-            <button class="btn btn-danger" data-bs-shortened="" data-bs-target="#deleteModal" data-bs-toggle="modal"
-                    type="button">
-                <i class="fas fa-trash"></i>
-            </button>
-        </td>
-    </tr>
-    </tbody>
-</table>
-<div aria-hidden="true" aria-labelledby="downloadModalLabel" class="modal fade" id="downloadModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="downloadModalLabel"></h5>
-                <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"></button>
-            </div>
-            <div class="modal-body">
-                <div class="d-flex justify-content-between">
-                    <button class="btn-lg btn-outline-primary"
-                            onclick="downloadExport('terse', $(this).attr('data-bs-shortened'))"
-                            type="button">Terse
-                    </button>
-                    <button class="btn-lg btn-outline-primary"
-                            onclick="downloadExport('visits', $(this).attr('data-bs-shortened'))"
-                            type="button">Visits
-                    </button>
-                    <button class="btn-lg btn-primary"
-                            onclick="downloadExport('both', $(this).attr('data-bs-shortened'));"
-                            type="button">Both
-                    </button>
-                </div>
-            </div>
+
+<div class="d-flex" id="wrapper">
+
+    <!-- Sidebar -->
+    <div class="bg-light border-right" id="sidebar-wrapper">
+        <div class="sidebar-heading">Start Bootstrap</div>
+        <div class="list-group list-group-flush">
+            <a class="list-group-item list-group-item-action bg-light" href="#">Dashboard</a>
+            <a class="list-group-item list-group-item-action bg-light" href="#">Shortcuts</a>
+            <a class="list-group-item list-group-item-action bg-light" href="#">Overview</a>
+            <a class="list-group-item list-group-item-action bg-light" href="#">Events</a>
+            <a class="list-group-item list-group-item-action bg-light" href="#">Profile</a>
+            <a class="list-group-item list-group-item-action bg-light" href="#">Status</a>
         </div>
     </div>
-</div>
-<div aria-hidden="true" aria-labelledby="deleteModalLabel" class="modal fade" id="deleteModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="deleteModalLabel"></h5>
-                <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"></button>
+    <div id="page-content-wrapper">
+
+        <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+            <button class="btn btn-primary" id="menu-toggle">Toggle Menu</button>
+
+            <button aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"
+                    class="navbar-toggler" data-target="#navbarSupportedContent" data-toggle="collapse" type="button">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Link</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a aria-expanded="false" aria-haspopup="true" class="nav-link dropdown-toggle"
+                           data-toggle="dropdown" href="#" id="navbarDropdown" role="button">
+                            Dropdown
+                        </a>
+                        <div aria-labelledby="navbarDropdown" class="dropdown-menu dropdown-menu-right">
+                            <a class="dropdown-item" href="#">Action</a>
+                            <a class="dropdown-item" href="#">Another action</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="#">Something else here</a>
+                        </div>
+                    </li>
+                </ul>
             </div>
-            <div class="modal-body">
-                <div class="d-flex justify-content-between">
-                    <button class="btn-lg btn-outline-danger"
-                            onclick="deleteShortened('terse', $(this).attr('data-bs-shortened'))"
-                            type="button">Terse
-                    </button>
-                    <button class="btn-lg btn-outline-danger"
-                            onclick="deleteShortened('visits', $(this).attr('data-bs-shortened'))"
-                            type="button">Visits
-                    </button>
-                    <button class="btn-lg btn-danger"
-                            onclick="deleteShortened('both', $(this).attr('data-bs-shortened'));"
-                            type="button">Both
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<div aria-hidden="true" aria-labelledby="formModalLabel" class="modal fade" id="formModal" tabindex="-1">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="formModalLabel">Write Terse Data</h5>
-                <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"></button>
-            </div>
-            <div class="modal-body">
-                <div class="mx-auto p-3 rounded-3" style="background-color: #eee;">
-                    <form id="formElem"> <!--TODO Form validation https://getbootstrap.com/docs/5.0/forms/validation/-->
-                        <div class="mb-3">
-                            <div class="mb-3">
-                                <label class="form-label" for="originalURL">Original URL</label>
-                                <input aria-describedby="originalHelp" class="form-control" id="originalURL" required
-                                       type="url">
-                                <div class="form-text" id="originalHelp">
-                                    The full path to the original URL the shortened URL will redirect to.
-                                </div>
-                            </div>
-                            <label for="shortenedURL">Shortened URL</label>
-                            <div class="input-group mb-3">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text" id="httpPrefix">MISSING</span>
-                                </div>
-                                <input aria-describedby="httpPrefix" class="form-control" id="shortenedURL" type="text">
-                            </div>
-                            <div class="mb-3">
-                                <select aria-label="Default select example" class="form-select" id="writeOperation">
-                                    <option selected value="insert">Insert</option>
-                                    <option value="update">Update</option>
-                                    <option value="upsert">Upsert</option>
-                                </select>
-                            </div>
-                            <div class="collapse mb-3" id="advanced">
-                                <hr/>
-                                <label for="redirectType">Redirect Type</label>
-                                <div class="mb-3 row justify-content-center">
-                                    <div aria-label="Basic radio toggle button group" class="btn-group"
-                                         id="redirectType" role="group">
+        </nav>
 
-                                        <input autocomplete="off" class="btn-check" id="301Redirect"
-                                               name="redirectType" onclick="hideShowHTMLForm()" type="radio"
-                                               value="301">
-                                        <label class="btn btn-outline-primary" for="301Redirect">HTTP 301</label>
-
-                                        <input autocomplete="off" checked class="btn-check"
-                                               id="302Redirect"
-                                               name="redirectType" onclick="hideShowHTMLForm()" type="radio"
-                                               value="302">
-                                        <label class="btn btn-outline-primary" for="302Redirect">HTTP 302</label>
-
-                                        <input autocomplete="off" class="btn-check" id="metaRedirect"
-                                               name="redirectType"
-                                               onclick="hideShowHTMLForm()" type="radio" value="meta">
-                                        <label class="btn btn-outline-primary" for="metaRedirect">HTML
-                                            &lt;meta&gt;</label>
-
-                                        <input autocomplete="off" class="btn-check" id="jsRedirect"
-                                               name="redirectType"
-                                               onclick="hideShowHTMLForm()" type="radio" value="js">
-                                        <label class="btn btn-outline-primary" for="jsRedirect">JavaScript</label>
-                                    </div>
-                                </div>
-                                <div class="collapse mb-3" id="htmlForm">
-                                    <div class="input-group mb-3">
-                                        <span class="input-group-text" id="basic-addon1">HTML Title</span>
-                                        <input aria-describedby="basic-addon1" aria-label="Username"
-                                               class="form-control" id="htmlTitle"
-                                               type="text">
-                                    </div>
-                                    <div class="form-check form-switch mb-3">
-                                        <input class="form-check-input" id="jsTracking" type="checkbox">
-                                        <label class="form-check-label" for="jsTracking">JavaScript Tracking</label>
-                                    </div>
-                                    <div class="mb-1"> <!--TODO Make this button look better.-->
-                                        <button class="btn btn-primary" onclick="inheritPreview()" type="button">Inherit
-                                        </button>
-                                    </div>
-                                    <div class="row justify-content-between align-items-end mb-1">
-                                        <div class="col-md-auto">
-                                            <label for="ogMeta">Open Graph &lt;meta&gt;</label>
-                                        </div>
-                                        <div class="col-md-auto">
-                                            <button class="btn btn-primary" onclick="addOGInput();" type="button">
-                                                <i class="fas fa-plus"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div class="row mb-3" id="ogMeta">
-                                        <div class="input-group mb-1" id="ogInput">
-                                            <input aria-label="property" class="form-control" placeholder="property"
-                                                   type="text">
-                                            <input aria-label="content" class="form-control" placeholder="content"
-                                                   type="text">
-                                            <button class="btn btn-danger" onclick="this.parentNode.remove();"
-                                                    type="button">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div class="row justify-content-between align-items-end mb-1">
-                                        <div class="col-md-auto">
-                                            <label for="ogMeta">Twitter &lt;meta&gt;</label>
-                                        </div>
-                                        <div class="col-md-auto">
-                                            <button class="btn btn-primary" onclick="addTwitterInput();" type="button">
-                                                <i class="fas fa-plus"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <!--TODO Add OG and Twitter meta tags docs links.-->
-                                    <div class="row mb-3" id="twitterMeta">
-                                        <div class="input-group mb-1" id="twitterInput">
-                                            <input aria-label="name" class="form-control" placeholder="name"
-                                                   type="text">
-                                            <input aria-label="content" class="form-control" placeholder="content"
-                                                   type="text">
-                                            <button class="btn btn-danger" onclick="this.parentNode.remove();"
-                                                    type="button">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
+        <div class="container-fluid">
+            <table class="table table-striped" id="terseTable">
+                <thead>
+                <tr>
+                    <th scope="col">
+                        <input class="form-check-input" id="checkAll" onchange="checkAll();" type="checkbox" value="">
+                        <label class="form-check-label" for="checkAll"></label>
+                    </th>
+                    <th scope="col">Shortened URL</th>
+                    <th scope="col">Original URL</th>
+                    <th scope="col">Redirect Type</th>
+                    <th scope="col">Visit Count</th>
+                    <th scope="col">Actions</th>
+                </tr>
+                </thead>
+                <tbody id="terseTableBody">
+                <tr id="templateTerseRow">
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>
+                        <button class="btn btn-primary" data-bs-shortened="" data-bs-target="#formModal"
+                                data-bs-toggle="modal"
+                                type="button">
+                            <i class="far fa-edit"></i>
+                        </button>
+                        <button class="btn btn-secondary" data-bs-shortened="" data-bs-target="#downloadModal"
+                                data-bs-toggle="modal"
+                                type="button">
+                            <i class="fas fa-download"></i>
+                        </button> <!--TODO Make this a modal where they can choose what kind of data to export?-->
+                        <button class="btn btn-danger" data-bs-shortened="" data-bs-target="#deleteModal"
+                                data-bs-toggle="modal"
+                                type="button">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <div aria-hidden="true" aria-labelledby="downloadModalLabel" class="modal fade" id="downloadModal"
+                 tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="downloadModalLabel"></h5>
+                            <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="d-flex justify-content-between">
+                                <button class="btn-lg btn-outline-primary"
+                                        onclick="downloadExport('terse', $(this).attr('data-bs-shortened'))"
+                                        type="button">Terse
+                                </button>
+                                <button class="btn-lg btn-outline-primary"
+                                        onclick="downloadExport('visits', $(this).attr('data-bs-shortened'))"
+                                        type="button">Visits
+                                </button>
+                                <button class="btn-lg btn-primary"
+                                        onclick="downloadExport('both', $(this).attr('data-bs-shortened'));"
+                                        type="button">Both
+                                </button>
                             </div>
                         </div>
-                        <div class="row mb-3 justify-content-between">
-                            <div class="col-md-auto">
-                                <input aria-expanded="false" autocomplete="off" class="btn-check"
-                                       data-bs-toggle="collapse"
-                                       id="advancedToggle" onclick="$('#advanced').collapse('toggle');"
-                                       type="checkbox">
-                                <label class="btn btn-secondary" for="advancedToggle">Advanced</label>
-                            </div>
-                            <div class="col-md-auto">
-                                <button class="btn btn-primary" id="submitButton" type="submit">Shorten</button>
+                    </div>
+                </div>
+            </div>
+            <div aria-hidden="true" aria-labelledby="deleteModalLabel" class="modal fade" id="deleteModal"
+                 tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="deleteModalLabel"></h5>
+                            <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="d-flex justify-content-between">
+                                <button class="btn-lg btn-outline-danger"
+                                        onclick="deleteShortened('terse', $(this).attr('data-bs-shortened'))"
+                                        type="button">Terse
+                                </button>
+                                <button class="btn-lg btn-outline-danger"
+                                        onclick="deleteShortened('visits', $(this).attr('data-bs-shortened'))"
+                                        type="button">Visits
+                                </button>
+                                <button class="btn-lg btn-danger"
+                                        onclick="deleteShortened('both', $(this).attr('data-bs-shortened'));"
+                                        type="button">Both
+                                </button>
                             </div>
                         </div>
-                    </form>
+                    </div>
+                </div>
+            </div>
+            <div aria-hidden="true" aria-labelledby="formModalLabel" class="modal fade" id="formModal" tabindex="-1">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="formModalLabel">Write Terse Data</h5>
+                            <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="mx-auto p-3 rounded-3" style="background-color: #eee;">
+                                <form id="formElem">
+                                    <!--TODO Form validation https://getbootstrap.com/docs/5.0/forms/validation/-->
+                                    <div class="mb-3">
+                                        <div class="mb-3">
+                                            <label class="form-label" for="originalURL">Original URL</label>
+                                            <input aria-describedby="originalHelp" class="form-control" id="originalURL"
+                                                   required
+                                                   type="url">
+                                            <div class="form-text" id="originalHelp">
+                                                The full path to the original URL the shortened URL will redirect to.
+                                            </div>
+                                        </div>
+                                        <label for="shortenedURL">Shortened URL</label>
+                                        <div class="input-group mb-3">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text" id="httpPrefix">MISSING</span>
+                                            </div>
+                                            <input aria-describedby="httpPrefix" class="form-control" id="shortenedURL"
+                                                   type="text">
+                                        </div>
+                                        <div class="mb-3">
+                                            <select aria-label="Default select example" class="form-select"
+                                                    id="writeOperation">
+                                                <option selected value="insert">Insert</option>
+                                                <option value="update">Update</option>
+                                                <option value="upsert">Upsert</option>
+                                            </select>
+                                        </div>
+                                        <div class="collapse mb-3" id="advanced">
+                                            <hr/>
+                                            <label for="redirectType">Redirect Type</label>
+                                            <div class="mb-3 row justify-content-center">
+                                                <div aria-label="Basic radio toggle button group" class="btn-group"
+                                                     id="redirectType" role="group">
+
+                                                    <input autocomplete="off" class="btn-check" id="301Redirect"
+                                                           name="redirectType" onclick="hideShowHTMLForm()" type="radio"
+                                                           value="301">
+                                                    <label class="btn btn-outline-primary" for="301Redirect">HTTP
+                                                        301</label>
+
+                                                    <input autocomplete="off" checked class="btn-check"
+                                                           id="302Redirect"
+                                                           name="redirectType" onclick="hideShowHTMLForm()" type="radio"
+                                                           value="302">
+                                                    <label class="btn btn-outline-primary" for="302Redirect">HTTP
+                                                        302</label>
+
+                                                    <input autocomplete="off" class="btn-check" id="metaRedirect"
+                                                           name="redirectType"
+                                                           onclick="hideShowHTMLForm()" type="radio" value="meta">
+                                                    <label class="btn btn-outline-primary" for="metaRedirect">HTML
+                                                        &lt;meta&gt;</label>
+
+                                                    <input autocomplete="off" class="btn-check" id="jsRedirect"
+                                                           name="redirectType"
+                                                           onclick="hideShowHTMLForm()" type="radio" value="js">
+                                                    <label class="btn btn-outline-primary"
+                                                           for="jsRedirect">JavaScript</label>
+                                                </div>
+                                            </div>
+                                            <div class="collapse mb-3" id="htmlForm">
+                                                <div class="input-group mb-3">
+                                                    <span class="input-group-text" id="basic-addon1">HTML Title</span>
+                                                    <input aria-describedby="basic-addon1" aria-label="Username"
+                                                           class="form-control" id="htmlTitle"
+                                                           type="text">
+                                                </div>
+                                                <div class="form-check form-switch mb-3">
+                                                    <input class="form-check-input" id="jsTracking" type="checkbox">
+                                                    <label class="form-check-label" for="jsTracking">JavaScript
+                                                        Tracking</label>
+                                                </div>
+                                                <div class="mb-1"> <!--TODO Make this button look better.-->
+                                                    <button class="btn btn-primary" onclick="inheritPreview()"
+                                                            type="button">Inherit
+                                                    </button>
+                                                </div>
+                                                <div class="row justify-content-between align-items-end mb-1">
+                                                    <div class="col-md-auto">
+                                                        <label for="ogMeta">Open Graph &lt;meta&gt;</label>
+                                                    </div>
+                                                    <div class="col-md-auto">
+                                                        <button class="btn btn-primary" onclick="addOGInput();"
+                                                                type="button">
+                                                            <i class="fas fa-plus"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                <div class="row mb-3" id="ogMeta">
+                                                    <div class="input-group mb-1" id="ogInput">
+                                                        <input aria-label="property" class="form-control"
+                                                               placeholder="property"
+                                                               type="text">
+                                                        <input aria-label="content" class="form-control"
+                                                               placeholder="content"
+                                                               type="text">
+                                                        <button class="btn btn-danger"
+                                                                onclick="this.parentNode.remove();"
+                                                                type="button">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                <div class="row justify-content-between align-items-end mb-1">
+                                                    <div class="col-md-auto">
+                                                        <label for="ogMeta">Twitter &lt;meta&gt;</label>
+                                                    </div>
+                                                    <div class="col-md-auto">
+                                                        <button class="btn btn-primary" onclick="addTwitterInput();"
+                                                                type="button">
+                                                            <i class="fas fa-plus"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                <!--TODO Add OG and Twitter meta tags docs links.-->
+                                                <div class="row mb-3" id="twitterMeta">
+                                                    <div class="input-group mb-1" id="twitterInput">
+                                                        <input aria-label="name" class="form-control" placeholder="name"
+                                                               type="text">
+                                                        <input aria-label="content" class="form-control"
+                                                               placeholder="content"
+                                                               type="text">
+                                                        <button class="btn btn-danger"
+                                                                onclick="this.parentNode.remove();"
+                                                                type="button">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-3 justify-content-between">
+                                        <div class="col-md-auto">
+                                            <input aria-expanded="false" autocomplete="off" class="btn-check"
+                                                   data-bs-toggle="collapse"
+                                                   id="advancedToggle" onclick="$('#advanced').collapse('toggle');"
+                                                   type="checkbox">
+                                            <label class="btn btn-secondary" for="advancedToggle">Advanced</label>
+                                        </div>
+                                        <div class="col-md-auto">
+                                            <button class="btn btn-primary" id="submitButton" type="submit">Shorten
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+<script>
+    $("#menu-toggle").click(function (e) {
+        e.preventDefault();
+        $("#wrapper").toggleClass("toggled");
+    });
+</script>
 <script src="data.js"></script>
 <script src="delete.js"></script>
 <script src="browserDownload.js"></script>
