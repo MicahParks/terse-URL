@@ -21,6 +21,29 @@ func NewMemSummary() (summaryStore SummaryStore) {
 	}
 }
 
+// Delete deletes the summary information for the given shortened URLs.
+func (m *MemSummary) Delete(_ context.Context, shortenedURLs []string) (err error) {
+
+	// Lock the Terse summary data for async safe use.
+	m.mux.Lock()
+	defer m.mux.Unlock()
+
+	// Check to see if all Terese summary data should be deleted.
+	if shortenedURLs == nil {
+
+		// Reset the summaries map.
+		m.summaries = make(map[string]models.TerseSummary)
+	} else {
+
+		// Iterate through the given shortened URLs and delete them from the summaries map.
+		for _, shortened := range shortenedURLs {
+			delete(m.summaries, shortened)
+		}
+	}
+
+	return nil
+}
+
 // Import deletes all of the existing Terse summary data and replaces it with the given summaries.
 func (m *MemSummary) Import(_ context.Context, summaries map[string]models.TerseSummary) (err error) {
 

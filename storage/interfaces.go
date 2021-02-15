@@ -10,6 +10,9 @@ import (
 // needing to know how the Terse summary data is stored.
 type SummaryStore interface {
 
+	// Delete deletes the summary information for the given shortened URLs.
+	Delete(ctx context.Context, shortenedURLs []string) (err error)
+
 	// Import deletes all of the existing Terse summary data and replaces it with the given summaries.
 	Import(ctx context.Context, summaries map[string]models.TerseSummary) (err error)
 

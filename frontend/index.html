@@ -325,15 +325,15 @@
     let originalTemplate = document.getElementById("templateTerseRow");
     let template = originalTemplate.cloneNode(true);
     let table = document.getElementById("terseTableBody");
-    index.removeChild(originalTemplate);
+    table.removeChild(originalTemplate);
     template.id = "summaryData";
 
     buildTable();
 
     function buildTable() {
 
-        while (index.firstChild) {
-            index.removeChild(index.firstChild);
+        while (table.firstChild) {
+            table.removeChild(table.firstChild);
         }
 
         let index = 0;
@@ -349,7 +349,7 @@
                 row.cells[2].innerHTML = summary.redirectType;
                 row.cells[3].innerHTML = summary.visitCount;
 
-                index.appendChild(row);
+                table.appendChild(row);
 
                 for (let button of $('#' + row.id + ' :button')) {
                     button.setAttribute('data-bs-shortened', summary.shortenedURL);

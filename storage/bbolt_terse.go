@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 
 	"github.com/MicahParks/ctxerrgroup"
 	"go.etcd.io/bbolt"
@@ -104,6 +105,13 @@ func (b *BboltTerse) Delete(ctx context.Context, del models.Delete) (err error) 
 		}
 	}
 
+	// Delete the Terse summary data.
+	if b.summaryStore != nil {
+		if err = b.summaryStore.Delete(ctx, nil); err != nil {
+			return fmt.Errorf("failed to delete Terse summary data: %w", err)
+		}
+	}
+
 	// Check to make sure if Terse data needs to be deleted.
 	if del.Terse == nil || *del.Terse {
 
@@ -138,6 +146,13 @@ func (b *BboltTerse) DeleteSome(ctx context.Context, del models.Delete, shortene
 	if del.Visits == nil || *del.Visits && b.visitsStore != nil {
 		if err = b.visitsStore.DeleteSome(ctx, del, shortenedURLs); err != nil {
 			return err
+		}
+	}
+
+	// Delete the Terse summary data.
+	if b.summaryStore != nil {
+		if err = b.summaryStore.Delete(ctx, shortenedURLs); err != nil {
+			return fmt.Errorf("failed to delete Terse summary data: %w", err)
 		}
 	}
 

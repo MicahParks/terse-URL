@@ -107,7 +107,6 @@ docker-compose up
 - [ ] Visit data middleware for data purging or whatever before it goes to backend storage.
 - [ ] SummaryStore not used when VisitsStore is `nil`?
 - [ ] Outgoing validation of spec with model methods?
-- [ ] Deleting in SummaryStore.
 - [ ] Make sure the frontend has a way to interact with visits data when the terse data has been deleted.
 - [ ] Make endpoints for reading multiple Terse/Visits.
 - [ ] Change endpoints like `/api/delete` to `/api/delete/all`.

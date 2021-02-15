@@ -19,6 +19,17 @@ func HandleSummary(logger *zap.SugaredLogger, summaryStore storage.SummaryStore)
 			"shortened", params.Shortened,
 		)
 
+		// Only proceed if there is a SummaryStore.
+		if summaryStore == nil {
+
+			// Log at the appropriate level.
+			message := "No SummaryStore configured."
+			logger.Warn(message)
+
+			// Report the error to the client.
+			return ErrorResponse(500, message, &api.TerseSummaryDefault{})
+		}
+
 		// Create a new request context.
 		ctx, cancel := configure.DefaultCtx()
 		defer cancel()

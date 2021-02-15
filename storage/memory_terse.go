@@ -2,6 +2,7 @@ package storage
 
 import (
 	"context"
+	"fmt"
 	"sync"
 
 	"github.com/MicahParks/ctxerrgroup"
@@ -93,6 +94,13 @@ func (m *MemTerse) Delete(ctx context.Context, del models.Delete) (err error) {
 		}
 	}
 
+	// Delete the Terse summary data.
+	if m.summaryStore != nil {
+		if err = m.summaryStore.Delete(ctx, nil); err != nil {
+			return fmt.Errorf("failed to delete Terse summary data: %w", err)
+		}
+	}
+
 	// Confirm the deletion of Terse data.
 	if del.Terse == nil || *del.Terse {
 
@@ -118,6 +126,13 @@ func (m *MemTerse) DeleteSome(ctx context.Context, del models.Delete, shortenedU
 	if del.Visits == nil || *del.Visits && m.visitsStore != nil {
 		if err = m.visitsStore.DeleteSome(ctx, del, shortenedURLs); err != nil {
 			return err
+		}
+	}
+
+	// Delete the Terse summary data.
+	if m.summaryStore != nil {
+		if err = m.summaryStore.Delete(ctx, shortenedURLs); err != nil {
+			return fmt.Errorf("failed to delete Terse summary data: %w", err)
 		}
 	}
 
