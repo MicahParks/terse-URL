@@ -66,7 +66,7 @@
                             type="button">Visits
                     </button>
                     <button class="btn-lg btn-primary"
-                            onclick="downloadExport('both', $(this).attr('data-bs-shortened'))"
+                            onclick="downloadExport('both', $(this).attr('data-bs-shortened'));"
                             type="button">Both
                     </button>
                 </div>
@@ -92,7 +92,7 @@
                             type="button">Visits
                     </button>
                     <button class="btn-lg btn-danger"
-                            onclick="deleteShortened('both', $(this).attr('data-bs-shortened'))"
+                            onclick="deleteShortened('both', $(this).attr('data-bs-shortened'));"
                             type="button">Both
                     </button>
                 </div>
@@ -332,9 +332,7 @@
 
     function buildTable() {
 
-        while (table.firstChild) {
-            table.removeChild(table.firstChild);
-        }
+        removeAllChildNodes(table);
 
         let index = 0;
         summarize(null).then(function (summaries) {
@@ -384,6 +382,7 @@
             case "both":
                 exportSome([currentShortened]).then(function (response) {
                     download(currentShortened + ".json", JSON.stringify(response));
+                    $('#downloadModal').modal('hide');
                 });
         }
     }
@@ -411,7 +410,8 @@
         switch (type) {
             case "both":
                 deleteSome([currentShortened]).then(function () {
-                    // TODO Delete from table.
+                    buildTable();
+                    $('#deleteModal').modal('hide');
                 });
         }
     }
