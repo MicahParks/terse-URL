@@ -245,7 +245,6 @@
 <script src="meta.js"></script>
 <script src="prefix.js"></script>
 <script src="summary.js"></script>
-<script src="table.js"></script>
 <script src="terse.js"></script>
 <script src="write.js"></script>
 <script>
@@ -325,6 +324,10 @@
     buildTable();
 
     function buildTable() {
+
+        while (table.firstChild) {
+            table.removeChild(table.firstChild);
+        }
 
         let index = 0;
         summarize(null).then(function (summaries) {

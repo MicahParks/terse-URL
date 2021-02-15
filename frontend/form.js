@@ -27,6 +27,7 @@ async function submitForm(e) {
 
     await write(operation, terse);
     $("#formModal").modal("hide");
+    buildTable(); // TODO Maybe don't do this every time?
 }
 
 function makeMetaMap(query) {
