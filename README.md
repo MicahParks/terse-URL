@@ -97,6 +97,7 @@ docker-compose up
 ## TODO
 
 - [ ] Address source code TODOs.
+- [ ] Inherit HTML title.
 - [ ] Implement `SHORTID_PARANOID` environment variable.
 - [ ] Make buttons work on `table.html`.
 - [ ] Implement JavaScript tracking.
