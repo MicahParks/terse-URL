@@ -26,6 +26,7 @@ async function submitForm(e) {
     }
 
     await write(operation, terse);
+    $("#formModal").modal("hide");
 }
 
 function makeMetaMap(query) {
