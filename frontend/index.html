@@ -17,6 +17,10 @@
 <table class="table table-striped" id="terseTable">
     <thead>
     <tr>
+        <th scope="col">
+            <input class="form-check-input" id="checkAll" onchange="checkAll();" type="checkbox" value="">
+            <label class="form-check-label" for="checkAll"></label>
+        </th>
         <th scope="col">Shortened URL</th>
         <th scope="col">Original URL</th>
         <th scope="col">Redirect Type</th>
@@ -26,7 +30,8 @@
     </thead>
     <tbody id="terseTableBody">
     <tr id="templateTerseRow">
-        <td title="bob"></td>
+        <td></td>
+        <td></td>
         <td></td>
         <td></td>
         <td></td>
@@ -319,7 +324,6 @@
         }
     }
 </script>
-<!--Non-form stuff-->
 <script>
 
     let originalTemplate = document.getElementById("templateTerseRow");
@@ -339,13 +343,22 @@
             for (const [_, summary] of Object.entries(summaries)) { // TODO Using _ as blank identifier...
 
                 let row = template.cloneNode(true);
-                row.id = template.id + index;
+                row.id = summary.shortenedURL;
                 index++;
 
-                row.cells[0].innerHTML = summary.shortenedURL;
-                row.cells[1].innerHTML = summary.originalURL;
-                row.cells[2].innerHTML = summary.redirectType;
-                row.cells[3].innerHTML = summary.visitCount;
+                let checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.value = summary.shortenedURL;
+                checkbox.id = summary.shortenedURL + 'Checkbox';
+                let label = document.createElement('label');
+                label.htmlFor = checkbox.id;
+
+                row.cells[0].appendChild(checkbox);
+                row.cells[0].appendChild(label);
+                row.cells[1].innerHTML = summary.shortenedURL;
+                row.cells[2].innerHTML = summary.originalURL;
+                row.cells[3].innerHTML = summary.redirectType;
+                row.cells[4].innerHTML = summary.visitCount;
 
                 table.appendChild(row);
 
@@ -354,6 +367,14 @@
                 }
             }
         });
+    }
+</script>
+<script>
+    function checkAll() {
+        let checked = document.getElementById("checkAll").checked;
+        for (let row of $('#terseTableBody > tr')) {
+            $("#" + row.id + ":first :input").prop('checked', checked);
+        }
     }
 </script>
 <script>
