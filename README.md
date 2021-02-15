@@ -108,6 +108,7 @@ docker-compose up
 - [ ] SummaryStore not used when VisitsStore is `nil`?
 - [ ] Outgoing validation of spec with model methods?
 - [ ] Deleting in SummaryStore.
+- [ ] Make sure the frontend has a way to interact with visits data when the terse data has been deleted.
 - [ ] Make endpoints for reading multiple Terse/Visits.
 - [ ] Change endpoints like `/api/delete` to `/api/delete/all`.
 - [ ] Write a utility that will export `.bbolt` to JSON.
