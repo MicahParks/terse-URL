@@ -20,90 +20,90 @@
     <div class="bg-light border-right" id="sidebar-wrapper">
         <div class="sidebar-heading">terseurl</div>
         <div class="list-group list-group-flush">
-            <a class="list-group-item list-group-item-action bg-light" href="#">Dashboard</a>
-            <a class="list-group-item list-group-item-action bg-light" href="#">Shortcuts</a>
-            <a class="list-group-item list-group-item-action bg-light" href="#">Overview</a>
-            <a class="list-group-item list-group-item-action bg-light" href="#">Events</a>
-            <a class="list-group-item list-group-item-action bg-light" href="#">Profile</a>
-            <a class="list-group-item list-group-item-action bg-light" href="#">Status</a>
+            <a class="list-group-item list-group-item-action bg-light" href="#">Shortened URLs</a>
+            <a class="list-group-item list-group-item-action bg-light" href="#">Visits</a> <!--TODO-->
         </div>
     </div>
     <div id="page-content-wrapper">
-
-        <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
-            <button class="btn btn-primary" id="menu-toggle">Toggle Menu</button>
-
-            <button aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"
-                    class="navbar-toggler" data-target="#navbarSupportedContent" data-toggle="collapse" type="button">
+        <nav class="navbar navbar-expand-lg navbar-light ps-3 pe-3 bg-light border-bottom justify-content-between">
+            <button class="btn btn-outline-secondary" id="menu-toggle">
                 <span class="navbar-toggler-icon"></span>
             </button>
-
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
-                    <li class="nav-item active">
-                        <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Link</a>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a aria-expanded="false" aria-haspopup="true" class="nav-link dropdown-toggle"
-                           data-toggle="dropdown" href="#" id="navbarDropdown" role="button">
-                            Dropdown
-                        </a>
-                        <div aria-labelledby="navbarDropdown" class="dropdown-menu dropdown-menu-right">
-                            <a class="dropdown-item" href="#">Action</a>
-                            <a class="dropdown-item" href="#">Another action</a>
-                            <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="#">Something else here</a>
-                        </div>
-                    </li>
-                </ul>
+            <div class="d-flex">
+                <i class="fab fa-github fa-2x ms-3"></i>
+                <i class="fas fa-user fa-2x ms-3"></i>
             </div>
         </nav>
-
-        <div class="container-fluid">
-            <table class="table table-striped" id="terseTable">
-                <thead>
-                <tr>
-                    <th scope="col">
-                        <input class="form-check-input" id="checkAll" onchange="checkAll();" type="checkbox" value="">
-                        <label class="form-check-label" for="checkAll"></label>
-                    </th>
-                    <th scope="col">Shortened URL</th>
-                    <th scope="col">Original URL</th>
-                    <th scope="col">Redirect Type</th>
-                    <th scope="col">Visit Count</th>
-                    <th scope="col">Actions</th>
-                </tr>
-                </thead>
-                <tbody id="terseTableBody">
-                <tr id="templateTerseRow">
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td>
-                        <button class="btn btn-primary" data-bs-shortened="" data-bs-target="#formModal"
-                                data-bs-toggle="modal"
-                                type="button">
-                            <i class="far fa-edit"></i>
-                        </button>
-                        <button class="btn btn-secondary" data-bs-shortened="" data-bs-target="#downloadModal"
-                                data-bs-toggle="modal"
-                                type="button">
-                            <i class="fas fa-download"></i>
-                        </button> <!--TODO Make this a modal where they can choose what kind of data to export?-->
-                        <button class="btn btn-danger" data-bs-shortened="" data-bs-target="#deleteModal"
-                                data-bs-toggle="modal"
-                                type="button">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
+        <div>
+            <div class="m-3 d-flex justify-content-between">
+                <div>
+                    <button class="btn btn-success" data-bs-shortened="" data-bs-target="#formModal"
+                            data-bs-toggle="modal" type="button">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </div>
+                <div>
+                    <button class="btn btn-primary" data-bs-shortened="" data-bs-target="#formModal"
+                            data-bs-toggle="modal"
+                            type="button">
+                        <i class="far fa-edit"></i>
+                    </button>
+                    <button class="btn btn-secondary" data-bs-shortened="" data-bs-target="#downloadModal"
+                            data-bs-toggle="modal"
+                            type="button">
+                        <i class="fas fa-download"></i>
+                    </button> <!--TODO Make this a modal where they can choose what kind of data to export?-->
+                    <button class="btn btn-danger" data-bs-shortened="" data-bs-target="#deleteModal"
+                            data-bs-toggle="modal"
+                            type="button">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="d-flex">
+                <table class="table table-striped" id="terseTable">
+                    <thead>
+                    <tr>
+                        <th scope="col">
+                            <input class="form-check-input" id="checkAll" onchange="checkAll();" type="checkbox"
+                                   value="">
+                            <label class="form-check-label" for="checkAll"></label>
+                        </th>
+                        <th scope="col">Shortened URL</th>
+                        <th scope="col">Original URL</th>
+                        <th scope="col">Redirect Type</th>
+                        <th scope="col">Visit Count</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody id="terseTableBody">
+                    <tr id="templateTerseRow">
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>
+                            <button class="btn btn-primary" data-bs-shortened="" data-bs-target="#formModal"
+                                    data-bs-toggle="modal"
+                                    type="button">
+                                <i class="far fa-edit"></i>
+                            </button>
+                            <button class="btn btn-secondary" data-bs-shortened="" data-bs-target="#downloadModal"
+                                    data-bs-toggle="modal"
+                                    type="button">
+                                <i class="fas fa-download"></i>
+                            </button> <!--TODO Make this a modal where they can choose what kind of data to export?-->
+                            <button class="btn btn-danger" data-bs-shortened="" data-bs-target="#deleteModal"
+                                    data-bs-toggle="modal"
+                                    type="button">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
             <div aria-hidden="true" aria-labelledby="downloadModalLabel" class="modal fade" id="downloadModal"
                  tabindex="-1">
                 <div class="modal-dialog">
@@ -437,7 +437,11 @@
                 row.cells[1].innerHTML = summary.shortenedURL;
                 row.cells[2].innerHTML = summary.originalURL;
                 row.cells[3].innerHTML = summary.redirectType;
-                row.cells[4].innerHTML = summary.visitCount;
+                if (summary.visitCount === undefined) {
+                    row.cells[4].innerHTML = "0";
+                } else {
+                    row.cells[4].innerHTML = summary.visitCount;
+                }
 
                 table.appendChild(row);
 
@@ -531,9 +535,13 @@
 
         modalTitle.textContent = 'Write Terse Data for ' + currentShortened;
 
-        getTerse(currentShortened).then(function (terse) {
-            populateForm(terse);
-        });
+        if (currentShortened !== "") {
+            getTerse(currentShortened).then(function (terse) {
+                populateForm(terse);
+            });
+        } else {
+            clearForm();
+        }
     });
 </script>
 </body>

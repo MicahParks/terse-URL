@@ -51,7 +51,7 @@ function populateForm(terse) {
 
     document.getElementById("originalURL").value = terse.originalURL;
     document.getElementById("shortenedURL").value = terse.shortenedURL;
-    terse.javascriptTracking = document.getElementById("jsTracking").checked = terse.javascriptTracking;
+    document.getElementById("jsTracking").checked = terse.javascriptTracking;
 
     document.getElementById("writeOperation").selectedIndex = 2;
 
@@ -69,6 +69,15 @@ function populateForm(terse) {
             populateMetaMap(terse.mediaPreview.og, terse.mediaPreview.twitter);
         }
     }
+}
+
+function clearForm() {
+    clearPreview();
+    document.getElementById("originalURL").value = "";
+    document.getElementById("shortenedURL").value = "";
+    document.getElementById("jsTracking").checked = "";
+    document.getElementById("writeOperation").selectedIndex = 0;
+    $("#htmlTitle").value = "";
 }
 
 function populateMetaMap(og, twitter) {
