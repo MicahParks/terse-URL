@@ -36,29 +36,30 @@
         </nav>
         <div>
             <div class="m-3 d-flex justify-content-between">
-                <div>
-                    <button class="btn btn-success" data-bs-shortened="" data-bs-target="#formModal"
-                            data-bs-toggle="modal" type="button">
-                        <i class="fas fa-plus"></i>
-                    </button>
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Bulk tools</h5>
+                        <button class="btn btn-primary" data-bs-shortened="" data-bs-target="#formModal"
+                                data-bs-toggle="modal"
+                                type="button">
+                            <i class="far fa-edit"></i>
+                        </button>
+                        <button class="btn btn-secondary" data-bs-shortened="" data-bs-target="#downloadModal"
+                                data-bs-toggle="modal"
+                                type="button">
+                            <i class="fas fa-download"></i>
+                        </button> <!--TODO Make this a modal where they can choose what kind of data to export?-->
+                        <button class="btn btn-danger" data-bs-shortened="" data-bs-target="#deleteModal"
+                                data-bs-toggle="modal"
+                                type="button">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
                 </div>
-                <div>
-                    <button class="btn btn-primary" data-bs-shortened="" data-bs-target="#formModal"
-                            data-bs-toggle="modal"
-                            type="button">
-                        <i class="far fa-edit"></i>
-                    </button>
-                    <button class="btn btn-secondary" data-bs-shortened="" data-bs-target="#downloadModal"
-                            data-bs-toggle="modal"
-                            type="button">
-                        <i class="fas fa-download"></i>
-                    </button> <!--TODO Make this a modal where they can choose what kind of data to export?-->
-                    <button class="btn btn-danger" data-bs-shortened="" data-bs-target="#deleteModal"
-                            data-bs-toggle="modal"
-                            type="button">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                </div>
+                <button class="btn btn-success m-3" data-bs-shortened="" data-bs-target="#formModal"
+                        data-bs-toggle="modal" type="button">
+                    <i class="fas fa-plus fa-2x"></i>
+                </button>
             </div>
             <div class="d-flex">
                 <table class="table table-striped" id="terseTable">
@@ -415,6 +416,7 @@
 
     function buildTable() {
 
+        document.getElementById("checkAll").checked = false;
         removeAllChildNodes(table);
 
         let index = 0;
