@@ -98,6 +98,10 @@ docker-compose up
 
 - [ ] Address source code TODOs.
 - [ ] Inherit HTML title.
+- [ ] Copy to clipboard button for shortened URL.
+- [ ] Show full shortened URL in table data.
+- [ ] Hyperlinks for shortened URL and original URL.
+- [ ] Add referer URL to query parameters?
 - [ ] Terse export reported as not found if there are no visits.
 - [ ] Implement `SHORTID_PARANOID` environment variable.
 - [ ] Make buttons work on `table.html`.
