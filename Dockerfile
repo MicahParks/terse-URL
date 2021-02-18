@@ -1,4 +1,4 @@
-FROM golang:1.15 AS builder
+FROM golang:1.16 AS builder
 
 # Get the Golang dependencies for better caching.
 WORKDIR /app
