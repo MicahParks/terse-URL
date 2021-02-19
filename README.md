@@ -101,6 +101,7 @@ docker-compose up
 - [ ] Copy to clipboard button for shortened URL.
 - [ ] Show full shortened URL in table data.
 - [ ] Hyperlinks for shortened URL and original URL.
+- [ ] Embed `redirect.gohtml` add a flag that can switch between that one and one read in at runtime.
 - [ ] Add referer URL to query parameters?
 - [ ] Terse export reported as not found if there are no visits.
 - [ ] Implement `SHORTID_PARANOID` environment variable.
