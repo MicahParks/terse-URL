@@ -30,7 +30,8 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="d-flex">
-                <i class="fab fa-github fa-2x ms-3"></i>
+                <a href="https://github.com/MicahParks/terseurl" style="color: black;" target="_blank"><i
+                        class="fab fa-github fa-2x ms-3"></i></a>
                 <i class="fas fa-user fa-2x ms-3"></i>
             </div>
         </nav>
@@ -39,17 +40,15 @@
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">Bulk tools</h5>
-                        <button class="btn btn-primary" data-bs-shortened="" data-bs-target="#formModal"
-                                data-bs-toggle="modal"
-                                type="button">
-                            <i class="far fa-edit"></i>
-                        </button>
                         <button class="btn btn-secondary" data-bs-shortened="" data-bs-target="#downloadModal"
+                                id="bulkDownload"
                                 data-bs-toggle="modal"
                                 type="button">
                             <i class="fas fa-download"></i>
                         </button> <!--TODO Make this a modal where they can choose what kind of data to export?-->
                         <button class="btn btn-danger" data-bs-shortened="" data-bs-target="#deleteModal"
+                                id="bulkDelete"
+                                onclick="bulkDelete();"
                                 data-bs-toggle="modal"
                                 type="button">
                             <i class="fas fa-trash"></i>
@@ -431,6 +430,7 @@
                 checkbox.type = 'checkbox';
                 checkbox.value = summary.shortenedURL;
                 checkbox.id = summary.shortenedURL + 'Checkbox';
+                checkbox.onchange = rowChecked();
                 let label = document.createElement('label');
                 label.htmlFor = checkbox.id;
 
@@ -447,6 +447,8 @@
 
                 table.appendChild(row);
 
+                document.getElementById(checkbox.id).onchange = rowChecked;
+
                 for (let button of $('#' + row.id + ' :button')) {
                     button.setAttribute('data-bs-shortened', summary.shortenedURL);
                 }
@@ -455,11 +457,28 @@
     }
 </script>
 <script>
-    function checkAll() {
-        let checked = document.getElementById("checkAll").checked;
+    let checkAllBox = document.getElementById("checkAll");
+    checkAllBox.checked = false;
+    checkAllBox.onchange = function () {
+        let checked = checkAllBox.checked;
         for (let row of $('#terseTableBody > tr')) {
             $("#" + row.id + ":first :input").prop('checked', checked);
         }
+        rowChecked();
+    }
+
+    function rowChecked() {
+        let bulkDownload = $("#bulkDownload");
+        let bulkDelete = $("#bulkDelete");
+        for (let row of $('#terseTableBody > tr')) {
+            if ($("#" + row.id + ":first :input").prop('checked')) {
+                bulkDownload.prop("disabled", false);
+                bulkDelete.prop("disabled", false);
+                return;
+            }
+        }
+        bulkDownload.prop("disabled", true);
+        bulkDelete.prop("disabled", true);
     }
 </script>
 <script>
@@ -545,6 +564,19 @@
             clearForm();
         }
     });
+</script>
+<script>
+    function bulkDelete() {
+        let ids = [];
+        for (let row of $('#terseTableBody > tr')) {
+            if ($("#" + row.id + ":first :input").prop('checked')) {
+                ids.push(row.id);
+            }
+        }
+        // TODO Figure this out...
+        // deleteSome(ids);
+        buildTable();
+    }
 </script>
 </body>
 </html>

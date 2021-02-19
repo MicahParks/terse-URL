@@ -98,6 +98,9 @@ docker-compose up
 
 - [ ] Address source code TODOs.
 - [ ] Inherit HTML title.
+- [ ] Truncate frontend table data so it doesn't run off the screen...
+- [ ] Make the bulk edit tools work.
+- [ ] When Terse data is deleted for a shortened URL, all its Visits data is too.
 - [ ] Copy to clipboard button for shortened URL.
 - [ ] Show full shortened URL in table data.
 - [ ] Hyperlinks for shortened URL and original URL.
