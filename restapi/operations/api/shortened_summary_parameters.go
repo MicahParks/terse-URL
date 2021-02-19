@@ -30,7 +30,7 @@ type ShortenedSummaryParams struct {
 	// HTTP Request Object
 	HTTPRequest *http.Request `json:"-"`
 
-	/*The array of shortened URLs to get Terse summary data for. If none is provided, all will summaries will be returned.
+	/*The array of shortened URLs to get Summary data for. If none is provided, all will summaries will be returned.
 	  In: body
 	*/
 	ShortenedURLs []string

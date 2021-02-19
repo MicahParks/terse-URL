@@ -105,10 +105,10 @@ func (b *BboltTerse) Delete(ctx context.Context, del models.Delete) (err error) 
 		}
 	}
 
-	// Delete the Terse summary data.
+	// Delete the Summary data.
 	if b.summaryStore != nil {
 		if err = b.summaryStore.Delete(ctx, nil); err != nil {
-			return fmt.Errorf("failed to delete Terse summary data: %w", err)
+			return fmt.Errorf("failed to delete Summary data: %w", err)
 		}
 	}
 
@@ -149,10 +149,10 @@ func (b *BboltTerse) DeleteSome(ctx context.Context, del models.Delete, shortene
 		}
 	}
 
-	// Delete the Terse summary data.
+	// Delete the Summary data.
 	if b.summaryStore != nil {
 		if err = b.summaryStore.Delete(ctx, shortenedURLs); err != nil {
-			return fmt.Errorf("failed to delete Terse summary data: %w", err)
+			return fmt.Errorf("failed to delete Summary data: %w", err)
 		}
 	}
 

@@ -150,12 +150,12 @@ paths:
         - "application/json"
       produces:
         - "application/json"
-      summary: "Provide Terse summary data for the requested shortened URLs."
-      description: "Terse summary data includes the shortened URL, the original URL, the type of redirect, and the
+      summary: "Provide Summary data for the requested shortened URLs."
+      description: "Summary data includes the shortened URL, the original URL, the type of redirect, and the
       number of visits."
       operationId: "shortenedSummary"
       parameters:
-        - description: "The array of shortened URLs to get Terse summary data for. If none is provided, all will
+        - description: "The array of shortened URLs to get Summary data for. If none is provided, all will
         summaries will be returned."
           in: "body"
           name: "shortenedURLs"
@@ -165,7 +165,7 @@ paths:
               type: "string"
       responses:
         200:
-          description: "The map of shortened URLs to Terse summary data."
+          description: "The map of shortened URLs to Summary data."
           schema:
             additionalProperties:
               $ref: "#/definitions/Summary"
@@ -420,7 +420,7 @@ definitions:
     type: "string"
 
   # Schema for summary data on a specific shortened URL.
-  Summary: # TODO Refactor "Terse summary data" to "Summary data"
+  Summary:
     properties:
       terse:
         $ref: "#/definitions/TerseSummary"

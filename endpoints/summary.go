@@ -9,8 +9,8 @@ import (
 	"github.com/MicahParks/terseurl/storage"
 )
 
-// HandleSummary creates a /api/summary endpoint handler via a closure. It can provide Terse summary data for the
-// requested shortened URLs.
+// HandleSummary creates a /api/summary endpoint handler via a closure. It can provide Summary data for the requested
+// shortened URLs.
 func HandleSummary(logger *zap.SugaredLogger, summaryStore storage.SummaryStore) api.TerseSummaryHandlerFunc {
 	return func(params api.TerseSummaryParams) middleware.Responder {
 

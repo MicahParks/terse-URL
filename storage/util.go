@@ -46,7 +46,7 @@ type configuration struct {
 type ctxCreator func() (ctx context.Context, cancel context.CancelFunc)
 
 // NewSummaryStore creates a new SummaryStore from the given configJSON. The storeType return value is used for logging.
-func NewSummaryStore(configJSON json.RawMessage, visitsStore VisitsStore) (summaryStore SummaryStore, storeType string, err error) {
+func NewSummaryStore(configJSON json.RawMessage) (summaryStore SummaryStore, storeType string, err error) {
 
 	// Create the configuration.
 	config := &configuration{}

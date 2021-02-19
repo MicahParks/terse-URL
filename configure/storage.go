@@ -73,7 +73,7 @@ func createStores(config *Configuration, group *ctxerrgroup.Group, logger *zap.S
 		"type", terseStoreType,
 	)
 
-	// Read from the Terse store and Visits store to initialize the Terse summary data.
+	// Read from the Terse store and Visits store to initialize the Summary data.
 	ctx, cancel := DefaultCtx()
 	var summaries map[string]models.TerseSummary
 	if summaries, err = storage.InitializeSummaries(ctx, config.TerseStore, config.VisitsStore); err != nil {
@@ -83,7 +83,7 @@ func createStores(config *Configuration, group *ctxerrgroup.Group, logger *zap.S
 	}
 	cancel()
 
-	// Initialize the Terse summary data in the Terse summary data store.
+	// Initialize the Summary data in the Summary data store.
 	ctx, cancel = DefaultCtx()
 	if err = config.SummaryStore.Import(ctx, summaries); err != nil {
 		logger.Fatalw("Failed to import the initial summaries into the SummaryStore.",

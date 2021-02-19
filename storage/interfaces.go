@@ -6,8 +6,8 @@ import (
 	"github.com/MicahParks/terseurl/models"
 )
 
-// SummaryStore is the Terse summary data storage interface. It allows for Terse summary storage operations without
-// needing to know how the Terse summary data is stored.
+// SummaryStore is the Summary data storage interface. It allows for Terse summary storage operations without needing to
+// know how the Summary data is stored. Summary data should not persist through a service restart.
 type SummaryStore interface {
 
 	// Close closes the connection to the underlying storage.
@@ -23,10 +23,10 @@ type SummaryStore interface {
 
 	// Summary provides the summary information for the given shortened URLs. If shortenedURLs is nil, all summaries
 	// will be returned. The error must be storage.ErrShortenedNotFound if a shortened URL is not found.
-	Summary(ctx context.Context, shortenedURLs []string) (summaries map[string]models.Summary, err error)
+	Summary(ctx context.Context, shortenedURLs []string) (summaries map[string]*models.Summary, err error)
 
 	// Upsert upserts the summary information for the given shortened URL.
-	Upsert(ctx context.Context, summaries map[string]models.Summary) (err error)
+	Upsert(ctx context.Context, summaries map[string]*models.Summary) (err error)
 }
 
 // TerseStore is the Terse storage interface. It allows for Terse storage operations without needing to know how
@@ -45,7 +45,7 @@ type TerseStore interface {
 	Read(ctx context.Context, shortenedURLs []string) (terseData map[string]models.Terse, err error)
 
 	// Summary summarizes the Terse data for the given shortened URLs. This is used in building the SummaryStore.
-	Summary(ctx context.Context, shortenedURLs []string) (summaries map[string]models.TerseSummary, err error)
+	Summary(ctx context.Context, shortenedURLs []string) (summaries map[string]*models.TerseSummary, err error)
 
 	// Write writes the given Terse data according to the given operation.
 	Write(ctx context.Context, terseData map[string]models.Terse, operation WriteOperation) (err error)
@@ -70,5 +70,5 @@ type VisitsStore interface {
 	Insert(ctx context.Context, visitsData map[string][]*models.Visit) (err error)
 
 	// Summary summarizes the Visits data for the given shortened URLs. This is used in building the SummaryStore.
-	Summary(ctx context.Context, shortenedURLs []string) (visitsSummary map[string]uint, err error)
+	Summary(ctx context.Context, shortenedURLs []string) (visitsSummary map[string]*models.VisitsSummary, err error)
 }

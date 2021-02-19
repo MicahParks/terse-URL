@@ -31,9 +31,9 @@ func NewShortenedSummary(ctx *middleware.Context, handler ShortenedSummaryHandle
 
 /* ShortenedSummary swagger:route POST /api/summary api shortenedSummary
 
-Provide Terse summary data for the requested shortened URLs.
+Provide Summary data for the requested shortened URLs.
 
-Terse summary data includes the shortened URL, the original URL, the type of redirect, and the number of visits.
+Summary data includes the shortened URL, the original URL, the type of redirect, and the number of visits.
 
 */
 type ShortenedSummary struct {

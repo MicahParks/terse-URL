@@ -5,6 +5,8 @@ import (
 	"fmt"
 
 	"github.com/MicahParks/ctxerrgroup"
+
+	"github.com/MicahParks/terseurl/models"
 )
 
 // TODO Remove VisitsStore and SummaryStore from TerseStore implementations.
@@ -25,34 +27,88 @@ func (s StoreManager) Close(ctx context.Context) (err error) {
 
 	// Close the SummaryStore.
 	var closeErr error
-	if closeErr = s.SummaryStore().Close(ctx); closeErr != nil {
+	s.SummaryStore(func(store SummaryStore) {
+		closeErr = store.Close(ctx)
+	})
+	if closeErr != nil {
 		err = fmt.Errorf("%v SummaryStore: %v", err, closeErr)
 	}
 
 	// Close the TerseStore.
-	if closeErr = s.TerseStore().Close(ctx); closeErr != nil {
+	if closeErr = s.terseStore.Close(ctx); closeErr != nil {
 		err = fmt.Errorf("%v TerseStore: %v", err, closeErr)
 	}
 
 	// Close the VisitsStore.
-	if closeErr = s.VisitsStore().Close(ctx); closeErr != nil {
+	s.VisitsStore(func(store VisitsStore) {
+		closeErr = store.Close(ctx)
+	})
+	if closeErr != nil {
 		err = fmt.Errorf("%v VisitsStore: %v", err, closeErr)
 	}
 
 	return err
 }
 
-// SummaryStore returns the current SummaryStore.
-func (s StoreManager) SummaryStore() (summaryStore SummaryStore) {
-	return s.summaryStore
+// InitializeSummaryStore initializes the SummaryStore with SummaryData gathered from the TerseStore and VisitsStore.
+func (s StoreManager) InitializeSummaryStore(ctx context.Context) (err error) {
+
+	// Get the Visits Summary data.
+	var visitsSummary map[string]*models.VisitsSummary
+	s.VisitsStore(func(store VisitsStore) {
+		visitsSummary, err = store.Summary(ctx, nil)
+	})
+	if err != nil {
+		return err
+	}
+
+	// Get the Summary data.
+	var terseSummary map[string]*models.TerseSummary
+	if terseSummary, err = s.terseStore.Summary(ctx, nil); err != nil {
+		return err
+	}
+
+	// Populate the SummaryStore with the Summary data.
+	summaryData := make(map[string]*models.Summary)
+	for shortened, terse := range terseSummary {
+
+		// Check if there is Visits data.
+		var visits *models.VisitsSummary
+		if visitsSummary != nil {
+			visits = visitsSummary[shortened]
+		}
+
+		// Assign the shortened URL's summary data to the return map.
+		summaryData[shortened] = &models.Summary{
+			Terse:  terse,
+			Visits: visits,
+		}
+	}
+
+	// If Visits data is allowed to be present when Terse data is not present for a shortened URL, then it would need to
+	// be looped through.
+
+	// Delete all existing Summary data and import the most recent summary data.
+	s.SummaryStore(func(store SummaryStore) {
+		if err = store.Delete(ctx, nil); err != nil { // Not necessary if only used on startup.
+			return
+		}
+		err = store.Upsert(ctx, summaryData)
+	})
+
+	return err
 }
 
-// TerseStore returns the current TerseStore.
-func (s StoreManager) TerseStore() (terseStore TerseStore) {
-	return s.terseStore
+// SummaryStore accepts a function to do if the SummaryStore is not nil
+func (s StoreManager) SummaryStore(doThis func(store SummaryStore)) {
+	if s.summaryStore != nil {
+		doThis(s.summaryStore)
+	}
 }
 
-// VisitsStore returns the current VisitsStore.
-func (s StoreManager) VisitsStore() (visitsStore VisitsStore) {
-	return s.visitsStore
+// VisitsStore accepts a function to do if the VisitsStore is not nil.
+func (s StoreManager) VisitsStore(doThis func(store VisitsStore)) {
+	if s.visitsStore != nil {
+		doThis(s.visitsStore)
+	}
 }

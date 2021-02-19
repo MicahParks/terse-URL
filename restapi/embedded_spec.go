@@ -203,7 +203,7 @@ func init() {
     },
     "/api/summary": {
       "post": {
-        "description": "Terse summary data includes the shortened URL, the original URL, the type of redirect, and the number of visits.",
+        "description": "Summary data includes the shortened URL, the original URL, the type of redirect, and the number of visits.",
         "consumes": [
           "application/json"
         ],
@@ -213,11 +213,11 @@ func init() {
         "tags": [
           "api"
         ],
-        "summary": "Provide Terse summary data for the requested shortened URLs.",
+        "summary": "Provide Summary data for the requested shortened URLs.",
         "operationId": "shortenedSummary",
         "parameters": [
           {
-            "description": "The array of shortened URLs to get Terse summary data for. If none is provided, all will summaries will be returned.",
+            "description": "The array of shortened URLs to get Summary data for. If none is provided, all will summaries will be returned.",
             "name": "shortenedURLs",
             "in": "body",
             "schema": {
@@ -230,7 +230,7 @@ func init() {
         ],
         "responses": {
           "200": {
-            "description": "The map of shortened URLs to Terse summary data.",
+            "description": "The map of shortened URLs to Summary data.",
             "schema": {
               "additionalProperties": {
                 "$ref": "#/definitions/Summary"
@@ -884,7 +884,7 @@ func init() {
     },
     "/api/summary": {
       "post": {
-        "description": "Terse summary data includes the shortened URL, the original URL, the type of redirect, and the number of visits.",
+        "description": "Summary data includes the shortened URL, the original URL, the type of redirect, and the number of visits.",
         "consumes": [
           "application/json"
         ],
@@ -894,11 +894,11 @@ func init() {
         "tags": [
           "api"
         ],
-        "summary": "Provide Terse summary data for the requested shortened URLs.",
+        "summary": "Provide Summary data for the requested shortened URLs.",
         "operationId": "shortenedSummary",
         "parameters": [
           {
-            "description": "The array of shortened URLs to get Terse summary data for. If none is provided, all will summaries will be returned.",
+            "description": "The array of shortened URLs to get Summary data for. If none is provided, all will summaries will be returned.",
             "name": "shortenedURLs",
             "in": "body",
             "schema": {
@@ -911,7 +911,7 @@ func init() {
         ],
         "responses": {
           "200": {
-            "description": "The map of shortened URLs to Terse summary data.",
+            "description": "The map of shortened URLs to Summary data.",
             "schema": {
               "additionalProperties": {
                 "$ref": "#/definitions/Summary"

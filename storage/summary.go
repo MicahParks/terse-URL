@@ -7,7 +7,7 @@ import (
 )
 
 // InitializeSummaries is a helper function to create the required data for a SummaryStore on startup. It will iterate
-// through all assets in the TerseStore and VisitsStore and map their shortened URLs to Terse summary data.
+// through all assets in the TerseStore and VisitsStore and map their shortened URLs to Summary data.
 func InitializeSummaries(ctx context.Context, terseStore TerseStore, visitsStore VisitsStore) (summaries map[string]models.TerseSummary, err error) {
 
 	// Create the return map.
@@ -33,7 +33,7 @@ func InitializeSummaries(ctx context.Context, terseStore TerseStore, visitsStore
 		// Get the count for the shortened URL.
 		count := counts[shortened]
 
-		// Combine the required Terse data with the count of Visits to create Terse summary data.
+		// Combine the required Terse data with the count of Visits to create Summary data.
 		summaries[shortened] = models.TerseSummary{
 			OriginalURL:  t.OriginalURL,
 			RedirectType: t.RedirectType,

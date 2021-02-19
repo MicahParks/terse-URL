@@ -65,7 +65,7 @@ func (m *MemTerse) CreateSummaryStore(ctx context.Context) (summaries map[string
 		// Lock the Terse map for async safe use.
 		m.mux.RLock()
 
-		// Create the Terse summary data by combining Visits counts and Terse data.
+		// Create the Summary data by combining Visits counts and Terse data.
 		for shortened, count := range counts {
 			terse := m.terse[shortened]
 			summaries[shortened] = models.TerseSummary{
@@ -94,10 +94,10 @@ func (m *MemTerse) Delete(ctx context.Context, del models.Delete) (err error) {
 		}
 	}
 
-	// Delete the Terse summary data.
+	// Delete the Summary data.
 	if m.summaryStore != nil {
 		if err = m.summaryStore.Delete(ctx, nil); err != nil {
-			return fmt.Errorf("failed to delete Terse summary data: %w", err)
+			return fmt.Errorf("failed to delete Summary data: %w", err)
 		}
 	}
 
@@ -129,10 +129,10 @@ func (m *MemTerse) DeleteSome(ctx context.Context, del models.Delete, shortenedU
 		}
 	}
 
-	// Delete the Terse summary data.
+	// Delete the Summary data.
 	if m.summaryStore != nil {
 		if err = m.summaryStore.Delete(ctx, shortenedURLs); err != nil {
-			return fmt.Errorf("failed to delete Terse summary data: %w", err)
+			return fmt.Errorf("failed to delete Summary data: %w", err)
 		}
 	}
 

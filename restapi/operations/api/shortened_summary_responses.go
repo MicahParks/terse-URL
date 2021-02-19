@@ -16,7 +16,7 @@ import (
 // ShortenedSummaryOKCode is the HTTP code returned for type ShortenedSummaryOK
 const ShortenedSummaryOKCode int = 200
 
-/*ShortenedSummaryOK The map of shortened URLs to Terse summary data.
+/*ShortenedSummaryOK The map of shortened URLs to Summary data.
 
 swagger:response shortenedSummaryOK
 */

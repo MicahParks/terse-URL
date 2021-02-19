@@ -9,14 +9,14 @@ import (
 
 // MemSummary is a SummaryStore implementation that stores all data in a Go map in memory.
 type MemSummary struct {
-	summaries map[string]models.Summary
+	summaries map[string]*models.Summary
 	mux       sync.RWMutex
 }
 
 // NewMemSummary creates a new MemSummary.
 func NewMemSummary() (summaryStore SummaryStore) {
 	return &MemSummary{
-		summaries: make(map[string]models.Summary),
+		summaries: make(map[string]*models.Summary),
 	}
 }
 
@@ -78,12 +78,12 @@ func (m *MemSummary) IncrementVisitCount(_ context.Context, shortened string) (e
 	return nil
 }
 
-// Summary provides the summary information for the given shortened URLs. If shortenedURLs is nil, all summaries
-// will be returned. The error must be storage.ErrShortenedNotFound if a shortened URL is not found.
-func (m *MemSummary) Summary(_ context.Context, shortenedURLs []string) (summaries map[string]models.Summary, err error) {
+// Summary provides the summary information for the given shortened URLs. If shortenedURLs is nil, all summaries will be
+// returned. The error must be storage.ErrShortenedNotFound if a shortened URL is not found.
+func (m *MemSummary) Summary(_ context.Context, shortenedURLs []string) (summaries map[string]*models.Summary, err error) {
 
 	// Create the return map.
-	summaries = make(map[string]models.Summary, len(shortenedURLs))
+	summaries = make(map[string]*models.Summary, len(shortenedURLs))
 
 	// Lock the Summary data for async safe use.
 	m.mux.RLock()
@@ -91,7 +91,7 @@ func (m *MemSummary) Summary(_ context.Context, shortenedURLs []string) (summari
 
 	// Check to see if all Summary data was requested, if so, copy all Summary data.
 	if shortenedURLs == nil {
-		summaries = make(map[string]models.Summary, len(m.summaries))
+		summaries = make(map[string]*models.Summary, len(m.summaries))
 		for shortened, summary := range m.summaries {
 			summaries[shortened] = summary
 		}
@@ -99,10 +99,8 @@ func (m *MemSummary) Summary(_ context.Context, shortenedURLs []string) (summari
 	}
 
 	// Iterate through the given shortened URLs. Copy the requested ones.
-	var summary models.Summary
-	var ok bool
 	for _, shortened := range shortenedURLs {
-		summary, ok = m.summaries[shortened]
+		summary, ok := m.summaries[shortened]
 		if !ok {
 			return nil, ErrShortenedNotFound
 		}
@@ -112,8 +110,8 @@ func (m *MemSummary) Summary(_ context.Context, shortenedURLs []string) (summari
 	return summaries, nil
 }
 
-// Upsert upserts the summary information for the given shortened URL.
-func (m *MemSummary) Upsert(_ context.Context, summaries map[string]models.Summary) (err error) {
+// Upsert upserts the Summary data for the given shortened URL.
+func (m *MemSummary) Upsert(_ context.Context, summaries map[string]*models.Summary) (err error) {
 
 	// Lock the Summary data for async safe use.
 	m.mux.Lock()
@@ -131,5 +129,5 @@ func (m *MemSummary) Upsert(_ context.Context, summaries map[string]models.Summa
 func (m *MemSummary) deleteAll() {
 
 	// Reassign the Summary data so it's taken by the garbage collector.
-	m.summaries = make(map[string]models.Summary)
+	m.summaries = make(map[string]*models.Summary)
 }
