@@ -14,7 +14,7 @@ type SummaryStore interface {
 	Close(ctx context.Context) (err error)
 
 	// Delete deletes the summary information for the given shortened URLs. If shortenedURLs is nil, all Summary data
-	// will be deleted.
+	// will be deleted. No error should be returned if a shortened URL is not found.
 	Delete(ctx context.Context, shortenedURLs []string) (err error)
 
 	// IncrementVisitCount increments the visit count for the given shortened URL. It is called in separate goroutine.

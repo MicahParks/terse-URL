@@ -2,7 +2,6 @@ package storage
 
 import (
 	"context"
-	"fmt"
 	"sync"
 
 	"github.com/MicahParks/terseurl/models"
@@ -10,124 +9,127 @@ import (
 
 // MemSummary is a SummaryStore implementation that stores all data in a Go map in memory.
 type MemSummary struct {
-	summaries map[string]models.TerseSummary
+	summaries map[string]models.Summary
 	mux       sync.RWMutex
 }
 
 // NewMemSummary creates a new MemSummary.
 func NewMemSummary() (summaryStore SummaryStore) {
 	return &MemSummary{
-		summaries: make(map[string]models.TerseSummary),
+		summaries: make(map[string]models.Summary),
 	}
 }
 
-// Delete deletes the summary information for the given shortened URLs.
-func (m *MemSummary) Delete(_ context.Context, shortenedURLs []string) (err error) {
+// Close closes the connection to the underlying storage.
+func (m *MemSummary) Close(_ context.Context) (err error) {
 
-	// Lock the Terse summary data for async safe use.
+	// Lock the Summary data for async safe use.
 	m.mux.Lock()
 	defer m.mux.Unlock()
 
-	// Check to see if all Terese summary data should be deleted.
-	if shortenedURLs == nil {
-
-		// Reset the summaries map.
-		m.summaries = make(map[string]models.TerseSummary)
-	} else {
-
-		// Iterate through the given shortened URLs and delete them from the summaries map.
-		for _, shortened := range shortenedURLs {
-			delete(m.summaries, shortened)
-		}
-	}
+	// Delete all the Summary data.
+	m.deleteAll()
 
 	return nil
 }
 
-// Import deletes all of the existing Terse summary data and replaces it with the given summaries.
-func (m *MemSummary) Import(_ context.Context, summaries map[string]models.TerseSummary) (err error) {
+// Delete deletes the summary information for the given shortened URLs. If shortenedURLs is nil, all Summary data
+// will be deleted. No error should be returned if a shortened URL is not found.
+func (m *MemSummary) Delete(_ context.Context, shortenedURLs []string) (err error) {
 
-	// Lock the Terse summary data for async safe use.
+	// Lock the Summary data for async safe use.
 	m.mux.Lock()
 	defer m.mux.Unlock()
 
-	// Reassign the summaries map.
-	m.summaries = summaries
+	// Check if all Summary data should be deleted.
+	if shortenedURLs == nil {
+		m.deleteAll()
+		return nil
+	}
+
+	// Iterate through the given shortened URLs.
+	for _, shortened := range shortenedURLs {
+		delete(m.summaries, shortened)
+	}
 
 	return nil
 }
 
 // IncrementVisitCount increments the visit count for the given shortened URL. It is called in separate goroutine.
+// The error must be storage.ErrShortenedNotFound if the shortened URL is not found.
 func (m *MemSummary) IncrementVisitCount(_ context.Context, shortened string) (err error) {
 
-	// Lock the Terse summary data for async safe use.
+	// Lock the Summary data for async safe use.
 	m.mux.Lock()
 	defer m.mux.Unlock()
 
-	// Get the Terse summary data.
+	// Get the current summary data.
 	summary, ok := m.summaries[shortened]
 	if !ok {
-		return fmt.Errorf("%w: %s", ErrShortenedNotFound, shortened)
+		return ErrShortenedNotFound
 	}
 
-	// Increment the visit counter.
-	summary.VisitCount++
+	// Increment the visits count.
+	summary.Visits.VisitCount++
+
+	// Reassign the summary data.
 	m.summaries[shortened] = summary
 
 	return nil
 }
 
-// Summarize provides the summary information for the given shortened URLs. If shortenedURLs is nil, all summaries will
-// be returned.
-func (m *MemSummary) Summarize(_ context.Context, shortenedURLs []string) (summaries map[string]models.TerseSummary, err error) {
+// Summary provides the summary information for the given shortened URLs. If shortenedURLs is nil, all summaries
+// will be returned. The error must be storage.ErrShortenedNotFound if a shortened URL is not found.
+func (m *MemSummary) Summary(_ context.Context, shortenedURLs []string) (summaries map[string]models.Summary, err error) {
 
-	// Lock the Terse summary data for async safe use.
+	// Create the return map.
+	summaries = make(map[string]models.Summary, len(shortenedURLs))
+
+	// Lock the Summary data for async safe use.
 	m.mux.RLock()
 	defer m.mux.RUnlock()
 
-	// Make a map of summaries.
-	summaries = make(map[string]models.TerseSummary)
-
-	// Return all for the nil case.
+	// Check to see if all Summary data was requested, if so, copy all Summary data.
 	if shortenedURLs == nil {
+		summaries = make(map[string]models.Summary, len(m.summaries))
 		for shortened, summary := range m.summaries {
 			summaries[shortened] = summary
 		}
-	} else {
+		return summaries, nil
+	}
 
-		// Iterate through the shortened URLs. Add their summaries to the map.
-		for _, shortened := range shortenedURLs {
-			summary, ok := m.summaries[shortened]
-			if !ok {
-				return nil, fmt.Errorf("%w: %s", ErrShortenedNotFound, shortened)
-			}
-			summaries[shortened] = summary
+	// Iterate through the given shortened URLs. Copy the requested ones.
+	var summary models.Summary
+	var ok bool
+	for _, shortened := range shortenedURLs {
+		summary, ok = m.summaries[shortened]
+		if !ok {
+			return nil, ErrShortenedNotFound
 		}
+		summaries[shortened] = summary
 	}
 
 	return summaries, nil
 }
 
-// Upsert upserts the summary information for the given shortened URL, but preserves the Visists count.
-func (m *MemSummary) Upsert(_ context.Context, summaries map[string]models.TerseSummary) (err error) {
+// Upsert upserts the summary information for the given shortened URL.
+func (m *MemSummary) Upsert(_ context.Context, summaries map[string]models.Summary) (err error) {
 
-	// Lock the Terse summary data for async safe use.
+	// Lock the Summary data for async safe use.
 	m.mux.Lock()
 	defer m.mux.Unlock()
 
-	// Upsert the summaries into the Terse summary data map.
+	// Iterate through the given summary data. Upsert the Summary data.
 	for shortened, summary := range summaries {
-
-		// Use the old count of Visits, or start at zero.
-		var count int64
-		if sum, ok := m.summaries[shortened]; ok {
-			count = sum.VisitCount
-		}
-		summary.VisitCount = count
-
-		// Upsert the Terse summary data into the map.
 		m.summaries[shortened] = summary
 	}
 
 	return nil
+}
+
+// deleteAll deletes all of the Summary data. It does not lock, so a lock must be used for async safe usage.
+func (m *MemSummary) deleteAll() {
+
+	// Reassign the Summary data so it's taken by the garbage collector.
+	m.summaries = make(map[string]models.Summary)
 }
