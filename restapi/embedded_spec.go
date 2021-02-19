@@ -36,12 +36,12 @@ func init() {
   "paths": {
     "/api/alive": {
       "get": {
-        "description": "Any non-200 response means the service is not alive.",
+        "description": "Used by Caddy or other reverse proxy to determine if the service is alive.",
         "tags": [
           "system"
         ],
         "summary": "Used by Caddy or other reverse proxy to determine if the service is alive.",
-        "operationId": "alive",
+        "operationId": "systemAlive",
         "responses": {
           "200": {
             "description": "Service is alive."
@@ -49,124 +49,9 @@ func init() {
         }
       }
     },
-    "/api/delete": {
-      "delete": {
-        "description": "All Terse and or Visits data will be deleted according to the deletion information specified.",
-        "consumes": [
-          "application/json"
-        ],
-        "tags": [
-          "api"
-        ],
-        "summary": "Delete all Terse and or Visits data.",
-        "operationId": "terseDelete",
-        "parameters": [
-          {
-            "description": "A JSON object containing the deletion information. If Terse or Visits data is marked for deletion, it will all be deleted.",
-            "name": "delete",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/Delete"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "The deletion request was successfully fulfilled."
-          },
-          "default": {
-            "description": "Unexpected error.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          }
-        }
-      }
-    },
-    "/api/delete/some": {
-      "delete": {
-        "description": "If only Terse data is deleted, the API user is responsible for cleaning up its Visits data before adding new Terse data under the same shortened URL.",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "api"
-        ],
-        "summary": "Delete Terse and or Visits data for the given shortened URLs.",
-        "operationId": "terseDeleteSome",
-        "parameters": [
-          {
-            "description": "Indicate if Terse and or Visits data should be deleted and for which shortened URLs.",
-            "name": "info",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "type": "object",
-              "properties": {
-                "delete": {
-                  "$ref": "#/definitions/Delete"
-                },
-                "shortenedURLs": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "The shortened URL's data was successfully deleted from the backend storage."
-          },
-          "default": {
-            "description": "Unexpected error.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          }
-        }
-      }
-    },
     "/api/export": {
-      "get": {
-        "description": "Depending on the underlying storage and amount of data, this may take a while.",
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "api"
-        ],
-        "summary": "Export all Terse and Visits data from the backend.",
-        "operationId": "terseExport",
-        "responses": {
-          "200": {
-            "description": "The export was successfully retrieved.",
-            "schema": {
-              "description": "All of the Terse and Visits data from the backend.",
-              "type": "object",
-              "additionalProperties": {
-                "$ref": "#/definitions/Export"
-              }
-            }
-          },
-          "default": {
-            "description": "Unexpected error.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          }
-        }
-      }
-    },
-    "/api/export/some": {
       "post": {
-        "description": "Export Terse and Visits data for the given shortened URLs.",
+        "description": "Export Terse and Visits data for the given shortened URLs. If shortenedURLs is null, then export all shortened URLs.",
         "consumes": [
           "application/json"
         ],
@@ -177,10 +62,10 @@ func init() {
           "api"
         ],
         "summary": "Export Terse and Visits data for the given shortened URLs.",
-        "operationId": "terseExportSome",
+        "operationId": "export",
         "parameters": [
           {
-            "description": "The shortened URLs to get the export for.",
+            "description": "The shortened URLs to get the export for. If null, an export of all shortened URLs will be given.",
             "name": "shortenedURLs",
             "in": "body",
             "schema": {
@@ -265,24 +150,16 @@ func init() {
           "api"
         ],
         "summary": "Import existing Terse and Visits data for the given shortened URLs.",
-        "operationId": "terseImport",
+        "operationId": "import",
         "parameters": [
           {
             "description": "A JSON object containing the deletion information. If Terse or Visits data is marked for deletion, it will all be deleted. An object matching shortened URLs to their previously exported data is also required.",
-            "name": "importDelete",
+            "name": "import",
             "in": "body",
             "required": true,
             "schema": {
-              "type": "object",
-              "properties": {
-                "delete": {
-                  "$ref": "#/definitions/Delete"
-                },
-                "import": {
-                  "additionalProperties": {
-                    "$ref": "#/definitions/Export"
-                  }
-                }
+              "additionalProperties": {
+                "$ref": "#/definitions/Export"
               }
             }
           }
@@ -307,7 +184,7 @@ func init() {
           "api"
         ],
         "summary": "Client's web browser is requesting what HTTP prefix all shortened URLs have.",
-        "operationId": "tersePrefix",
+        "operationId": "shortenedURLPrefix",
         "responses": {
           "200": {
             "description": "The HTTP prefix all shortened URLs have.",
@@ -337,11 +214,11 @@ func init() {
           "api"
         ],
         "summary": "Provide Terse summary data for the requested shortened URLs.",
-        "operationId": "terseSummary",
+        "operationId": "shortenedSummary",
         "parameters": [
           {
             "description": "The array of shortened URLs to get Terse summary data for. If none is provided, all will summaries will be returned.",
-            "name": "shortened",
+            "name": "shortenedURLs",
             "in": "body",
             "schema": {
               "type": "array",
@@ -356,7 +233,7 @@ func init() {
             "description": "The map of shortened URLs to Terse summary data.",
             "schema": {
               "additionalProperties": {
-                "$ref": "#/definitions/TerseSummary"
+                "$ref": "#/definitions/Summary"
               }
             }
           },
@@ -369,8 +246,8 @@ func init() {
         }
       }
     },
-    "/api/terse/{shortened}": {
-      "get": {
+    "/api/terse": {
+      "post": {
         "description": "Read the Terse data for the given shortened URL.",
         "produces": [
           "application/json"
@@ -379,14 +256,19 @@ func init() {
           "api"
         ],
         "summary": "Read the Terse data for the given shortened URL.",
-        "operationId": "terseTerse",
+        "operationId": "terseRead",
         "parameters": [
           {
-            "type": "string",
             "description": "The shortened URL to get the Terse data for.",
-            "name": "shortened",
-            "in": "path",
-            "required": true
+            "name": "shortenedURL",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
           }
         ],
         "responses": {
@@ -403,25 +285,70 @@ func init() {
             }
           }
         }
-      }
-    },
-    "/api/visits/{shortened}": {
-      "get": {
+      },
+      "delete": {
+        "description": "Delete all assets for the given shortened URLs. This includes all Terse data, Visits data, and Summary data.",
+        "consumes": [
+          "application/json"
+        ],
         "produces": [
           "application/json"
         ],
         "tags": [
           "api"
         ],
-        "summary": "Get the Visits data for the given shortened URL.",
-        "operationId": "terseVisits",
+        "summary": "Delete all assets for the given shortened URLs.",
+        "operationId": "shortenedDelete",
         "parameters": [
           {
-            "type": "string",
-            "description": "The shortened URL to get the s data for.",
-            "name": "shortened",
-            "in": "path",
-            "required": true
+            "description": "The shortened URLs whose data should be deleted.",
+            "name": "shortenedURLs",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The shortened URL's data was successfully deleted from the backend storage."
+          },
+          "default": {
+            "description": "Unexpected error.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/api/visits": {
+      "post": {
+        "description": "Read the Visits data for the given shortened URLs.",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "api"
+        ],
+        "summary": "Read the Visits data for the given shortened URLs.",
+        "operationId": "visitsRead",
+        "parameters": [
+          {
+            "description": "The shortened URL to get the Visits data for.",
+            "name": "shortenedURL",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
           }
         ],
         "responses": {
@@ -434,6 +361,45 @@ func init() {
                 "$ref": "#/definitions/Visit"
               }
             }
+          },
+          "default": {
+            "description": "Unexpected error.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "delete": {
+        "description": "Delete all Visits data for the given shortened URLs. This will affect Summary data.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "api"
+        ],
+        "summary": "Delete all Visits data for the given shortened URLs.",
+        "operationId": "visitsDelete",
+        "parameters": [
+          {
+            "description": "The shortened URLs whose Visits data should be deleted.",
+            "name": "shortenedURLs",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The shortened URL's Visits data was successfully deleted from the backend storage."
           },
           "default": {
             "description": "Unexpected error.",
@@ -498,7 +464,7 @@ func init() {
         }
       }
     },
-    "/{shortened}": {
+    "/{shortenedURL}": {
       "get": {
         "description": "Use the shortened URL. It will redirect to the full URL if it has not expired.",
         "produces": [
@@ -508,11 +474,11 @@ func init() {
           "public"
         ],
         "summary": "Typically a web browser would visit this endpoint, then get redirected.",
-        "operationId": "terseRedirect",
+        "operationId": "publicRedirect",
         "parameters": [
           {
             "type": "string",
-            "name": "shortened",
+            "name": "shortenedURL",
             "in": "path",
             "required": true
           }
@@ -550,18 +516,6 @@ func init() {
     }
   },
   "definitions": {
-    "Delete": {
-      "properties": {
-        "terse": {
-          "type": "boolean",
-          "default": true
-        },
-        "visits": {
-          "type": "boolean",
-          "default": true
-        }
-      }
-    },
     "Error": {
       "type": "object",
       "required": [
@@ -619,6 +573,16 @@ func init() {
         "meta",
         "js"
       ]
+    },
+    "Summary": {
+      "properties": {
+        "terse": {
+          "$ref": "#/definitions/TerseSummary"
+        },
+        "visits": {
+          "$ref": "#/definitions/VisitsSummary"
+        }
+      }
     },
     "Terse": {
       "required": [
@@ -678,9 +642,6 @@ func init() {
         },
         "shortenedURL": {
           "type": "string"
-        },
-        "visitCount": {
-          "type": "integer"
         }
       }
     },
@@ -710,6 +671,14 @@ func init() {
         },
         "ip": {
           "type": "string"
+        }
+      }
+    },
+    "VisitsSummary": {
+      "properties": {
+        "visitCount": {
+          "type": "integer",
+          "format": "uint"
         }
       }
     }
@@ -748,12 +717,12 @@ func init() {
   "paths": {
     "/api/alive": {
       "get": {
-        "description": "Any non-200 response means the service is not alive.",
+        "description": "Used by Caddy or other reverse proxy to determine if the service is alive.",
         "tags": [
           "system"
         ],
         "summary": "Used by Caddy or other reverse proxy to determine if the service is alive.",
-        "operationId": "alive",
+        "operationId": "systemAlive",
         "responses": {
           "200": {
             "description": "Service is alive."
@@ -761,124 +730,9 @@ func init() {
         }
       }
     },
-    "/api/delete": {
-      "delete": {
-        "description": "All Terse and or Visits data will be deleted according to the deletion information specified.",
-        "consumes": [
-          "application/json"
-        ],
-        "tags": [
-          "api"
-        ],
-        "summary": "Delete all Terse and or Visits data.",
-        "operationId": "terseDelete",
-        "parameters": [
-          {
-            "description": "A JSON object containing the deletion information. If Terse or Visits data is marked for deletion, it will all be deleted.",
-            "name": "delete",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/Delete"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "The deletion request was successfully fulfilled."
-          },
-          "default": {
-            "description": "Unexpected error.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          }
-        }
-      }
-    },
-    "/api/delete/some": {
-      "delete": {
-        "description": "If only Terse data is deleted, the API user is responsible for cleaning up its Visits data before adding new Terse data under the same shortened URL.",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "api"
-        ],
-        "summary": "Delete Terse and or Visits data for the given shortened URLs.",
-        "operationId": "terseDeleteSome",
-        "parameters": [
-          {
-            "description": "Indicate if Terse and or Visits data should be deleted and for which shortened URLs.",
-            "name": "info",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "type": "object",
-              "properties": {
-                "delete": {
-                  "$ref": "#/definitions/Delete"
-                },
-                "shortenedURLs": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "The shortened URL's data was successfully deleted from the backend storage."
-          },
-          "default": {
-            "description": "Unexpected error.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          }
-        }
-      }
-    },
     "/api/export": {
-      "get": {
-        "description": "Depending on the underlying storage and amount of data, this may take a while.",
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "api"
-        ],
-        "summary": "Export all Terse and Visits data from the backend.",
-        "operationId": "terseExport",
-        "responses": {
-          "200": {
-            "description": "The export was successfully retrieved.",
-            "schema": {
-              "description": "All of the Terse and Visits data from the backend.",
-              "type": "object",
-              "additionalProperties": {
-                "$ref": "#/definitions/Export"
-              }
-            }
-          },
-          "default": {
-            "description": "Unexpected error.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          }
-        }
-      }
-    },
-    "/api/export/some": {
       "post": {
-        "description": "Export Terse and Visits data for the given shortened URLs.",
+        "description": "Export Terse and Visits data for the given shortened URLs. If shortenedURLs is null, then export all shortened URLs.",
         "consumes": [
           "application/json"
         ],
@@ -889,10 +743,10 @@ func init() {
           "api"
         ],
         "summary": "Export Terse and Visits data for the given shortened URLs.",
-        "operationId": "terseExportSome",
+        "operationId": "export",
         "parameters": [
           {
-            "description": "The shortened URLs to get the export for.",
+            "description": "The shortened URLs to get the export for. If null, an export of all shortened URLs will be given.",
             "name": "shortenedURLs",
             "in": "body",
             "schema": {
@@ -977,24 +831,16 @@ func init() {
           "api"
         ],
         "summary": "Import existing Terse and Visits data for the given shortened URLs.",
-        "operationId": "terseImport",
+        "operationId": "import",
         "parameters": [
           {
             "description": "A JSON object containing the deletion information. If Terse or Visits data is marked for deletion, it will all be deleted. An object matching shortened URLs to their previously exported data is also required.",
-            "name": "importDelete",
+            "name": "import",
             "in": "body",
             "required": true,
             "schema": {
-              "type": "object",
-              "properties": {
-                "delete": {
-                  "$ref": "#/definitions/Delete"
-                },
-                "import": {
-                  "additionalProperties": {
-                    "$ref": "#/definitions/Export"
-                  }
-                }
+              "additionalProperties": {
+                "$ref": "#/definitions/Export"
               }
             }
           }
@@ -1019,7 +865,7 @@ func init() {
           "api"
         ],
         "summary": "Client's web browser is requesting what HTTP prefix all shortened URLs have.",
-        "operationId": "tersePrefix",
+        "operationId": "shortenedURLPrefix",
         "responses": {
           "200": {
             "description": "The HTTP prefix all shortened URLs have.",
@@ -1049,11 +895,11 @@ func init() {
           "api"
         ],
         "summary": "Provide Terse summary data for the requested shortened URLs.",
-        "operationId": "terseSummary",
+        "operationId": "shortenedSummary",
         "parameters": [
           {
             "description": "The array of shortened URLs to get Terse summary data for. If none is provided, all will summaries will be returned.",
-            "name": "shortened",
+            "name": "shortenedURLs",
             "in": "body",
             "schema": {
               "type": "array",
@@ -1068,7 +914,7 @@ func init() {
             "description": "The map of shortened URLs to Terse summary data.",
             "schema": {
               "additionalProperties": {
-                "$ref": "#/definitions/TerseSummary"
+                "$ref": "#/definitions/Summary"
               }
             }
           },
@@ -1081,8 +927,8 @@ func init() {
         }
       }
     },
-    "/api/terse/{shortened}": {
-      "get": {
+    "/api/terse": {
+      "post": {
         "description": "Read the Terse data for the given shortened URL.",
         "produces": [
           "application/json"
@@ -1091,14 +937,19 @@ func init() {
           "api"
         ],
         "summary": "Read the Terse data for the given shortened URL.",
-        "operationId": "terseTerse",
+        "operationId": "terseRead",
         "parameters": [
           {
-            "type": "string",
             "description": "The shortened URL to get the Terse data for.",
-            "name": "shortened",
-            "in": "path",
-            "required": true
+            "name": "shortenedURL",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
           }
         ],
         "responses": {
@@ -1115,25 +966,70 @@ func init() {
             }
           }
         }
-      }
-    },
-    "/api/visits/{shortened}": {
-      "get": {
+      },
+      "delete": {
+        "description": "Delete all assets for the given shortened URLs. This includes all Terse data, Visits data, and Summary data.",
+        "consumes": [
+          "application/json"
+        ],
         "produces": [
           "application/json"
         ],
         "tags": [
           "api"
         ],
-        "summary": "Get the Visits data for the given shortened URL.",
-        "operationId": "terseVisits",
+        "summary": "Delete all assets for the given shortened URLs.",
+        "operationId": "shortenedDelete",
         "parameters": [
           {
-            "type": "string",
-            "description": "The shortened URL to get the s data for.",
-            "name": "shortened",
-            "in": "path",
-            "required": true
+            "description": "The shortened URLs whose data should be deleted.",
+            "name": "shortenedURLs",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The shortened URL's data was successfully deleted from the backend storage."
+          },
+          "default": {
+            "description": "Unexpected error.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/api/visits": {
+      "post": {
+        "description": "Read the Visits data for the given shortened URLs.",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "api"
+        ],
+        "summary": "Read the Visits data for the given shortened URLs.",
+        "operationId": "visitsRead",
+        "parameters": [
+          {
+            "description": "The shortened URL to get the Visits data for.",
+            "name": "shortenedURL",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
           }
         ],
         "responses": {
@@ -1146,6 +1042,45 @@ func init() {
                 "$ref": "#/definitions/Visit"
               }
             }
+          },
+          "default": {
+            "description": "Unexpected error.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "delete": {
+        "description": "Delete all Visits data for the given shortened URLs. This will affect Summary data.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "api"
+        ],
+        "summary": "Delete all Visits data for the given shortened URLs.",
+        "operationId": "visitsDelete",
+        "parameters": [
+          {
+            "description": "The shortened URLs whose Visits data should be deleted.",
+            "name": "shortenedURLs",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The shortened URL's Visits data was successfully deleted from the backend storage."
           },
           "default": {
             "description": "Unexpected error.",
@@ -1210,7 +1145,7 @@ func init() {
         }
       }
     },
-    "/{shortened}": {
+    "/{shortenedURL}": {
       "get": {
         "description": "Use the shortened URL. It will redirect to the full URL if it has not expired.",
         "produces": [
@@ -1220,11 +1155,11 @@ func init() {
           "public"
         ],
         "summary": "Typically a web browser would visit this endpoint, then get redirected.",
-        "operationId": "terseRedirect",
+        "operationId": "publicRedirect",
         "parameters": [
           {
             "type": "string",
-            "name": "shortened",
+            "name": "shortenedURL",
             "in": "path",
             "required": true
           }
@@ -1262,18 +1197,6 @@ func init() {
     }
   },
   "definitions": {
-    "Delete": {
-      "properties": {
-        "terse": {
-          "type": "boolean",
-          "default": true
-        },
-        "visits": {
-          "type": "boolean",
-          "default": true
-        }
-      }
-    },
     "Error": {
       "type": "object",
       "required": [
@@ -1331,6 +1254,16 @@ func init() {
         "meta",
         "js"
       ]
+    },
+    "Summary": {
+      "properties": {
+        "terse": {
+          "$ref": "#/definitions/TerseSummary"
+        },
+        "visits": {
+          "$ref": "#/definitions/VisitsSummary"
+        }
+      }
     },
     "Terse": {
       "required": [
@@ -1390,9 +1323,6 @@ func init() {
         },
         "shortenedURL": {
           "type": "string"
-        },
-        "visitCount": {
-          "type": "integer"
         }
       }
     },
@@ -1422,6 +1352,14 @@ func init() {
         },
         "ip": {
           "type": "string"
+        }
+      }
+    },
+    "VisitsSummary": {
+      "properties": {
+        "visitCount": {
+          "type": "integer",
+          "format": "uint"
         }
       }
     }

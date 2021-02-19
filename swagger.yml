@@ -27,106 +27,26 @@ paths:
   /api/alive:
     get:
       summary: "Used by Caddy or other reverse proxy to determine if the service is alive."
-      description: "Any non-200 response means the service is not alive."
-      operationId: "alive"
+      description: "Used by Caddy or other reverse proxy to determine if the service is alive."
+      operationId: "systemAlive"
       responses:
         200:
           description: "Service is alive."
       tags:
         - "system"
 
-  /api/delete:
-    delete:
-      consumes:
-        - "application/json"
-      summary: "Delete all Terse and or Visits data."
-      description: "All Terse and or Visits data will be deleted according to the deletion information specified."
-      operationId: "terseDelete"
-      parameters:
-        - description: "A JSON object containing the deletion information. If Terse or Visits data is marked for
-        deletion, it will all be deleted."
-          in: "body"
-          name: "delete"
-          required: true
-          schema:
-            $ref: "#/definitions/Delete"
-      responses:
-        200:
-          description: "The deletion request was successfully fulfilled."
-        default:
-          description: "Unexpected error."
-          schema:
-            $ref: "#/definitions/Error"
-      tags:
-        - "api"
-
-  /api/delete/some:
-    delete:
-      consumes:
-        - "application/json"
-      produces:
-        - "application/json"
-      summary: "Delete Terse and or Visits data for the given shortened URLs."
-      description: "If only Terse data is deleted, the API user is responsible for cleaning up its Visits data before
-      adding new Terse data under the same shortened URL."
-      operationId: "terseDeleteSome"
-      parameters:
-        - description: "Indicate if Terse and or Visits data should be deleted and for which shortened URLs."
-          in: "body"
-          name: "info"
-          required: true
-          schema:
-            type: "object"
-            properties:
-              delete:
-                $ref: "#/definitions/Delete"
-              shortenedURLs:
-                type: "array"
-                items:
-                  type: "string"
-      responses:
-        200:
-          description: "The shortened URL's data was successfully deleted from the backend storage."
-        default:
-          description: "Unexpected error."
-          schema:
-            $ref: "#/definitions/Error"
-      tags:
-        - "api"
-
   /api/export:
-    get:
-      produces:
-        - "application/json"
-      summary: "Export all Terse and Visits data from the backend."
-      description: "Depending on the underlying storage and amount of data, this may take a while."
-      operationId: "terseExport"
-      responses:
-        200:
-          description: "The export was successfully retrieved."
-          schema:
-            description: "All of the Terse and Visits data from the backend."
-            type: "object"
-            additionalProperties:
-              $ref: "#/definitions/Export"
-        default:
-          description: "Unexpected error."
-          schema:
-            $ref: "#/definitions/Error"
-      tags:
-        - "api"
-
-  /api/export/some:
     post:
       consumes:
         - "application/json"
       produces:
         - "application/json"
       summary: "Export Terse and Visits data for the given shortened URLs."
-      description: "Export Terse and Visits data for the given shortened URLs."
-      operationId: "terseExportSome"
+      description: "Export Terse and Visits data for the given shortened URLs. If shortenedURLs is null, then export all
+      shortened URLs."
+      operationId: "export"
       parameters:
-        - description: "The shortened URLs to get the export for."
+        - description: "The shortened URLs to get the export for. If null, an export of all shortened URLs will be given."
           in: "body"
           name: "shortenedURLs"
           schema:
@@ -186,22 +106,17 @@ paths:
       summary: "Import existing Terse and Visits data for the given shortened URLs."
       description: "Any imported data will overwrite existing data. Unless deletion information is specified. In that
       case all Terse or Visits data can be deleted before importing the new data."
-      operationId: "terseImport"
+      operationId: "import"
       parameters:
         - description: "A JSON object containing the deletion information. If Terse or Visits data is marked for
         deletion, it will all be deleted. An object matching shortened URLs to their previously exported data is also
         required."
           in: "body"
-          name: "importDelete"
+          name: "import"
           required: true
           schema:
-            type: "object"
-            properties:
-              delete:
-                $ref: "#/definitions/Delete"
-              import:
-                additionalProperties:
-                  $ref: "#/definitions/Export"
+            additionalProperties:
+              $ref: "#/definitions/Export"
       responses:
         200:
           description: "The import request was successfully fulfilled."
@@ -216,7 +131,7 @@ paths:
     get:
       summary: "Client's web browser is requesting what HTTP prefix all shortened URLs have."
       description: "Provides the HTTP prefix all shortened URLs have."
-      operationId: "tersePrefix"
+      operationId: "shortenedURLPrefix"
       responses:
         200:
           description: "The HTTP prefix all shortened URLs have."
@@ -238,12 +153,12 @@ paths:
       summary: "Provide Terse summary data for the requested shortened URLs."
       description: "Terse summary data includes the shortened URL, the original URL, the type of redirect, and the
       number of visits."
-      operationId: "terseSummary"
+      operationId: "shortenedSummary"
       parameters:
         - description: "The array of shortened URLs to get Terse summary data for. If none is provided, all will
         summaries will be returned."
           in: "body"
-          name: "shortened"
+          name: "shortenedURLs"
           schema:
             type: "array"
             items:
@@ -253,7 +168,7 @@ paths:
           description: "The map of shortened URLs to Terse summary data."
           schema:
             additionalProperties:
-              $ref: "#/definitions/TerseSummary"
+              $ref: "#/definitions/Summary"
         default:
           description: "Unexpected error."
           schema:
@@ -261,19 +176,49 @@ paths:
       tags:
         - "api"
 
-  /api/terse/{shortened}:
-    get:
+  /api/terse:
+    delete:
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      summary: "Delete all assets for the given shortened URLs."
+      description: "Delete all assets for the given shortened URLs. This includes all Terse data, Visits data, and
+      Summary data."
+      operationId: "shortenedDelete"
+      parameters:
+        - description: "The shortened URLs whose data should be deleted."
+          in: "body"
+          name: "shortenedURLs"
+          required: true
+          schema:
+            type: "array"
+            items:
+              type: "string"
+      responses:
+        200:
+          description: "The shortened URL's data was successfully deleted from the backend storage."
+        default:
+          description: "Unexpected error."
+          schema:
+            $ref: "#/definitions/Error"
+      tags:
+        - "api"
+    post:
       produces:
         - "application/json"
       summary: "Read the Terse data for the given shortened URL."
       description: "Read the Terse data for the given shortened URL."
-      operationId: "terseTerse"
+      operationId: "terseRead"
       parameters:
         - description: "The shortened URL to get the Terse data for."
-          in: "path"
-          name: "shortened"
+          in: "body"
+          name: "shortenedURL"
           required: true
-          type: "string"
+          schema:
+            type: "array"
+            items:
+              type: "string"
       responses:
         200:
           description: "The Terse data was successfully retrieved."
@@ -286,18 +231,49 @@ paths:
       tags:
         - "api"
 
-  /api/visits/{shortened}:
-    get:
+  /api/visits:
+    # TODO Create an endpoint that allows for the selective deletion of Visits data.
+    delete:
+      consumes:
+        - "application/json"
       produces:
         - "application/json"
-      summary: "Get the Visits data for the given shortened URL."
-      operationId: "terseVisits"
+      summary: "Delete all Visits data for the given shortened URLs."
+      description: "Delete all Visits data for the given shortened URLs. This will affect Summary data."
+      operationId: "visitsDelete"
       parameters:
-        - description: "The shortened URL to get the s data for."
-          in: "path"
-          name: "shortened"
+        - description: "The shortened URLs whose Visits data should be deleted."
+          in: "body"
+          name: "shortenedURLs"
           required: true
-          type: "string"
+          schema:
+            type: "array"
+            items:
+              type: "string"
+      responses:
+        200:
+          description: "The shortened URL's Visits data was successfully deleted from the backend storage."
+        default:
+          description: "Unexpected error."
+          schema:
+            $ref: "#/definitions/Error"
+      tags:
+        - "api"
+    post:
+      produces:
+        - "application/json"
+      summary: "Read the Visits data for the given shortened URLs."
+      description: "Read the Visits data for the given shortened URLs."
+      operationId: "visitsRead"
+      parameters:
+        - description: "The shortened URL to get the Visits data for."
+          in: "body"
+          name: "shortenedURL"
+          required: true
+          schema:
+            type: "array"
+            items:
+              type: "string"
       responses:
         200:
           description: "The Visits data was successfully retrieved."
@@ -356,16 +332,16 @@ paths:
 
   # IDs are always 9 characters or greater, so they can be put at the base path as long as all other paths are 8
   # characters or less.
-  /{shortened}:
+  /{shortenedURL}:
     get:
       summary: "Typically a web browser would visit this endpoint, then get redirected."
       description: "Use the shortened URL. It will redirect to the full URL if it has not expired."
-      operationId: "terseRedirect"
+      operationId: "publicRedirect"
       produces:
         - "text/html"
       parameters:
         - in: "path"
-          name: "shortened"
+          name: "shortenedURL"
           required: true
           type: "string"
       responses: # TODO Add 200 response for when social media link previews are enabled.
@@ -393,16 +369,6 @@ paths:
 
 
 definitions:
-
-  # Schema for deleting Terse and Visits data.
-  Delete:
-    properties:
-      terse:
-        default: true
-        type: "boolean"
-      visits:
-        default: true
-        type: "boolean"
 
   # Schema for Terse export. It contains Terse and Visits data for a shortened URL.
   Export:
@@ -453,6 +419,14 @@ definitions:
       - "js"
     type: "string"
 
+  # Schema for summary data on a specific shortened URL.
+  Summary: # TODO Refactor "Terse summary data" to "Summary data"
+    properties:
+      terse:
+        $ref: "#/definitions/TerseSummary"
+      visits:
+        $ref: "#/definitions/VisitsSummary"
+
   # Schema for a Terse URL, which represented a shortened URL and original pair plus metadata.
   Terse:
     properties:
@@ -489,7 +463,7 @@ definitions:
     required:
       - "originalURL"
 
-  # Schema for summary data on a specific shortened URL.
+  # Schema for summarizing Terse data.
   TerseSummary:
     properties:
       originalURL:
@@ -498,8 +472,6 @@ definitions:
         type: "string"
       redirectType:
         $ref: "#/definitions/RedirectType"
-      visitCount:
-        type: "integer"
 
   # Schema for Twitter HTML meta tags.
   Twitter:
@@ -523,3 +495,11 @@ definitions:
     required:
       - "accessed"
       - "ip"
+
+
+  # Schema for summarizing Visits data.
+  VisitsSummary:
+    properties:
+      visitCount:
+        type: "integer"
+        format: "uint" # TODO Remove or change?

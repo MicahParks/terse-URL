@@ -10,115 +10,65 @@ import (
 // needing to know how the Terse summary data is stored.
 type SummaryStore interface {
 
-	// Delete deletes the summary information for the given shortened URLs.
-	Delete(ctx context.Context, shortenedURLs []string) (err error)
+	// Close closes the connection to the underlying storage.
+	Close(ctx context.Context) (err error)
 
-	// Import deletes all of the existing Terse summary data and replaces it with the given summaries.
-	Import(ctx context.Context, summaries map[string]models.TerseSummary) (err error)
+	// Delete deletes the summary information for the given shortened URLs. If shortenedURLs is nil, all Summary data
+	// will be deleted.
+	Delete(ctx context.Context, shortenedURLs []string) (err error)
 
 	// IncrementVisitCount increments the visit count for the given shortened URL. It is called in separate goroutine.
 	// The error must be storage.ErrShortenedNotFound if the shortened URL is not found.
 	IncrementVisitCount(ctx context.Context, shortened string) (err error)
 
-	// Summarize provides the summary information for the given shortened URLs. If shortenedURLs is nil, all summaries
+	// Summary provides the summary information for the given shortened URLs. If shortenedURLs is nil, all summaries
 	// will be returned. The error must be storage.ErrShortenedNotFound if a shortened URL is not found.
-	//
-	// TODO Apply this nil pattern to other endpoints?
-	Summarize(ctx context.Context, shortenedURLs []string) (summaries map[string]models.TerseSummary, err error)
+	Summary(ctx context.Context, shortenedURLs []string) (summaries map[string]models.Summary, err error)
 
 	// Upsert upserts the summary information for the given shortened URL.
-	Upsert(ctx context.Context, summaries map[string]models.TerseSummary) (err error)
+	Upsert(ctx context.Context, summaries map[string]models.Summary) (err error)
 }
 
 // TerseStore is the Terse storage interface. It allows for Terse storage operations without needing to know how
 // the Terse data is stored.
 type TerseStore interface {
 
-	// Close closes the connection to the underlying storage. The ctxerrgroup should be killed. This may or may not
-	// close the connection to the VisitsStore, depending on the configuration.
+	// Close closes the connection to the underlying storage.
 	Close(ctx context.Context) (err error)
 
-	// CreateSummaryStore creates the SummaryStore based on the existing VisitsStore data.
-	CreateSummaryStore(ctx context.Context) (summaries map[string]models.TerseSummary, err error)
+	// Delete deletes the Terse data for the given shortened URLs. If shortenedURLs is nil, all shortened URLs' Terse
+	// data is deleted. There should be no error if a shortened URL is not found.
+	Delete(ctx context.Context, shortenedURLs []string) (err error)
 
-	// Delete deletes data according to the del argument. If the VisitsStore is not nil, then the same method will be
-	// called for the associated VisitsStore.
-	Delete(ctx context.Context, del models.Delete) (err error)
+	// Read returns a map of shortened URLs to Terse data. If shortenedURLs is nil, all shortened URLs' Terse data is
+	// expected. The error must be storage.ErrShortenedNotFound if a shortened URL is not found.
+	Read(ctx context.Context, shortenedURLs []string) (terseData map[string]models.Terse, err error)
 
-	// DeleteSome deletes data according to the del argument for the given shortened URL. No error should be given if
-	// the shortened URL is not found. If the VisitsStore is not nil, then the same method will be called for the
-	// associated VisitsStore.
-	DeleteSome(ctx context.Context, del models.Delete, shortenedURLs []string) (err error)
+	// Summary summarizes the Terse data for the given shortened URLs. This is used in building the SummaryStore.
+	Summary(ctx context.Context, shortenedURLs []string) (summaries map[string]models.TerseSummary, err error)
 
-	// Export returns a map of shortened URLs to export data.
-	Export(ctx context.Context) (export map[string]models.Export, err error)
-
-	// ExportSome returns a export of Terse and Visit data for a given shortened URL. The error must be
-	// storage.ErrShortenedNotFound if the shortened URL is not found.
-	ExportSome(ctx context.Context, shortenedURLs []string) (export map[string]models.Export, err error)
-
-	// ExportTerse exports all Terse data as a map of shortened URLs to Terse data.
-	//
-	// TODO And ExportSomeTerse?
-	ExportTerse(ctx context.Context) (terse map[string]*models.Terse, err error)
-
-	// Import imports the given export's data. If del is not nil, data will be deleted accordingly. If del is nil, data
-	// may be overwritten, but unaffected data will be untouched. If the VisitsStore is not nil, then the same method
-	// will be called for the associated VisitsStore.
-	Import(ctx context.Context, del *models.Delete, export map[string]models.Export) (err error)
-
-	// Insert adds a Terse to the TerseStore. The shortened URL will be active after this. The error must be
-	// storage.ErrShortenedExists if the shortened URL is already present.
-	Insert(ctx context.Context, terse *models.Terse) (err error)
-
-	// Read retrieves all non-Visit Terse data give its shortened URL. A nil visit may be passed in and the visit should
-	// not be recorded. The error must be storage.ErrShortenedNotFound if the shortened URL is not found.
-	Read(ctx context.Context, shortened string, visit *models.Visit) (terse *models.Terse, err error)
-
-	// SummaryStore returns the underlying SummaryStore, which holds the backend storage for tracking summary data for
-	// Terse.
-	SummaryStore() SummaryStore
-
-	// Update assumes the Terse already exists. It will override all of its values. The error must be
-	// storage.ErrShortenedNotFound if the shortened URL is not found.
-	Update(ctx context.Context, terse *models.Terse) (err error)
-
-	// Upsert will upsert the Terse into the backend storage.
-	Upsert(ctx context.Context, terse *models.Terse) (err error)
-
-	// VisitsStore returns the underlying VisitsStore, which holds the backend storage for tracking visits to shortened
-	// URLs.
-	VisitsStore() VisitsStore
+	// Write writes the given Terse data according to the given operation.
+	Write(ctx context.Context, terseData map[string]models.Terse, operation WriteOperation) (err error)
 }
 
 // VisitsStore is the Visits storage interface. It allows for Visits storage operations without needing to know how the
 // Visits data is stored.
 type VisitsStore interface {
 
-	// Add adds the visit to the visits store.
-	Add(ctx context.Context, shortened string, visit *models.Visit) (err error)
-
 	// Close closes the connection to the underlying storage.
 	Close(ctx context.Context) (err error)
 
-	// Delete deletes data according to the del argument.
-	Delete(ctx context.Context, del models.Delete) (err error)
+	// Delete deletes Visits data for the given shortened URLs. No error should be given if a shortened URL is not
+	// found.
+	Delete(ctx context.Context, shortenedURLs []string) (err error)
 
-	// DeleteSome deletes data according to the del argument for the shortened URL. No error should be given if the
-	// shortened URL is not found.
-	DeleteSome(ctx context.Context, del models.Delete, shortenedURLs []string) (err error)
+	// Read exports the Visits data for the given shortened URLs.
+	Read(ctx context.Context, shortenedURLs []string) (visitsData map[string][]*models.Visit, err error)
 
-	// Export exports all exports all visits data.
-	Export(ctx context.Context) (allVisits map[string][]*models.Visit, err error)
+	// Insert inserts the given Visits data. The visits do not need to be unique, so the Visits data should be appended
+	// to the data structure in storage.
+	Insert(ctx context.Context, visitsData map[string][]*models.Visit) (err error)
 
-	// ExportCounts creates a map of shortened URLs to count of Visits.
-	ExportCounts(ctx context.Context) (counts map[string]uint, err error)
-
-	// ExportSome gets all visits to the shortened URL. The error must be storage.ErrShortenedNotFound if the shortened
-	// URL is not found.
-	ExportSome(ctx context.Context, shortenedURLs []string) (visits map[string][]*models.Visit, err error)
-
-	// Import imports the given export's data. If del is not nil, data will be deleted accordingly. If del is nil, data
-	// may be overwritten, but unaffected data will be untouched.
-	Import(ctx context.Context, del *models.Delete, export map[string]models.Export) (err error)
+	// Summary summarizes the Visits data for the given shortened URLs. This is used in building the SummaryStore.
+	Summary(ctx context.Context, shortenedURLs []string) (visitsSummary map[string]uint, err error)
 }

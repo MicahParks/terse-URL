@@ -26,9 +26,6 @@ type TerseSummary struct {
 
 	// shortened URL
 	ShortenedURL string `json:"shortenedURL,omitempty"`
-
-	// visit count
-	VisitCount int64 `json:"visitCount,omitempty"`
 }
 
 // Validate validates this terse summary
