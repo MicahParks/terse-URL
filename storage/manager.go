@@ -61,6 +61,7 @@ func (s StoreManager) InitializeSummaryStore(ctx context.Context) (err error) {
 	if err != nil {
 		return err
 	}
+	haveVisits := visitsSummary != nil
 
 	// Get the Summary data.
 	var terseSummary map[string]*models.TerseSummary
@@ -74,7 +75,7 @@ func (s StoreManager) InitializeSummaryStore(ctx context.Context) (err error) {
 
 		// Check if there is Visits data.
 		var visits *models.VisitsSummary
-		if visitsSummary != nil {
+		if haveVisits {
 			visits = visitsSummary[shortened]
 		}
 
