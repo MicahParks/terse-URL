@@ -14,15 +14,15 @@ type SummaryStore interface {
 	Close(ctx context.Context) (err error)
 
 	// Delete deletes the summary information for the given shortened URLs. If shortenedURLs is nil, all Summary data
-	// will be deleted. No error should be returned if a shortened URL is not found.
+	// are deleted. No error should be returned if a shortened URL is not found.
 	Delete(ctx context.Context, shortenedURLs []string) (err error)
 
 	// IncrementVisitCount increments the visit count for the given shortened URL. It is called in separate goroutine.
 	// The error must be storage.ErrShortenedNotFound if the shortened URL is not found.
 	IncrementVisitCount(ctx context.Context, shortened string) (err error)
 
-	// Read provides the summary information for the given shortened URLs. If shortenedURLs is nil, all summaries will
-	// be returned. The error must be storage.ErrShortenedNotFound if a shortened URL is not found.
+	// Read provides the summary information for the given shortened URLs. If shortenedURLs is nil, all summaries are
+	// returned. The error must be storage.ErrShortenedNotFound if a shortened URL is not found.
 	Read(ctx context.Context, shortenedURLs []string) (summaries map[string]*models.Summary, err error)
 
 	// Upsert upserts the summary information for the given shortened URL.
@@ -36,15 +36,16 @@ type TerseStore interface {
 	// Close closes the connection to the underlying storage.
 	Close(ctx context.Context) (err error)
 
-	// Delete deletes the Terse data for the given shortened URLs. If shortenedURLs is nil, all shortened URLs' Terse
-	// data is deleted. There should be no error if a shortened URL is not found.
+	// Delete deletes the Terse data for the given shortened URLs. If shortenedURLs is nil, all shortened URL Terse
+	// data are deleted. There should be no error if a shortened URL is not found.
 	Delete(ctx context.Context, shortenedURLs []string) (err error)
 
-	// Read returns a map of shortened URLs to Terse data. If shortenedURLs is nil, all shortened URLs' Terse data is
+	// Read returns a map of shortened URLs to Terse data. If shortenedURLs is nil, all shortened URL Terse data are
 	// expected. The error must be storage.ErrShortenedNotFound if a shortened URL is not found.
 	Read(ctx context.Context, shortenedURLs []string) (terseData map[string]models.Terse, err error)
 
-	// Summary summarizes the Terse data for the given shortened URLs. This is used in building the SummaryStore.
+	// Summary summarizes the Terse data for the given shortened URLs. If shortenedURLs is nil, then all shortened URL
+	// Summary data are expected.
 	Summary(ctx context.Context, shortenedURLs []string) (summaries map[string]*models.TerseSummary, err error)
 
 	// Write writes the given Terse data according to the given operation.
@@ -58,17 +59,19 @@ type VisitsStore interface {
 	// Close closes the connection to the underlying storage.
 	Close(ctx context.Context) (err error)
 
-	// Delete deletes Visits data for the given shortened URLs. No error should be given if a shortened URL is not
-	// found.
+	// Delete deletes Visits data for the given shortened URLs. If shortenedURLs is nil, then all Visits data are
+	// deleted. No error should be given if a shortened URL is not found.
 	Delete(ctx context.Context, shortenedURLs []string) (err error)
 
 	// Insert inserts the given Visits data. The visits do not need to be unique, so the Visits data should be appended
 	// to the data structure in storage.
 	Insert(ctx context.Context, visitsData map[string][]*models.Visit) (err error)
 
-	// Read exports the Visits data for the given shortened URLs.
+	// Read exports the Visits data for the given shortened URLs. If shortenedURLs is nil, then all shortened URL Visits
+	// data are expected. The error must be storage.ErrShortenedNotFound if a shortened URL is not found.
 	Read(ctx context.Context, shortenedURLs []string) (visitsData map[string][]*models.Visit, err error)
 
-	// Summary summarizes the Visits data for the given shortened URLs. This is used in building the SummaryStore.
+	// Summary summarizes the Visits data for the given shortened URLs. If shortenedURLs is nil, then all shortened URL
+	// Summary data are expected.
 	Summary(ctx context.Context, shortenedURLs []string) (visitsSummary map[string]*models.VisitsSummary, err error)
 }

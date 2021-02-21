@@ -41,15 +41,17 @@ func (m *MemVisits) Delete(_ context.Context, shortenedURLs []string) (err error
 	m.mux.Lock()
 	defer m.mux.Unlock()
 
-	// Check if all Summary data should be deleted.
+	// Check for teh nil case.
 	if shortenedURLs == nil {
-		m.deleteAll()
-		return nil
-	}
 
-	// Iterate through the given shortened URLs.
-	for _, shortened := range shortenedURLs {
-		delete(m.visits, shortened)
+		// Delete all Visits data.
+		m.deleteAll()
+	} else {
+
+		// Iterate through the given shortened URLs.
+		for _, shortened := range shortenedURLs {
+			delete(m.visits, shortened)
+		}
 	}
 
 	return nil
@@ -63,16 +65,80 @@ func (m *MemVisits) Insert(_ context.Context, visitsData map[string][]*models.Vi
 	m.mux.Lock()
 	defer m.mux.Unlock()
 
+	// Iterate through the given Visits data and append it to the existing.
+	for shortened, visits := range visitsData {
+		visitsData[shortened] = append(visitsData[shortened], visits...)
+	}
+
+	return nil
 }
 
-// Read exports the Visits data for the given shortened URLs.
+// Read exports the Visits data for the given shortened URLs. If shortenedURLs is nil, all shortened URLs' Visits data
+// are expected. The error must be storage.ErrShortenedNotFound if a shortened URL is not found.
 func (m *MemVisits) Read(_ context.Context, shortenedURLs []string) (visitsData map[string][]*models.Visit, err error) {
 
+	// Create the return map.
+	visitsData = make(map[string][]*models.Visit, len(shortenedURLs))
+
+	// Lock the Summary data for async safe use.
+	m.mux.RLock()
+	defer m.mux.RUnlock()
+
+	// Check for the nil case.
+	if shortenedURLs == nil {
+
+		// Copy all Visits data.
+		visitsData = make(map[string][]*models.Visit, len(m.visits))
+		for shortened, visits := range m.visits {
+			visitsData[shortened] = visits
+		}
+	} else {
+
+		// Iterate through the given shortened URLs.
+		for _, shortened := range shortenedURLs {
+
+			// Get the visits for the shortened URL.
+			visits, ok := m.visits[shortened]
+			if !ok {
+				return nil, ErrShortenedNotFound
+			}
+
+			// Add the Visits data to the return map.
+			visitsData[shortened] = visits
+		}
+	}
+
+	return visitsData, nil
 }
 
 // Summary summarizes the Visits data for the given shortened URLs. This is used in building the SummaryStore.
 func (m *MemVisits) Summary(_ context.Context, shortenedURLs []string) (visitsSummary map[string]*models.VisitsSummary, err error) {
 
+	// Create the return map.
+	visitsSummary = make(map[string]*models.VisitsSummary, len(shortenedURLs))
+
+	// Lock the Summary data for async safe use.
+	m.mux.RLock()
+	defer m.mux.RUnlock()
+
+	// Check for the nil case.
+	if shortenedURLs == nil {
+
+		// Gather the Summary data for all shortened URLs.
+		for shortened, visits := range m.visits {
+			visitsSummary[shortened] = &models.VisitsSummary{
+				VisitCount: uint64(len(visits)),
+			}
+		}
+	} else {
+
+		// Iterate through the given shortened URLs.
+		for _, shortened := range shortenedURLs {
+
+		}
+	}
+
+	return visitsSummary, nil
 }
 
 // deleteAll deletes all of the Visits data. It does not lock, so a lock must be used for async safe usage.

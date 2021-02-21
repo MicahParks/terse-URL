@@ -18,6 +18,9 @@ type StoreManager struct { // TODO Rename.
 	visitsStore  VisitsStore
 }
 
+// TODO Turn shortenedURLs argument into a map, then back into a slice before giving to stores. This will ensure it is a
+// set and helps prevent DOS.
+
 func (s StoreManager) Close(ctx context.Context) (err error) {
 
 	// Kill the worker pool.

@@ -7,6 +7,9 @@ import (
 	"github.com/MicahParks/terseurl/models"
 )
 
+// TODO Memory implementations for all stores both consume and produce pointers. Should copies of the data be consumed
+// TODO and produced so the user doesn't have any confusion? (Slices as well.)
+
 // MemSummary is a SummaryStore implementation that stores all data in a Go map in memory.
 type MemSummary struct {
 	summaries map[string]*models.Summary
@@ -33,23 +36,25 @@ func (m *MemSummary) Close(_ context.Context) (err error) {
 	return nil
 }
 
-// Delete deletes the summary information for the given shortened URLs. If shortenedURLs is nil, all Summary data
-// will be deleted. No error should be returned if a shortened URL is not found.
+// Delete deletes the summary information for the given shortened URLs. If shortenedURLs is nil, all Summary data are
+// deleted. No error should be returned if a shortened URL is not found.
 func (m *MemSummary) Delete(_ context.Context, shortenedURLs []string) (err error) {
 
 	// Lock the Summary data for async safe use.
 	m.mux.Lock()
 	defer m.mux.Unlock()
 
-	// Check if all Summary data should be deleted.
+	// Check for the nil case.
 	if shortenedURLs == nil {
-		m.deleteAll()
-		return nil
-	}
 
-	// Iterate through the given shortened URLs.
-	for _, shortened := range shortenedURLs {
-		delete(m.summaries, shortened)
+		// Delete all summary data.
+		m.deleteAll()
+	} else {
+
+		// Iterate through the given shortened URLs.
+		for _, shortened := range shortenedURLs {
+			delete(m.summaries, shortened)
+		}
 	}
 
 	return nil
@@ -78,7 +83,7 @@ func (m *MemSummary) IncrementVisitCount(_ context.Context, shortened string) (e
 	return nil
 }
 
-// Read provides the summary information for the given shortened URLs. If shortenedURLs is nil, all summaries will be
+// Read provides the summary information for the given shortened URLs. If shortenedURLs is nil, all summaries are
 // returned. The error must be storage.ErrShortenedNotFound if a shortened URL is not found.
 func (m *MemSummary) Read(_ context.Context, shortenedURLs []string) (summaries map[string]*models.Summary, err error) {
 
@@ -91,20 +96,22 @@ func (m *MemSummary) Read(_ context.Context, shortenedURLs []string) (summaries 
 
 	// Check to see if all Summary data was requested, if so, copy all Summary data.
 	if shortenedURLs == nil {
+
+		// Copy all Summary data.
 		summaries = make(map[string]*models.Summary, len(m.summaries))
 		for shortened, summary := range m.summaries {
 			summaries[shortened] = summary
 		}
-		return summaries, nil
-	}
+	} else {
 
-	// Iterate through the given shortened URLs. Copy the requested ones.
-	for _, shortened := range shortenedURLs {
-		summary, ok := m.summaries[shortened]
-		if !ok {
-			return nil, ErrShortenedNotFound
+		// Iterate through the given shortened URLs. Copy the requested ones.
+		for _, shortened := range shortenedURLs {
+			summary, ok := m.summaries[shortened]
+			if !ok {
+				return nil, ErrShortenedNotFound
+			}
+			summaries[shortened] = summary
 		}
-		summaries[shortened] = summary
 	}
 
 	return summaries, nil
