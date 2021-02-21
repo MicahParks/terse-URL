@@ -21,9 +21,9 @@ type SummaryStore interface {
 	// The error must be storage.ErrShortenedNotFound if the shortened URL is not found.
 	IncrementVisitCount(ctx context.Context, shortened string) (err error)
 
-	// Summary provides the summary information for the given shortened URLs. If shortenedURLs is nil, all summaries
-	// will be returned. The error must be storage.ErrShortenedNotFound if a shortened URL is not found.
-	Summary(ctx context.Context, shortenedURLs []string) (summaries map[string]*models.Summary, err error)
+	// Read provides the summary information for the given shortened URLs. If shortenedURLs is nil, all summaries will
+	// be returned. The error must be storage.ErrShortenedNotFound if a shortened URL is not found.
+	Read(ctx context.Context, shortenedURLs []string) (summaries map[string]*models.Summary, err error)
 
 	// Upsert upserts the summary information for the given shortened URL.
 	Upsert(ctx context.Context, summaries map[string]*models.Summary) (err error)
@@ -62,12 +62,12 @@ type VisitsStore interface {
 	// found.
 	Delete(ctx context.Context, shortenedURLs []string) (err error)
 
-	// Read exports the Visits data for the given shortened URLs.
-	Read(ctx context.Context, shortenedURLs []string) (visitsData map[string][]*models.Visit, err error)
-
 	// Insert inserts the given Visits data. The visits do not need to be unique, so the Visits data should be appended
 	// to the data structure in storage.
 	Insert(ctx context.Context, visitsData map[string][]*models.Visit) (err error)
+
+	// Read exports the Visits data for the given shortened URLs.
+	Read(ctx context.Context, shortenedURLs []string) (visitsData map[string][]*models.Visit, err error)
 
 	// Summary summarizes the Visits data for the given shortened URLs. This is used in building the SummaryStore.
 	Summary(ctx context.Context, shortenedURLs []string) (visitsSummary map[string]*models.VisitsSummary, err error)

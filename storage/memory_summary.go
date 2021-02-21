@@ -78,9 +78,9 @@ func (m *MemSummary) IncrementVisitCount(_ context.Context, shortened string) (e
 	return nil
 }
 
-// Summary provides the summary information for the given shortened URLs. If shortenedURLs is nil, all summaries will be
+// Read provides the summary information for the given shortened URLs. If shortenedURLs is nil, all summaries will be
 // returned. The error must be storage.ErrShortenedNotFound if a shortened URL is not found.
-func (m *MemSummary) Summary(_ context.Context, shortenedURLs []string) (summaries map[string]*models.Summary, err error) {
+func (m *MemSummary) Read(_ context.Context, shortenedURLs []string) (summaries map[string]*models.Summary, err error) {
 
 	// Create the return map.
 	summaries = make(map[string]*models.Summary, len(shortenedURLs))

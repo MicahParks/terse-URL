@@ -2,7 +2,6 @@ package storage
 
 import (
 	"context"
-	"fmt"
 	"sync"
 
 	"github.com/MicahParks/terseurl/models"
@@ -21,147 +20,64 @@ func NewMemVisits() (visitsStore VisitsStore) {
 	}
 }
 
-// Add adds the visit to the visits store.
-func (m *MemVisits) Add(_ context.Context, shortened string, visit *models.Visit) (err error) {
-
-	// Lock the Visits map for async safe use.
-	m.mux.Lock()
-	defer m.mux.Unlock()
-
-	// Confirm the shortened URL is a key in the map.
-	visits, ok := m.visits[shortened]
-	if !ok {
-		visits = make([]*models.Visit, 0)
-		m.visits[shortened] = visits
-	}
-
-	// Add the visits to the slice of visits for this shortened URL.
-	m.visits[shortened] = append(visits, visit)
-
-	return nil
-}
-
-// Close lets the garbage collector take care of the old Visits data.
+// Close closes the connection to the underlying storage.
 func (m *MemVisits) Close(_ context.Context) (err error) {
-	m.visits = make(map[string][]*models.Visit)
-	return nil
-}
 
-// Delete deletes data according to the del argument.
-func (m *MemVisits) Delete(_ context.Context, del models.Delete) (err error) {
-
-	// Confirm the deletion of Visits data.
-	if del.Visits == nil || *del.Visits {
-
-		// Lock the Visits map for async safe use.
-		m.mux.Lock()
-
-		// Reassign the Visits map and the garbage collector will take care of the old data.
-		m.visits = make(map[string][]*models.Visit)
-
-		// Unlock the Visits map. The write operation is over.
-		m.mux.Unlock()
-	}
-
-	return nil
-}
-
-// DeleteSome deletes data according to the del argument for the shortened URL. No error will be given if the shortened
-// URL is not found.
-func (m *MemVisits) DeleteSome(_ context.Context, del models.Delete, shortenedURLs []string) (err error) {
-
-	// Confirm the deletion of Visits data.
-	if del.Visits == nil || *del.Visits {
-
-		// Lock the Visits map for async safe use.
-		m.mux.Lock()
-
-		// Iterate through the shortened URLs.
-		for _, shortened := range shortenedURLs {
-
-			// Delete all visits for the shortened URL.
-			delete(m.visits, shortened)
-		}
-
-		// Unlock the Visits map. The write operation is over.
-		m.mux.Unlock()
-	}
-
-	return nil
-}
-
-// Export exports all exports all visits data.
-func (m *MemVisits) Export(_ context.Context) (allVisits map[string][]*models.Visit, err error) {
-
-	// Lock the Visits map for async safe use.
-	m.mux.RLock()
-	defer m.mux.RUnlock()
-
-	return m.visits, nil
-}
-
-// ExportCounts creates a map of shortened URLs to count of Visits.
-func (m *MemVisits) ExportCounts(_ context.Context) (counts map[string]uint, err error) {
-
-	// Create the return map.
-	counts = make(map[string]uint)
-
-	// Lock the Visits map for async safe use.
-	m.mux.RLock()
-	defer m.mux.RUnlock()
-
-	// Iterate through the shortened URLs and count the visits.
-	for shortened, visits := range m.visits {
-		counts[shortened] = uint(len(visits))
-	}
-
-	return counts, nil
-}
-
-// ExportSome gets all visits to the shortened URL. The error storage.ErrShortenedNotFound will be given if the shortened
-// URL is not found.
-func (m *MemVisits) ExportSome(_ context.Context, shortenedURLs []string) (visits map[string][]*models.Visit, err error) {
-
-	// Create the return map.
-	visits = make(map[string][]*models.Visit)
-
-	// Lock the Visits map for async safe use.
-	m.mux.RLock()
-	defer m.mux.RUnlock()
-
-	// Iterate through the shortened URLs.
-	for _, shortened := range shortenedURLs {
-
-		// Confirm the shortened URL is a key in the map.
-		var ok bool
-		if visits[shortened], ok = m.visits[shortened]; !ok {
-			return nil, fmt.Errorf("%w: %s", ErrShortenedNotFound, shortened)
-		}
-	}
-
-	// Return the visits.
-	return visits, nil
-}
-
-// Import imports the given export's data. If del is not nil, data will be deleted accordingly. If del is nil, data
-// may be overwritten, but unaffected data will be untouched.
-func (m *MemVisits) Import(ctx context.Context, del *models.Delete, export map[string]models.Export) (err error) {
-
-	// Check if data needs to be deleted before importing.
-	if del != nil {
-		if err = m.Delete(ctx, *del); err != nil {
-			return err
-		}
-	}
-
-	// Lock the Visits map for async safe usage.
+	// Lock the Summary data for async safe use.
 	m.mux.Lock()
 	defer m.mux.Unlock()
 
-	// Write every shortened URL's Visits data to the Visits map.
-	for shortened, exp := range export {
-		m.visits[shortened] = exp.Visits
+	// Delete all the Summary data.
+	m.deleteAll()
+
+	return nil
+}
+
+// Delete deletes Visits data for the given shortened URLs. No error should be given if a shortened URL is not
+// found.
+func (m *MemVisits) Delete(_ context.Context, shortenedURLs []string) (err error) {
+
+	// Lock the Summary data for async safe use.
+	m.mux.Lock()
+	defer m.mux.Unlock()
+
+	// Check if all Summary data should be deleted.
+	if shortenedURLs == nil {
+		m.deleteAll()
+		return nil
+	}
+
+	// Iterate through the given shortened URLs.
+	for _, shortened := range shortenedURLs {
+		delete(m.visits, shortened)
 	}
 
 	return nil
+}
+
+// Insert inserts the given Visits data. The visits do not need to be unique, so the Visits data should be appended
+// to the data structure in storage.
+func (m *MemVisits) Insert(_ context.Context, visitsData map[string][]*models.Visit) (err error) {
+
+	// Lock the Summary data for async safe use.
+	m.mux.Lock()
+	defer m.mux.Unlock()
+
+}
+
+// Read exports the Visits data for the given shortened URLs.
+func (m *MemVisits) Read(_ context.Context, shortenedURLs []string) (visitsData map[string][]*models.Visit, err error) {
+
+}
+
+// Summary summarizes the Visits data for the given shortened URLs. This is used in building the SummaryStore.
+func (m *MemVisits) Summary(_ context.Context, shortenedURLs []string) (visitsSummary map[string]*models.VisitsSummary, err error) {
+
+}
+
+// deleteAll deletes all of the Visits data. It does not lock, so a lock must be used for async safe usage.
+func (m *MemVisits) deleteAll() {
+
+	// Reassign the Visits data so it's taken by the garbage collector.
+	m.visits = make(map[string][]*models.Visit)
 }
