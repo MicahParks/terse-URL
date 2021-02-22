@@ -140,7 +140,7 @@ func (m *MemTerse) Summary(_ context.Context, shortenedURLs []string) (summaries
 // Write writes the given Terse data according to the given operation. The error must be storage.ErrShortenedExists
 // if an Insert operation cannot be performed due to the Terse data already existing. The error must be
 // storage.ErrShortenedNotFound if an Update operation cannot be performed due to the Terse data not existing.
-func (m *MemTerse) Write(_ context.Context, terseData map[string]models.Terse, operation WriteOperation) (err error) {
+func (m *MemTerse) Write(_ context.Context, terseData map[string]*models.Terse, operation WriteOperation) (err error) {
 
 	// Lock the Terse data for async safe use.
 	m.mux.Lock()
@@ -161,7 +161,7 @@ func (m *MemTerse) Write(_ context.Context, terseData map[string]models.Terse, o
 		}
 
 		// Assign the shortened URL the given Terse data.
-		m.terse[shortened] = &terse
+		m.terse[shortened] = terse
 	}
 
 	return nil

@@ -13,8 +13,8 @@ import (
 
 // HandleImport creates and /api/import endpoint handler via a closure. It can import Terse and or Visits data. It will
 // delete existing data before importing, if told to do so.
-func HandleImport(logger *zap.SugaredLogger, terseStore storage.TerseStore) api.TerseImportHandlerFunc {
-	return func(params api.TerseImportParams) middleware.Responder {
+func HandleImport(logger *zap.SugaredLogger, terseStore storage.TerseStore) api.ImportHandlerFunc {
+	return func(params api.ImportParams) middleware.Responder {
 
 		// Log the event.
 		logger.Infow("Importing data.",

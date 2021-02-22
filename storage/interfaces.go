@@ -51,7 +51,7 @@ type TerseStore interface {
 	// Write writes the given Terse data according to the given operation. The error must be storage.ErrShortenedExists
 	// if an Insert operation cannot be performed due to the Terse data already existing. The error must be
 	// storage.ErrShortenedNotFound if an Update operation cannot be performed due to the Terse data not existing.
-	Write(ctx context.Context, terseData map[string]models.Terse, operation WriteOperation) (err error)
+	Write(ctx context.Context, terseData map[string]*models.Terse, operation WriteOperation) (err error)
 }
 
 // VisitsStore is the Visits storage interface. It allows for Visits storage operations without needing to know how the

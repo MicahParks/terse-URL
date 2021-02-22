@@ -112,7 +112,7 @@ func (b BboltTerse) Summary(_ context.Context, shortenedURLs []string) (summarie
 // Write writes the given Terse data according to the given operation. The error must be storage.ErrShortenedExists
 // if an Insert operation cannot be performed due to the Terse data already existing. The error must be
 // storage.ErrShortenedNotFound if an Update operation cannot be performed due to the Terse data not existing.
-func (b BboltTerse) Write(_ context.Context, terseData map[string]models.Terse, operation WriteOperation) (err error) {
+func (b BboltTerse) Write(_ context.Context, terseData map[string]*models.Terse, operation WriteOperation) (err error) {
 
 	// Open the bbolt database for writing, batch if possible.
 	if err = b.db.Batch(func(tx *bbolt.Tx) error {
@@ -132,7 +132,7 @@ func (b BboltTerse) Write(_ context.Context, terseData map[string]models.Terse, 
 			}
 
 			// Transform the Terse data into bytes.
-			data, err := terseToBytes(terse)
+			data, err := terseToBytes(*terse) // TODO Check for nil?
 			if err != nil {
 				return err
 			}
