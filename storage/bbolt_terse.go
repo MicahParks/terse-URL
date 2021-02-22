@@ -2,11 +2,7 @@ package storage
 
 import (
 	"context"
-	"encoding/json"
-	"errors"
-	"fmt"
 
-	"github.com/MicahParks/ctxerrgroup"
 	"go.etcd.io/bbolt"
 
 	"github.com/MicahParks/terseurl/models"
@@ -14,518 +10,137 @@ import (
 
 // BboltTerse is a TerseStore implementation that relies on a bbolt file for the backend storage.
 type BboltTerse struct {
-	db           *bbolt.DB
-	createCtx    ctxCreator
-	group        *ctxerrgroup.Group
-	summaryStore SummaryStore
-	terseBucket  []byte
-	visitsStore  VisitsStore
+	db          *bbolt.DB
+	terseBucket []byte
 }
 
 // NewBboltTerse creates a new BboltTerse given the required assets.
-func NewBboltTerse(db *bbolt.DB, createCtx ctxCreator, group *ctxerrgroup.Group, summaryStore SummaryStore, terseBucket []byte, visitsStore VisitsStore) (terseStore TerseStore) {
-	return &BboltTerse{
-		db:           db,
-		createCtx:    createCtx,
-		group:        group,
-		terseBucket:  terseBucket,
-		summaryStore: summaryStore,
-		visitsStore:  visitsStore,
+func NewBboltTerse(db *bbolt.DB, terseBucket []byte) (terseStore TerseStore) {
+	return BboltTerse{
+		db:          db,
+		terseBucket: terseBucket,
 	}
 }
 
-// Close closes the connection to the underlying storage. The ctxerrgroup will be killed. This will not close the
-// connection to the VisitsStore.
-func (b *BboltTerse) Close(_ context.Context) (err error) {
-
-	// Kill the worker pool.
-	b.group.Kill()
+// Close closes the connection to the underlying storage.
+func (b BboltTerse) Close(_ context.Context) (err error) {
 
 	// Close the bbolt database file.
 	return b.db.Close()
 }
 
-// CreateSummaryStore creates the SummaryStore based on the existing VisitsStore data.
-func (b *BboltTerse) CreateSummaryStore(ctx context.Context) (summaries map[string]models.TerseSummary, err error) {
+// BucketName returns the name of the bbolt bucket.
+func (b BboltTerse) BucketName() (bucketName []byte) {
+	return b.terseBucket
+}
+
+// DB returns the bbolt database.
+func (b BboltTerse) DB() (db *bbolt.DB) {
+	return b.db
+}
+
+// Delete deletes the Terse data for the given shortened URLs. If shortenedURLs is nil, all shortened URL Terse
+// data are deleted. There should be no error if a shortened URL is not found.
+func (b BboltTerse) Delete(_ context.Context, shortenedURLs []string) (err error) {
+	return bboltDelete(b, shortenedURLs)
+}
+
+// Read returns a map of shortened URLs to Terse data. If shortenedURLs is nil, all shortened URL Terse data are
+// expected. The error must be storage.ErrShortenedNotFound if a shortened URL is not found.
+func (b BboltTerse) Read(_ context.Context, shortenedURLs []string) (terseData map[string]*models.Terse, err error) {
 
 	// Create the return map.
-	summaries = make(map[string]models.TerseSummary)
+	terseData = make(map[string]*models.Terse, len(shortenedURLs))
 
-	// Confirm the visitsStore is not nil.
-	if b.visitsStore != nil {
+	// Create the forEachFunc.
+	var forEach forEachFunc = func(shortened, data []byte) (err error) {
 
-		// Get the map of counts.
-		var counts map[string]uint
-		counts, err = b.visitsStore.ExportCounts(ctx)
+		// Turn the raw data into Terse data.
+		terse, err := bytesToTerse(data)
 		if err != nil {
-			return nil, err
+			return err
 		}
 
-		// Open the bbolt database for viewing.
-		if err = b.db.View(func(tx *bbolt.Tx) error {
+		// Add the Terse data to the return map.
+		terseData[string(shortened)] = &terse
 
-			// Iterate through all the keys.
-			if err = tx.Bucket(b.terseBucket).ForEach(func(shortened, value []byte) error {
+		return nil
+	}
 
-				// Create the terse.
-				summary := models.TerseSummary{}
+	// Read the Terse data into the return map.
+	if err = bboltRead(b, forEach, shortenedURLs); err != nil {
+		return nil, err
+	}
 
-				// Unmarshal the visit.
-				if err = json.Unmarshal(value, &summary); err != nil {
-					return err
-				}
+	return terseData, nil
+}
 
-				// Complete the summary info by adding the Visits count.
-				summary.VisitCount = int64(counts[string(shortened)]) // TODO Conversion may cause data loss.
+// Summary summarizes the Terse data for the given shortened URLs. If shortenedURLs is nil, then all shortened URL
+// Summary data are expected.
+func (b BboltTerse) Summary(_ context.Context, shortenedURLs []string) (summaries map[string]*models.TerseSummary, err error) {
 
-				// Add the summary to the return map.
-				summaries[string(shortened)] = summary
+	// Create the return map.
+	summaries = make(map[string]*models.TerseSummary, len(shortenedURLs))
 
-				return nil
-			}); err != nil {
-				return err
-			}
-			return nil
-		}); err != nil {
-			return nil, err
+	// Create the forEachFunc.
+	var forEach forEachFunc = func(shortened, data []byte) (err error) {
+
+		// Turn the raw data into Terse data.
+		terse, err := bytesToTerse(data)
+		if err != nil {
+			return err
 		}
+
+		// Add the Terse data to the return map.
+		summaries[string(shortened)] = &models.TerseSummary{ // TODO Is map locking required?
+			OriginalURL:  terse.OriginalURL,
+			RedirectType: terse.RedirectType,
+			ShortenedURL: terse.ShortenedURL,
+		}
+
+		return nil
+	}
+
+	// Read the Summary data into the return map.
+	if err = bboltRead(b, forEach, shortenedURLs); err != nil {
+		return nil, err
 	}
 
 	return summaries, nil
 }
 
-// Delete deletes data according to the del argument. If the VisitsStore is not nil, then the same method will be
-// called for the associated VisitsStore.
-func (b *BboltTerse) Delete(ctx context.Context, del models.Delete) (err error) {
+// Write writes the given Terse data according to the given operation. The error must be storage.ErrShortenedExists
+// if an Insert operation cannot be performed due to the Terse data already existing. The error must be
+// storage.ErrShortenedNotFound if an Update operation cannot be performed due to the Terse data not existing.
+func (b BboltTerse) Write(_ context.Context, terseData map[string]models.Terse, operation WriteOperation) (err error) {
 
-	// Delete Visits data if required.
-	if del.Visits == nil || *del.Visits && b.visitsStore != nil {
-		if err = b.visitsStore.Delete(ctx, del); err != nil {
-			return err
-		}
-	}
+	// Open the bbolt database for writing, batch if possible.
+	if err = b.db.Batch(func(tx *bbolt.Tx) error {
 
-	// Delete the Summary data.
-	if b.summaryStore != nil {
-		if err = b.summaryStore.Delete(ctx, nil); err != nil {
-			return fmt.Errorf("failed to delete Summary data: %w", err)
-		}
-	}
+		// Iterate through the given shortened URLs.
+		for shortened, terse := range terseData {
 
-	// Check to make sure if Terse data needs to be deleted.
-	if del.Terse == nil || *del.Terse {
-
-		// Open the bbolt database for writing.
-		if err = b.db.Update(func(tx *bbolt.Tx) error {
-
-			// Delete the Terse data bucket from the database.
-			if err = tx.DeleteBucket(b.terseBucket); err != nil {
-				return err
-			}
-
-			// Create the bucket again.
-			if _, err = tx.CreateBucket(b.terseBucket); err != nil {
-				return err
-			}
-
-			return nil
-		}); err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
-// DeleteSome deletes data according to the del argument for the given shortened URL. No error should be given if
-// the shortened URL is not found. If the VisitsStore is not nil, then the same method will be called for the
-// associated VisitsStore.
-func (b *BboltTerse) DeleteSome(ctx context.Context, del models.Delete, shortenedURLs []string) (err error) {
-
-	// Delete Visits data if required.
-	if del.Visits == nil || *del.Visits && b.visitsStore != nil {
-		if err = b.visitsStore.DeleteSome(ctx, del, shortenedURLs); err != nil {
-			return err
-		}
-	}
-
-	// Delete the Summary data.
-	if b.summaryStore != nil {
-		if err = b.summaryStore.Delete(ctx, shortenedURLs); err != nil {
-			return fmt.Errorf("failed to delete Summary data: %w", err)
-		}
-	}
-
-	// Check to make sure if Terse data needs to be deleted.
-	if del.Terse == nil || *del.Terse {
-
-		// Open the bbolt database for writing.
-		if err = b.db.Update(func(tx *bbolt.Tx) error {
-
-			// Iterate through the shortened URLs.
-			for _, shortened := range shortenedURLs {
-
-				// Delete the Terse from the bucket.
-				if err = tx.Bucket(b.terseBucket).Delete([]byte(shortened)); err != nil {
-					return err
+			// Check to see if the shortened URL is present in the bucket.
+			if operation == Insert || operation == Update {
+				value := tx.Bucket(b.terseBucket).Get([]byte(shortened))
+				if value != nil && operation == Insert {
+					return ErrShortenedExists
+				}
+				if value == nil && operation == Update {
+					return ErrShortenedNotFound
 				}
 			}
 
-			return nil
-		}); err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
-// Export returns a map of shortened URLs to export data.
-func (b *BboltTerse) Export(ctx context.Context) (export map[string]models.Export, err error) {
-
-	// Create the map for all visits.
-	visits := make(map[string][]*models.Visit)
-
-	// Only get visits if there is a visits store.
-	if b.visitsStore != nil {
-
-		// Get all the visits.
-		if visits, err = b.visitsStore.Export(ctx); err != nil {
-			return nil, err
-		}
-	}
-
-	// Create the export map.
-	export = make(map[string]models.Export)
-
-	// Open the bbolt database for reading.
-	if err = b.db.View(func(tx *bbolt.Tx) error {
-
-		// For every key in the bucket, add it to the export.
-		if err = tx.Bucket(b.terseBucket).ForEach(func(shortened, data []byte) error {
-
-			// Turn the Terse data into a Terse Go structure.
-			var terse *models.Terse
-			if terse, err = unmarshalTerseData(data); err != nil {
+			// Transform the Terse data into bytes.
+			data, err := terseToBytes(terse)
+			if err != nil {
 				return err
 			}
 
-			// Add the Terse and Visits export to the export map.
-			export[string(shortened)] = models.Export{
-				Terse:  terse,
-				Visits: visits[string(shortened)], // TODO Check if ok?
-			}
-
-			return nil
-		}); err != nil {
-			return err
-		}
-		return nil
-	}); err != nil {
-		return nil, err
-	}
-
-	return export, nil
-}
-
-// ExportSome returns a export of Terse and Visit data for a given shortened URL. The error must be
-// storage.ErrShortenedNotFound if the shortened URL is not found.
-func (b *BboltTerse) ExportSome(ctx context.Context, shortenedURLs []string) (export map[string]models.Export, err error) {
-
-	// Create the return map.
-	export = make(map[string]models.Export)
-
-	// Get the visits.
-	var visits map[string][]*models.Visit
-	if b.visitsStore != nil {
-		if visits, err = b.visitsStore.ExportSome(ctx, shortenedURLs); err != nil {
-			return nil, err
-		}
-	}
-
-	// Open the bbolt database for reading.
-	if err = b.db.View(func(tx *bbolt.Tx) error {
-
-		// Iterate through the shortened URLs.
-		for _, shortened := range shortenedURLs {
-
-			// Get the Terse data from the bucket.
-			data := tx.Bucket(b.terseBucket).Get([]byte(shortened))
-			if data == nil {
-				return ErrShortenedNotFound
-			}
-
-			// Turn the data into a Go struct.
-			var terse *models.Terse
-			if terse, err = unmarshalTerseData(data); err != nil {
+			// Write the Terse data to the bucket.
+			if err = tx.Bucket(b.terseBucket).Put([]byte(shortened), data); err != nil {
 				return err
 			}
-
-			// Combine the data and add to the return slice.
-			export[shortened] = models.Export{
-				Terse:  terse,
-				Visits: visits[shortened], // TODO Check if ok?
-			}
-		}
-
-		return nil
-	}); err != nil {
-		return nil, err
-	}
-
-	return export, nil
-}
-
-// ExportTerse exports all Terse data as a map of shortened URLs to Terse data.
-func (b *BboltTerse) ExportTerse(_ context.Context) (terse map[string]*models.Terse, err error) {
-
-	// Create the export map.
-	terse = make(map[string]*models.Terse)
-
-	// Open the bbolt database for reading.
-	if err = b.db.View(func(tx *bbolt.Tx) error {
-
-		// For every key in the bucket, add it to the export.
-		if err = tx.Bucket(b.terseBucket).ForEach(func(shortened, data []byte) error {
-
-			// Turn the Terse data into a Terse Go structure.
-			var t *models.Terse
-			if t, err = unmarshalTerseData(data); err != nil {
-				return err
-			}
-
-			// Add the Terse the return map.
-			terse[string(shortened)] = t
-
-			return nil
-		}); err != nil {
-			return err
-		}
-		return nil
-	}); err != nil {
-		return nil, err
-	}
-
-	return terse, nil
-}
-
-// Import imports the given export's data. If del is not nil, data will be deleted accordingly. If del is nil, data
-// may be overwritten, but unaffected data will be untouched. If the VisitsStore is not nil, then the same method
-// will be called for the associated VisitsStore.
-func (b *BboltTerse) Import(ctx context.Context, del *models.Delete, export map[string]models.Export) (err error) {
-
-	// Check if data needs to be deleted before importing.
-	if del != nil {
-		if err = b.Delete(ctx, *del); err != nil {
-			return err
-		}
-	}
-
-	// Import the Visits data.
-	if b.visitsStore != nil {
-
-		// Import the Visits data. Never pass in a deletion data structure, because that already happened above.
-		if err = b.visitsStore.Import(ctx, nil, export); err != nil {
-			return err
-		}
-	}
-
-	// Open the bbolt database for writing, batch if possible.
-	if err = b.db.Batch(func(tx *bbolt.Tx) error {
-
-		// Write every shortened URL's Terse data to the bbolt database.
-		for shortened, exp := range export {
-
-			// Turn the Terse into JSON bytes.
-			var value []byte
-			if value, err = json.Marshal(exp.Terse); err != nil {
-				return err
-			}
-
-			// Write the Terse to the bucket.
-			if err = tx.Bucket(b.terseBucket).Put([]byte(shortened), value); err != nil {
-				return err
-			}
-		}
-
-		return nil
-	}); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-// Insert adds a Terse to the TerseStore. The shortened URL will be active after this. The error will be
-// storage.ErrShortenedExists if the shortened URL is already present.
-func (b *BboltTerse) Insert(ctx context.Context, terse *models.Terse) (err error) {
-
-	// Determine if the Terse is already present.
-	if _, err = b.getTerseData(terse.ShortenedURL); !errors.Is(err, ErrShortenedNotFound) {
-		if err != nil {
-			return err
-		}
-		return ErrShortenedExists
-	}
-	err = nil
-
-	// Write the Terse to the bucket.
-	if err = b.writeTerse(ctx, terse); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-// Read retrieves all non-Visit Terse data give its shortened URL. A nil visit may be passed in and the visit should
-// not be recorded. The error must be storage.ErrShortenedNotFound if the shortened URL is not found.
-func (b *BboltTerse) Read(_ context.Context, shortened string, visit *models.Visit) (terse *models.Terse, err error) {
-
-	// Only update the SummaryStore and VisitsStore if there wasn't an error.
-	defer func() {
-		if err == nil {
-
-			// Increment the number of times the shortened URL has been visited. Do this in a separate goroutine so the response
-			// is faster.
-			if b.summaryStore != nil {
-				ctx, cancel := b.createCtx()
-				go b.group.AddWorkItem(ctx, cancel, func(workCtx context.Context) (err error) {
-					return b.summaryStore.IncrementVisitCount(ctx, shortened)
-				})
-			}
-
-			// Track the visit to this shortened URL. Do this in a separate goroutine so the response is faster.
-			if visit != nil && b.visitsStore != nil {
-				ctx, cancel := b.createCtx()
-				go b.group.AddWorkItem(ctx, cancel, func(workCtx context.Context) (err error) {
-					return b.visitsStore.Add(workCtx, shortened, visit)
-				})
-			}
-		}
-	}()
-
-	// Get the Terse from the bucket.
-	if terse, err = b.getTerse(shortened); err != nil {
-		return nil, err
-	}
-
-	return terse, nil
-}
-
-// SummaryStore returns the VisitsStore.
-func (b *BboltTerse) SummaryStore() SummaryStore {
-	return b.summaryStore
-}
-
-// Update assumes the Terse already exists. It will override all of its values. The error must be
-// storage.ErrShortenedNotFound if the shortened URL is not found.
-func (b *BboltTerse) Update(ctx context.Context, terse *models.Terse) (err error) {
-
-	// Determine if the Terse is already present.
-	if _, err = b.getTerseData(terse.ShortenedURL); err != nil {
-		return err
-	}
-
-	// Write the Terse to the bucket.
-	if err = b.writeTerse(ctx, terse); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-// Upsert will upsert the Terse into the backend storage.
-func (b *BboltTerse) Upsert(ctx context.Context, terse *models.Terse) (err error) {
-
-	// Write the Terse to the bucket.
-	if err = b.writeTerse(ctx, terse); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-// VisitsStore returns the VisitsStore.
-func (b *BboltTerse) VisitsStore() VisitsStore {
-	return b.visitsStore
-}
-
-// getTerse gets the shortened URL's Terse data from the bbolt database.
-func (b *BboltTerse) getTerse(shortened string) (terse *models.Terse, err error) {
-
-	// Get the Terse data from the bucket.
-	var data []byte
-	if data, err = b.getTerseData(shortened); err != nil {
-		return nil, err
-	}
-
-	// Turn the data into the Go structure.
-	if terse, err = unmarshalTerseData(data); err != nil {
-		return nil, err
-	}
-
-	return terse, nil
-}
-
-// getTerseData get the shortened URL's raw Terse data from the bbolt database.
-func (b *BboltTerse) getTerseData(shortened string) (data []byte, err error) {
-
-	// Open the bbolt database for reading.
-	if err = b.db.View(func(tx *bbolt.Tx) error {
-
-		// Get the Terse from the bucket.
-		data = tx.Bucket(b.terseBucket).Get([]byte(shortened))
-
-		return nil
-	}); err != nil {
-		return nil, err
-	}
-
-	// If the data is nil, then no Terse exists for this shortened URL.
-	if data == nil {
-		return nil, ErrShortenedNotFound
-	}
-
-	return data, nil
-}
-
-// unmarshalTerseData turns the JSON data into the Go structure.
-func unmarshalTerseData(data []byte) (terse *models.Terse, err error) {
-	terse = &models.Terse{}
-	if err = json.Unmarshal(data, terse); err != nil {
-		return nil, err
-	}
-	return terse, nil
-}
-
-// writeTerse writes the Terse data to the bbolt database.
-func (b *BboltTerse) writeTerse(ctx context.Context, terse *models.Terse) (err error) {
-
-	// Upsert the Terse data into the SummaryStore.
-	if b.summaryStore != nil {
-		summaries := make(map[string]models.TerseSummary)
-		summaries[terse.ShortenedURL] = models.TerseSummary{
-			OriginalURL:  terse.OriginalURL,
-			RedirectType: terse.RedirectType,
-			ShortenedURL: terse.ShortenedURL,
-		}
-		if err = b.summaryStore.Upsert(ctx, summaries); err != nil {
-			return err
-		}
-	}
-
-	// Turn the Terse into JSON bytes.
-	var value []byte
-	if value, err = json.Marshal(terse); err != nil {
-		return err
-	}
-
-	// Open the bbolt database for writing, batch if possible.
-	if err = b.db.Batch(func(tx *bbolt.Tx) error {
-
-		// Write the Terse to the bucket.
-		if err = tx.Bucket(b.terseBucket).Put([]byte(terse.ShortenedURL), value); err != nil {
-			return err
 		}
 
 		return nil

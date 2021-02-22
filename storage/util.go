@@ -5,8 +5,9 @@ import (
 	"encoding/json"
 	"errors"
 
-	"github.com/MicahParks/ctxerrgroup"
 	"go.etcd.io/bbolt"
+
+	"github.com/MicahParks/terseurl/models"
 )
 
 const (
@@ -42,8 +43,10 @@ type configuration struct {
 	BboltPath string `json:"bboltPath"`
 }
 
-// ctxCreator is a function signature that creates a context and its cancel function.
+// ctxCreator is a function signature that creates a context and its cancel function. TODO
 type ctxCreator func() (ctx context.Context, cancel context.CancelFunc)
+
+// TODO Create StoreManager and pass that around instead.
 
 // NewSummaryStore creates a new SummaryStore from the given configJSON. The storeType return value is used for logging.
 func NewSummaryStore(configJSON json.RawMessage) (summaryStore SummaryStore, storeType string, err error) {
@@ -75,7 +78,7 @@ func NewSummaryStore(configJSON json.RawMessage) (summaryStore SummaryStore, sto
 }
 
 // NewTerseStore creates a new TerseStore from the given configJSON. The storeType return value is used for logging.
-func NewTerseStore(configJSON json.RawMessage, createCtx ctxCreator, errChan chan<- error, group *ctxerrgroup.Group, summaryStore SummaryStore, visitsStore VisitsStore) (terseStore TerseStore, storeType string, err error) {
+func NewTerseStore(configJSON json.RawMessage) (terseStore TerseStore, storeType string, err error) {
 
 	// Create the configuration.
 	config := &configuration{}
@@ -109,12 +112,12 @@ func NewTerseStore(configJSON json.RawMessage, createCtx ctxCreator, errChan cha
 		}
 
 		// Assign the interface implementation.
-		terseStore = NewBboltTerse(db, createCtx, group, summaryStore, bboltTerseBucket, visitsStore)
+		terseStore = NewBboltTerse(db, bboltTerseBucket)
 
 	// Use and in memory implementation of the TerseStore by default.
 	default:
 		config.Type = storageMemory
-		terseStore = NewMemTerse(createCtx, errChan, group, summaryStore, visitsStore)
+		terseStore = NewMemTerse()
 	}
 
 	return terseStore, config.Type, nil
@@ -169,6 +172,18 @@ func NewVisitsStore(configJSON json.RawMessage) (visitsStore VisitsStore, storeT
 	return visitsStore, config.Type, nil
 }
 
+// bytesToTerse transforms bytes to Terse data.
+func bytesToTerse(data []byte) (terse models.Terse, err error) {
+	err = json.Unmarshal(data, &terse)
+	return terse, err
+}
+
+// bytesToVisits transforms bytes to Visits data.
+func bytesToVisits(data []byte) (visits []*models.Visit, err error) {
+	err = json.Unmarshal(data, &visits)
+	return visits, err
+}
+
 // createBucket creates the given bucketName in the given bbolt database, if it doesn't already exist.
 func createBucket(db *bbolt.DB, bucketName []byte) (err error) {
 	if err = db.Update(func(tx *bbolt.Tx) error {
@@ -185,4 +200,14 @@ func createBucket(db *bbolt.DB, bucketName []byte) (err error) {
 // openBbolt opens the file found at filePath as a bbolt database.
 func openBbolt(filePath string) (db *bbolt.DB, err error) {
 	return bbolt.Open(filePath, 0666, nil)
+}
+
+// terseToBytes transforms Terse data to bytes.
+func terseToBytes(terse models.Terse) (data []byte, err error) {
+	return json.Marshal(terse)
+}
+
+// visitsToBytes transforms Visits data to bytes.
+func visitsToBytes(visits []*models.Visit) (data []byte, err error) {
+	return json.Marshal(visits)
 }

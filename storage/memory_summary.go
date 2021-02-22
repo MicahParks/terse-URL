@@ -97,11 +97,8 @@ func (m *MemSummary) Read(_ context.Context, shortenedURLs []string) (summaries 
 	// Check to see if all Summary data was requested, if so, copy all Summary data.
 	if shortenedURLs == nil {
 
-		// Copy all Summary data.
-		summaries = make(map[string]*models.Summary, len(m.summaries))
-		for shortened, summary := range m.summaries {
-			summaries[shortened] = summary
-		}
+		// Use all Summary data.
+		summaries = m.summaries
 	} else {
 
 		// Iterate through the given shortened URLs. Copy the requested ones.

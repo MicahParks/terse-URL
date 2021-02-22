@@ -2,7 +2,6 @@ package storage
 
 import (
 	"context"
-	"encoding/json"
 
 	"go.etcd.io/bbolt"
 
@@ -17,240 +16,66 @@ type BboltVisits struct {
 
 // NewBboltVisits creates a new NewBboltVisits given the required assets.
 func NewBboltVisits(db *bbolt.DB, visitsBucket []byte) (visitsStore VisitsStore) {
-	return &BboltVisits{
+	return BboltVisits{
 		db:           db,
 		visitsBucket: visitsBucket,
 	}
 }
 
-// Add adds the visit to the visits store.
-func (b *BboltVisits) Add(_ context.Context, shortened string, visit *models.Visit) (err error) {
+// Close closes the connection to the underlying storage.
+func (b BboltVisits) Close(_ context.Context) (err error) {
 
-	// Get the existing visits.
-	var visits []*models.Visit
-	if visits, err = b.exportShortened(shortened); err != nil {
-		return err
-	}
+	// Close the bbolt database file.
+	return b.db.Close()
+}
 
-	// Add the visits to the existing visits.
-	visits = append(visits, visit)
+// BucketName returns the name of the bbolt bucket.
+func (b BboltVisits) BucketName() (bucketName []byte) {
+	return b.visitsBucket
+}
 
-	// Turn the visits into JSON data.
-	var data []byte
-	if data, err = json.Marshal(visits); err != nil {
-		return err
-	}
+// DB returns the bbolt database.
+func (b BboltVisits) DB() (db *bbolt.DB) {
+	return b.db
+}
+
+// Delete deletes Visits data for the given shortened URLs. If shortenedURLs is nil, then all Visits data are
+// deleted. No error should be given if a shortened URL is not found.
+func (b BboltVisits) Delete(_ context.Context, shortenedURLs []string) (err error) {
+	return bboltDelete(b, shortenedURLs)
+}
+
+// Insert inserts the given Visits data. The visits do not need to be unique, so the Visits data should be appended
+// to the data structure in storage.
+func (b BboltVisits) Insert(_ context.Context, visitsData map[string][]*models.Visit) (err error) {
 
 	// Open the bbolt database for writing, batch if possible.
 	if err = b.db.Batch(func(tx *bbolt.Tx) error {
 
-		// Put the updated JSON data into the bucket.
-		if err = tx.Bucket(b.visitsBucket).Put([]byte(shortened), data); err != nil {
-			return err
-		}
+		// Iterate through the given shortened URLs.
+		for shortened, visits := range visitsData {
 
-		return nil
-	}); err != nil {
-		return err
-	}
+			// Get the existing Visits data.
+			var existingVisits []*models.Visit
+			data := tx.Bucket(b.visitsBucket).Get([]byte(shortened))
 
-	return nil
-}
-
-// Close lets the garbage collector take care of the old Visits data.
-func (b *BboltVisits) Close(_ context.Context) (err error) {
-	return b.db.Close()
-}
-
-// Delete deletes data according to the del argument.
-func (b *BboltVisits) Delete(_ context.Context, del models.Delete) (err error) {
-
-	// Confirm Visits data deletion.
-	if del.Visits == nil || *del.Visits {
-
-		// Open the bbolt database for writing.
-		if err = b.db.Update(func(tx *bbolt.Tx) error {
-
-			// Delete the Visits from the bucket.
-			if err = tx.DeleteBucket(b.visitsBucket); err != nil {
-				return err
-			}
-
-			// Create the bucket again.
-			if _, err = tx.CreateBucket(b.visitsBucket); err != nil {
-				return err
-			}
-
-			return nil
-		}); err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
-// DeleteSome deletes data according to the del argument for the shortened URL. No error will be given if the shortened
-// URL is not found.
-func (b *BboltVisits) DeleteSome(_ context.Context, del models.Delete, shortenedURLs []string) (err error) {
-
-	// Confirm Visits data deletion.
-	if del.Visits == nil || *del.Visits {
-
-		// Open the bbolt database for writing, batch if possible.
-		if err = b.db.Batch(func(tx *bbolt.Tx) error {
-
-			// Iterate through the shortened URLs.
-			for _, shortened := range shortenedURLs {
-
-				// Delete all of this shortened URL's visits from the bucket.
-				if err = tx.Bucket(b.visitsBucket).Delete([]byte(shortened)); err != nil {
+			// Transform the raw data into Visits data.
+			if data != nil {
+				if existingVisits, err = bytesToVisits(data); err != nil {
 					return err
 				}
 			}
 
-			return nil
-		}); err != nil {
-			return err
-		}
-	}
+			// Add the given visits data to the existing Visits data.
+			existingVisits = append(existingVisits, visits...)
 
-	return nil
-}
-
-// Export exports all exports all visits data.
-func (b *BboltVisits) Export(_ context.Context) (allVisits map[string][]*models.Visit, err error) {
-
-	// Create the return map.
-	allVisits = make(map[string][]*models.Visit)
-
-	// Open the bbolt database for reading.
-	if err = b.db.View(func(tx *bbolt.Tx) error {
-
-		// Iterate through all the keys.
-		if err = tx.Bucket(b.visitsBucket).ForEach(func(shortened, value []byte) error {
-
-			// Create the visits.
-			visits := make([]*models.Visit, 0)
-
-			// Unmarshal the visit.
-			if err = json.Unmarshal(value, &visits); err != nil {
+			// Turn the Visits data back into raw data.
+			if data, err = visitsToBytes(existingVisits); err != nil {
 				return err
 			}
 
-			// Assign the visits to the map.
-			allVisits[string(shortened)] = visits
-
-			return nil
-		}); err != nil {
-			return err
-		}
-		return nil
-	}); err != nil {
-		return nil, err
-	}
-
-	return allVisits, nil
-}
-
-// ExportCounts creates a map of shortened URLs to count of Visits.
-func (b *BboltVisits) ExportCounts(_ context.Context) (counts map[string]uint, err error) {
-
-	// Create the return map.
-	counts = make(map[string]uint)
-
-	// Open the bbolt database for viewing.
-	if err = b.db.View(func(tx *bbolt.Tx) error {
-
-		// Iterate through all the keys.
-		if err = tx.Bucket(b.visitsBucket).ForEach(func(shortened, value []byte) error {
-
-			// Create the visits.
-			visits := make([]*models.Visit, 0)
-
-			// Unmarshal the visit.
-			if err = json.Unmarshal(value, &visits); err != nil {
-				return err
-			}
-
-			// Assign the number of visits to the map.
-			counts[string(shortened)] = uint(len(visits))
-
-			return nil
-		}); err != nil {
-			return err
-		}
-		return nil
-	}); err != nil {
-		return nil, err
-	}
-
-	return counts, nil
-}
-
-// ExportSome gets all visits to the shortened URL. The error storage.ErrShortenedNotFound will be given if the shortened
-// URL is not found.
-func (b *BboltVisits) ExportSome(_ context.Context, shortenedURLs []string) (visits map[string][]*models.Visit, err error) {
-
-	// Create the return map.
-	visits = make(map[string][]*models.Visit)
-
-	// Open the bbolt database for reading.
-	var data []byte
-	if err = b.db.View(func(tx *bbolt.Tx) error {
-
-		// Iterate through the shortened URLs.
-		for _, shortened := range shortenedURLs {
-
-			// Get the Visits from the bucket.
-			data = tx.Bucket(b.visitsBucket).Get([]byte(shortened))
-			if data == nil {
-				return ErrShortenedNotFound
-			}
-
-			// Turn the JSON data into the Go structure.
-			var v []*models.Visit
-			if err = json.Unmarshal(data, &v); err != nil {
-				return err
-			}
-
-			// Add the visits to the return map.
-			visits[shortened] = v
-		}
-
-		return nil
-	}); err != nil {
-		return nil, err
-	}
-
-	return visits, nil
-}
-
-// Import imports the given export's data. If del is not nil, data will be deleted accordingly. If del is nil, data
-// may be overwritten, but unaffected data will be untouched.
-func (b *BboltVisits) Import(ctx context.Context, del *models.Delete, export map[string]models.Export) (err error) {
-
-	// Check if data needs to be deleted before importing.
-	if del != nil {
-		if err = b.Delete(ctx, *del); err != nil {
-			return err
-		}
-	}
-
-	// Open the bbolt database for writing, batch if possible.
-	if err = b.db.Batch(func(tx *bbolt.Tx) error {
-
-		// Write every shortened URL's Visits data to the bbolt database.
-		for shortened, exp := range export {
-
-			// Turn the Terse into JSON bytes.
-			var value []byte
-			if value, err = json.Marshal(exp.Visits); err != nil {
-				return err
-			}
-
-			// Write the Visits to the bucket.
-			if err = tx.Bucket(b.visitsBucket).Put([]byte(shortened), value); err != nil {
+			// Write the Visits data back to the bucket.
+			if err = tx.Bucket(b.visitsBucket).Put([]byte(shortened), data); err != nil {
 				return err
 			}
 		}
@@ -260,32 +85,67 @@ func (b *BboltVisits) Import(ctx context.Context, del *models.Delete, export map
 		return err
 	}
 
-	return nil
+	return err
 }
 
-// exportShortened gets all visits for the given shortened URL.
-func (b *BboltVisits) exportShortened(shortened string) (visits []*models.Visit, err error) {
+// Read exports the Visits data for the given shortened URLs. If shortenedURLs is nil, then all shortened URL Visits
+// data are expected. The error must be storage.ErrShortenedNotFound if a shortened URL is not found.
+func (b BboltVisits) Read(_ context.Context, shortenedURLs []string) (visitsData map[string][]*models.Visit, err error) {
 
-	// Open the bbolt database for reading.
-	var data []byte
-	if err = b.db.View(func(tx *bbolt.Tx) error {
+	// Create the return map.
+	visitsData = make(map[string][]*models.Visit)
 
-		// Get the Visits from the bucket.
-		data = tx.Bucket(b.visitsBucket).Get([]byte(shortened))
+	// Create the forEachFunc.
+	var forEach forEachFunc = func(shortened, data []byte) (err error) {
+
+		// Turn the raw data into Visits data.
+		visits, err := bytesToVisits(data)
+		if err != nil {
+			return err
+		}
+
+		// Add the Visits data to the return map.
+		visitsData[string(shortened)] = visits
 
 		return nil
-	}); err != nil {
+	}
+
+	// Read the Visits data into the return map.
+	if err = bboltRead(b, forEach, shortenedURLs); err != nil {
 		return nil, err
 	}
 
-	// Only unmarshal data if there was any.
-	if data != nil {
+	return visitsData, nil
+}
 
-		// Turn the JSON data into the Go structure.
-		if err = json.Unmarshal(data, &visits); err != nil {
-			return nil, err
+// Summary summarizes the Visits data for the given shortened URLs. If shortenedURLs is nil, then all shortened URL
+// Summary data are expected. The error must be storage.ErrShortenedNotFound if a shortened URL is not found.
+func (b BboltVisits) Summary(_ context.Context, shortenedURLs []string) (summaries map[string]*models.VisitsSummary, err error) {
+
+	// Create the return map.
+	summaries = make(map[string]*models.VisitsSummary)
+
+	// Create the forEachFunc.
+	var forEach forEachFunc = func(shortened, data []byte) (err error) {
+
+		// Turn the raw data into Visits data.
+		visits, err := bytesToVisits(data)
+		if err != nil {
+			return err
 		}
+
+		// Add the Visits data to the return map.
+		summaries[string(shortened)] = &models.VisitsSummary{
+			VisitCount: uint64(len(visits)),
+		}
+
+		return nil
 	}
 
-	return visits, nil
+	// Read the Summary data into the return map.
+	if err = bboltRead(b, forEach, shortenedURLs); err != nil {
+		return nil, err
+	}
+
+	return summaries, nil
 }

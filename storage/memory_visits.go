@@ -23,11 +23,11 @@ func NewMemVisits() (visitsStore VisitsStore) {
 // Close closes the connection to the underlying storage.
 func (m *MemVisits) Close(_ context.Context) (err error) {
 
-	// Lock the Summary data for async safe use.
+	// Lock the Visits data for async safe use.
 	m.mux.Lock()
 	defer m.mux.Unlock()
 
-	// Delete all the Summary data.
+	// Delete all the Visits data.
 	m.deleteAll()
 
 	return nil
@@ -37,11 +37,11 @@ func (m *MemVisits) Close(_ context.Context) (err error) {
 // found.
 func (m *MemVisits) Delete(_ context.Context, shortenedURLs []string) (err error) {
 
-	// Lock the Summary data for async safe use.
+	// Lock the Visits data for async safe use.
 	m.mux.Lock()
 	defer m.mux.Unlock()
 
-	// Check for teh nil case.
+	// Check for the nil case.
 	if shortenedURLs == nil {
 
 		// Delete all Visits data.
@@ -61,7 +61,7 @@ func (m *MemVisits) Delete(_ context.Context, shortenedURLs []string) (err error
 // to the data structure in storage.
 func (m *MemVisits) Insert(_ context.Context, visitsData map[string][]*models.Visit) (err error) {
 
-	// Lock the Summary data for async safe use.
+	// Lock the Visits data for async safe use.
 	m.mux.Lock()
 	defer m.mux.Unlock()
 
@@ -80,24 +80,21 @@ func (m *MemVisits) Read(_ context.Context, shortenedURLs []string) (visitsData 
 	// Create the return map.
 	visitsData = make(map[string][]*models.Visit, len(shortenedURLs))
 
-	// Lock the Summary data for async safe use.
+	// Lock the Visits data for async safe use.
 	m.mux.RLock()
 	defer m.mux.RUnlock()
 
 	// Check for the nil case.
 	if shortenedURLs == nil {
 
-		// Copy all Visits data.
-		visitsData = make(map[string][]*models.Visit, len(m.visits))
-		for shortened, visits := range m.visits {
-			visitsData[shortened] = visits
-		}
+		// Use all Visits data.
+		visitsData = m.visits
 	} else {
 
 		// Iterate through the given shortened URLs.
 		for _, shortened := range shortenedURLs {
 
-			// Get the visits for the shortened URL.
+			// Get the Visits data for the shortened URL.
 			visits, ok := m.visits[shortened]
 			if !ok {
 				return nil, ErrShortenedNotFound
@@ -111,13 +108,14 @@ func (m *MemVisits) Read(_ context.Context, shortenedURLs []string) (visitsData 
 	return visitsData, nil
 }
 
-// Summary summarizes the Visits data for the given shortened URLs. This is used in building the SummaryStore.
-func (m *MemVisits) Summary(_ context.Context, shortenedURLs []string) (visitsSummary map[string]*models.VisitsSummary, err error) {
+// Summary summarizes the Visits data for the given shortened URLs. If shortenedURLs is nil, then all shortened URL
+// Summary data are expected. The error must be storage.ErrShortenedNotFound if a shortened URL is not found.
+func (m *MemVisits) Summary(_ context.Context, shortenedURLs []string) (summaries map[string]*models.VisitsSummary, err error) {
 
 	// Create the return map.
-	visitsSummary = make(map[string]*models.VisitsSummary, len(shortenedURLs))
+	summaries = make(map[string]*models.VisitsSummary, len(shortenedURLs))
 
-	// Lock the Summary data for async safe use.
+	// Lock the Visits data for async safe use.
 	m.mux.RLock()
 	defer m.mux.RUnlock()
 
@@ -126,7 +124,7 @@ func (m *MemVisits) Summary(_ context.Context, shortenedURLs []string) (visitsSu
 
 		// Gather the Summary data for all shortened URLs.
 		for shortened, visits := range m.visits {
-			visitsSummary[shortened] = &models.VisitsSummary{
+			summaries[shortened] = &models.VisitsSummary{
 				VisitCount: uint64(len(visits)),
 			}
 		}
@@ -135,10 +133,20 @@ func (m *MemVisits) Summary(_ context.Context, shortenedURLs []string) (visitsSu
 		// Iterate through the given shortened URLs.
 		for _, shortened := range shortenedURLs {
 
+			// Get the Visits data for the shortened URL.
+			visits, ok := m.visits[shortened]
+			if !ok {
+				return nil, ErrShortenedNotFound
+			}
+
+			// Add the Visits data to the return map.
+			summaries[shortened] = &models.VisitsSummary{
+				VisitCount: uint64(len(visits)),
+			}
 		}
 	}
 
-	return visitsSummary, nil
+	return summaries, nil
 }
 
 // deleteAll deletes all of the Visits data. It does not lock, so a lock must be used for async safe usage.

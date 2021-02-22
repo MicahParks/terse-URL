@@ -47,19 +47,18 @@ func configureAPI(api *operations.TerseurlAPI) http.Handler {
 	api.HTMLProducer = configure.HTMLProducer(logger)
 
 	// Assign the endpoint handlers.
-	api.APIFrontendMetaHandler = frontend.HandleMeta(logger.Named("/api/frontend/meta"))
-	api.APITerseDeleteHandler = endpoints.HandleDelete(logger.Named("/api/delete"), config.TerseStore)
-	api.APITerseDeleteSomeHandler = endpoints.HandleDeleteSome(logger.Named("/api/delete/some"), config.TerseStore)
-	api.APITerseExportHandler = endpoints.HandleExport(logger.Named("/api/export"), config.TerseStore)
-	api.APITerseExportSomeHandler = endpoints.HandleExportSome(logger.Named("/api/export/some"), config.TerseStore)
-	api.APITerseImportHandler = endpoints.HandleImport(logger.Named("/api/import"), config.TerseStore)
-	api.APITersePrefixHandler = endpoints.HandlePrefix(logger.Named("/api/prefix"), config.Prefix)
-	api.APITerseSummaryHandler = endpoints.HandleSummary(logger.Named("/api/summary"), config.SummaryStore)
-	api.APITerseTerseHandler = endpoints.HandleTerse(logger.Named("/api/terse/{shortened}"), config.TerseStore)
-	api.APITerseVisitsHandler = endpoints.HandleVisits(logger.Named("/api/visits/{shortened}"), config.VisitsStore)
-	api.APITerseWriteHandler = endpoints.HandleWrite(logger.Named("/api/write/{operation}"), config.ShortID, config.TerseStore)
-	api.PublicTerseRedirectHandler = public.HandleRedirect(logger.Named("/{shortened}"), config.Template, config.TerseStore)
-	api.SystemAliveHandler = system.HandleAlive()
+	api.APIExportHandler = api.HandleExport(logger.Named("POST /api/export"))
+	api.APIFrontendMetaHandler = frontend.HandleMeta(logger.Named("POST /api/frontend/meta"))
+	api.APIImportHandler = api.HandleImport(logger.Named("POST /api/import"))
+	api.APIShortenedDeleteHandler = api.HandleShortenedDelete(logger.Named("DELETE /api/terse"))
+	api.APIShortenedURLPrefixHandler = api.HandleShortenedURLPrefix(logger.Named("POST /api/prefix"))
+	api.APIShortenedSummaryHandler = api.HandleShortenedSummary(logger.Named("POST /api/summary"))
+	api.APITerseReadHandler = api.HandleTerseRead(logger.Named("POST /api/terse"))
+	api.APITerseWriteHandler = endpoints.HandleWrite(logger.Named("POST /api/write/{operation}"), config.ShortID, config.TerseStore)
+	api.APIVisitsDeleteHandler = api.HandlerVisitsDelete(logger.Named("DELETE /api/visits"))
+	api.APIVisitsReadHandler = api.HandleVisitsRead(logger.Named("POST /api/visits"))
+	api.PublicPublicRedirectHandler = public.HandleRedirect(logger.Named("GET /{shortened}"), config.Template, config.TerseStore)
+	api.SystemSystemAliveHandler = system.HandleAlive()
 
 	api.PreServerShutdown = func() {}
 

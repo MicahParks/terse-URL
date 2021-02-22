@@ -42,13 +42,15 @@ type TerseStore interface {
 
 	// Read returns a map of shortened URLs to Terse data. If shortenedURLs is nil, all shortened URL Terse data are
 	// expected. The error must be storage.ErrShortenedNotFound if a shortened URL is not found.
-	Read(ctx context.Context, shortenedURLs []string) (terseData map[string]models.Terse, err error)
+	Read(ctx context.Context, shortenedURLs []string) (terseData map[string]*models.Terse, err error)
 
 	// Summary summarizes the Terse data for the given shortened URLs. If shortenedURLs is nil, then all shortened URL
 	// Summary data are expected.
 	Summary(ctx context.Context, shortenedURLs []string) (summaries map[string]*models.TerseSummary, err error)
 
-	// Write writes the given Terse data according to the given operation.
+	// Write writes the given Terse data according to the given operation. The error must be storage.ErrShortenedExists
+	// if an Insert operation cannot be performed due to the Terse data already existing. The error must be
+	// storage.ErrShortenedNotFound if an Update operation cannot be performed due to the Terse data not existing.
 	Write(ctx context.Context, terseData map[string]models.Terse, operation WriteOperation) (err error)
 }
 
@@ -72,6 +74,6 @@ type VisitsStore interface {
 	Read(ctx context.Context, shortenedURLs []string) (visitsData map[string][]*models.Visit, err error)
 
 	// Summary summarizes the Visits data for the given shortened URLs. If shortenedURLs is nil, then all shortened URL
-	// Summary data are expected.
-	Summary(ctx context.Context, shortenedURLs []string) (visitsSummary map[string]*models.VisitsSummary, err error)
+	// Summary data are expected. The error must be storage.ErrShortenedNotFound if a shortened URL is not found.
+	Summary(ctx context.Context, shortenedURLs []string) (summaries map[string]*models.VisitsSummary, err error)
 }
