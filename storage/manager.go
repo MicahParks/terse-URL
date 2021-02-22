@@ -54,6 +54,34 @@ func (s StoreManager) Close(ctx context.Context) (err error) {
 	return err
 }
 
+// DeleteShortened deletes the all data for the given shortened URLs. If shortenedURLs is nil, all shortened URL data
+// are deleted. There should be no error if a shortened URL is not found.
+func (s StoreManager) DeleteShortened(ctx context.Context, shortenedURLs []string) (err error) {
+
+	// Delete the Terse data for the shortened URL.
+	if err = s.terseStore.Delete(ctx, shortenedURLs); err != nil {
+		return err
+	}
+
+	// Delete the Visits data for the shortened URL.
+	s.VisitsStore(func(store VisitsStore) {
+		err = store.Delete(ctx, shortenedURLs)
+	})
+	if err != nil {
+		return err
+	}
+
+	// Delete the Summary data for the shortened URL.
+	s.SummaryStore(func(store SummaryStore) {
+		err = store.Delete(ctx, shortenedURLs)
+	})
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // Export exports the Terse data and Visits data for the given shortened URLs. If shortenedURLs is nil, then all
 // shortened URLs are exported.
 func (s StoreManager) Export(ctx context.Context, shortenedURLs []string) (export map[string]*models.Export, err error) {
@@ -163,6 +191,24 @@ func (s StoreManager) InitializeSummaryStore(ctx context.Context) (err error) {
 	})
 
 	return err
+}
+
+// Summary retrieves the Summary data for the given shortened URLs. If shortenedURLs is nil, then all shortened URL
+// summary data will be returned.
+func (s StoreManager) Summary(ctx context.Context, shortenedURLs []string) (summaries map[string]*models.Summary, err error) {
+
+	// Create the return map.
+	summaries = make(map[string]*models.Summary, len(shortenedURLs))
+
+	// Retrieve the Summary data from the SummaryStore.
+	s.SummaryStore(func(store SummaryStore) {
+		summaries, err = store.Read(ctx, shortenedURLs)
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return summaries, nil
 }
 
 // SummaryStore accepts a function to do if the SummaryStore is not nil
