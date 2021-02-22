@@ -82,6 +82,21 @@ func (s StoreManager) DeleteShortened(ctx context.Context, shortenedURLs []strin
 	return nil
 }
 
+// DeleteVisits deletes Visits data for the given shortened URLs. If shortenedURLs is nil, then all Visits data are
+// deleted. No error should be given if a shortened URL is not found.
+func (s StoreManager) DeleteVisits(ctx context.Context, shortenedURLs []string) (err error) {
+
+	// Delete the Visits data from the VisitsStore.
+	s.VisitsStore(func(store VisitsStore) {
+		err = store.Delete(ctx, shortenedURLs)
+	})
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // Export exports the Terse data and Visits data for the given shortened URLs. If shortenedURLs is nil, then all
 // shortened URLs are exported.
 func (s StoreManager) Export(ctx context.Context, shortenedURLs []string) (export map[string]*models.Export, err error) {
@@ -218,9 +233,41 @@ func (s StoreManager) SummaryStore(doThis func(store SummaryStore)) {
 	}
 }
 
+// Terse returns a map of shortened URLs to Terse data. If shortenedURLs is nil, all shortened URL Terse data are
+// expected. The error must be storage.ErrShortenedNotFound if a shortened URL is not found.
+func (s StoreManager) Terse(ctx context.Context, shortenedURLs []string) (terse map[string]*models.Terse, err error) {
+	return s.terseStore.Read(ctx, shortenedURLs)
+}
+
+// Visits exports the Visits data for the given shortened URLs. If shortenedURLs is nil, then all shortened URL Visits
+// data are expected. The error must be storage.ErrShortenedNotFound if a shortened URL is not found.
+func (s StoreManager) Visits(ctx context.Context, shortenedURLs []string) (visits map[string][]*models.Visit, err error) {
+
+	// Create the return map.
+	visits = make(map[string][]*models.Visit, len(shortenedURLs))
+
+	// Get the Visits data from the VisitsStore.
+	s.VisitsStore(func(store VisitsStore) {
+		visits, err = store.Read(ctx, shortenedURLs)
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return visits, nil
+}
+
 // VisitsStore accepts a function to do if the VisitsStore is not nil.
 func (s StoreManager) VisitsStore(doThis func(store VisitsStore)) {
 	if s.visitsStore != nil {
 		doThis(s.visitsStore)
 	}
+}
+
+// WriteTerse Write writes the given Terse data according to the given operation. The error must be
+// storage.ErrShortenedExists if an Insert operation cannot be performed due to the Terse data already existing. The
+// error must be storage.ErrShortenedNotFound if an Update operation cannot be performed due to the Terse data not
+// existing.
+func (s StoreManager) WriteTerse(ctx context.Context, terse map[string]*models.Terse, operation WriteOperation) (err error) {
+	return s.terseStore.Write(ctx, terse, operation)
 }

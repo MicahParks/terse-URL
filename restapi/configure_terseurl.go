@@ -50,7 +50,7 @@ func configureAPI(api *operations.TerseurlAPI) http.Handler {
 	api.APIExportHandler = api.HandleExport(logger.Named("POST /api/export"))
 	api.APIFrontendMetaHandler = frontend.HandleMeta(logger.Named("POST /api/frontend/meta"))
 	api.APIImportHandler = api.HandleImport(logger.Named("POST /api/import"))
-	api.APIShortenedDeleteHandler = api.HandleShortenedDelete(logger.Named("DELETE /api/terse"))
+	api.APIShortenedDeleteHandler = api.HandleShortenedDelete(logger.Named("DELETE /api/shortened"))
 	api.APIShortenedURLPrefixHandler = api.HandleShortenedURLPrefix(logger.Named("POST /api/prefix"))
 	api.APIShortenedSummaryHandler = api.HandleShortenedSummary(logger.Named("POST /api/summary"))
 	api.APITerseReadHandler = api.HandleTerseRead(logger.Named("POST /api/terse"))

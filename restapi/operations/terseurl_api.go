@@ -374,7 +374,7 @@ func (o *TerseurlAPI) initHandlerCache() {
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
-	o.handlers["DELETE"]["/api/terse"] = apiops.NewShortenedDelete(o.context, o.APIShortenedDeleteHandler)
+	o.handlers["DELETE"]["/api/shortened"] = apiops.NewShortenedDelete(o.context, o.APIShortenedDeleteHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}

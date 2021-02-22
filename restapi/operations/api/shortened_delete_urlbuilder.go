@@ -35,7 +35,7 @@ func (o *ShortenedDeleteURL) SetBasePath(bp string) {
 func (o *ShortenedDeleteURL) Build() (*url.URL, error) {
 	var _result url.URL
 
-	var _path = "/api/terse"
+	var _path = "/api/shortened"
 
 	_basePath := o._basePath
 	if _basePath == "" {

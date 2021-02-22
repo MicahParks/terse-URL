@@ -201,6 +201,47 @@ func init() {
         }
       }
     },
+    "/api/shortened": {
+      "delete": {
+        "description": "Delete all assets for the given shortened URLs. This includes all Terse data, Visits data, and Summary data.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "api"
+        ],
+        "summary": "Delete all assets for the given shortened URLs.",
+        "operationId": "shortenedDelete",
+        "parameters": [
+          {
+            "description": "The shortened URLs whose data should be deleted.",
+            "name": "shortenedURLs",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The shortened URL's data was successfully deleted from the backend storage."
+          },
+          "default": {
+            "description": "Unexpected error.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
     "/api/summary": {
       "post": {
         "description": "Summary data includes the shortened URL, the original URL, the type of redirect, and the number of visits.",
@@ -277,45 +318,6 @@ func init() {
             "schema": {
               "$ref": "#/definitions/Terse"
             }
-          },
-          "default": {
-            "description": "Unexpected error.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          }
-        }
-      },
-      "delete": {
-        "description": "Delete all assets for the given shortened URLs. This includes all Terse data, Visits data, and Summary data.",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "api"
-        ],
-        "summary": "Delete all assets for the given shortened URLs.",
-        "operationId": "shortenedDelete",
-        "parameters": [
-          {
-            "description": "The shortened URLs whose data should be deleted.",
-            "name": "shortenedURLs",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "The shortened URL's data was successfully deleted from the backend storage."
           },
           "default": {
             "description": "Unexpected error.",
@@ -882,6 +884,47 @@ func init() {
         }
       }
     },
+    "/api/shortened": {
+      "delete": {
+        "description": "Delete all assets for the given shortened URLs. This includes all Terse data, Visits data, and Summary data.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "api"
+        ],
+        "summary": "Delete all assets for the given shortened URLs.",
+        "operationId": "shortenedDelete",
+        "parameters": [
+          {
+            "description": "The shortened URLs whose data should be deleted.",
+            "name": "shortenedURLs",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The shortened URL's data was successfully deleted from the backend storage."
+          },
+          "default": {
+            "description": "Unexpected error.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
     "/api/summary": {
       "post": {
         "description": "Summary data includes the shortened URL, the original URL, the type of redirect, and the number of visits.",
@@ -958,45 +1001,6 @@ func init() {
             "schema": {
               "$ref": "#/definitions/Terse"
             }
-          },
-          "default": {
-            "description": "Unexpected error.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          }
-        }
-      },
-      "delete": {
-        "description": "Delete all assets for the given shortened URLs. This includes all Terse data, Visits data, and Summary data.",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "api"
-        ],
-        "summary": "Delete all assets for the given shortened URLs.",
-        "operationId": "shortenedDelete",
-        "parameters": [
-          {
-            "description": "The shortened URLs whose data should be deleted.",
-            "name": "shortenedURLs",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "The shortened URL's data was successfully deleted from the backend storage."
           },
           "default": {
             "description": "Unexpected error.",

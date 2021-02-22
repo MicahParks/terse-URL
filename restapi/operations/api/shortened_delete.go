@@ -29,7 +29,7 @@ func NewShortenedDelete(ctx *middleware.Context, handler ShortenedDeleteHandler)
 	return &ShortenedDelete{Context: ctx, Handler: handler}
 }
 
-/* ShortenedDelete swagger:route DELETE /api/terse api shortenedDelete
+/* ShortenedDelete swagger:route DELETE /api/shortened api shortenedDelete
 
 Delete all assets for the given shortened URLs.
 

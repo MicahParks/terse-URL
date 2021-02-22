@@ -176,7 +176,7 @@ paths:
       tags:
         - "api"
 
-  /api/terse:
+  /api/shortened:
     delete:
       consumes:
         - "application/json"
@@ -184,7 +184,7 @@ paths:
         - "application/json"
       summary: "Delete all assets for the given shortened URLs."
       description: "Delete all assets for the given shortened URLs. This includes all Terse data, Visits data, and
-      Summary data."
+          Summary data."
       operationId: "shortenedDelete"
       parameters:
         - description: "The shortened URLs whose data should be deleted."
@@ -204,6 +204,8 @@ paths:
             $ref: "#/definitions/Error"
       tags:
         - "api"
+
+  /api/terse:
     post:
       produces:
         - "application/json"
