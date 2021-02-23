@@ -9,12 +9,11 @@ import (
 	"github.com/MicahParks/ctxerrgroup"
 	"go.uber.org/zap"
 
-	"github.com/MicahParks/terseurl/models"
 	"github.com/MicahParks/terseurl/storage"
 )
 
-// createStores handles the process of creating the SummaryStore, TerseStore, and VisitsStore.
-func createStores(config *Configuration, group *ctxerrgroup.Group, logger *zap.SugaredLogger, rawConfig *configuration) (err error) {
+// createStores handles the process of creating the SummaryStore, TerseStore, and VisitsStore. TODO
+func createStores(config *Configuration, group ctxerrgroup.Group, logger *zap.SugaredLogger, rawConfig *configuration) (err error) {
 
 	// Get the SummaryStore configuration.
 	var summaryConfig json.RawMessage
@@ -23,8 +22,8 @@ func createStores(config *Configuration, group *ctxerrgroup.Group, logger *zap.S
 	}
 
 	// Create the SummaryStore.
-	var summaryStoreType string
-	if config.SummaryStore, summaryStoreType, err = storage.NewSummaryStore(summaryConfig, config.VisitsStore); err != nil {
+	summaryStore, summaryStoreType, err := storage.NewSummaryStore(summaryConfig)
+	if err != nil {
 		logger.Fatalw("Failed to create SummaryStore.",
 			"type", summaryStoreType,
 			"error", err.Error(),
@@ -42,8 +41,8 @@ func createStores(config *Configuration, group *ctxerrgroup.Group, logger *zap.S
 	}
 
 	// Create the VisitsStore.
-	var visitsStoreType string
-	if config.VisitsStore, visitsStoreType, err = storage.NewVisitsStore(visitsConfig); err != nil {
+	visitsStore, visitsStoreType, err := storage.NewVisitsStore(visitsConfig)
+	if err != nil {
 		logger.Fatalw("Failed to create VisitsStore.",
 			"type", visitsStoreType,
 			"error", err.Error(),
@@ -61,8 +60,8 @@ func createStores(config *Configuration, group *ctxerrgroup.Group, logger *zap.S
 	}
 
 	// Create the TerseStore.
-	var terseStoreType string
-	if config.TerseStore, terseStoreType, err = storage.NewTerseStore(terseConfig, DefaultCtx, config.ErrChan, group, config.SummaryStore, config.VisitsStore); err != nil {
+	terseStore, terseStoreType, err := storage.NewTerseStore(terseConfig)
+	if err != nil {
 		logger.Fatalw("Failed to create TerseStore.",
 			"type", terseStoreType,
 			"error", err.Error(),
@@ -73,22 +72,13 @@ func createStores(config *Configuration, group *ctxerrgroup.Group, logger *zap.S
 		"type", terseStoreType,
 	)
 
-	// Read from the Terse store and Visits store to initialize the Summary data.
-	ctx, cancel := DefaultCtx()
-	var summaries map[string]models.TerseSummary
-	if summaries, err = storage.InitializeSummaries(ctx, config.TerseStore, config.VisitsStore); err != nil {
-		logger.Fatalw("Failed to initialize the summaries for the SummaryStore.",
-			"error", err.Error(),
-		)
-	}
-	cancel()
+	// Create the store manager.
+	config.StoreManager = storage.NewStoreManager(DefaultCtx, group, summaryStore, terseStore, visitsStore)
 
-	// Initialize the Summary data in the Summary data store.
-	ctx, cancel = DefaultCtx()
-	if err = config.SummaryStore.Import(ctx, summaries); err != nil {
-		logger.Fatalw("Failed to import the initial summaries into the SummaryStore.",
-			"error", err.Error(),
-		)
+	// Initialize the SummaryStore.
+	ctx, cancel := DefaultCtx()
+	if err = config.StoreManager.InitializeSummaryStore(ctx); err != nil {
+		return err
 	}
 	cancel()
 

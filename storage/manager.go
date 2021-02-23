@@ -9,9 +9,7 @@ import (
 	"github.com/MicahParks/terseurl/models"
 )
 
-// TODO Remove VisitsStore and SummaryStore from TerseStore implementations.
-
-type StoreManager struct { // TODO Rename.
+type StoreManager struct {
 	createCtx    ctxCreator
 	group        ctxerrgroup.Group
 	summaryStore SummaryStore
@@ -19,10 +17,18 @@ type StoreManager struct { // TODO Rename.
 	visitsStore  VisitsStore
 }
 
-// TODO Turn shortenedURLs argument into a map, then back into a slice before giving to stores. This will ensure it is a
-// set and helps prevent DOS.
+// NewStoreManager creates a new manager for the data stores.
+func NewStoreManager(createCtx ctxCreator, group ctxerrgroup.Group, summaryStore SummaryStore, terseStore TerseStore, visitsStore VisitsStore) (manager StoreManager) {
+	return StoreManager{
+		createCtx:    createCtx,
+		group:        group,
+		summaryStore: summaryStore,
+		terseStore:   terseStore,
+		visitsStore:  visitsStore,
+	}
+}
 
-// Close TODO
+// Close closes the ctxerrgroup and all the underlying data stores.
 func (s StoreManager) Close(ctx context.Context) (err error) {
 
 	// Kill the worker pool.
@@ -59,6 +65,9 @@ func (s StoreManager) Close(ctx context.Context) (err error) {
 // are deleted. There should be no error if a shortened URL is not found.
 func (s StoreManager) DeleteShortened(ctx context.Context, shortenedURLs []string) (err error) {
 
+	// Turn the input slice into a set.
+	shortenedURLs = makeStringSliceSet(shortenedURLs)
+
 	// Delete the Terse data for the shortened URL.
 	if err = s.terseStore.Delete(ctx, shortenedURLs); err != nil {
 		return err
@@ -87,6 +96,9 @@ func (s StoreManager) DeleteShortened(ctx context.Context, shortenedURLs []strin
 // deleted. No error should be given if a shortened URL is not found.
 func (s StoreManager) DeleteVisits(ctx context.Context, shortenedURLs []string) (err error) {
 
+	// Turn the input slice into a set.
+	shortenedURLs = makeStringSliceSet(shortenedURLs)
+
 	// Delete the Visits data from the VisitsStore.
 	s.VisitsStore(func(store VisitsStore) {
 		err = store.Delete(ctx, shortenedURLs)
@@ -101,6 +113,9 @@ func (s StoreManager) DeleteVisits(ctx context.Context, shortenedURLs []string) 
 // Export exports the Terse data and Visits data for the given shortened URLs. If shortenedURLs is nil, then all
 // shortened URLs are exported.
 func (s StoreManager) Export(ctx context.Context, shortenedURLs []string) (export map[string]*models.Export, err error) {
+
+	// Turn the input slice into a set.
+	shortenedURLs = makeStringSliceSet(shortenedURLs)
 
 	// Create the return map.
 	export = make(map[string]*models.Export, len(shortenedURLs))
@@ -229,6 +244,9 @@ func (s StoreManager) Redirect(ctx context.Context, shortened string, visit mode
 // summary data will be returned.
 func (s StoreManager) Summary(ctx context.Context, shortenedURLs []string) (summaries map[string]*models.Summary, err error) {
 
+	// Turn the input slice into a set.
+	shortenedURLs = makeStringSliceSet(shortenedURLs)
+
 	// Create the return map.
 	summaries = make(map[string]*models.Summary, len(shortenedURLs))
 
@@ -253,12 +271,19 @@ func (s StoreManager) SummaryStore(doThis func(store SummaryStore)) {
 // Terse returns a map of shortened URLs to Terse data. If shortenedURLs is nil, all shortened URL Terse data are
 // expected. The error must be storage.ErrShortenedNotFound if a shortened URL is not found.
 func (s StoreManager) Terse(ctx context.Context, shortenedURLs []string) (terse map[string]*models.Terse, err error) {
+
+	// Turn the input slice into a set.
+	shortenedURLs = makeStringSliceSet(shortenedURLs)
+
 	return s.terseStore.Read(ctx, shortenedURLs)
 }
 
 // Visits exports the Visits data for the given shortened URLs. If shortenedURLs is nil, then all shortened URL Visits
 // data are expected. The error must be storage.ErrShortenedNotFound if a shortened URL is not found.
 func (s StoreManager) Visits(ctx context.Context, shortenedURLs []string) (visits map[string][]models.Visit, err error) {
+
+	// Turn the input slice into a set.
+	shortenedURLs = makeStringSliceSet(shortenedURLs)
 
 	// Create the return map.
 	visits = make(map[string][]models.Visit, len(shortenedURLs))
@@ -317,4 +342,28 @@ func (s StoreManager) handleVisit(shortened string, visit models.Visit) {
 			return err
 		})
 	}
+}
+
+// makeStringSliceSet makes a slice of strings a set by removing duplicate elements.
+func makeStringSliceSet(slice []string) (set []string) {
+
+	// Create a map to serve as a set.
+	m := make(map[string]struct{})
+
+	// Turn the slice into a map.
+	for _, str := range slice {
+		m[str] = struct{}{}
+	}
+
+	// Preallocate the return slice memory for faster insertion.
+	set = make([]string, len(m))
+
+	// Turn the map back into a slice.
+	i := 0
+	for str := range m {
+		set[i] = str
+		i++
+	}
+
+	return set
 }

@@ -7,8 +7,8 @@ import (
 )
 
 // HandleAlive creates and /api/alive endpoint handler via a closure.
-func HandleAlive() system.AliveHandlerFunc {
-	return func(params system.AliveParams) middleware.Responder {
-		return &system.AliveOK{}
+func HandleAlive() system.SystemAliveHandlerFunc {
+	return func(params system.SystemAliveParams) middleware.Responder {
+		return &system.SystemAliveOK{}
 	}
 }

@@ -47,17 +47,17 @@ func configureAPI(api *operations.TerseurlAPI) http.Handler {
 	api.HTMLProducer = configure.HTMLProducer(logger)
 
 	// Assign the endpoint handlers.
-	api.APIExportHandler = endpoints.HandleExport(logger.Named("POST /api/export"))
+	api.APIExportHandler = endpoints.HandleExport(logger.Named("POST /api/export"), config.StoreManager)
 	api.APIFrontendMetaHandler = frontend.HandleMeta(logger.Named("POST /api/frontend/meta"))
-	api.APIImportHandler = endpoints.HandleImport(logger.Named("POST /api/import"))
-	api.APIShortenedDeleteHandler = endpoints.HandleShortenedDelete(logger.Named("DELETE /api/shortened"))
+	api.APIImportHandler = endpoints.HandleImport(logger.Named("POST /api/import"), config.StoreManager)
+	api.APIShortenedDeleteHandler = endpoints.HandleShortenedDelete(logger.Named("DELETE /api/shortened"), config.StoreManager)
 	api.APIShortenedPrefixHandler = endpoints.HandleShortenedPrefix(logger.Named("POST /api/prefix"), config.Prefix)
-	api.APIShortenedSummaryHandler = endpoints.HandleShortenedSummary(logger.Named("POST /api/summary"))
-	api.APITerseReadHandler = endpoints.HandleTerseRead(logger.Named("POST /api/terse"))
-	api.APITerseWriteHandler = endpoints.HandleWrite(logger.Named("POST /api/write/{operation}"), config.ShortID, config.TerseStore)
-	api.APIVisitsDeleteHandler = endpoints.HandlerVisitsDelete(logger.Named("DELETE /api/visits"))
-	api.APIVisitsReadHandler = endpoints.HandleVisitsRead(logger.Named("POST /api/visits"))
-	api.PublicPublicRedirectHandler = public.HandleRedirect(logger.Named("GET /{shortenedURL}"), config.Template)
+	api.APIShortenedSummaryHandler = endpoints.HandleShortenedSummary(logger.Named("POST /api/summary"), config.StoreManager)
+	api.APITerseReadHandler = endpoints.HandleTerseRead(logger.Named("POST /api/terse"), config.StoreManager)
+	api.APITerseWriteHandler = endpoints.HandleWrite(logger.Named("POST /api/write/{operation}"), config.ShortID, config.StoreManager)
+	api.APIVisitsDeleteHandler = endpoints.HandlerVisitsDelete(logger.Named("DELETE /api/visits"), config.StoreManager)
+	api.APIVisitsReadHandler = endpoints.HandleVisitsRead(logger.Named("POST /api/visits"), config.StoreManager)
+	api.PublicPublicRedirectHandler = public.HandleRedirect(logger.Named("GET /{shortenedURL}"), config.Template, config.StoreManager)
 	api.SystemSystemAliveHandler = system.HandleAlive()
 
 	api.PreServerShutdown = func() {}
@@ -72,19 +72,10 @@ func configureAPI(api *operations.TerseurlAPI) http.Handler {
 		defer cancel()
 
 		// Close the TerseStore.
-		if err = config.TerseStore.Close(ctx); err != nil {
+		if err = config.StoreManager.Close(ctx); err != nil {
 			logger.Errorw("Failed to close the TerseStore.",
 				"error", err.Error(),
 			)
-		}
-
-		// Close the VisitsStore.
-		if config.VisitsStore != nil {
-			if err = config.VisitsStore.Close(ctx); err != nil {
-				logger.Errorw("Failed to close the VisitsStore.",
-					"error", err.Error(),
-				)
-			}
 		}
 	}
 

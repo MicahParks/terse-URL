@@ -20,7 +20,7 @@ require (
 	go.etcd.io/bbolt v1.3.5
 	go.uber.org/multierr v1.6.0 // indirect
 	go.uber.org/zap v1.16.0
-	golang.org/x/net v0.0.0-20210119194325-5f4716e94777
-	golang.org/x/sys v0.0.0-20210124154548-22da62e12c0c // indirect
-	golang.org/x/time v0.0.0-20201208040808-7e3f01d25324 // indirect
+	golang.org/x/net v0.0.0-20210222171744-9060382bd457
+	golang.org/x/sys v0.0.0-20210223095934-7937bea0104d // indirect
+	golang.org/x/time v0.0.0-20210220033141-f8bda1e9f3ba // indirect
 )

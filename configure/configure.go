@@ -33,9 +33,7 @@ type Configuration struct {
 	Prefix          string
 	ShortID         *shortid.Shortid
 	ShortIDParanoid bool
-	SummaryStore    storage.SummaryStore
-	TerseStore      storage.TerseStore
-	VisitsStore     storage.VisitsStore
+	StoreManager    storage.StoreManager
 }
 
 // Configure gathers all startup configurations, formats them, and returns them as a Go struct.
@@ -86,7 +84,7 @@ func Configure() (config Configuration, err error) {
 	})
 
 	// Create the Terse, Visits, and Summary data stores.
-	if err = createStores(&config, &group, logger, rawConfig); err != nil {
+	if err = createStores(&config, group, logger, rawConfig); err != nil {
 		logger.Fatalw("Failed to create data store.",
 			"error", err.Error(),
 		)
