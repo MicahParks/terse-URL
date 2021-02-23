@@ -51,13 +51,13 @@ func configureAPI(api *operations.TerseurlAPI) http.Handler {
 	api.APIFrontendMetaHandler = frontend.HandleMeta(logger.Named("POST /api/frontend/meta"))
 	api.APIImportHandler = api.HandleImport(logger.Named("POST /api/import"))
 	api.APIShortenedDeleteHandler = api.HandleShortenedDelete(logger.Named("DELETE /api/shortened"))
-	api.APIShortenedURLPrefixHandler = api.HandleShortenedURLPrefix(logger.Named("POST /api/prefix"))
+	api.APIShortenedURLPrefixHandler = endpoints.HandleShortenedURLPrefix(logger.Named("POST /api/prefix"), config.Prefix)
 	api.APIShortenedSummaryHandler = api.HandleShortenedSummary(logger.Named("POST /api/summary"))
 	api.APITerseReadHandler = api.HandleTerseRead(logger.Named("POST /api/terse"))
 	api.APITerseWriteHandler = endpoints.HandleWrite(logger.Named("POST /api/write/{operation}"), config.ShortID, config.TerseStore)
 	api.APIVisitsDeleteHandler = api.HandlerVisitsDelete(logger.Named("DELETE /api/visits"))
 	api.APIVisitsReadHandler = api.HandleVisitsRead(logger.Named("POST /api/visits"))
-	api.PublicPublicRedirectHandler = public.HandleRedirect(logger.Named("GET /{shortened}"), config.Template, config.TerseStore)
+	api.PublicPublicRedirectHandler = public.HandleRedirect(logger.Named("GET /{shortenedURL}"), config.Template)
 	api.SystemSystemAliveHandler = system.HandleAlive()
 
 	api.PreServerShutdown = func() {}
