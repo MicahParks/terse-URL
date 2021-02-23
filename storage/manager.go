@@ -100,10 +100,10 @@ func (s StoreManager) DeleteVisits(ctx context.Context, shortenedURLs []string) 
 
 // Export exports the Terse data and Visits data for the given shortened URLs. If shortenedURLs is nil, then all
 // shortened URLs are exported.
-func (s StoreManager) Export(ctx context.Context, shortenedURLs []string) (export map[string]*models.Export, err error) {
+func (s StoreManager) Export(ctx context.Context, shortenedURLs []string) (export map[string]models.Export, err error) {
 
 	// Create the return map.
-	export = make(map[string]*models.Export, len(shortenedURLs))
+	export = make(map[string]models.Export, len(shortenedURLs))
 
 	// Get the Terse data for the export.
 	var terse map[string]*models.Terse
@@ -122,7 +122,7 @@ func (s StoreManager) Export(ctx context.Context, shortenedURLs []string) (expor
 
 	// Combine the Terse data and Visits data for the export.
 	for shortened, t := range terse {
-		export[shortened] = &models.Export{
+		export[shortened] = models.Export{
 			Terse:  t,
 			Visits: visits[shortened],
 		}

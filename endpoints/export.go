@@ -11,11 +11,11 @@ import (
 
 // HandleExport creates and /api/export endpoint handler via a closure. It can perform exports of all Terse and Visits
 // data.
-func HandleExport(logger *zap.SugaredLogger, terseStore storage.TerseStore) api.TerseExportHandlerFunc {
-	return func(params api.TerseExportParams) middleware.Responder {
+func HandleExport(logger *zap.SugaredLogger, manager storage.StoreManager) api.ExportHandlerFunc {
+	return func(params api.ExportParams) middleware.Responder {
 
 		// Log the event.
-		logger.Info("Exporting all Terse and Visits data.")
+		logger.Info("Exporting data.")
 
 		// Create a request context.
 		//
@@ -24,7 +24,7 @@ func HandleExport(logger *zap.SugaredLogger, terseStore storage.TerseStore) api.
 		defer cancel()
 
 		// Get the data dump.
-		dump, err := terseStore.Export(ctx)
+		dump, err := manager.Export(ctx, params.ShortenedURLs)
 		if err != nil {
 
 			// Log at the appropriate level.
@@ -34,10 +34,10 @@ func HandleExport(logger *zap.SugaredLogger, terseStore storage.TerseStore) api.
 			)
 
 			// Report the error to the client.
-			return ErrorResponse(500, message, &api.TerseExportDefault{})
+			return ErrorResponse(500, message, &api.ExportDefault{})
 		}
 
-		return &api.TerseExportOK{
+		return &api.ExportOK{
 			Payload: dump,
 		}
 	}

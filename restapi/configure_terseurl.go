@@ -47,7 +47,7 @@ func configureAPI(api *operations.TerseurlAPI) http.Handler {
 	api.HTMLProducer = configure.HTMLProducer(logger)
 
 	// Assign the endpoint handlers.
-	api.APIExportHandler = api.HandleExport(logger.Named("POST /api/export"))
+	api.APIExportHandler = endpoints.HandleExport(logger.Named("POST /api/export"))
 	api.APIFrontendMetaHandler = frontend.HandleMeta(logger.Named("POST /api/frontend/meta"))
 	api.APIImportHandler = api.HandleImport(logger.Named("POST /api/import"))
 	api.APIShortenedDeleteHandler = api.HandleShortenedDelete(logger.Named("DELETE /api/shortened"))
