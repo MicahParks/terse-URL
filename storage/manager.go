@@ -12,6 +12,7 @@ import (
 // TODO Remove VisitsStore and SummaryStore from TerseStore implementations.
 
 type StoreManager struct { // TODO Rename.
+	createCtx    ctxCreator
 	group        ctxerrgroup.Group
 	summaryStore SummaryStore
 	terseStore   TerseStore
@@ -208,6 +209,22 @@ func (s StoreManager) InitializeSummaryStore(ctx context.Context) (err error) {
 	return err
 }
 
+// Redirect is called when a visit to a shortened URL has occurred. It will keep track of the visit and return the
+// required information for a redirect.
+func (s StoreManager) Redirect(ctx context.Context, shortened string, visit *models.Visit) (terse *models.Terse, err error) {
+
+	// Handle the visit in another goroutine for a faster response.
+	go s.handleVisit(shortened, visit)
+
+	// Get the Terse data from the TerseStore.
+	var terseData map[string]*models.Terse
+	if terseData, err = s.Terse(ctx, []string{shortened}); err != nil {
+		return nil, err
+	}
+
+	return terseData[shortened], nil
+}
+
 // Summary retrieves the Summary data for the given shortened URLs. If shortenedURLs is nil, then all shortened URL
 // summary data will be returned.
 func (s StoreManager) Summary(ctx context.Context, shortenedURLs []string) (summaries map[string]*models.Summary, err error) {
@@ -270,4 +287,34 @@ func (s StoreManager) VisitsStore(doThis func(store VisitsStore)) {
 // existing.
 func (s StoreManager) WriteTerse(ctx context.Context, terse map[string]*models.Terse, operation WriteOperation) (err error) {
 	return s.terseStore.Write(ctx, terse, operation)
+}
+
+// handleVisit happens asynchronously when a redirect occurs. It updates the appropriate data stores with the required
+// information.
+func (s StoreManager) handleVisit(shortened string, visit *models.Visit) {
+
+	// Add the Visits data to the VisitsStore.
+	{
+		ctx, cancel := s.createCtx()
+		s.group.AddWorkItem(ctx, cancel, func(workCtx context.Context) (err error) {
+			visits := map[string][]*models.Visit{shortened: {visit}}
+			s.VisitsStore(func(store VisitsStore) {
+				err = store.Insert(workCtx, visits)
+			})
+
+			return err
+		})
+	}
+
+	// Update the count in the SummaryStore.
+	{
+		ctx, cancel := s.createCtx()
+		s.group.AddWorkItem(ctx, cancel, func(workCtx context.Context) (err error) {
+			s.SummaryStore(func(store SummaryStore) {
+				err = store.IncrementVisitCount(workCtx, shortened)
+			})
+
+			return err
+		})
+	}
 }
