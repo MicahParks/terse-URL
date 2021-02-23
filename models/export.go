@@ -23,7 +23,7 @@ type Export struct {
 	Terse *Terse `json:"terse,omitempty"`
 
 	// visits
-	Visits []*Visit `json:"visits"`
+	Visits []Visit `json:"visits"`
 }
 
 // Validate validates this export
@@ -67,17 +67,12 @@ func (m *Export) validateVisits(formats strfmt.Registry) error {
 	}
 
 	for i := 0; i < len(m.Visits); i++ {
-		if swag.IsZero(m.Visits[i]) { // not required
-			continue
-		}
 
-		if m.Visits[i] != nil {
-			if err := m.Visits[i].Validate(formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
-					return ve.ValidateName("visits" + "." + strconv.Itoa(i))
-				}
-				return err
+		if err := m.Visits[i].Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("visits" + "." + strconv.Itoa(i))
 			}
+			return err
 		}
 
 	}
@@ -121,13 +116,11 @@ func (m *Export) contextValidateVisits(ctx context.Context, formats strfmt.Regis
 
 	for i := 0; i < len(m.Visits); i++ {
 
-		if m.Visits[i] != nil {
-			if err := m.Visits[i].ContextValidate(ctx, formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
-					return ve.ValidateName("visits" + "." + strconv.Itoa(i))
-				}
-				return err
+		if err := m.Visits[i].ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("visits" + "." + strconv.Itoa(i))
 			}
+			return err
 		}
 
 	}

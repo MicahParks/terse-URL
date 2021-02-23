@@ -681,7 +681,8 @@ func init() {
         "ip": {
           "type": "string"
         }
-      }
+      },
+      "x-nullable": false
     },
     "VisitsSummary": {
       "properties": {
@@ -1371,7 +1372,8 @@ func init() {
         "ip": {
           "type": "string"
         }
-      }
+      },
+      "x-nullable": false
     },
     "VisitsSummary": {
       "properties": {

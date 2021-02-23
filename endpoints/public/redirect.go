@@ -37,7 +37,7 @@ func HandleRedirect(logger *zap.SugaredLogger, tmpl *template.Template, manager 
 		visitTime := strfmt.DateTime(time.Now())
 
 		// Create the visit to represent this request.
-		visit := &models.Visit{
+		visit := models.Visit{
 			Accessed: &visitTime,
 			Headers:  params.HTTPRequest.Header,
 			IP:       &params.HTTPRequest.RemoteAddr, // TODO Use X-Forwarded-For if configured to do so.

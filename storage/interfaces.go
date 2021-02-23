@@ -67,11 +67,11 @@ type VisitsStore interface {
 
 	// Insert inserts the given Visits data. The visits do not need to be unique, so the Visits data should be appended
 	// to the data structure in storage.
-	Insert(ctx context.Context, visitsData map[string][]*models.Visit) (err error)
+	Insert(ctx context.Context, visitsData map[string][]models.Visit) (err error)
 
 	// Read exports the Visits data for the given shortened URLs. If shortenedURLs is nil, then all shortened URL Visits
 	// data are expected. The error must be storage.ErrShortenedNotFound if a shortened URL is not found.
-	Read(ctx context.Context, shortenedURLs []string) (visitsData map[string][]*models.Visit, err error)
+	Read(ctx context.Context, shortenedURLs []string) (visitsData map[string][]models.Visit, err error)
 
 	// Summary summarizes the Visits data for the given shortened URLs. If shortenedURLs is nil, then all shortened URL
 	// Summary data are expected. The error must be storage.ErrShortenedNotFound if a shortened URL is not found.

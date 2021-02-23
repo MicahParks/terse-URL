@@ -499,6 +499,7 @@ definitions:
           type: "array"
           items:
             type: "string"
+    x-nullable: false
     required:
       - "accessed"
       - "ip"

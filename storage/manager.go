@@ -112,7 +112,7 @@ func (s StoreManager) Export(ctx context.Context, shortenedURLs []string) (expor
 	}
 
 	// Get the Visits data for the export.
-	visits := make(map[string][]*models.Visit)
+	visits := make(map[string][]models.Visit)
 	s.VisitsStore(func(store VisitsStore) {
 		visits, err = store.Read(ctx, shortenedURLs)
 	})
@@ -137,7 +137,7 @@ func (s StoreManager) Import(ctx context.Context, data map[string]*models.Export
 
 	// Iterate through the given import data and put it in the proper format.
 	terse := make(map[string]*models.Terse)
-	visits := make(map[string][]*models.Visit)
+	visits := make(map[string][]models.Visit)
 	for shortened, export := range data {
 		terse[shortened] = export.Terse
 		visits[shortened] = export.Visits
@@ -211,7 +211,7 @@ func (s StoreManager) InitializeSummaryStore(ctx context.Context) (err error) {
 
 // Redirect is called when a visit to a shortened URL has occurred. It will keep track of the visit and return the
 // required information for a redirect.
-func (s StoreManager) Redirect(ctx context.Context, shortened string, visit *models.Visit) (terse *models.Terse, err error) {
+func (s StoreManager) Redirect(ctx context.Context, shortened string, visit models.Visit) (terse *models.Terse, err error) {
 
 	// Handle the visit in another goroutine for a faster response.
 	go s.handleVisit(shortened, visit)
@@ -258,10 +258,10 @@ func (s StoreManager) Terse(ctx context.Context, shortenedURLs []string) (terse 
 
 // Visits exports the Visits data for the given shortened URLs. If shortenedURLs is nil, then all shortened URL Visits
 // data are expected. The error must be storage.ErrShortenedNotFound if a shortened URL is not found.
-func (s StoreManager) Visits(ctx context.Context, shortenedURLs []string) (visits map[string][]*models.Visit, err error) {
+func (s StoreManager) Visits(ctx context.Context, shortenedURLs []string) (visits map[string][]models.Visit, err error) {
 
 	// Create the return map.
-	visits = make(map[string][]*models.Visit, len(shortenedURLs))
+	visits = make(map[string][]models.Visit, len(shortenedURLs))
 
 	// Get the Visits data from the VisitsStore.
 	s.VisitsStore(func(store VisitsStore) {
@@ -291,13 +291,13 @@ func (s StoreManager) WriteTerse(ctx context.Context, terse map[string]*models.T
 
 // handleVisit happens asynchronously when a redirect occurs. It updates the appropriate data stores with the required
 // information.
-func (s StoreManager) handleVisit(shortened string, visit *models.Visit) {
+func (s StoreManager) handleVisit(shortened string, visit models.Visit) {
 
 	// Add the Visits data to the VisitsStore.
 	{
 		ctx, cancel := s.createCtx()
 		s.group.AddWorkItem(ctx, cancel, func(workCtx context.Context) (err error) {
-			visits := map[string][]*models.Visit{shortened: {visit}}
+			visits := map[string][]models.Visit{shortened: {visit}}
 			s.VisitsStore(func(store VisitsStore) {
 				err = store.Insert(workCtx, visits)
 			})

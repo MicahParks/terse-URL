@@ -10,13 +10,13 @@ import (
 // MemVisits is a VisitsStore implementation that stores all data in a Go map in memory.
 type MemVisits struct {
 	mux    sync.RWMutex
-	visits map[string][]*models.Visit
+	visits map[string][]models.Visit
 }
 
 // NewMemVisits creates a new MemVisits.
 func NewMemVisits() (visitsStore VisitsStore) {
 	return &MemVisits{
-		visits: make(map[string][]*models.Visit),
+		visits: make(map[string][]models.Visit),
 	}
 }
 
@@ -59,7 +59,7 @@ func (m *MemVisits) Delete(_ context.Context, shortenedURLs []string) (err error
 
 // Insert inserts the given Visits data. The visits do not need to be unique, so the Visits data should be appended
 // to the data structure in storage.
-func (m *MemVisits) Insert(_ context.Context, visitsData map[string][]*models.Visit) (err error) {
+func (m *MemVisits) Insert(_ context.Context, visitsData map[string][]models.Visit) (err error) {
 
 	// Lock the Visits data for async safe use.
 	m.mux.Lock()
@@ -75,10 +75,10 @@ func (m *MemVisits) Insert(_ context.Context, visitsData map[string][]*models.Vi
 
 // Read exports the Visits data for the given shortened URLs. If shortenedURLs is nil, all shortened URLs' Visits data
 // are expected. The error must be storage.ErrShortenedNotFound if a shortened URL is not found.
-func (m *MemVisits) Read(_ context.Context, shortenedURLs []string) (visitsData map[string][]*models.Visit, err error) {
+func (m *MemVisits) Read(_ context.Context, shortenedURLs []string) (visitsData map[string][]models.Visit, err error) {
 
 	// Create the return map.
-	visitsData = make(map[string][]*models.Visit, len(shortenedURLs))
+	visitsData = make(map[string][]models.Visit, len(shortenedURLs))
 
 	// Lock the Visits data for async safe use.
 	m.mux.RLock()
@@ -153,5 +153,5 @@ func (m *MemVisits) Summary(_ context.Context, shortenedURLs []string) (summarie
 func (m *MemVisits) deleteAll() {
 
 	// Reassign the Visits data so it's taken by the garbage collector.
-	m.visits = make(map[string][]*models.Visit)
+	m.visits = make(map[string][]models.Visit)
 }

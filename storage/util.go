@@ -179,7 +179,7 @@ func bytesToTerse(data []byte) (terse models.Terse, err error) {
 }
 
 // bytesToVisits transforms bytes to Visits data.
-func bytesToVisits(data []byte) (visits []*models.Visit, err error) {
+func bytesToVisits(data []byte) (visits []models.Visit, err error) {
 	err = json.Unmarshal(data, &visits)
 	return visits, err
 }
@@ -208,6 +208,6 @@ func terseToBytes(terse models.Terse) (data []byte, err error) {
 }
 
 // visitsToBytes transforms Visits data to bytes.
-func visitsToBytes(visits []*models.Visit) (data []byte, err error) {
+func visitsToBytes(visits []models.Visit) (data []byte, err error) {
 	return json.Marshal(visits)
 }

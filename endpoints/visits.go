@@ -28,7 +28,7 @@ func HandleVisitsRead(logger *zap.SugaredLogger, manager storage.StoreManager) a
 
 		// Get the visits from storage.
 		var err error
-		visits := make(map[string][]*models.Visit, 0)
+		visits := make(map[string][]models.Visit, 0)
 		if visits, err = manager.Visits(ctx, params.ShortenedURL); err != nil {
 
 			// Log at the appropriate level. Assign the response code and message.
@@ -42,7 +42,7 @@ func HandleVisitsRead(logger *zap.SugaredLogger, manager storage.StoreManager) a
 				)
 			} else {
 				code = 500
-				message = "Failed to find the visits for the shortened URL."
+				message = "Failed to read Visits data for the shortened URLs."
 				logger.Errorw(message,
 					"error", err.Error(),
 				)
@@ -53,7 +53,7 @@ func HandleVisitsRead(logger *zap.SugaredLogger, manager storage.StoreManager) a
 		}
 
 		return &api.VisitsReadOK{
-			Payload: visits, // TODO Find a way to get the generated code to make this a map[string][]*models.Visit
+			Payload: visits,
 		}
 	}
 }
