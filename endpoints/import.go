@@ -1,8 +1,6 @@
 package endpoints
 
 import (
-	"fmt"
-
 	"github.com/go-openapi/runtime/middleware"
 	"go.uber.org/zap"
 
@@ -13,20 +11,18 @@ import (
 
 // HandleImport creates and /api/import endpoint handler via a closure. It can import Terse and or Visits data. It will
 // delete existing data before importing, if told to do so.
-func HandleImport(logger *zap.SugaredLogger, terseStore storage.TerseStore) api.ImportHandlerFunc {
+func HandleImport(logger *zap.SugaredLogger, manager storage.StoreManager) api.ImportHandlerFunc {
 	return func(params api.ImportParams) middleware.Responder {
 
 		// Log the event.
-		logger.Infow("Importing data.",
-			"delete", fmt.Sprintf("%+v", params.ImportDelete.Delete),
-		)
+		logger.Infow("Importing data.")
 
 		// Create a request context.
 		ctx, cancel := configure.DefaultCtx()
 		defer cancel()
 
 		// Import the given data.
-		if err := terseStore.Import(ctx, params.ImportDelete.Delete, params.ImportDelete.Import); err != nil {
+		if err := manager.Import(ctx, params.Import); err != nil {
 
 			// Log at the appropriate level.
 			message := "Failed to import data. Clean up may be necessary."
@@ -35,9 +31,9 @@ func HandleImport(logger *zap.SugaredLogger, terseStore storage.TerseStore) api.
 			)
 
 			// Report the error to the client.
-			return ErrorResponse(500, message, &api.TerseImportDefault{})
+			return ErrorResponse(500, message, &api.ImportDefault{})
 		}
 
-		return &api.TerseImportOK{}
+		return &api.ImportOK{}
 	}
 }

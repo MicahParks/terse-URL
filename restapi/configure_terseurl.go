@@ -49,7 +49,7 @@ func configureAPI(api *operations.TerseurlAPI) http.Handler {
 	// Assign the endpoint handlers.
 	api.APIExportHandler = endpoints.HandleExport(logger.Named("POST /api/export"))
 	api.APIFrontendMetaHandler = frontend.HandleMeta(logger.Named("POST /api/frontend/meta"))
-	api.APIImportHandler = api.HandleImport(logger.Named("POST /api/import"))
+	api.APIImportHandler = endpoints.HandleImport(logger.Named("POST /api/import"))
 	api.APIShortenedDeleteHandler = api.HandleShortenedDelete(logger.Named("DELETE /api/shortened"))
 	api.APIShortenedURLPrefixHandler = endpoints.HandleShortenedURLPrefix(logger.Named("POST /api/prefix"), config.Prefix)
 	api.APIShortenedSummaryHandler = api.HandleShortenedSummary(logger.Named("POST /api/summary"))
