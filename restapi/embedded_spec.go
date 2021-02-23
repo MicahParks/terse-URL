@@ -81,6 +81,7 @@ func init() {
             "description": "The export was successfully retrieved.",
             "schema": {
               "additionalProperties": {
+                "x-nullable": true,
                 "$ref": "#/definitions/Export"
               }
             }
@@ -159,6 +160,7 @@ func init() {
             "required": true,
             "schema": {
               "additionalProperties": {
+                "x-nullable": true,
                 "$ref": "#/definitions/Export"
               }
             }
@@ -184,7 +186,7 @@ func init() {
           "api"
         ],
         "summary": "Client's web browser is requesting what HTTP prefix all shortened URLs have.",
-        "operationId": "shortenedURLPrefix",
+        "operationId": "shortenedPrefix",
         "responses": {
           "200": {
             "description": "The HTTP prefix all shortened URLs have.",
@@ -274,6 +276,7 @@ func init() {
             "description": "The map of shortened URLs to Summary data.",
             "schema": {
               "additionalProperties": {
+                "x-nullable": true,
                 "$ref": "#/definitions/Summary"
               }
             }
@@ -316,7 +319,10 @@ func init() {
           "200": {
             "description": "The Terse data was successfully retrieved.",
             "schema": {
-              "$ref": "#/definitions/Terse"
+              "additionalProperties": {
+                "x-nullable": true,
+                "$ref": "#/definitions/Terse"
+              }
             }
           },
           "default": {
@@ -764,6 +770,7 @@ func init() {
             "description": "The export was successfully retrieved.",
             "schema": {
               "additionalProperties": {
+                "x-nullable": true,
                 "$ref": "#/definitions/Export"
               }
             }
@@ -842,6 +849,7 @@ func init() {
             "required": true,
             "schema": {
               "additionalProperties": {
+                "x-nullable": true,
                 "$ref": "#/definitions/Export"
               }
             }
@@ -867,7 +875,7 @@ func init() {
           "api"
         ],
         "summary": "Client's web browser is requesting what HTTP prefix all shortened URLs have.",
-        "operationId": "shortenedURLPrefix",
+        "operationId": "shortenedPrefix",
         "responses": {
           "200": {
             "description": "The HTTP prefix all shortened URLs have.",
@@ -957,6 +965,7 @@ func init() {
             "description": "The map of shortened URLs to Summary data.",
             "schema": {
               "additionalProperties": {
+                "x-nullable": true,
                 "$ref": "#/definitions/Summary"
               }
             }
@@ -999,7 +1008,10 @@ func init() {
           "200": {
             "description": "The Terse data was successfully retrieved.",
             "schema": {
-              "$ref": "#/definitions/Terse"
+              "additionalProperties": {
+                "x-nullable": true,
+                "$ref": "#/definitions/Terse"
+              }
             }
           },
           "default": {

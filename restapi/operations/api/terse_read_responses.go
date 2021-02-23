@@ -25,7 +25,7 @@ type TerseReadOK struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Terse `json:"body,omitempty"`
+	Payload map[string]*models.Terse `json:"body,omitempty"`
 }
 
 // NewTerseReadOK creates TerseReadOK with default headers values
@@ -35,13 +35,13 @@ func NewTerseReadOK() *TerseReadOK {
 }
 
 // WithPayload adds the payload to the terse read o k response
-func (o *TerseReadOK) WithPayload(payload *models.Terse) *TerseReadOK {
+func (o *TerseReadOK) WithPayload(payload map[string]*models.Terse) *TerseReadOK {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the terse read o k response
-func (o *TerseReadOK) SetPayload(payload *models.Terse) {
+func (o *TerseReadOK) SetPayload(payload map[string]*models.Terse) {
 	o.Payload = payload
 }
 
@@ -49,11 +49,14 @@ func (o *TerseReadOK) SetPayload(payload *models.Terse) {
 func (o *TerseReadOK) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
 
 	rw.WriteHeader(200)
-	if o.Payload != nil {
-		payload := o.Payload
-		if err := producer.Produce(rw, payload); err != nil {
-			panic(err) // let the recovery middleware deal with this
-		}
+	payload := o.Payload
+	if payload == nil {
+		// return empty map
+		payload = make(map[string]*models.Terse, 50)
+	}
+
+	if err := producer.Produce(rw, payload); err != nil {
+		panic(err) // let the recovery middleware deal with this
 	}
 }
 

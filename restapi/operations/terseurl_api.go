@@ -65,11 +65,11 @@ func NewTerseurlAPI(spec *loads.Document) *TerseurlAPI {
 		APIShortenedDeleteHandler: apiops.ShortenedDeleteHandlerFunc(func(params apiops.ShortenedDeleteParams) middleware.Responder {
 			return middleware.NotImplemented("operation api.ShortenedDelete has not yet been implemented")
 		}),
+		APIShortenedPrefixHandler: apiops.ShortenedPrefixHandlerFunc(func(params apiops.ShortenedPrefixParams) middleware.Responder {
+			return middleware.NotImplemented("operation api.ShortenedPrefix has not yet been implemented")
+		}),
 		APIShortenedSummaryHandler: apiops.ShortenedSummaryHandlerFunc(func(params apiops.ShortenedSummaryParams) middleware.Responder {
 			return middleware.NotImplemented("operation api.ShortenedSummary has not yet been implemented")
-		}),
-		APIShortenedURLPrefixHandler: apiops.ShortenedURLPrefixHandlerFunc(func(params apiops.ShortenedURLPrefixParams) middleware.Responder {
-			return middleware.NotImplemented("operation api.ShortenedURLPrefix has not yet been implemented")
 		}),
 		SystemSystemAliveHandler: system.SystemAliveHandlerFunc(func(params system.SystemAliveParams) middleware.Responder {
 			return middleware.NotImplemented("operation system.SystemAlive has not yet been implemented")
@@ -135,10 +135,10 @@ type TerseurlAPI struct {
 	PublicPublicRedirectHandler public.PublicRedirectHandler
 	// APIShortenedDeleteHandler sets the operation handler for the shortened delete operation
 	APIShortenedDeleteHandler apiops.ShortenedDeleteHandler
+	// APIShortenedPrefixHandler sets the operation handler for the shortened prefix operation
+	APIShortenedPrefixHandler apiops.ShortenedPrefixHandler
 	// APIShortenedSummaryHandler sets the operation handler for the shortened summary operation
 	APIShortenedSummaryHandler apiops.ShortenedSummaryHandler
-	// APIShortenedURLPrefixHandler sets the operation handler for the shortened URL prefix operation
-	APIShortenedURLPrefixHandler apiops.ShortenedURLPrefixHandler
 	// SystemSystemAliveHandler sets the operation handler for the system alive operation
 	SystemSystemAliveHandler system.SystemAliveHandler
 	// APITerseReadHandler sets the operation handler for the terse read operation
@@ -244,11 +244,11 @@ func (o *TerseurlAPI) Validate() error {
 	if o.APIShortenedDeleteHandler == nil {
 		unregistered = append(unregistered, "api.ShortenedDeleteHandler")
 	}
+	if o.APIShortenedPrefixHandler == nil {
+		unregistered = append(unregistered, "api.ShortenedPrefixHandler")
+	}
 	if o.APIShortenedSummaryHandler == nil {
 		unregistered = append(unregistered, "api.ShortenedSummaryHandler")
-	}
-	if o.APIShortenedURLPrefixHandler == nil {
-		unregistered = append(unregistered, "api.ShortenedURLPrefixHandler")
 	}
 	if o.SystemSystemAliveHandler == nil {
 		unregistered = append(unregistered, "system.SystemAliveHandler")
@@ -375,14 +375,14 @@ func (o *TerseurlAPI) initHandlerCache() {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
 	o.handlers["DELETE"]["/api/shortened"] = apiops.NewShortenedDelete(o.context, o.APIShortenedDeleteHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/api/prefix"] = apiops.NewShortenedPrefix(o.context, o.APIShortenedPrefixHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
 	o.handlers["POST"]["/api/summary"] = apiops.NewShortenedSummary(o.context, o.APIShortenedSummaryHandler)
-	if o.handlers["GET"] == nil {
-		o.handlers["GET"] = make(map[string]http.Handler)
-	}
-	o.handlers["GET"]["/api/prefix"] = apiops.NewShortenedURLPrefix(o.context, o.APIShortenedURLPrefixHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}

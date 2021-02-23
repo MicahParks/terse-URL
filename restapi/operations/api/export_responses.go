@@ -25,7 +25,7 @@ type ExportOK struct {
 	/*
 	  In: Body
 	*/
-	Payload map[string]models.Export `json:"body,omitempty"`
+	Payload map[string]*models.Export `json:"body,omitempty"`
 }
 
 // NewExportOK creates ExportOK with default headers values
@@ -35,13 +35,13 @@ func NewExportOK() *ExportOK {
 }
 
 // WithPayload adds the payload to the export o k response
-func (o *ExportOK) WithPayload(payload map[string]models.Export) *ExportOK {
+func (o *ExportOK) WithPayload(payload map[string]*models.Export) *ExportOK {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the export o k response
-func (o *ExportOK) SetPayload(payload map[string]models.Export) {
+func (o *ExportOK) SetPayload(payload map[string]*models.Export) {
 	o.Payload = payload
 }
 
@@ -52,7 +52,7 @@ func (o *ExportOK) WriteResponse(rw http.ResponseWriter, producer runtime.Produc
 	payload := o.Payload
 	if payload == nil {
 		// return empty map
-		payload = make(map[string]models.Export, 50)
+		payload = make(map[string]*models.Export, 50)
 	}
 
 	if err := producer.Produce(rw, payload); err != nil {

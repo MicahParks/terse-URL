@@ -12,19 +12,19 @@ import (
 	"github.com/go-openapi/runtime/middleware"
 )
 
-// NewShortenedURLPrefixParams creates a new ShortenedURLPrefixParams object
+// NewShortenedPrefixParams creates a new ShortenedPrefixParams object
 //
 // There are no default values defined in the spec.
-func NewShortenedURLPrefixParams() ShortenedURLPrefixParams {
+func NewShortenedPrefixParams() ShortenedPrefixParams {
 
-	return ShortenedURLPrefixParams{}
+	return ShortenedPrefixParams{}
 }
 
-// ShortenedURLPrefixParams contains all the bound params for the shortened URL prefix operation
+// ShortenedPrefixParams contains all the bound params for the shortened prefix operation
 // typically these are obtained from a http.Request
 //
-// swagger:parameters shortenedURLPrefix
-type ShortenedURLPrefixParams struct {
+// swagger:parameters shortenedPrefix
+type ShortenedPrefixParams struct {
 
 	// HTTP Request Object
 	HTTPRequest *http.Request `json:"-"`
@@ -33,8 +33,8 @@ type ShortenedURLPrefixParams struct {
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
 // for simple values it will use straight method calls.
 //
-// To ensure default values, the struct must have been initialized with NewShortenedURLPrefixParams() beforehand.
-func (o *ShortenedURLPrefixParams) BindRequest(r *http.Request, route *middleware.MatchedRoute) error {
+// To ensure default values, the struct must have been initialized with NewShortenedPrefixParams() beforehand.
+func (o *ShortenedPrefixParams) BindRequest(r *http.Request, route *middleware.MatchedRoute) error {
 	var res []error
 
 	o.HTTPRequest = r

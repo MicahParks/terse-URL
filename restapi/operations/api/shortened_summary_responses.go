@@ -25,7 +25,7 @@ type ShortenedSummaryOK struct {
 	/*
 	  In: Body
 	*/
-	Payload map[string]models.Summary `json:"body,omitempty"`
+	Payload map[string]*models.Summary `json:"body,omitempty"`
 }
 
 // NewShortenedSummaryOK creates ShortenedSummaryOK with default headers values
@@ -35,13 +35,13 @@ func NewShortenedSummaryOK() *ShortenedSummaryOK {
 }
 
 // WithPayload adds the payload to the shortened summary o k response
-func (o *ShortenedSummaryOK) WithPayload(payload map[string]models.Summary) *ShortenedSummaryOK {
+func (o *ShortenedSummaryOK) WithPayload(payload map[string]*models.Summary) *ShortenedSummaryOK {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the shortened summary o k response
-func (o *ShortenedSummaryOK) SetPayload(payload map[string]models.Summary) {
+func (o *ShortenedSummaryOK) SetPayload(payload map[string]*models.Summary) {
 	o.Payload = payload
 }
 
@@ -52,7 +52,7 @@ func (o *ShortenedSummaryOK) WriteResponse(rw http.ResponseWriter, producer runt
 	payload := o.Payload
 	if payload == nil {
 		// return empty map
-		payload = make(map[string]models.Summary, 50)
+		payload = make(map[string]*models.Summary, 50)
 	}
 
 	if err := producer.Produce(rw, payload); err != nil {

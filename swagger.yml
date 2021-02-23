@@ -59,6 +59,7 @@ paths:
           schema:
             additionalProperties:
               $ref: "#/definitions/Export"
+              x-nullable: true
         default:
           description: "Unexpected error."
           schema:
@@ -117,6 +118,7 @@ paths:
           schema:
             additionalProperties:
               $ref: "#/definitions/Export"
+              x-nullable: true
       responses:
         200:
           description: "The import request was successfully fulfilled."
@@ -131,7 +133,7 @@ paths:
     get:
       summary: "Client's web browser is requesting what HTTP prefix all shortened URLs have."
       description: "Provides the HTTP prefix all shortened URLs have."
-      operationId: "shortenedURLPrefix"
+      operationId: "shortenedPrefix"
       responses:
         200:
           description: "The HTTP prefix all shortened URLs have."
@@ -169,6 +171,7 @@ paths:
           schema:
             additionalProperties:
               $ref: "#/definitions/Summary"
+              x-nullable: true
         default:
           description: "Unexpected error."
           schema:
@@ -225,7 +228,9 @@ paths:
         200:
           description: "The Terse data was successfully retrieved."
           schema:
-            $ref: "#/definitions/Terse"
+            additionalProperties:
+              $ref: "#/definitions/Terse"
+              x-nullable: true
         default:
           description: "Unexpected error."
           schema:

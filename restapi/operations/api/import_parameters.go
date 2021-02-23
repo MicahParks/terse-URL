@@ -39,7 +39,7 @@ type ImportParams struct {
 	  Required: true
 	  In: body
 	*/
-	Import map[string]models.Export
+	Import map[string]*models.Export
 }
 
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
@@ -53,7 +53,7 @@ func (o *ImportParams) BindRequest(r *http.Request, route *middleware.MatchedRou
 
 	if runtime.HasBody(r) {
 		defer r.Body.Close()
-		var body map[string]models.Export
+		var body map[string]*models.Export
 		if err := route.Consumer.Consume(r.Body, &body); err != nil {
 			if err == io.EOF {
 				res = append(res, errors.Required("import", "body", ""))
