@@ -21,12 +21,12 @@ import (
 
 // HandleRedirect creates and /{shortened} endpoint handler via a closure. It can perform redirects based on the
 // shortened URL's Terse data. It will add visits to the VisitStore, if it exists.
-func HandleRedirect(logger *zap.SugaredLogger, tmpl *template.Template, terseStore storage.TerseStore) public.TerseRedirectHandlerFunc {
-	return func(params public.TerseRedirectParams) middleware.Responder {
+func HandleRedirect(logger *zap.SugaredLogger, tmpl *template.Template, manager storage.StoreManager) public.PublicRedirectHandlerFunc {
+	return func(params public.PublicRedirectParams) middleware.Responder {
 
 		// Debug info.
 		logger.Debugw("Parameters",
-			"shortened", params.Shortened,
+			"shortened", params.ShortenedURL,
 		)
 
 		// Create a new request context.
@@ -44,31 +44,31 @@ func HandleRedirect(logger *zap.SugaredLogger, tmpl *template.Template, terseSto
 		}
 
 		// Get the Terse from the TerseStore.
-		terse, err := terseStore.Read(ctx, params.Shortened, visit)
+		terse, err := manager.Redirect(ctx, params.ShortenedURL, visit)
 		if err != nil {
 
 			// Log at the appropriate level.
 			if errors.Is(err, storage.ErrShortenedNotFound) {
 				logger.Infow("Shortened URL not found.",
-					"shortened", params.Shortened,
+					"shortened", params.ShortenedURL,
 					"error", err.Error(),
 				)
 			} else {
 				logger.Errorw("Failed to get original URL from shortened.",
-					"shortened", params.Shortened,
+					"shortened", params.ShortenedURL,
 					"error", err.Error(),
 				)
 			}
 
 			// Report the error to the client.
-			return &public.TerseRedirectNotFound{}
+			return &public.PublicRedirectNotFound{}
 		}
 
 		// TODO Validate OriginalURL, if needed. Like if empty.
 
 		// Check to see if a 301 redirect needs to be issued.
 		if terse.RedirectType == models.RedirectTypeNr301 {
-			return &public.TerseRedirectMovedPermanently{Location: terse.OriginalURL}
+			return &public.PublicRedirectMovedPermanently{Location: terse.OriginalURL}
 		}
 
 		// Check to see if an HTML file should be returned instead.
@@ -91,12 +91,12 @@ func HandleRedirect(logger *zap.SugaredLogger, tmpl *template.Template, terseSto
 
 			// If there is no error in populating the HTML template, return an HTML document to the client.
 			if err = tmpl.Execute(buf, previewMeta); err == nil {
-				return &public.TerseRedirectOK{Payload: ioutil.NopCloser(buf)}
+				return &public.PublicRedirectOK{Payload: ioutil.NopCloser(buf)}
 			}
 
 			// Failed to execute HTML template. Log the event. Reassign the error to nil. Perform the default redirect.
 			logger.Warnw("Failed to execute template.",
-				"shortened", params.Shortened,
+				"shortened", params.ShortenedURL,
 				"error", err.Error(),
 			)
 			err = nil
@@ -110,7 +110,7 @@ func HandleRedirect(logger *zap.SugaredLogger, tmpl *template.Template, terseSto
 		}
 
 		// Issue a standard temporary redirect.
-		return &public.TerseRedirectFound{
+		return &public.PublicRedirectFound{
 			Location: terse.OriginalURL,
 		}
 	}
