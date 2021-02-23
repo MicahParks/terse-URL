@@ -55,8 +55,8 @@ func configureAPI(api *operations.TerseurlAPI) http.Handler {
 	api.APIShortenedSummaryHandler = endpoints.HandleShortenedSummary(logger.Named("POST /api/summary"))
 	api.APITerseReadHandler = endpoints.HandleTerseRead(logger.Named("POST /api/terse"))
 	api.APITerseWriteHandler = endpoints.HandleWrite(logger.Named("POST /api/write/{operation}"), config.ShortID, config.TerseStore)
-	api.APIVisitsDeleteHandler = api.HandlerVisitsDelete(logger.Named("DELETE /api/visits"))
-	api.APIVisitsReadHandler = api.HandleVisitsRead(logger.Named("POST /api/visits"))
+	api.APIVisitsDeleteHandler = endpoints.HandlerVisitsDelete(logger.Named("DELETE /api/visits"))
+	api.APIVisitsReadHandler = endpoints.HandleVisitsRead(logger.Named("POST /api/visits"))
 	api.PublicPublicRedirectHandler = public.HandleRedirect(logger.Named("GET /{shortenedURL}"), config.Template)
 	api.SystemSystemAliveHandler = system.HandleAlive()
 

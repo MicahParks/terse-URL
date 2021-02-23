@@ -363,10 +363,11 @@ func init() {
           "200": {
             "description": "The Visits data was successfully retrieved.",
             "schema": {
-              "description": "The visit data for the given shortened URL.",
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/Visit"
+              "additionalProperties": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/definitions/Visit"
+                }
               }
             }
           },
@@ -1052,10 +1053,11 @@ func init() {
           "200": {
             "description": "The Visits data was successfully retrieved.",
             "schema": {
-              "description": "The visit data for the given shortened URL.",
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/Visit"
+              "additionalProperties": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/definitions/Visit"
+                }
               }
             }
           },

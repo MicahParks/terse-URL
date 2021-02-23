@@ -22,10 +22,10 @@ swagger:response visitsReadOK
 */
 type VisitsReadOK struct {
 
-	/*The visit data for the given shortened URL.
+	/*
 	  In: Body
 	*/
-	Payload []*models.Visit `json:"body,omitempty"`
+	Payload map[string][]models.Visit `json:"body,omitempty"`
 }
 
 // NewVisitsReadOK creates VisitsReadOK with default headers values
@@ -35,13 +35,13 @@ func NewVisitsReadOK() *VisitsReadOK {
 }
 
 // WithPayload adds the payload to the visits read o k response
-func (o *VisitsReadOK) WithPayload(payload []*models.Visit) *VisitsReadOK {
+func (o *VisitsReadOK) WithPayload(payload map[string][]models.Visit) *VisitsReadOK {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the visits read o k response
-func (o *VisitsReadOK) SetPayload(payload []*models.Visit) {
+func (o *VisitsReadOK) SetPayload(payload map[string][]models.Visit) {
 	o.Payload = payload
 }
 
@@ -51,8 +51,8 @@ func (o *VisitsReadOK) WriteResponse(rw http.ResponseWriter, producer runtime.Pr
 	rw.WriteHeader(200)
 	payload := o.Payload
 	if payload == nil {
-		// return empty array
-		payload = make([]*models.Visit, 0, 50)
+		// return empty map
+		payload = make(map[string][]models.Visit, 50)
 	}
 
 	if err := producer.Produce(rw, payload); err != nil {

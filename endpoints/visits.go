@@ -12,14 +12,14 @@ import (
 	"github.com/MicahParks/terseurl/storage"
 )
 
-// HandleVisits creates and /api/visits/{shortened} endpoint handler via a closure. It can perform exports of a single
-// shortened URL's Visits data.
-func HandleVisits(logger *zap.SugaredLogger, visitsStore storage.VisitsStore) api.TerseVisitsHandlerFunc {
-	return func(params api.TerseVisitsParams) middleware.Responder {
+// HandleVisitsRead creates and /api/visits/{shortened} endpoint handler via a closure. It can perform exports of a
+// single shortened URL's Visits data.
+func HandleVisitsRead(logger *zap.SugaredLogger, manager storage.StoreManager) api.VisitsReadHandlerFunc {
+	return func(params api.VisitsReadParams) middleware.Responder {
 
 		// Log the event.
-		logger.Infow("Reading a shortened URL's Visits data.",
-			"shortened", params.Shortened,
+		logger.Debugw("Reading shortened URL Visits data.",
+			"shortened", params.ShortenedURL,
 		)
 
 		// Create a request context.
@@ -29,35 +29,31 @@ func HandleVisits(logger *zap.SugaredLogger, visitsStore storage.VisitsStore) ap
 		// Get the visits from storage.
 		var err error
 		visits := make(map[string][]*models.Visit, 0)
-		if visitsStore != nil {
-			if visits, err = visitsStore.ExportSome(ctx, []string{params.Shortened}); err != nil {
+		if visits, err = manager.Visits(ctx, params.ShortenedURL); err != nil {
 
-				// Log at the appropriate level. Assign the response code and message.
-				var code int
-				var message string
-				if errors.Is(err, storage.ErrShortenedNotFound) {
-					code = 400
-					message = "Shortened URL not found."
-					logger.Infow(message,
-						"shortened", params.Shortened,
-						"error", err.Error(),
-					)
-				} else {
-					code = 500
-					message = "Failed to find the visits for the shortened URL."
-					logger.Errorw(message,
-						"shortened", params.Shortened,
-						"error", err.Error(),
-					)
-				}
-
-				// Report the error to the client.
-				return ErrorResponse(code, message, &api.TerseVisitsDefault{})
+			// Log at the appropriate level. Assign the response code and message.
+			var code int
+			var message string
+			if errors.Is(err, storage.ErrShortenedNotFound) {
+				code = 400
+				message = "Shortened URL not found."
+				logger.Infow(message,
+					"error", err.Error(),
+				)
+			} else {
+				code = 500
+				message = "Failed to find the visits for the shortened URL."
+				logger.Errorw(message,
+					"error", err.Error(),
+				)
 			}
+
+			// Report the error to the client.
+			return ErrorResponse(code, message, &api.VisitsReadDefault{})
 		}
 
-		return &api.TerseVisitsOK{
-			Payload: visits[params.Shortened], // TODO Check if okay.
+		return &api.VisitsReadOK{
+			Payload: visits, // TODO Find a way to get the generated code to make this a map[string][]*models.Visit
 		}
 	}
 }
