@@ -9,6 +9,7 @@ import (
 	"github.com/MicahParks/terseurl/models"
 )
 
+// StoreManager holds all data stores and coordinates operations on them.
 type StoreManager struct {
 	createCtx    ctxCreator
 	group        ctxerrgroup.Group

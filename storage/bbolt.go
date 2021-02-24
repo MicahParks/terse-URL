@@ -60,7 +60,7 @@ func bboltDelete(b bboltStore, shortenedURLs []string) (err error) {
 	return nil
 }
 
-// bboltRead reads teh
+// bboltRead reads the given shortened URLs from the bbolt storage and performs a function on each of their values.
 func bboltRead(b bboltStore, forEach forEachFunc, shortenedURLs []string) (err error) {
 
 	// Open the bbolt database for reading.

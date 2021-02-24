@@ -28,7 +28,7 @@ func HandleVisitsRead(logger *zap.SugaredLogger, manager storage.StoreManager) a
 
 		// Get the visits from storage.
 		var err error
-		visits := make(map[string][]models.Visit, 0)
+		var visits map[string][]models.Visit
 		if visits, err = manager.Visits(ctx, params.ShortenedURL); err != nil {
 
 			// Log at the appropriate level. Assign the response code and message.
