@@ -1,7 +1,9 @@
 package storage
 
 import (
+	"bytes"
 	"context"
+	"encoding/gob"
 	"encoding/json"
 	"errors"
 
@@ -174,14 +176,22 @@ func NewVisitsStore(configJSON json.RawMessage) (visitsStore VisitsStore, storeT
 
 // bytesToTerse transforms bytes to Terse data.
 func bytesToTerse(data []byte) (terse models.Terse, err error) {
-	err = json.Unmarshal(data, &terse)
-	return terse, err
+	buf := bytes.NewReader(data)
+	dec := gob.NewDecoder(buf)
+	if err = dec.Decode(&terse); err != nil {
+		return models.Terse{}, err
+	}
+	return terse, nil
 }
 
 // bytesToVisits transforms bytes to Visits data.
 func bytesToVisits(data []byte) (visits []models.Visit, err error) {
-	err = json.Unmarshal(data, &visits)
-	return visits, err
+	buf := bytes.NewReader(data)
+	dec := gob.NewDecoder(buf)
+	if err = dec.Decode(&visits); err != nil {
+		return nil, err
+	}
+	return visits, nil
 }
 
 // createBucket creates the given bucketName in the given bbolt database, if it doesn't already exist.
@@ -204,10 +214,20 @@ func openBbolt(filePath string) (db *bbolt.DB, err error) {
 
 // terseToBytes transforms Terse data to bytes.
 func terseToBytes(terse models.Terse) (data []byte, err error) {
-	return json.Marshal(terse)
+	var buf bytes.Buffer
+	enc := gob.NewEncoder(&buf)
+	if err = enc.Encode(terse); err != nil {
+		return nil, err
+	}
+	return buf.Bytes(), nil
 }
 
 // visitsToBytes transforms Visits data to bytes.
 func visitsToBytes(visits []models.Visit) (data []byte, err error) {
-	return json.Marshal(visits)
+	var buf bytes.Buffer
+	enc := gob.NewEncoder(&buf)
+	if err = enc.Encode(visits); err != nil {
+		return nil, err
+	}
+	return buf.Bytes(), nil
 }

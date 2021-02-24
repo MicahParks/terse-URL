@@ -16,7 +16,7 @@ import (
 // TerseWriteOKCode is the HTTP code returned for type TerseWriteOK
 const TerseWriteOKCode int = 200
 
-/*TerseWriteOK The write operation was successful.
+/*TerseWriteOK The map of shortened URLs to original URLs.
 
 swagger:response terseWriteOK
 */
@@ -25,7 +25,7 @@ type TerseWriteOK struct {
 	/*The shortened URL affected.
 	  In: Body
 	*/
-	Payload string `json:"body,omitempty"`
+	Payload map[string]*models.Terse `json:"body,omitempty"`
 }
 
 // NewTerseWriteOK creates TerseWriteOK with default headers values
@@ -35,13 +35,13 @@ func NewTerseWriteOK() *TerseWriteOK {
 }
 
 // WithPayload adds the payload to the terse write o k response
-func (o *TerseWriteOK) WithPayload(payload string) *TerseWriteOK {
+func (o *TerseWriteOK) WithPayload(payload map[string]*models.Terse) *TerseWriteOK {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the terse write o k response
-func (o *TerseWriteOK) SetPayload(payload string) {
+func (o *TerseWriteOK) SetPayload(payload map[string]*models.Terse) {
 	o.Payload = payload
 }
 
@@ -50,6 +50,11 @@ func (o *TerseWriteOK) WriteResponse(rw http.ResponseWriter, producer runtime.Pr
 
 	rw.WriteHeader(200)
 	payload := o.Payload
+	if payload == nil {
+		// return empty map
+		payload = make(map[string]*models.Terse, 50)
+	}
+
 	if err := producer.Produce(rw, payload); err != nil {
 		panic(err) // let the recovery middleware deal with this
 	}

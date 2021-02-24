@@ -440,7 +440,10 @@ func init() {
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/TerseInput"
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/TerseInput"
+              }
             }
           },
           {
@@ -458,10 +461,13 @@ func init() {
         ],
         "responses": {
           "200": {
-            "description": "The write operation was successful.",
+            "description": "The map of shortened URLs to original URLs.",
             "schema": {
               "description": "The shortened URL affected.",
-              "type": "string"
+              "additionalProperties": {
+                "x-nullable": true,
+                "$ref": "#/definitions/Terse"
+              }
             }
           },
           "default": {
@@ -639,7 +645,8 @@ func init() {
         "shortenedURL": {
           "type": "string"
         }
-      }
+      },
+      "x-nullable": false
     },
     "TerseSummary": {
       "properties": {
@@ -1131,7 +1138,10 @@ func init() {
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/TerseInput"
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/TerseInput"
+              }
             }
           },
           {
@@ -1149,10 +1159,13 @@ func init() {
         ],
         "responses": {
           "200": {
-            "description": "The write operation was successful.",
+            "description": "The map of shortened URLs to original URLs.",
             "schema": {
               "description": "The shortened URL affected.",
-              "type": "string"
+              "additionalProperties": {
+                "x-nullable": true,
+                "$ref": "#/definitions/Terse"
+              }
             }
           },
           "default": {
@@ -1330,7 +1343,8 @@ func init() {
         "shortenedURL": {
           "type": "string"
         }
-      }
+      },
+      "x-nullable": false
     },
     "TerseSummary": {
       "properties": {

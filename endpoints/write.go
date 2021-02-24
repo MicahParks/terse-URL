@@ -26,45 +26,49 @@ func HandleWrite(logger *zap.SugaredLogger, shortID *shortid.Shortid, manager st
 		// Log the event.
 		logger.Infow("Writing terse data.",
 			"operation", params.Operation,
-			"shortened", params.Terse.ShortenedURL,
 		)
 
 		// Create a request context.
 		ctx, cancel := configure.DefaultCtx()
 		defer cancel()
 
-		// If no redirect type was give, use 302 as the default.
-		if params.Terse.RedirectType == "" {
-			params.Terse.RedirectType = models.RedirectTypeNr302
-		}
-
-		// Create the Terse data structure.
-		terse := &models.Terse{
-			JavascriptTracking: params.Terse.JavascriptTracking,
-			MediaPreview:       params.Terse.MediaPreview,
-			OriginalURL:        params.Terse.OriginalURL,
-			RedirectType:       params.Terse.RedirectType,
-			ShortenedURL:       params.Terse.ShortenedURL,
-		}
-
-		// If no shortened URL was given, create one.
+		// Iterate through the input Terse data.
+		terseMap := make(map[string]*models.Terse)
 		var err error
-		if params.Terse.ShortenedURL == "" {
-			if terse.ShortenedURL, err = shortID.Generate(); err != nil { // TODO Loop this in paranoid mode?
+		for _, terseInput := range params.Terse {
 
-				// Log at the appropriate level.
-				message := "Failed to create random shortened URL."
-				logger.Errorw(message,
-					"error", err.Error(),
-				)
+			// TODO Verify RedirectTypes of an empty string are not allowed.
 
-				// Report the error to the client.
-				return ErrorResponse(500, message, &api.TerseWriteDefault{})
+			// Create the Terse data structure.
+			terse := &models.Terse{
+				JavascriptTracking: terseInput.JavascriptTracking,
+				MediaPreview:       terseInput.MediaPreview,
+				OriginalURL:        terseInput.OriginalURL,
+				RedirectType:       terseInput.RedirectType,
+				ShortenedURL:       terseInput.ShortenedURL,
 			}
+
+			// If no shortened URL was given, create one.
+			if terseInput.ShortenedURL == "" {
+				if terse.ShortenedURL, err = shortID.Generate(); err != nil { // TODO Loop this in paranoid mode?
+
+					// Log at the appropriate level.
+					message := "Failed to create random shortened URL."
+					logger.Errorw(message,
+						"error", err.Error(),
+					)
+
+					// Report the error to the client.
+					return ErrorResponse(500, message, &api.TerseWriteDefault{})
+				}
+			}
+
+			// Add the Terse data to the map of Terse data to write.
+			terseMap[terse.ShortenedURL] = terse
 		}
 
 		// Decide which operation to do.
-		switch terseMap := map[string]*models.Terse{terse.ShortenedURL: terse}; params.Operation {
+		switch params.Operation {
 		case "insert":
 			err = manager.WriteTerse(ctx, terseMap, storage.Insert)
 		case "update":
@@ -83,21 +87,18 @@ func HandleWrite(logger *zap.SugaredLogger, shortID *shortid.Shortid, manager st
 				code = 400
 				message = "Not going to overwrite existing shortened URL."
 				logger.Infow(message,
-					"shortened", terse.ShortenedURL,
 					"error", err.Error(),
 				)
 			} else if errors.Is(err, storage.ErrShortenedNotFound) {
 				code = 400
 				message = "Shortened URL not found."
 				logger.Infow(message,
-					"shortened", terse.ShortenedURL,
 					"error", err.Error(),
 				)
 			} else {
 				code = 500
 				message = "Failed to write Terse."
 				logger.Errorw(message,
-					"shortened", terse.ShortenedURL,
 					"error", err.Error(),
 				)
 			}
@@ -107,7 +108,7 @@ func HandleWrite(logger *zap.SugaredLogger, shortID *shortid.Shortid, manager st
 		}
 
 		return &api.TerseWriteOK{
-			Payload: terse.ShortenedURL,
+			Payload: terseMap,
 		}
 	}
 }

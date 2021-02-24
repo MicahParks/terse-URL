@@ -6,7 +6,6 @@ package api
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
 	"io"
 	"net/http"
 
@@ -45,7 +44,7 @@ type TerseWriteParams struct {
 	  Required: true
 	  In: body
 	*/
-	Terse *models.TerseInput
+	Terse []models.TerseInput
 }
 
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
@@ -64,7 +63,7 @@ func (o *TerseWriteParams) BindRequest(r *http.Request, route *middleware.Matche
 
 	if runtime.HasBody(r) {
 		defer r.Body.Close()
-		var body models.TerseInput
+		var body []models.TerseInput
 		if err := route.Consumer.Consume(r.Body, &body); err != nil {
 			if err == io.EOF {
 				res = append(res, errors.Required("terse", "body", ""))
@@ -72,18 +71,17 @@ func (o *TerseWriteParams) BindRequest(r *http.Request, route *middleware.Matche
 				res = append(res, errors.NewParseError("terse", "body", "", err))
 			}
 		} else {
-			// validate body object
-			if err := body.Validate(route.Formats); err != nil {
-				res = append(res, err)
-			}
 
-			ctx := validate.WithOperationRequest(context.Background())
-			if err := body.ContextValidate(ctx, route.Formats); err != nil {
-				res = append(res, err)
+			// validate array of body objects
+			for i := range body {
+				if err := body[i].Validate(route.Formats); err != nil {
+					res = append(res, err)
+					break
+				}
 			}
 
 			if len(res) == 0 {
-				o.Terse = &body
+				o.Terse = body
 			}
 		}
 	} else {

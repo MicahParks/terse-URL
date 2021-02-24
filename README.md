@@ -98,6 +98,8 @@ docker-compose up
 
 - [ ] Address source code TODOs.
 - [ ] Inherit HTML title.
+- [ ] Make write operations atomic?
+- [ ] Change bbolt data structure for Visits to something more scalable.
 - [ ] Truncate frontend table data so it doesn't run off the screen...
 - [ ] Make the bulk edit tools work.
 - [ ] When Terse data is deleted for a shortened URL, all its Visits data is too.

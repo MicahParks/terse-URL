@@ -10,7 +10,7 @@ info:
     name: "MIT"
     url: "https://opensource.org/licenses/MIT"
   title: "terseurl"
-  version: "0.0.1"
+  version: "0.0.3"
 
 tags:
   - description: "Endpoints to perform operations on Terse data."
@@ -314,7 +314,9 @@ paths:
           name: "terse"
           required: true
           schema:
-            $ref: "#/definitions/TerseInput"
+            type: "array"
+            items:
+              $ref: "#/definitions/TerseInput"
         - description: "The write operation to perform with the Terse data."
           in: "path"
           enum:
@@ -326,10 +328,12 @@ paths:
           type: "string"
       responses:
         200:
-          description: "The write operation was successful."
+          description: "The map of shortened URLs to written Terse data."
           schema:
             description: "The shortened URL affected."
-            type: "string"
+            additionalProperties:
+              $ref: "#/definitions/Terse"
+              x-nullable: true
         default:
           description: "Unexpected error."
           schema:
@@ -469,6 +473,7 @@ definitions:
         type: "string"
     required:
       - "originalURL"
+    x-nullable: false
 
   # Schema for summarizing Terse data.
   TerseSummary:
