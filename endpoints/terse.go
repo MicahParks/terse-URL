@@ -18,7 +18,7 @@ func HandleTerseRead(logger *zap.SugaredLogger, manager storage.StoreManager) ap
 
 		// Log the event.
 		logger.Infow("Reading a shortened URL's Terse data.",
-			"shortenedURLs", params.ShortenedURL,
+			"shortenedURLs", params.ShortenedURLs,
 		)
 
 		// Create a new request context.
@@ -26,7 +26,7 @@ func HandleTerseRead(logger *zap.SugaredLogger, manager storage.StoreManager) ap
 		defer cancel()
 
 		// Get the Terse.
-		terse, err := manager.Terse(ctx, params.ShortenedURL)
+		terse, err := manager.Terse(ctx, params.ShortenedURLs)
 		if err != nil {
 
 			// Log at the appropriate level. Assign the response code and message.

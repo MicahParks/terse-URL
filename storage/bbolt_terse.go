@@ -39,14 +39,14 @@ func (b BboltTerse) DB() (db *bbolt.DB) {
 	return b.db
 }
 
-// Delete deletes the Terse data for the given shortened URLs. If shortenedURLs is nil, all shortened URL Terse
-// data are deleted. There should be no error if a shortened URL is not found.
+// Delete deletes the Terse data for the given shortened URLs. If shortenedURLs is nil or empty, all shortened URL
+// Terse data are deleted. There should be no error if a shortened URL is not found.
 func (b BboltTerse) Delete(_ context.Context, shortenedURLs []string) (err error) {
 	return bboltDelete(b, shortenedURLs)
 }
 
-// Read returns a map of shortened URLs to Terse data. If shortenedURLs is nil, all shortened URL Terse data are
-// expected. The error must be storage.ErrShortenedNotFound if a shortened URL is not found.
+// Read returns a map of shortened URLs to Terse data. If shortenedURLs is nil or empty, all shortened URL Terse
+// data are expected. The error must be storage.ErrShortenedNotFound if a shortened URL is not found.
 func (b BboltTerse) Read(_ context.Context, shortenedURLs []string) (terseData map[string]*models.Terse, err error) {
 
 	// Create the return map.
@@ -75,8 +75,8 @@ func (b BboltTerse) Read(_ context.Context, shortenedURLs []string) (terseData m
 	return terseData, nil
 }
 
-// Summary summarizes the Terse data for the given shortened URLs. If shortenedURLs is nil, then all shortened URL
-// Summary data are expected.
+// Summary summarizes the Terse data for the given shortened URLs. If shortenedURLs is nil or empty, then all
+// shortened URL Summary data are expected.
 func (b BboltTerse) Summary(_ context.Context, shortenedURLs []string) (summaries map[string]*models.TerseSummary, err error) {
 
 	// Create the return map.
@@ -92,11 +92,7 @@ func (b BboltTerse) Summary(_ context.Context, shortenedURLs []string) (summarie
 		}
 
 		// Add the Terse data to the return map.
-		summaries[string(shortened)] = &models.TerseSummary{ // TODO Is map locking required?
-			OriginalURL:  terse.OriginalURL,
-			RedirectType: terse.RedirectType,
-			ShortenedURL: terse.ShortenedURL,
-		}
+		summaries[string(shortened)] = summarizeTerse(terse) // TODO Is map locking required?
 
 		return nil
 	}

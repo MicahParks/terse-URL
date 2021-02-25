@@ -31,11 +31,11 @@ type TerseReadParams struct {
 	// HTTP Request Object
 	HTTPRequest *http.Request `json:"-"`
 
-	/*The shortened URL to get the Terse data for.
+	/*The shortened URLs to read the Terse data for.
 	  Required: true
 	  In: body
 	*/
-	ShortenedURL []string
+	ShortenedURLs []string
 }
 
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
@@ -52,16 +52,16 @@ func (o *TerseReadParams) BindRequest(r *http.Request, route *middleware.Matched
 		var body []string
 		if err := route.Consumer.Consume(r.Body, &body); err != nil {
 			if err == io.EOF {
-				res = append(res, errors.Required("shortenedUrl", "body", ""))
+				res = append(res, errors.Required("shortenedURLs", "body", ""))
 			} else {
-				res = append(res, errors.NewParseError("shortenedUrl", "body", "", err))
+				res = append(res, errors.NewParseError("shortenedURLs", "body", "", err))
 			}
 		} else {
 			// no validation required on inline body
-			o.ShortenedURL = body
+			o.ShortenedURLs = body
 		}
 	} else {
-		res = append(res, errors.Required("shortenedUrl", "body", ""))
+		res = append(res, errors.Required("shortenedURLs", "body", ""))
 	}
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)

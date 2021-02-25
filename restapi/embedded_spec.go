@@ -19,6 +19,7 @@ var (
 func init() {
 	SwaggerJSON = json.RawMessage([]byte(`{
   "schemes": [
+    "https",
     "http"
   ],
   "swagger": "2.0",
@@ -29,7 +30,7 @@ func init() {
       "name": "MIT",
       "url": "https://opensource.org/licenses/MIT"
     },
-    "version": "0.0.1"
+    "version": "0.0.3"
   },
   "host": "localhost",
   "basePath": "/",
@@ -293,6 +294,9 @@ func init() {
     "/api/terse": {
       "post": {
         "description": "Read the Terse data for the given shortened URL.",
+        "consumes": [
+          "application/json"
+        ],
         "produces": [
           "application/json"
         ],
@@ -303,8 +307,8 @@ func init() {
         "operationId": "terseRead",
         "parameters": [
           {
-            "description": "The shortened URL to get the Terse data for.",
-            "name": "shortenedURL",
+            "description": "The shortened URLs to read the Terse data for.",
+            "name": "shortenedURLs",
             "in": "body",
             "required": true,
             "schema": {
@@ -337,6 +341,9 @@ func init() {
     "/api/visits": {
       "post": {
         "description": "Read the Visits data for the given shortened URLs.",
+        "consumes": [
+          "application/json"
+        ],
         "produces": [
           "application/json"
         ],
@@ -347,8 +354,8 @@ func init() {
         "operationId": "visitsRead",
         "parameters": [
           {
-            "description": "The shortened URL to get the Visits data for.",
-            "name": "shortenedURL",
+            "description": "The shortened URLs to read the Visits data for.",
+            "name": "shortenedURLs",
             "in": "body",
             "required": true,
             "schema": {
@@ -461,7 +468,7 @@ func init() {
         ],
         "responses": {
           "200": {
-            "description": "The map of shortened URLs to original URLs.",
+            "description": "The map of shortened URLs to written Terse data.",
             "schema": {
               "description": "The shortened URL affected.",
               "additionalProperties": {
@@ -717,6 +724,7 @@ func init() {
 }`))
 	FlatSwaggerJSON = json.RawMessage([]byte(`{
   "schemes": [
+    "https",
     "http"
   ],
   "swagger": "2.0",
@@ -727,7 +735,7 @@ func init() {
       "name": "MIT",
       "url": "https://opensource.org/licenses/MIT"
     },
-    "version": "0.0.1"
+    "version": "0.0.3"
   },
   "host": "localhost",
   "basePath": "/",
@@ -991,6 +999,9 @@ func init() {
     "/api/terse": {
       "post": {
         "description": "Read the Terse data for the given shortened URL.",
+        "consumes": [
+          "application/json"
+        ],
         "produces": [
           "application/json"
         ],
@@ -1001,8 +1012,8 @@ func init() {
         "operationId": "terseRead",
         "parameters": [
           {
-            "description": "The shortened URL to get the Terse data for.",
-            "name": "shortenedURL",
+            "description": "The shortened URLs to read the Terse data for.",
+            "name": "shortenedURLs",
             "in": "body",
             "required": true,
             "schema": {
@@ -1035,6 +1046,9 @@ func init() {
     "/api/visits": {
       "post": {
         "description": "Read the Visits data for the given shortened URLs.",
+        "consumes": [
+          "application/json"
+        ],
         "produces": [
           "application/json"
         ],
@@ -1045,8 +1059,8 @@ func init() {
         "operationId": "visitsRead",
         "parameters": [
           {
-            "description": "The shortened URL to get the Visits data for.",
-            "name": "shortenedURL",
+            "description": "The shortened URLs to read the Visits data for.",
+            "name": "shortenedURLs",
             "in": "body",
             "required": true,
             "schema": {
@@ -1159,7 +1173,7 @@ func init() {
         ],
         "responses": {
           "200": {
-            "description": "The map of shortened URLs to original URLs.",
+            "description": "The map of shortened URLs to written Terse data.",
             "schema": {
               "description": "The shortened URL affected.",
               "additionalProperties": {

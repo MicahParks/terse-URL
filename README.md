@@ -98,11 +98,11 @@ docker-compose up
 
 - [ ] Address source code TODOs.
 - [ ] Inherit HTML title.
+- [ ] ShortenedURL not found shouldn't produce an error in logs.
 - [ ] Make write operations atomic?
 - [ ] Change bbolt data structure for Visits to something more scalable.
 - [ ] Truncate frontend table data so it doesn't run off the screen...
 - [ ] Make the bulk edit tools work.
-- [ ] When Terse data is deleted for a shortened URL, all its Visits data is too.
 - [ ] Copy to clipboard button for shortened URL.
 - [ ] Show full shortened URL in table data.
 - [ ] Hyperlinks for shortened URL and original URL.
@@ -117,7 +117,6 @@ docker-compose up
 - [ ] Customizable visit data tracking.
 - [ ] Visit data middleware for data purging or whatever before it goes to backend storage.
 - [ ] SummaryStore not used when VisitsStore is `nil`?
-- [ ] Outgoing validation of spec with model methods?
 - [ ] Make sure the frontend has a way to interact with visits data when the terse data has been deleted.
 - [ ] Make endpoints for reading multiple Terse/Visits.
 - [ ] Change endpoints like `/api/delete` to `/api/delete/all`.

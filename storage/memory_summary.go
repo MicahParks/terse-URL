@@ -36,8 +36,8 @@ func (m *MemSummary) Close(_ context.Context) (err error) {
 	return nil
 }
 
-// Delete deletes the summary information for the given shortened URLs. If shortenedURLs is nil, all Summary data are
-// deleted. No error should be returned if a shortened URL is not found.
+// Delete deletes the summary information for the given shortened URLs. If shortenedURLs is nil or empty, all
+// Summary data are deleted. No error should be returned if a shortened URL is not found.
 func (m *MemSummary) Delete(_ context.Context, shortenedURLs []string) (err error) {
 
 	// Lock the Summary data for async safe use.
@@ -45,7 +45,7 @@ func (m *MemSummary) Delete(_ context.Context, shortenedURLs []string) (err erro
 	defer m.mux.Unlock()
 
 	// Check for the nil case.
-	if shortenedURLs == nil {
+	if shortenedURLs == nil || len(shortenedURLs) == 0 {
 
 		// Delete all summary data.
 		m.deleteAll()
@@ -83,8 +83,8 @@ func (m *MemSummary) IncrementVisitCount(_ context.Context, shortened string) (e
 	return nil
 }
 
-// Read provides the summary information for the given shortened URLs. If shortenedURLs is nil, all summaries are
-// returned. The error must be storage.ErrShortenedNotFound if a shortened URL is not found.
+// Read provides the summary information for the given shortened URLs. If shortenedURLs is nil or empty, all
+// summaries are returned. The error must be storage.ErrShortenedNotFound if a shortened URL is not found.
 func (m *MemSummary) Read(_ context.Context, shortenedURLs []string) (summaries map[string]*models.Summary, err error) {
 
 	// Create the return map.
@@ -95,7 +95,7 @@ func (m *MemSummary) Read(_ context.Context, shortenedURLs []string) (summaries 
 	defer m.mux.RUnlock()
 
 	// Check to see if all Summary data was requested, if so, copy all Summary data.
-	if shortenedURLs == nil {
+	if shortenedURLs == nil || len(shortenedURLs) == 0 {
 
 		// Use all Summary data.
 		summaries = m.summaries

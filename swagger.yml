@@ -21,6 +21,7 @@ tags:
     name: "system"
 
 schemes:
+  - "https"
   - "http"
 
 paths:
@@ -210,15 +211,17 @@ paths:
 
   /api/terse:
     post:
+      consumes:
+        - "application/json"
       produces:
         - "application/json"
       summary: "Read the Terse data for the given shortened URL."
       description: "Read the Terse data for the given shortened URL."
       operationId: "terseRead"
       parameters:
-        - description: "The shortened URL to get the Terse data for."
+        - description: "The shortened URLs to read the Terse data for."
           in: "body"
-          name: "shortenedURL"
+          name: "shortenedURLs"
           required: true
           schema:
             type: "array"
@@ -267,15 +270,17 @@ paths:
       tags:
         - "api"
     post:
+      consumes:
+        - "application/json"
       produces:
         - "application/json"
       summary: "Read the Visits data for the given shortened URLs."
       description: "Read the Visits data for the given shortened URLs."
       operationId: "visitsRead"
       parameters:
-        - description: "The shortened URL to get the Visits data for."
+        - description: "The shortened URLs to read the Visits data for."
           in: "body"
-          name: "shortenedURL"
+          name: "shortenedURLs"
           required: true
           schema:
             type: "array"

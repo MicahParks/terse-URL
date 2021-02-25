@@ -10,7 +10,11 @@ function WriteInit() {
 }
 
 async function write(operation, terse) {
-    let init = new WriteInit();
-    init.body = JSON.stringify(terse);
-    return fetch(`/api/write/${operation}`, init);
+    swaggerClient.then(
+        client => client.apis.api.terseWrite({terse: [terse], operation: operation}),
+        reason => console.error('failed to load the spec: ' + reason)
+    )
+        .then(
+            reason => console.error('failed on api call: ' + reason)
+        );
 }

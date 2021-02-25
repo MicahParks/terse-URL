@@ -39,8 +39,8 @@ func (b BboltVisits) DB() (db *bbolt.DB) {
 	return b.db
 }
 
-// Delete deletes Visits data for the given shortened URLs. If shortenedURLs is nil, then all Visits data are
-// deleted. No error should be given if a shortened URL is not found.
+// Delete deletes Visits data for the given shortened URLs. If shortenedURLs is nil or empty, then all Visits data
+// are deleted. No error should be given if a shortened URL is not found.
 func (b BboltVisits) Delete(_ context.Context, shortenedURLs []string) (err error) {
 	return bboltDelete(b, shortenedURLs)
 }
@@ -88,8 +88,8 @@ func (b BboltVisits) Insert(_ context.Context, visitsData map[string][]models.Vi
 	return err
 }
 
-// Read exports the Visits data for the given shortened URLs. If shortenedURLs is nil, then all shortened URL Visits
-// data are expected. The error must be storage.ErrShortenedNotFound if a shortened URL is not found.
+// Read exports the Visits data for the given shortened URLs. If shortenedURLs is nil or empty, then all shortened
+// URL Visits data are expected. The error must be storage.ErrShortenedNotFound if a shortened URL is not found.
 func (b BboltVisits) Read(_ context.Context, shortenedURLs []string) (visitsData map[string][]models.Visit, err error) {
 
 	// Create the return map.
@@ -118,8 +118,9 @@ func (b BboltVisits) Read(_ context.Context, shortenedURLs []string) (visitsData
 	return visitsData, nil
 }
 
-// Summary summarizes the Visits data for the given shortened URLs. If shortenedURLs is nil, then all shortened URL
-// Summary data are expected. The error must be storage.ErrShortenedNotFound if a shortened URL is not found.
+// Summary summarizes the Visits data for the given shortened URLs. If shortenedURLs is nil or empty, then all
+// shortened URL Summary data are expected. The error must be storage.ErrShortenedNotFound if a shortened URL is not
+// found.
 func (b BboltVisits) Summary(_ context.Context, shortenedURLs []string) (summaries map[string]*models.VisitsSummary, err error) {
 
 	// Create the return map.

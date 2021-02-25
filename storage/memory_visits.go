@@ -33,8 +33,8 @@ func (m *MemVisits) Close(_ context.Context) (err error) {
 	return nil
 }
 
-// Delete deletes Visits data for the given shortened URLs. No error should be given if a shortened URL is not
-// found.
+// Delete deletes Visits data for the given shortened URLs. If shortenedURLs is nil or empty, then all Visits data
+// are deleted. No error should be given if a shortened URL is not found.
 func (m *MemVisits) Delete(_ context.Context, shortenedURLs []string) (err error) {
 
 	// Lock the Visits data for async safe use.
@@ -42,7 +42,7 @@ func (m *MemVisits) Delete(_ context.Context, shortenedURLs []string) (err error
 	defer m.mux.Unlock()
 
 	// Check for the nil case.
-	if shortenedURLs == nil {
+	if shortenedURLs == nil || len(shortenedURLs) == 0 {
 
 		// Delete all Visits data.
 		m.deleteAll()
@@ -73,8 +73,8 @@ func (m *MemVisits) Insert(_ context.Context, visitsData map[string][]models.Vis
 	return nil
 }
 
-// Read exports the Visits data for the given shortened URLs. If shortenedURLs is nil, all shortened URLs' Visits data
-// are expected. The error must be storage.ErrShortenedNotFound if a shortened URL is not found.
+// Read exports the Visits data for the given shortened URLs. If shortenedURLs is nil or empty, then all shortened
+// URL Visits data are expected. The error must be storage.ErrShortenedNotFound if a shortened URL is not found.
 func (m *MemVisits) Read(_ context.Context, shortenedURLs []string) (visitsData map[string][]models.Visit, err error) {
 
 	// Create the return map.
@@ -85,7 +85,7 @@ func (m *MemVisits) Read(_ context.Context, shortenedURLs []string) (visitsData 
 	defer m.mux.RUnlock()
 
 	// Check for the nil case.
-	if shortenedURLs == nil {
+	if shortenedURLs == nil || len(shortenedURLs) == 0 {
 
 		// Use all Visits data.
 		visitsData = m.visits
@@ -108,8 +108,9 @@ func (m *MemVisits) Read(_ context.Context, shortenedURLs []string) (visitsData 
 	return visitsData, nil
 }
 
-// Summary summarizes the Visits data for the given shortened URLs. If shortenedURLs is nil, then all shortened URL
-// Summary data are expected. The error must be storage.ErrShortenedNotFound if a shortened URL is not found.
+// Summary summarizes the Visits data for the given shortened URLs. If shortenedURLs is nil or empty, then all
+// shortened URL Summary data are expected. The error must be storage.ErrShortenedNotFound if a shortened URL is not
+// found.
 func (m *MemVisits) Summary(_ context.Context, shortenedURLs []string) (summaries map[string]*models.VisitsSummary, err error) {
 
 	// Create the return map.
@@ -120,7 +121,7 @@ func (m *MemVisits) Summary(_ context.Context, shortenedURLs []string) (summarie
 	defer m.mux.RUnlock()
 
 	// Check for the nil case.
-	if shortenedURLs == nil {
+	if shortenedURLs == nil || len(shortenedURLs) == 0 {
 
 		// Gather the Summary data for all shortened URLs.
 		for shortened, visits := range m.visits {

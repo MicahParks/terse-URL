@@ -19,7 +19,7 @@ func HandleVisitsRead(logger *zap.SugaredLogger, manager storage.StoreManager) a
 
 		// Log the event.
 		logger.Debugw("Reading shortened URL Visits data.",
-			"shortened", params.ShortenedURL,
+			"shortened", params.ShortenedURLs,
 		)
 
 		// Create a request context.
@@ -29,7 +29,7 @@ func HandleVisitsRead(logger *zap.SugaredLogger, manager storage.StoreManager) a
 		// Get the visits from storage.
 		var err error
 		var visits map[string][]models.Visit
-		if visits, err = manager.Visits(ctx, params.ShortenedURL); err != nil {
+		if visits, err = manager.Visits(ctx, params.ShortenedURLs); err != nil {
 
 			// Log at the appropriate level. Assign the response code and message.
 			var code int

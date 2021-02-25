@@ -212,11 +212,20 @@ func openBbolt(filePath string) (db *bbolt.DB, err error) {
 	return bbolt.Open(filePath, 0666, nil)
 }
 
+// summarizeTerse creates a *models.TerseSummary from a models.Terse.
+func summarizeTerse(terse models.Terse) (summary *models.TerseSummary) {
+	return &models.TerseSummary{
+		OriginalURL:  terse.OriginalURL,
+		RedirectType: terse.RedirectType,
+		ShortenedURL: terse.ShortenedURL,
+	}
+}
+
 // terseToBytes transforms Terse data to bytes.
 func terseToBytes(terse models.Terse) (data []byte, err error) {
 	var buf bytes.Buffer
 	enc := gob.NewEncoder(&buf)
-	if err = enc.Encode(terse); err != nil {
+	if err = enc.Encode(&terse); err != nil {
 		return nil, err
 	}
 	return buf.Bytes(), nil
@@ -226,7 +235,7 @@ func terseToBytes(terse models.Terse) (data []byte, err error) {
 func visitsToBytes(visits []models.Visit) (data []byte, err error) {
 	var buf bytes.Buffer
 	enc := gob.NewEncoder(&buf)
-	if err = enc.Encode(visits); err != nil {
+	if err = enc.Encode(visits); err != nil { // TODO Need to use *[]models.Visit?
 		return nil, err
 	}
 	return buf.Bytes(), nil

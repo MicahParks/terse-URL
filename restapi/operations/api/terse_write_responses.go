@@ -16,7 +16,7 @@ import (
 // TerseWriteOKCode is the HTTP code returned for type TerseWriteOK
 const TerseWriteOKCode int = 200
 
-/*TerseWriteOK The map of shortened URLs to original URLs.
+/*TerseWriteOK The map of shortened URLs to written Terse data.
 
 swagger:response terseWriteOK
 */

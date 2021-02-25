@@ -23,4 +23,4 @@ ENV PORT 30000
 WORKDIR /terseurl
 COPY --from=builder /app/terseurl terseurl
 COPY --from=builder /app/redirect.gohtml redirect.gohtml
-CMD ["/terseurl/terseurl"]
+CMD ["/terseurl/terseurl", "--scheme=http"]

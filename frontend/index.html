@@ -141,17 +141,9 @@
                         </div>
                         <div class="modal-body">
                             <div class="d-flex justify-content-between">
-                                <button class="btn-lg btn-outline-danger"
-                                        onclick="deleteShortened('terse', $(this).attr('data-bs-shortened'))"
-                                        type="button">Terse
-                                </button>
-                                <button class="btn-lg btn-outline-danger"
-                                        onclick="deleteShortened('visits', $(this).attr('data-bs-shortened'))"
-                                        type="button">Visits
-                                </button>
                                 <button class="btn-lg btn-danger"
-                                        onclick="deleteShortened('both', $(this).attr('data-bs-shortened'));"
-                                        type="button">Both
+                                        onclick="deleteShortened([$(this).attr('data-bs-shortened')]);"
+                                        type="button">Delete
                                 </button>
                             </div>
                         </div>
@@ -328,10 +320,10 @@
 <script src="export.js"></script>
 <script src="form.js"></script>
 <script src="meta.js"></script>
-<script src="prefix.js"></script>
 <script src="summary.js"></script>
 <script src="terse.js"></script>
 <script src="write.js"></script>
+<script src="main.js"></script>
 <script>
     $("#menu-toggle").click(function (e) {
         e.preventDefault();
@@ -340,8 +332,18 @@
 </script>
 <script>
 
-    // Get the prefix for all shortened URLs.
-    getPrefix();
+    // Set the shortened URL prefix.
+    let swaggerClient = new SwaggerClient('/swagger.json');
+    swaggerClient.then(
+        client => client.apis.api.shortenedPrefix(),
+        reason => console.error('failed to load the spec: ' + reason)
+    )
+        .then(
+            shortenedPrefixResult => document.getElementById("httpPrefix").textContent = JSON.parse(shortenedPrefixResult.data),
+            reason => console.error('failed on api call: ' + reason)
+        );
+</script>
+<script>
 
     // Set the handler for form submission.
     let formElem = document.getElementById("formElem");
@@ -423,26 +425,26 @@
             for (const [_, summary] of Object.entries(summaries)) { // TODO Using _ as blank identifier...
 
                 let row = template.cloneNode(true);
-                row.id = summary.shortenedURL;
+                row.id = summary.terse.shortenedURL;
                 index++;
 
                 let checkbox = document.createElement('input');
                 checkbox.type = 'checkbox';
-                checkbox.value = summary.shortenedURL;
-                checkbox.id = summary.shortenedURL + 'Checkbox';
+                checkbox.value = summary.terse.shortenedURL;
+                checkbox.id = summary.terse.shortenedURL + 'Checkbox';
                 checkbox.onchange = rowChecked();
                 let label = document.createElement('label');
                 label.htmlFor = checkbox.id;
 
                 row.cells[0].appendChild(checkbox);
                 row.cells[0].appendChild(label);
-                row.cells[1].innerHTML = summary.shortenedURL;
-                row.cells[2].innerHTML = summary.originalURL;
-                row.cells[3].innerHTML = summary.redirectType;
+                row.cells[1].innerHTML = summary.terse.shortenedURL;
+                row.cells[2].innerHTML = summary.terse.originalURL;
+                row.cells[3].innerHTML = summary.terse.redirectType;
                 if (summary.visitCount === undefined) {
                     row.cells[4].innerHTML = "0";
                 } else {
-                    row.cells[4].innerHTML = summary.visitCount;
+                    row.cells[4].innerHTML = summary.visits.visitCount;
                 }
 
                 table.appendChild(row);
@@ -450,7 +452,7 @@
                 document.getElementById(checkbox.id).onchange = rowChecked;
 
                 for (let button of $('#' + row.id + ' :button')) {
-                    button.setAttribute('data-bs-shortened', summary.shortenedURL);
+                    button.setAttribute('data-bs-shortened', summary.terse.shortenedURL);
                 }
             }
         });
@@ -529,19 +531,6 @@
     });
 </script>
 <script>
-
-    function deleteShortened(type) {
-
-        switch (type) {
-            case "both":
-                deleteSome([currentShortened]).then(function () {
-                    buildTable();
-                    $('#deleteModal').modal('hide');
-                });
-        }
-    }
-</script>
-<script>
     let formModal = document.getElementById('formModal');
     formModal.addEventListener('show.bs.modal', function (event) {
         // Button that triggered the modal
@@ -558,7 +547,7 @@
 
         if (currentShortened !== "") {
             getTerse(currentShortened).then(function (terse) {
-                populateForm(terse);
+                populateForm(terse[currentShortened]);
             });
         } else {
             clearForm();

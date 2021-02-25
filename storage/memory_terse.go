@@ -33,8 +33,8 @@ func (m *MemTerse) Close(_ context.Context) (err error) {
 	return nil
 }
 
-// Delete deletes the Terse data for the given shortened URLs. If shortenedURLs is nil, all shortened URL Terse
-// data are deleted. There should be no error if a shortened URL is not found.
+// Delete deletes the Terse data for the given shortened URLs. If shortenedURLs is nil or empty, all shortened URL
+// Terse data are deleted. There should be no error if a shortened URL is not found.
 func (m *MemTerse) Delete(_ context.Context, shortenedURLs []string) (err error) {
 
 	// Lock the Terse data for async safe use.
@@ -42,7 +42,7 @@ func (m *MemTerse) Delete(_ context.Context, shortenedURLs []string) (err error)
 	defer m.mux.Unlock()
 
 	// Check for the nil case.
-	if shortenedURLs == nil {
+	if shortenedURLs == nil || len(shortenedURLs) == 0 {
 
 		// Delete all Terse data.
 		m.deleteAll()
@@ -57,8 +57,8 @@ func (m *MemTerse) Delete(_ context.Context, shortenedURLs []string) (err error)
 	return nil
 }
 
-// Read returns a map of shortened URLs to Terse data. If shortenedURLs is nil, all shortened URL Terse data are
-// expected. The error must be storage.ErrShortenedNotFound if a shortened URL is not found.
+// Read returns a map of shortened URLs to Terse data. If shortenedURLs is nil or empty, all shortened URL Terse
+// data are expected. The error must be storage.ErrShortenedNotFound if a shortened URL is not found.
 func (m *MemTerse) Read(_ context.Context, shortenedURLs []string) (terseData map[string]*models.Terse, err error) {
 
 	// Create the return map.
@@ -69,7 +69,7 @@ func (m *MemTerse) Read(_ context.Context, shortenedURLs []string) (terseData ma
 	defer m.mux.RUnlock()
 
 	// Check for the nil case.
-	if shortenedURLs == nil {
+	if shortenedURLs == nil || len(shortenedURLs) == 0 {
 
 		// Use all Terse data.
 		terseData = m.terse
@@ -92,8 +92,8 @@ func (m *MemTerse) Read(_ context.Context, shortenedURLs []string) (terseData ma
 	return terseData, nil
 }
 
-// Summary summarizes the Terse data for the given shortened URLs. If shortenedURLs is nil, then all shortened URL
-// Summary data are expected.
+// Summary summarizes the Terse data for the given shortened URLs. If shortenedURLs is nil or empty, then all
+// shortened URL Summary data are expected.
 func (m *MemTerse) Summary(_ context.Context, shortenedURLs []string) (summaries map[string]*models.TerseSummary, err error) {
 
 	// Create the return map.
@@ -104,15 +104,11 @@ func (m *MemTerse) Summary(_ context.Context, shortenedURLs []string) (summaries
 	defer m.mux.RUnlock()
 
 	// Check for the nil case.
-	if shortenedURLs == nil {
+	if shortenedURLs == nil || len(shortenedURLs) == 0 {
 
 		// Gather the Summary data for all shortened URLs.
 		for shortened, terse := range m.terse {
-			summaries[shortened] = &models.TerseSummary{
-				OriginalURL:  terse.OriginalURL,
-				RedirectType: terse.RedirectType,
-				ShortenedURL: terse.ShortenedURL,
-			}
+			summaries[shortened] = summarizeTerse(*terse)
 		}
 	} else {
 
@@ -126,11 +122,7 @@ func (m *MemTerse) Summary(_ context.Context, shortenedURLs []string) (summaries
 			}
 
 			// Add the Terse data to the return map.
-			summaries[shortened] = &models.TerseSummary{
-				OriginalURL:  terse.OriginalURL,
-				RedirectType: terse.RedirectType,
-				ShortenedURL: terse.ShortenedURL,
-			}
+			summaries[shortened] = summarizeTerse(*terse)
 		}
 	}
 

@@ -5,9 +5,10 @@
 //  The Terse URL shortener.
 //  Schemes:
 //    http
+//    https
 //  Host: localhost
 //  BasePath: /
-//  Version: 0.0.1
+//  Version: 0.0.3
 //  License: MIT https://opensource.org/licenses/MIT
 //
 //  Consumes:

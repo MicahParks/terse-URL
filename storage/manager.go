@@ -2,6 +2,7 @@ package storage
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/MicahParks/ctxerrgroup"
@@ -229,14 +230,14 @@ func (s StoreManager) InitializeSummaryStore(ctx context.Context) (err error) {
 // required information for a redirect.
 func (s StoreManager) Redirect(ctx context.Context, shortened string, visit models.Visit) (terse *models.Terse, err error) {
 
-	// Handle the visit in another goroutine for a faster response.
-	go s.handleVisit(shortened, visit)
-
 	// Get the Terse data from the TerseStore.
 	var terseData map[string]*models.Terse
 	if terseData, err = s.Terse(ctx, []string{shortened}); err != nil {
 		return nil, err
 	}
+
+	// Handle the visit in another goroutine for a faster response.
+	go s.handleVisit(shortened, visit)
 
 	return terseData[shortened], nil
 }
@@ -312,7 +313,65 @@ func (s StoreManager) VisitsStore(doThis func(store VisitsStore)) {
 // error must be storage.ErrShortenedNotFound if an Update operation cannot be performed due to the Terse data not
 // existing.
 func (s StoreManager) WriteTerse(ctx context.Context, terse map[string]*models.Terse, operation WriteOperation) (err error) {
-	return s.terseStore.Write(ctx, terse, operation)
+
+	// Write the Terse data.
+	if err = s.terseStore.Write(ctx, terse, operation); err != nil {
+		return err
+	}
+
+	// Add the shortened URLs to the SummaryStore, if required.
+	s.SummaryStore(func(store SummaryStore) {
+		switch operation {
+		case Insert:
+
+			// Iterate through the given shortened URLs, which are new. Create Summary data for them.
+			summaries := make(map[string]*models.Summary)
+			for shortened, terseData := range terse {
+				summaries[shortened] = &models.Summary{
+					Terse:  summarizeTerse(*terseData),
+					Visits: &models.VisitsSummary{VisitCount: 0},
+				}
+			}
+
+			// Upsert the new Summary data into the SummaryStore.
+			if err = store.Upsert(ctx, summaries); err != nil {
+				return
+			}
+
+		case Upsert:
+
+			// Iterate through the given shortened URLs.
+			summaries := make(map[string]*models.Summary)
+			for shortened, terseData := range terse {
+
+				// Create entries in the SummaryStore for any new shortened URLs.
+				_, err = store.Read(ctx, []string{shortened})
+				if err != nil {
+					if errors.Is(err, ErrShortenedNotFound) {
+
+						// The shortened URL was not already in the SummaryStore. Add it to the map of new summaries.
+						summaries[shortened] = &models.Summary{
+							Terse:  summarizeTerse(*terseData),
+							Visits: &models.VisitsSummary{VisitCount: 0},
+						}
+
+					} else {
+						return
+					}
+				}
+			}
+
+			// Upsert the new Summary data into the SummaryStore.
+			if err = store.Upsert(ctx, summaries); err != nil {
+				return
+			}
+		}
+	})
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // handleVisit happens asynchronously when a redirect occurs. It updates the appropriate data stores with the required
