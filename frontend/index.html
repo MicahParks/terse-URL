@@ -441,7 +441,7 @@
                 row.cells[1].innerHTML = summary.terse.shortenedURL;
                 row.cells[2].innerHTML = summary.terse.originalURL;
                 row.cells[3].innerHTML = summary.terse.redirectType;
-                if (summary.visitCount === undefined) {
+                if (summary.visits.visitCount === undefined) {
                     row.cells[4].innerHTML = "0";
                 } else {
                     row.cells[4].innerHTML = summary.visits.visitCount;
