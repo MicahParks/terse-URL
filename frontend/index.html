@@ -40,15 +40,14 @@
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">Bulk tools</h5>
-                        <button class="btn btn-secondary" data-bs-shortened="" data-bs-target="#downloadModal"
-                                id="bulkDownload"
-                                data-bs-toggle="modal"
+                        <button class="btn btn-secondary" id="bulkDownload"
+                                onclick="downloadExport(checkedShortened());"
                                 type="button">
                             <i class="fas fa-download"></i>
-                        </button> <!--TODO Make this a modal where they can choose what kind of data to export?-->
-                        <button class="btn btn-danger" data-bs-shortened="" data-bs-target="#deleteModal"
+                        </button>
+                        <button class="btn btn-danger" data-bs-target="#deleteModal"
                                 id="bulkDelete"
-                                onclick="bulkDelete();"
+                                onclick="deleteShortened(checkedShortened());"
                                 data-bs-toggle="modal"
                                 type="button">
                             <i class="fas fa-trash"></i>
@@ -65,7 +64,7 @@
                     <thead>
                     <tr>
                         <th scope="col">
-                            <input class="form-check-input" id="checkAll" onchange="checkAll();" type="checkbox"
+                            <input class="form-check-input" id="checkAll" type="checkbox"
                                    value="">
                             <label class="form-check-label" for="checkAll"></label>
                         </th>
@@ -89,8 +88,8 @@
                                     type="button">
                                 <i class="far fa-edit"></i>
                             </button>
-                            <button class="btn btn-secondary" data-bs-shortened="" data-bs-target="#downloadModal"
-                                    data-bs-toggle="modal"
+                            <button class="btn btn-secondary" data-bs-shortened=""
+                                    onclick="currentShortened = this.getAttribute('data-bs-shortened');downloadExport([currentShortened]);"
                                     type="button">
                                 <i class="fas fa-download"></i>
                             </button> <!--TODO Make this a modal where they can choose what kind of data to export?-->
@@ -104,33 +103,6 @@
                     </tbody>
                 </table>
             </div>
-            <div aria-hidden="true" aria-labelledby="downloadModalLabel" class="modal fade" id="downloadModal"
-                 tabindex="-1">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="downloadModalLabel"></h5>
-                            <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"></button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="d-flex justify-content-between">
-                                <button class="btn-lg btn-outline-primary"
-                                        onclick="downloadExport('terse', $(this).attr('data-bs-shortened'))"
-                                        type="button">Terse
-                                </button>
-                                <button class="btn-lg btn-outline-primary"
-                                        onclick="downloadExport('visits', $(this).attr('data-bs-shortened'))"
-                                        type="button">Visits
-                                </button>
-                                <button class="btn-lg btn-primary"
-                                        onclick="downloadExport('both', $(this).attr('data-bs-shortened'));"
-                                        type="button">Both
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
             <div aria-hidden="true" aria-labelledby="deleteModalLabel" class="modal fade" id="deleteModal"
                  tabindex="-1">
                 <div class="modal-dialog">
@@ -140,10 +112,10 @@
                             <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"></button>
                         </div>
                         <div class="modal-body">
-                            <div class="d-flex justify-content-between">
+                            <div class="d-flex justify-content-end">
                                 <button class="btn-lg btn-danger"
-                                        onclick="deleteShortened([$(this).attr('data-bs-shortened')]);"
-                                        type="button">Delete
+                                        onclick="deleteRow(currentShortened)"
+                                        type="button">Confirm
                                 </button>
                             </div>
                         </div>
@@ -333,11 +305,12 @@
 <script>
 
     // Set the shortened URL prefix.
-    let swaggerClient = new SwaggerClient('/swagger.json');
-    swaggerClient.then(
-        client => client.apis.api.shortenedPrefix(),
-        reason => console.error('failed to load the spec: ' + reason)
-    )
+    let swaggerClient = new SwaggerClient('http://localhost:80/swagger.json'); // TODO Change to just /swagger.json and add some logic to determine http or https.
+    swaggerClient
+        .then(
+            client => client.apis.api.shortenedPrefix(),
+            reason => console.error('failed to load the spec: ' + reason)
+        )
         .then(
             shortenedPrefixResult => document.getElementById("httpPrefix").textContent = JSON.parse(shortenedPrefixResult.data),
             reason => console.error('failed on api call: ' + reason)
@@ -415,13 +388,13 @@
 
     buildTable();
 
-    function buildTable() {
+    async function buildTable() {
 
         document.getElementById("checkAll").checked = false;
         removeAllChildNodes(table);
 
         let index = 0;
-        summarize(null).then(function (summaries) {
+        return summarize(null).then(function (summaries) {
             for (const [_, summary] of Object.entries(summaries)) { // TODO Using _ as blank identifier...
 
                 let row = template.cloneNode(true);
@@ -441,7 +414,7 @@
                 row.cells[1].innerHTML = summary.terse.shortenedURL;
                 row.cells[2].innerHTML = summary.terse.originalURL;
                 row.cells[3].innerHTML = summary.terse.redirectType;
-                if (summary.visits.visitCount === undefined) {
+                if (summary.visits === undefined || summary.visits.visitCount === undefined) {
                     row.cells[4].innerHTML = "0";
                 } else {
                     row.cells[4].innerHTML = summary.visits.visitCount;
@@ -469,6 +442,16 @@
         rowChecked();
     }
 
+    function checkedShortened() {
+        let checked = [];
+        for (let row of $('#terseTableBody > tr')) {
+            if ($("#" + row.id + ":first :input").prop('checked')) {
+                checked.push(row.id);
+            }
+        }
+        return checked;
+    }
+
     function rowChecked() {
         let bulkDownload = $("#bulkDownload");
         let bulkDelete = $("#bulkDelete");
@@ -484,37 +467,6 @@
     }
 </script>
 <script>
-    let downloadModal = document.getElementById('downloadModal');
-    downloadModal.addEventListener('show.bs.modal', function (event) {
-        // Button that triggered the modal
-        let button = event.relatedTarget;
-        // Extract info from data-bs-* attributes
-        currentShortened = button.getAttribute('data-bs-shortened');
-        // If necessary, you could initiate an AJAX request here
-        // and then do the updating in a callback.
-        //
-        // Update the modal's content.
-        let modalTitle = downloadModal.querySelector('.modal-title');
-
-        modalTitle.textContent = 'Export ' + currentShortened;
-    });
-</script>
-<script>
-
-    let currentShortened = "";
-
-    function downloadExport(type) {
-
-        switch (type) {
-            case "both":
-                exportSome([currentShortened]).then(function (response) {
-                    download(currentShortened + ".json", JSON.stringify(response));
-                    $('#downloadModal').modal('hide');
-                });
-        }
-    }
-</script>
-<script>
     let deleteModal = document.getElementById('deleteModal');
     deleteModal.addEventListener('show.bs.modal', function (event) {
         // Button that triggered the modal
@@ -527,7 +479,11 @@
         // Update the modal's content.
         let modalTitle = deleteModal.querySelector('.modal-title');
 
-        modalTitle.textContent = 'Delete ' + currentShortened;
+        if (currentShortened === null || currentShortened === undefined) {
+            modalTitle.textContent = 'Confirm deletion of all Terse data?';
+        } else {
+            modalTitle.textContent = 'Confirm deletion of "' + currentShortened + '"' + "?";
+        }
     });
 </script>
 <script>
@@ -543,7 +499,10 @@
         // Update the modal's content.
         let modalTitle = formModal.querySelector('.modal-title');
 
-        modalTitle.textContent = 'Write Terse Data for ' + currentShortened;
+        if (currentShortened !== "") {
+
+            modalTitle.textContent = 'Write Terse Data for "' + currentShortened + '"';
+        }
 
         if (currentShortened !== "") {
             getTerse(currentShortened).then(function (terse) {
@@ -553,19 +512,6 @@
             clearForm();
         }
     });
-</script>
-<script>
-    function bulkDelete() {
-        let ids = [];
-        for (let row of $('#terseTableBody > tr')) {
-            if ($("#" + row.id + ":first :input").prop('checked')) {
-                ids.push(row.id);
-            }
-        }
-        // TODO Figure this out...
-        // deleteSome(ids);
-        buildTable();
-    }
 </script>
 </body>
 </html>

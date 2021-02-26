@@ -1,11 +1,10 @@
-package frontend
+package endpoints
 
 import (
 	"github.com/go-openapi/runtime/middleware"
 	"go.uber.org/zap"
 
 	"github.com/MicahParks/terseurl/configure"
-	"github.com/MicahParks/terseurl/endpoints"
 	"github.com/MicahParks/terseurl/meta"
 	"github.com/MicahParks/terseurl/restapi/operations/api"
 )
@@ -36,7 +35,7 @@ func HandleMeta(logger *zap.SugaredLogger) api.FrontendMetaHandlerFunc {
 			)
 
 			// Report the error to the client.
-			return endpoints.ErrorResponse(500, message, &api.FrontendMetaDefault{})
+			return ErrorResponse(500, message, &api.FrontendMetaDefault{})
 		}
 
 		return &api.FrontendMetaOK{

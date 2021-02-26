@@ -1,21 +1,14 @@
-function ExportInit(shortenedURLs) {
-    this.body = JSON.stringify(shortenedURLs);
-    this.headers = {
-        "Content-Type": "application/json"
-    };
-    this.method = "POST";
-}
-
-async function exportAll() {
-    return fetch("/api/export")
-        .then(function (response) {
-            return response.json();
-        })
-}
-
-async function exportSome(shortenedURLs) {
-    return fetch(`/api/export/some`, new ExportInit(shortenedURLs))
-        .then(function (response) {
-            return response.json();
-        });
+async function exportShortened(shortenedURLs) {
+    let resultPromise;
+    let promise = swaggerClient
+        .then(
+            client => client.apis.api.export({shortenedURLs: shortenedURLs}),
+            reason => console.error('failed to load the spec: ' + reason)
+        )
+        .then(
+            exportResult => resultPromise = JSON.parse(exportResult.data),
+            reason => console.error('failed on api call: ' + reason)
+        );
+    await promise;
+    return resultPromise;
 }

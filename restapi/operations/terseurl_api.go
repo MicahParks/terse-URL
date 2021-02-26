@@ -21,6 +21,7 @@ import (
 	"github.com/go-openapi/swag"
 
 	apiops "github.com/MicahParks/terseurl/restapi/operations/api"
+	"github.com/MicahParks/terseurl/restapi/operations/frontend"
 	"github.com/MicahParks/terseurl/restapi/operations/public"
 	"github.com/MicahParks/terseurl/restapi/operations/system"
 )
@@ -45,8 +46,14 @@ func NewTerseurlAPI(spec *loads.Document) *TerseurlAPI {
 
 		JSONConsumer: runtime.JSONConsumer(),
 
+		CSSProducer: runtime.ProducerFunc(func(w io.Writer, data interface{}) error {
+			return errors.NotImplemented("css producer has not yet been implemented")
+		}),
 		HTMLProducer: runtime.ProducerFunc(func(w io.Writer, data interface{}) error {
 			return errors.NotImplemented("html producer has not yet been implemented")
+		}),
+		JsProducer: runtime.ProducerFunc(func(w io.Writer, data interface{}) error {
+			return errors.NotImplemented("js producer has not yet been implemented")
 		}),
 		JSONProducer: runtime.JSONProducer(),
 
@@ -55,6 +62,9 @@ func NewTerseurlAPI(spec *loads.Document) *TerseurlAPI {
 		}),
 		APIFrontendMetaHandler: apiops.FrontendMetaHandlerFunc(func(params apiops.FrontendMetaParams) middleware.Responder {
 			return middleware.NotImplemented("operation api.FrontendMeta has not yet been implemented")
+		}),
+		FrontendFrontendStaticHandler: frontend.FrontendStaticHandlerFunc(func(params frontend.FrontendStaticParams) middleware.Responder {
+			return middleware.NotImplemented("operation frontend.FrontendStatic has not yet been implemented")
 		}),
 		APIImportHandler: apiops.ImportHandlerFunc(func(params apiops.ImportParams) middleware.Responder {
 			return middleware.NotImplemented("operation api.Import has not yet been implemented")
@@ -118,9 +128,15 @@ type TerseurlAPI struct {
 	//   - application/json
 	JSONConsumer runtime.Consumer
 
+	// CSSProducer registers a producer for the following mime types:
+	//   - text/css
+	CSSProducer runtime.Producer
 	// HTMLProducer registers a producer for the following mime types:
 	//   - text/html
 	HTMLProducer runtime.Producer
+	// JsProducer registers a producer for the following mime types:
+	//   - text/javascript
+	JsProducer runtime.Producer
 	// JSONProducer registers a producer for the following mime types:
 	//   - application/json
 	JSONProducer runtime.Producer
@@ -129,6 +145,8 @@ type TerseurlAPI struct {
 	APIExportHandler apiops.ExportHandler
 	// APIFrontendMetaHandler sets the operation handler for the frontend meta operation
 	APIFrontendMetaHandler apiops.FrontendMetaHandler
+	// FrontendFrontendStaticHandler sets the operation handler for the frontend static operation
+	FrontendFrontendStaticHandler frontend.FrontendStaticHandler
 	// APIImportHandler sets the operation handler for the import operation
 	APIImportHandler apiops.ImportHandler
 	// PublicPublicRedirectHandler sets the operation handler for the public redirect operation
@@ -222,8 +240,14 @@ func (o *TerseurlAPI) Validate() error {
 		unregistered = append(unregistered, "JSONConsumer")
 	}
 
+	if o.CSSProducer == nil {
+		unregistered = append(unregistered, "CSSProducer")
+	}
 	if o.HTMLProducer == nil {
 		unregistered = append(unregistered, "HTMLProducer")
+	}
+	if o.JsProducer == nil {
+		unregistered = append(unregistered, "JsProducer")
 	}
 	if o.JSONProducer == nil {
 		unregistered = append(unregistered, "JSONProducer")
@@ -234,6 +258,9 @@ func (o *TerseurlAPI) Validate() error {
 	}
 	if o.APIFrontendMetaHandler == nil {
 		unregistered = append(unregistered, "api.FrontendMetaHandler")
+	}
+	if o.FrontendFrontendStaticHandler == nil {
+		unregistered = append(unregistered, "frontend.FrontendStaticHandler")
 	}
 	if o.APIImportHandler == nil {
 		unregistered = append(unregistered, "api.ImportHandler")
@@ -311,8 +338,12 @@ func (o *TerseurlAPI) ProducersFor(mediaTypes []string) map[string]runtime.Produ
 	result := make(map[string]runtime.Producer, len(mediaTypes))
 	for _, mt := range mediaTypes {
 		switch mt {
+		case "text/css":
+			result["text/css"] = o.CSSProducer
 		case "text/html":
 			result["text/html"] = o.HTMLProducer
+		case "text/javascript":
+			result["text/javascript"] = o.JsProducer
 		case "application/json":
 			result["application/json"] = o.JSONProducer
 		}
@@ -363,6 +394,10 @@ func (o *TerseurlAPI) initHandlerCache() {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
 	o.handlers["POST"]["/api/frontend/meta"] = apiops.NewFrontendMeta(o.context, o.APIFrontendMetaHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/frontend/{fileName}"] = frontend.NewFrontendStatic(o.context, o.FrontendFrontendStaticHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}

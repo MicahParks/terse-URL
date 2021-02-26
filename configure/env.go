@@ -43,6 +43,7 @@ type configuration struct {
 	ShortIDParanoid  bool
 	ShortIDSeed      uint64
 	TemplatePath     string
+	StaticFSDirName  string
 	SummaryStoreJSON string
 	TerseStoreJSON   string
 	VisitsStoreJSON  string
@@ -116,6 +117,7 @@ func readEnvVars() (config *configuration, err error) {
 	}
 	config.ShortIDParanoid = len(os.Getenv("SHORTID_PARANOID")) != 0
 	config.TemplatePath = os.Getenv("TEMPLATE_PATH")
+	config.StaticFSDirName = os.Getenv("FRONTEND_STATIC_DIR")
 	config.TerseStoreJSON = os.Getenv("TERSE_STORE_JSON")
 	config.VisitsStoreJSON = os.Getenv("VISITS_STORE_JSON")
 	config.SummaryStoreJSON = os.Getenv("SUMMARY_STORE_JSON")

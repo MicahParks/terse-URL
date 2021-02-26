@@ -19,7 +19,7 @@ import (
 	"github.com/MicahParks/terseurl/storage"
 )
 
-// HandleRedirect creates and /{shortened} endpoint handler via a closure. It can perform redirects based on the
+// HandleRedirect creates and /{shortenedURL} endpoint handler via a closure. It can perform redirects based on the
 // shortened URL's Terse data. It will add visits to the VisitStore, if it exists.
 func HandleRedirect(logger *zap.SugaredLogger, tmpl *template.Template, manager storage.StoreManager) public.PublicRedirectHandlerFunc {
 	return func(params public.PublicRedirectParams) middleware.Responder {

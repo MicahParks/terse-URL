@@ -10,3 +10,13 @@ function download(filename, text) {
 
     document.body.removeChild(element);
 }
+
+function downloadExport(shortenedURLs) {
+    exportShortened(shortenedURLs).then(function (exportData) {
+        let filename = 'export.json';
+        if (shortenedURLs.length === 1) {
+            filename = shortenedURLs + '.json';
+        }
+        download(filename, JSON.stringify(exportData));
+    });
+}

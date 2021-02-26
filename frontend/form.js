@@ -25,9 +25,10 @@ async function submitForm(e) {
         terse.mediaPreview = new MediaPreview(og, htmlTitle, twitter);
     }
 
-    await write(operation, terse);
+    write(operation, terse).then(function () {
+        buildTable(); // TODO Maybe don't do this every time?
+    });
     $("#formModal").modal("hide");
-    buildTable(); // TODO Maybe don't do this every time?
 }
 
 function makeMetaMap(query) {

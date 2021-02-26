@@ -1,14 +1,14 @@
-function MetaInit(originalURL) {
-    this.body = JSON.stringify(originalURL);
-    this.headers = {
-        "Content-Type": "application/json"
-    }
-    this.method = "POST";
-}
-
 async function getMeta(originalURL) {
-    return fetch("/api/frontend/meta", new MetaInit(originalURL))
-        .then(function (response) {
-            return response.json();
-        })
+    let resultPromise;
+    let promise = swaggerClient
+        .then(
+            client => client.apis.api.frontendMeta({originalURL: JSON.stringify(originalURL)}),
+            reason => console.error('failed to load the spec: ' + reason)
+        )
+        .then(
+            frontendMetaResult => resultPromise = JSON.parse(frontendMetaResult.data),
+            reason => console.error('failed on api call: ' + reason)
+        );
+    await promise;
+    return resultPromise;
 }

@@ -19,7 +19,6 @@ var (
 func init() {
 	SwaggerJSON = json.RawMessage([]byte(`{
   "schemes": [
-    "https",
     "http"
   ],
   "swagger": "2.0",
@@ -486,6 +485,40 @@ func init() {
         }
       }
     },
+    "/frontend/{fileName}": {
+      "get": {
+        "description": "Frontend static assets: HTML, JS, etc are returned.",
+        "produces": [
+          "text/html",
+          "text/css",
+          "text/javascript"
+        ],
+        "tags": [
+          "frontend"
+        ],
+        "summary": "Files for the web frontend.",
+        "operationId": "frontendStatic",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "fileName",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The frontend asset.",
+            "schema": {
+              "type": "file"
+            }
+          },
+          "404": {
+            "description": "The file was not found."
+          }
+        }
+      }
+    },
     "/{shortenedURL}": {
       "get": {
         "description": "Use the shortened URL. It will redirect to the full URL if it has not expired.",
@@ -711,6 +744,10 @@ func init() {
     {
       "description": "Endpoints to perform operations on Terse data.",
       "name": "api"
+    },
+    {
+      "description": "Endpoints that serve frontend assets.",
+      "name": "frontend"
     },
     {
       "description": "Endpoints that are publicly accessible.",
@@ -724,7 +761,6 @@ func init() {
 }`))
 	FlatSwaggerJSON = json.RawMessage([]byte(`{
   "schemes": [
-    "https",
     "http"
   ],
   "swagger": "2.0",
@@ -1191,6 +1227,40 @@ func init() {
         }
       }
     },
+    "/frontend/{fileName}": {
+      "get": {
+        "description": "Frontend static assets: HTML, JS, etc are returned.",
+        "produces": [
+          "text/css",
+          "text/html",
+          "text/javascript"
+        ],
+        "tags": [
+          "frontend"
+        ],
+        "summary": "Files for the web frontend.",
+        "operationId": "frontendStatic",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "fileName",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The frontend asset.",
+            "schema": {
+              "type": "file"
+            }
+          },
+          "404": {
+            "description": "The file was not found."
+          }
+        }
+      }
+    },
     "/{shortenedURL}": {
       "get": {
         "description": "Use the shortened URL. It will redirect to the full URL if it has not expired.",
@@ -1416,6 +1486,10 @@ func init() {
     {
       "description": "Endpoints to perform operations on Terse data.",
       "name": "api"
+    },
+    {
+      "description": "Endpoints that serve frontend assets.",
+      "name": "frontend"
     },
     {
       "description": "Endpoints that are publicly accessible.",

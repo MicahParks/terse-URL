@@ -45,10 +45,12 @@ func configureAPI(api *operations.TerseurlAPI) http.Handler {
 
 	// Create the HTML producer.
 	api.HTMLProducer = configure.HTMLProducer(logger)
+	api.CSSProducer = configure.HTMLProducer(logger)
+	api.JsProducer = configure.HTMLProducer(logger)
 
 	// Assign the endpoint handlers.
 	api.APIExportHandler = endpoints.HandleExport(logger.Named("POST /api/export"), config.StoreManager)
-	api.APIFrontendMetaHandler = frontend.HandleMeta(logger.Named("POST /api/frontend/meta"))
+	api.APIFrontendMetaHandler = endpoints.HandleMeta(logger.Named("POST /api/frontend/meta"))
 	api.APIImportHandler = endpoints.HandleImport(logger.Named("POST /api/import"), config.StoreManager)
 	api.APIShortenedDeleteHandler = endpoints.HandleShortenedDelete(logger.Named("DELETE /api/shortened"), config.StoreManager)
 	api.APIShortenedPrefixHandler = endpoints.HandleShortenedPrefix(logger.Named("POST /api/prefix"), config.Prefix)
@@ -57,6 +59,7 @@ func configureAPI(api *operations.TerseurlAPI) http.Handler {
 	api.APITerseWriteHandler = endpoints.HandleWrite(logger.Named("POST /api/write/{operation}"), config.ShortID, config.StoreManager)
 	api.APIVisitsDeleteHandler = endpoints.HandlerVisitsDelete(logger.Named("DELETE /api/visits"), config.StoreManager)
 	api.APIVisitsReadHandler = endpoints.HandleVisitsRead(logger.Named("POST /api/visits"), config.StoreManager)
+	api.FrontendFrontendStaticHandler = frontend.HandleFrontendStatic(logger.Named("GET /frontend/{fileName}"), config.StaticFS)
 	api.PublicPublicRedirectHandler = public.HandleRedirect(logger.Named("GET /{shortenedURL}"), config.Template, config.StoreManager)
 	api.SystemSystemAliveHandler = system.HandleAlive()
 

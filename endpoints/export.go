@@ -29,7 +29,7 @@ func HandleExport(logger *zap.SugaredLogger, manager storage.StoreManager) api.E
 
 			// Log at the appropriate level.
 			message := "Failed to perform data dump."
-			logger.Errorw(message,
+			logger.Warnw(message,
 				"error", err.Error(),
 			)
 

@@ -70,18 +70,19 @@ However, the project can support any storage backend that implements its respect
 
 Environment variable table:
 
-|Name                |Description                                                                                                                                                                        |Default Value                  |Example Value                                |
-|--------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------|---------------------------------------------|
-|`DEFAULT_TIMEOUT`   |The amount of time to wait before timing out for an incoming (client) or an outgoing (database) request in seconds.                                                                |`60`                           |`180`                                        |
-|`HTTP_PREFIX`       |The HTTP prefix all shortened URLs will have. This is used by the frontend.                                                                                                        |`https://terseurl.com/`        |`https://example.com/`                       |
-|`INVALID_PATHS`     |A comma separated list of paths that cannot be assigned to a shortened URL. Whitespace prefixes and suffixes are trimmed. All swagger endpoints like `api` are invalid.            |swagger endpoints and frontend |`ready ,live, v2`                            |
-|`SHORTID_PARANOID`  |Indicate whether randomly generated short URLs should be checked to see if they are already in use. Any value sets the boolean to true. Empty for false.                           |blank                          |`true`                                       |
-|`SHORTID_SEED`      |The seed to give the random shortened URL generator. Unsigned 64 bit integer. It is recommend to set this in a production setting.                                                 |System clock                   |`2301015`                                    |
-|`TEMPLATE_PATH`     |The full or relative path to the HTML template to use when a shortened URL is requested and JavaScript fingerprinting or social media link previews are on.                        |`redirect.gohtml`              |`customTemplate.gohtml`                      |
-|`SUMMARY_STORE_JSON`|The JSON formatted storage configuration for the SummaryStore. If empty, it will try to read the file at `summaryStore.json`. If not found it will use an in memory implementation.|blank                          |`{"type":"memory"}`                          |
-|`TERSE_STORE_JSON`  |The JSON formatted storage configuration for the TerseStore. If empty, it will try to read the file at `terseStore.json`. If not found it will use an in memory implementation.    |blank                          |`{"type":"bbolt","bboltPath":"terse.bbolt"}` |
-|`VISITS_STORE_JSON` |The JSON formatted storage configuration for the VisitsStore. If empty, it will try to read the file at `visitsStore.json`. If not found, visits will not be tracked.              |blank                          |`{"type":"bbolt","bboltPath":"visits.bbolt"}`|
-|`WORKER_COUNT`      |The quantity of workers to use for incoming request async tasks like performing async database calls. Not the number of incoming requests that can be handled at one time.         |`4`                            |`10`                                         |
+|Name                 |Description                                                                                                                                                                                              |Default Value                  |Example Value                                |
+|---------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------|---------------------------------------------|
+|`DEFAULT_TIMEOUT`    |The amount of time to wait before timing out for an incoming (client) or an outgoing (database) request in seconds.                                                                                      |`60`                           |`180`                                        |
+|`FRONTEND_STATIC_DIR`|The path to the directory that contains the static frontend assets to be served out of `/frontend/*`. If empty, the embedded assets will be used.                                                        |blank                          |`./frontend2`                                |
+|`HTTP_PREFIX`        |The HTTP prefix all shortened URLs will have. This is used by the frontend.                                                                                                                              |`https://terseurl.com/`        |`https://example.com/`                       |
+|`INVALID_PATHS`      |A comma separated list of paths that cannot be assigned to a shortened URL. Whitespace prefixes and suffixes are trimmed. All swagger endpoints like `api` are invalid.                                  |swagger endpoints and frontend |`ready ,live, v2`                            |
+|`SHORTID_PARANOID`   |Indicate whether randomly generated short URLs should be checked to see if they are already in use. Any value sets the boolean to true. Empty for false.                                                 |blank                          |`true`                                       |
+|`SHORTID_SEED`       |The seed to give the random shortened URL generator. Unsigned 64 bit integer. It is recommend to set this in a production setting.                                                                       |System clock                   |`2301015`                                    |
+|`TEMPLATE_PATH`      |The full or relative path to the HTML template to use when a shortened URL is requested and JavaScript fingerprinting or social media link previews are on. If empty, the embedded template will be used.|`redirect.gohtml`              |`customTemplate.gohtml`                      |
+|`SUMMARY_STORE_JSON` |The JSON formatted storage configuration for the SummaryStore. If empty, it will try to read the file at `summaryStore.json`. If not found it will use an in memory implementation.                      |blank                          |`{"type":"memory"}`                          |
+|`TERSE_STORE_JSON`   |The JSON formatted storage configuration for the TerseStore. If empty, it will try to read the file at `terseStore.json`. If not found it will use an in memory implementation.                          |blank                          |`{"type":"bbolt","bboltPath":"terse.bbolt"}` |
+|`VISITS_STORE_JSON`  |The JSON formatted storage configuration for the VisitsStore. If empty, it will try to read the file at `visitsStore.json`. If not found, visits will not be tracked.                                    |blank                          |`{"type":"bbolt","bboltPath":"visits.bbolt"}`|
+|`WORKER_COUNT`       |The quantity of workers to use for incoming request async tasks like performing async database calls. Not the number of incoming requests that can be handled at one time.                               |`4`                            |`10`                                         |
 
 ### JSON formatted storage configuration
 
@@ -98,29 +99,26 @@ docker-compose up
 
 - [ ] Address source code TODOs.
 - [ ] Inherit HTML title.
-- [ ] ShortenedURL not found shouldn't produce an error in logs.
 - [ ] Make write operations atomic?
+- [ ] Implement an IdentityStore (AuthStore?).
+- [ ] Completely remove ErrShortenedNotFound? Use zero values to communicate that?
+- [ ] Visits is nil in export when no visits. Should be empty array.
 - [ ] Change bbolt data structure for Visits to something more scalable.
-- [ ] Truncate frontend table data so it doesn't run off the screen...
-- [ ] Make the bulk edit tools work.
+- [ ] Truncate frontend table data so it doesn't run off the screen.
+- [ ] Add more logic to rate limiter for frontend use case.
+- [ ] Default redirect or template value?
 - [ ] Copy to clipboard button for shortened URL.
 - [ ] Show full shortened URL in table data.
 - [ ] Hyperlinks for shortened URL and original URL.
 - [ ] Embed `redirect.gohtml` add a flag that can switch between that one and one read in at runtime.
 - [ ] Add referer URL to query parameters?
-- [ ] Terse export reported as not found if there are no visits.
 - [ ] Implement `SHORTID_PARANOID` environment variable.
-- [ ] Make buttons work on `table.html`.
 - [ ] Implement JavaScript tracking.
 - [ ] Implement JavaScript fingerprinting.
+- [ ] Expand Visits
 - [ ] Create HTML navigation.
 - [ ] Customizable visit data tracking.
 - [ ] Visit data middleware for data purging or whatever before it goes to backend storage.
-- [ ] SummaryStore not used when VisitsStore is `nil`?
-- [ ] Make sure the frontend has a way to interact with visits data when the terse data has been deleted.
-- [ ] Make endpoints for reading multiple Terse/Visits.
-- [ ] Change endpoints like `/api/delete` to `/api/delete/all`.
-- [ ] Write a utility that will export `.bbolt` to JSON.
 - [ ] Implement `SHORTID_PARANOID`.
 - [ ] Allow for shortened URLs of the form `{owner}/{shortened}` in `/api/write/{operation}` endpoint.
   - [ ] Only allow for random shortened URLs in top level.

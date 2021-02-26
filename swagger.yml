@@ -15,13 +15,15 @@ info:
 tags:
   - description: "Endpoints to perform operations on Terse data."
     name: "api"
+  - description: "Endpoints that serve frontend assets."
+    name: "frontend"
   - description: "Endpoints that are publicly accessible."
     name: "public"
   - description: "Endpoints required by the system that are not public facing and do not affect Terse data."
     name: "system"
 
 schemes:
-  - "https"
+  #  - "https"
   - "http"
 
 paths:
@@ -382,6 +384,30 @@ paths:
           description: "The shortened URL expired or never existed."
       tags:
         - "public"
+
+  /frontend/{fileName}:
+    get:
+      summary: "Files for the web frontend."
+      description: "Frontend static assets: HTML, JS, etc are returned."
+      operationId: "frontendStatic"
+      produces:
+        - "text/html"
+        - "text/css"
+        - "text/javascript"
+      parameters:
+        - in: "path"
+          name: "fileName"
+          required: true
+          type: "string"
+      responses: # TODO Add 200 response for when social media link previews are enabled.
+        200:
+          description: "The frontend asset."
+          schema:
+            type: "file"
+        404:
+          description: "The file was not found."
+      tags:
+        - "frontend"
 
 
 definitions:

@@ -3,12 +3,14 @@ package configure
 import (
 	"context"
 	"html/template"
+	"io/fs"
 	"io/ioutil"
 
 	"github.com/MicahParks/ctxerrgroup"
 	"github.com/teris-io/shortid"
 	"go.uber.org/zap"
 
+	"github.com/MicahParks/terseurl"
 	"github.com/MicahParks/terseurl/storage"
 )
 
@@ -33,6 +35,7 @@ type Configuration struct {
 	Prefix          string
 	ShortID         *shortid.Shortid
 	ShortIDParanoid bool
+	StaticFS        fs.FS
 	StoreManager    storage.StoreManager
 }
 
@@ -57,14 +60,16 @@ func Configure() (config Configuration, err error) {
 		return Configuration{}, err // Should be unreachable.
 	}
 
-	// Figure out the path to the HTML template.
-	if rawConfig.TemplatePath == "" {
-		rawConfig.TemplatePath = defaultTemplatePath
-	}
-
 	// Create the HTML template.
 	if config.Template, err = createTemplate(rawConfig.TemplatePath, ""); err != nil {
 		return Configuration{}, err
+	}
+
+	// Create the file system for the frontend static assets.
+	if config.StaticFS, err = terseurl.FrontendFS(rawConfig.StaticFSDirName); err != nil {
+		logger.Fatalw("Failed to configure file system for static frontend assets.",
+			"error", err.Error(),
+		)
 	}
 
 	// Set the database timeout.
@@ -111,14 +116,24 @@ func DefaultCtx() (ctx context.Context, cancel context.CancelFunc) {
 // createTemplate reads the template file at filePath and turns it into a Golang template with the given name.
 func createTemplate(filePath, name string) (tmpl *template.Template, err error) {
 
-	// Read the template file into memory.
-	var fileData []byte
-	if fileData, err = ioutil.ReadFile(filePath); err != nil {
-		return nil, err
+	// Check if the embedded template should be used.
+	var tmplStr string
+	if filePath == "" {
+
+		// Use the embedded template.
+		tmplStr = terseurl.RedirectTemplate
+	} else {
+
+		// Read the give template file from the OS.
+		var fileData []byte
+		if fileData, err = ioutil.ReadFile(filePath); err != nil {
+			return nil, err
+		}
+		tmplStr = string(fileData)
 	}
 
 	// Create the Go template from the file.
-	return template.New(name).Parse(string(fileData))
+	return template.New(name).Parse(tmplStr)
 }
 
 // handleAsyncError logs errors asynchronously for an error channel.

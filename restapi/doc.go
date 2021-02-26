@@ -5,7 +5,6 @@
 //  The Terse URL shortener.
 //  Schemes:
 //    http
-//    https
 //  Host: localhost
 //  BasePath: /
 //  Version: 0.0.3
@@ -15,7 +14,9 @@
 //    - application/json
 //
 //  Produces:
+//    - text/css
 //    - text/html
+//    - text/javascript
 //    - application/json
 //
 // swagger:meta
