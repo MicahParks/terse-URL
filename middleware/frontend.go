@@ -28,7 +28,7 @@ func FrontendMiddleware(frontendDir string, next http.Handler) (handler http.Han
 	return func(writer http.ResponseWriter, request *http.Request) {
 
 		// Redirect for the root file.
-		if request.URL.Path == "/" || request.URL.Path == "/index.html" || request.URL.Path == strings.TrimPrefix(frontendPrefix, "/") {
+		if request.URL.Path == "/" || request.URL.Path == "/index.html" || request.URL.Path == strings.TrimSuffix(frontendPrefix, "/") {
 
 			// Permanent redirect.
 			http.Redirect(writer, request, frontendPrefix, 301)
