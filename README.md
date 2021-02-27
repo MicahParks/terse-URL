@@ -90,9 +90,11 @@ TODO
 
 ## Deployment
 
+TODO Dynamically assign port and HTTP(S) for frontend swagger spec. This is preventing the debug mode from being the
+same as `docker-compose`.
+
 ```bash
-touch terse.bbolt visits.bbolt
-docker-compose up
+HOST=0.0.0.0 PORT=30000 FRONTEND_STATIC_DIR=frontend TEMPLATE_PATH=redirect.gohtml go run -race cmd/terseurl-server/main.go
 ```
 
 ## TODO
@@ -106,18 +108,15 @@ docker-compose up
 - [ ] Change bbolt data structure for Visits to something more scalable.
 - [ ] Truncate frontend table data so it doesn't run off the screen.
 - [ ] Add more logic to rate limiter for frontend use case.
-- [ ] Default redirect or template value?
 - [ ] Copy to clipboard button for shortened URL.
 - [ ] Show full shortened URL in table data.
 - [ ] Hyperlinks for shortened URL and original URL.
-- [ ] Embed `redirect.gohtml` add a flag that can switch between that one and one read in at runtime.
 - [ ] Add referer URL to query parameters?
 - [ ] Implement `SHORTID_PARANOID` environment variable.
 - [ ] Implement JavaScript tracking.
 - [ ] Implement JavaScript fingerprinting.
-- [ ] Expand Visits
+- [ ] Expand Visits model to include untyped data for custom VisitsStore implementation or middleware.
 - [ ] Create HTML navigation.
-- [ ] Customizable visit data tracking.
 - [ ] Visit data middleware for data purging or whatever before it goes to backend storage.
 - [ ] Implement `SHORTID_PARANOID`.
 - [ ] Allow for shortened URLs of the form `{owner}/{shortened}` in `/api/write/{operation}` endpoint.
