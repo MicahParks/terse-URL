@@ -17,8 +17,8 @@ type forEachFunc func(shortened, data []byte) (err error)
 // bboltDelete deletes the given shortened URLs from the bbolt storage.
 func bboltDelete(b bboltStore, shortenedURLs []string) (err error) {
 
-	// Check for the nil case.
-	if shortenedURLs == nil || len(shortenedURLs) == 0 {
+	// Check for the empty case.
+	if len(shortenedURLs) == 0 {
 
 		// Open the bbolt database for exclusive writing.
 		if err = b.DB().Update(func(tx *bbolt.Tx) error {
@@ -66,8 +66,8 @@ func bboltRead(b bboltStore, forEach forEachFunc, shortenedURLs []string) (err e
 	// Open the bbolt database for reading.
 	if err = b.DB().View(func(tx *bbolt.Tx) error {
 
-		// Check for the nil case.
-		if shortenedURLs == nil || len(shortenedURLs) == 0 {
+		// Check for the empty case.
+		if len(shortenedURLs) == 0 {
 
 			// Iterate through all the shortened URLs.
 			if err = tx.Bucket(b.BucketName()).ForEach(forEach); err != nil {

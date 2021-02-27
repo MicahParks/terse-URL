@@ -41,8 +41,8 @@ func (m *MemVisits) Delete(_ context.Context, shortenedURLs []string) (err error
 	m.mux.Lock()
 	defer m.mux.Unlock()
 
-	// Check for the nil case.
-	if shortenedURLs == nil || len(shortenedURLs) == 0 {
+	// Check for the empty case.
+	if len(shortenedURLs) == 0 {
 
 		// Delete all Visits data.
 		m.deleteAll()
@@ -84,8 +84,8 @@ func (m *MemVisits) Read(_ context.Context, shortenedURLs []string) (visitsData 
 	m.mux.RLock()
 	defer m.mux.RUnlock()
 
-	// Check for the nil case.
-	if shortenedURLs == nil || len(shortenedURLs) == 0 {
+	// Check for the empty case.
+	if len(shortenedURLs) == 0 {
 
 		// Use all Visits data.
 		visitsData = m.visits
@@ -120,8 +120,8 @@ func (m *MemVisits) Summary(_ context.Context, shortenedURLs []string) (summarie
 	m.mux.RLock()
 	defer m.mux.RUnlock()
 
-	// Check for the nil case.
-	if shortenedURLs == nil || len(shortenedURLs) == 0 {
+	// Check for the empty case.
+	if len(shortenedURLs) == 0 {
 
 		// Gather the Summary data for all shortened URLs.
 		for shortened, visits := range m.visits {

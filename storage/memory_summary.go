@@ -44,8 +44,8 @@ func (m *MemSummary) Delete(_ context.Context, shortenedURLs []string) (err erro
 	m.mux.Lock()
 	defer m.mux.Unlock()
 
-	// Check for the nil case.
-	if shortenedURLs == nil || len(shortenedURLs) == 0 {
+	// Check for the empty case.
+	if len(shortenedURLs) == 0 {
 
 		// Delete all summary data.
 		m.deleteAll()
@@ -95,7 +95,7 @@ func (m *MemSummary) Read(_ context.Context, shortenedURLs []string) (summaries 
 	defer m.mux.RUnlock()
 
 	// Check to see if all Summary data was requested, if so, copy all Summary data.
-	if shortenedURLs == nil || len(shortenedURLs) == 0 {
+	if len(shortenedURLs) == 0 {
 
 		// Use all Summary data.
 		summaries = m.summaries
