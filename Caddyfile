@@ -1,21 +1,6 @@
 localhost
 
-file_server
-root /frontend/* /frontend/
-
-redir / /frontend/ permanent # TODO Is this how it should be handled long term?
-redir /index.html /frontend/index.html
-
-@proxy {
-    not path /frontend/*
-}
-
-#log {
-#    output stdout
-#    level DEBUG
-#}
-
-reverse_proxy @proxy http://terseurl:30000 {
+reverse_proxy http://terseurl:30000 {
     health_path /api/alive
     health_interval 5s
     health_timeout 2s

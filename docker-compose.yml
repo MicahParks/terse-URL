@@ -16,6 +16,9 @@ services:
       context: "."
       dockerfile: "Dockerfile"
     container_name: "terseurl"
+    environment:
+      FRONTEND_STATIC_DIR: "frontend"
+      TEMPLATE_PATH: "redirect.gohtml"
     image: "micahparks/terseurl"
     volumes:
       - "./terseStore.json:/terseurl/terseStore.json:ro"
@@ -23,6 +26,7 @@ services:
       - "./visitsStore.json:/terseurl/visitsStore.json:ro"
       - "./visits.bbolt:/terseurl/visits.bbolt"
       - "./redirect.gohtml:/terseurl/redirect.gohtml"
+      - "./frontend:/terseurl/frontend"
 volumes:
   caddy:
   caddyConfig:
