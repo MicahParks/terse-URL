@@ -15,9 +15,9 @@ import (
 
 	"github.com/MicahParks/terseurl/configure"
 	"github.com/MicahParks/terseurl/endpoints"
-	"github.com/MicahParks/terseurl/endpoints/frontend"
 	"github.com/MicahParks/terseurl/endpoints/public"
 	"github.com/MicahParks/terseurl/endpoints/system"
+	"github.com/MicahParks/terseurl/middleware"
 	"github.com/MicahParks/terseurl/restapi/operations"
 )
 
@@ -45,8 +45,6 @@ func configureAPI(api *operations.TerseurlAPI) http.Handler {
 
 	// Create the HTML producer.
 	api.HTMLProducer = configure.HTMLProducer(logger)
-	api.CSSProducer = configure.HTMLProducer(logger)
-	api.JsProducer = configure.HTMLProducer(logger)
 
 	// Assign the endpoint handlers.
 	api.APIExportHandler = endpoints.HandleExport(logger.Named("POST /api/export"), config.StoreManager)
@@ -59,7 +57,6 @@ func configureAPI(api *operations.TerseurlAPI) http.Handler {
 	api.APITerseWriteHandler = endpoints.HandleWrite(logger.Named("POST /api/write/{operation}"), config.ShortID, config.StoreManager)
 	api.APIVisitsDeleteHandler = endpoints.HandlerVisitsDelete(logger.Named("DELETE /api/visits"), config.StoreManager)
 	api.APIVisitsReadHandler = endpoints.HandleVisitsRead(logger.Named("POST /api/visits"), config.StoreManager)
-	api.FrontendFrontendStaticHandler = frontend.HandleFrontendStatic(logger.Named("GET /frontend/{fileName}"), config.StaticFS)
 	api.PublicPublicRedirectHandler = public.HandleRedirect(logger.Named("GET /{shortenedURL}"), config.Template, config.StoreManager)
 	api.SystemSystemAliveHandler = system.HandleAlive()
 
@@ -114,6 +111,15 @@ func setupGlobalMiddleware(handler http.Handler) http.Handler {
 	// Find the IP of the client in the X-Forwarded-For header, because Caddy will be the server in front of this.
 	limit.SetIPLookups([]string{"X-Forwarded-For"})
 
+	// Set up the rate limiter middleware.
+	toll := tollbooth.LimitHandler(limit, handler) // TODO Logging middleware. Maybe another rate limiter instead.
+
+	// Set up the frontend middleware.
+	frontendMiddleware, err := middleware.FrontendMiddleware("frontend", toll)
+	if err != nil {
+		log.Fatalln(err.Error())
+	}
+
 	// Follow the HTTP middleware pattern.
-	return tollbooth.LimitHandler(limit, handler) // TODO Logging middleware. Maybe another rate limiter instead.
+	return frontendMiddleware
 }

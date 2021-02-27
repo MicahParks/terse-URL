@@ -385,30 +385,6 @@ paths:
       tags:
         - "public"
 
-  /frontend/{fileName}:
-    get:
-      summary: "Files for the web frontend."
-      description: "Frontend static assets: HTML, JS, etc are returned."
-      operationId: "frontendStatic"
-      produces:
-        - "text/html"
-        - "text/css"
-        - "text/javascript"
-      parameters:
-        - in: "path"
-          name: "fileName"
-          required: true
-          type: "string"
-      responses: # TODO Add 200 response for when social media link previews are enabled.
-        200:
-          description: "The frontend asset."
-          schema:
-            type: "file"
-        404:
-          description: "The file was not found."
-      tags:
-        - "frontend"
-
 
 definitions:
 
