@@ -27,10 +27,10 @@ func FrontendMiddleware(frontendDir string, next http.Handler) (handler http.Han
 	return func(writer http.ResponseWriter, request *http.Request) {
 
 		// Redirect for the root file.
-		if request.URL.Path == "/" || request.URL.Path == "/index.html" || request.URL.Path == "/frontend" {
+		if request.URL.Path == "/" || request.URL.Path == "/index.html" || request.URL.Path == strings.TrimPrefix(frontendPrefix, "/") {
 
 			// Permanent redirect.
-			http.Redirect(writer, request, "/frontend/", 301)
+			http.Redirect(writer, request, frontendPrefix, 301)
 
 			// Handle requests with the /frontend prefix.
 		} else if strings.HasPrefix(request.URL.Path, frontendPrefix) {
