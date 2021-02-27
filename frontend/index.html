@@ -305,7 +305,7 @@
 <script>
 
     // Set the shortened URL prefix.
-    let swaggerClient = new SwaggerClient('http://localhost:80/swagger.json'); // TODO Change to just /swagger.json and add some logic to determine http or https.
+    let swaggerClient = new SwaggerClient('http://localhost:30000/swagger.json'); // TODO Change to just /swagger.json and add some logic to determine http or https.
     swaggerClient
         .then(
             client => client.apis.api.shortenedPrefix(),

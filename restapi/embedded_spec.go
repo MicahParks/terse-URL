@@ -31,7 +31,7 @@ func init() {
     },
     "version": "0.0.3"
   },
-  "host": "localhost",
+  "host": "localhost:30000",
   "basePath": "/",
   "paths": {
     "/api/alive": {
@@ -773,7 +773,7 @@ func init() {
     },
     "version": "0.0.3"
   },
-  "host": "localhost",
+  "host": "localhost:30000",
   "basePath": "/",
   "paths": {
     "/api/alive": {
