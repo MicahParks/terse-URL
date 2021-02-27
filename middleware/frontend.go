@@ -21,6 +21,7 @@ func FrontendMiddleware(frontendDir string, next http.Handler) (handler http.Han
 	if err != nil {
 		return nil, err
 	}
+	httpFileSystem := http.FS(fileSystem)
 
 	// Create the HTTP handler via a closure.
 	return func(writer http.ResponseWriter, request *http.Request) {
@@ -38,7 +39,7 @@ func FrontendMiddleware(frontendDir string, next http.Handler) (handler http.Han
 			request.URL.Path = strings.TrimPrefix(request.URL.Path, frontendPrefix)
 
 			// Serve the file system via HTTP.
-			http.FileServer(http.FS(fileSystem)).ServeHTTP(writer, request)
+			http.FileServer(httpFileSystem).ServeHTTP(writer, request)
 		} else {
 
 			// Follow the HTTP middleware pattern.
