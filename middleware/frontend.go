@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"io/fs"
 	"net/http"
 	"strings"
 
@@ -17,8 +18,8 @@ const (
 func FrontendMiddleware(frontendDir string, next http.Handler) (handler http.HandlerFunc, err error) {
 
 	// Get the appropriate file system for the frontend assets.
-	fileSystem, err := terseurl.FrontendFS(frontendDir)
-	if err != nil {
+	var fileSystem fs.FS
+	if fileSystem, err = terseurl.FrontendFS(frontendDir); err != nil {
 		return nil, err
 	}
 	httpFileSystem := http.FS(fileSystem)
