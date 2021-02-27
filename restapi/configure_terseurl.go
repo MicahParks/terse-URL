@@ -109,12 +109,14 @@ func setupGlobalMiddleware(handler http.Handler) http.Handler {
 	limit := tollbooth.NewLimiter(1, &limiter.ExpirableOptions{DefaultExpirationTTL: time.Hour})
 
 	// Find the IP of the client in the X-Forwarded-For header, because Caddy will be the server in front of this.
-	limit.SetIPLookups([]string{"X-Forwarded-For"})
+	limit.SetIPLookups([]string{"X-Forwarded-For"}) // TODO Add string for regular lookup.
 
 	// Set up the rate limiter middleware.
 	toll := tollbooth.LimitHandler(limit, handler) // TODO Logging middleware. Maybe another rate limiter instead.
 
 	// Set up the frontend middleware.
+	//
+	// TODO Add function in configure package for grabbing this string value.
 	frontendMiddleware, err := middleware.FrontendMiddleware("frontend", toll)
 	if err != nil {
 		log.Fatalln(err.Error())
