@@ -31,7 +31,7 @@ func FrontendMiddleware(frontendDir string, next http.Handler) (handler http.Han
 		if request.URL.Path == "/" || request.URL.Path == "/index.html" || request.URL.Path == strings.TrimSuffix(frontendPrefix, "/") {
 
 			// Permanent redirect.
-			http.Redirect(writer, request, frontendPrefix, 301)
+			http.Redirect(writer, request, frontendPrefix, http.StatusMovedPermanently)
 
 			// Handle requests with the /frontend prefix.
 		} else if strings.HasPrefix(request.URL.Path, frontendPrefix) {
