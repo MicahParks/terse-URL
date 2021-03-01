@@ -2,12 +2,12 @@ swagger: "2.0"
 
 basePath: "/"
 
-host: "localhost:30000" # TODO Change if you found this off the internet and want to run it yourself.
+host: "terseurl.com" # TODO Change if you found this off the internet and want to run it yourself.
 
 info:
   description: "The Terse URL shortener."
   license:
-    name: "MIT"
+    name: "AGPL-3.0"
     url: "https://opensource.org/licenses/MIT"
   title: "terseurl"
   version: "0.0.3"
@@ -23,7 +23,7 @@ tags:
     name: "system"
 
 schemes:
-  #  - "https"
+  - "https"
   - "http"
 
 paths:

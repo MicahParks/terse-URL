@@ -90,8 +90,23 @@ TODO
 
 ## Deployment
 
-TODO Dynamically assign port and HTTP(S) for frontend swagger spec. This is preventing the debug mode from being the
-same as `docker-compose`.
+To deploy terseurl for local development, follow the below instructions. These can be adapted for production. It is
+recommended to use embedded assets in production.
+
+### `docker-compose` development
+
+The following command will create a fresh instance of terseurl hosted via HTTPS exposing ports `80` and `443`.
+
+If using bbolt, the files must be created before a `docker-compose` starts the service. If the files are not present at
+this time, `docker-compose` will create the files as directories.
+
+```bash
+rm -rf terse.bbolt visits.bbolt
+touch terse.bbolt visits.bbolt
+docker-compose up
+```
+
+### Local development
 
 ```bash
 HOST=0.0.0.0 PORT=30000 FRONTEND_STATIC_DIR=frontend TEMPLATE_PATH=redirect.gohtml go run -race cmd/terseurl-server/main.go

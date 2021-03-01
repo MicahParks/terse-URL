@@ -5,7 +5,8 @@
 //  The Terse URL shortener.
 //  Schemes:
 //    http
-//  Host: localhost:30000
+//    https
+//  Host: terseurl.com
 //  BasePath: /
 //  Version: 0.0.3
 //  License: MIT https://opensource.org/licenses/MIT

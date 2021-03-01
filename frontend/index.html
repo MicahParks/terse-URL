@@ -304,17 +304,25 @@
 </script>
 <script>
 
-    // Set the shortened URL prefix.
-    let swaggerClient = new SwaggerClient('http://localhost:30000/swagger.json'); // TODO Change to just /swagger.json and add some logic to determine http or https.
-    swaggerClient
-        .then(
-            client => client.apis.api.shortenedPrefix(),
-            reason => console.error('failed to load the spec: ' + reason)
-        )
-        .then(
-            shortenedPrefixResult => document.getElementById("httpPrefix").textContent = JSON.parse(shortenedPrefixResult.data),
-            reason => console.error('failed on api call: ' + reason)
-        );
+    async function loadPrefix() {
+        swaggerClient
+            .then(
+                client => client.apis.api.shortenedPrefix(),
+                reason => console.error('failed to load the spec: ' + reason)
+            )
+            .then(
+                shortenedPrefixResult => document.getElementById("httpPrefix").textContent = JSON.parse(shortenedPrefixResult.data),
+                reason => console.error('failed on api call: ' + reason)
+            )
+    }
+
+
+    let swaggerClient = fetch('/swagger.json').then(response => response.json().then(editedSpec => {
+        editedSpec["schemes"] = [location.protocol.slice(0, -1)];
+        editedSpec["host"] = location.host;
+        return new SwaggerClient({spec: editedSpec});
+    }));
+    loadPrefix()
 </script>
 <script>
 
