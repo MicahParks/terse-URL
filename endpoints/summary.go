@@ -5,6 +5,7 @@ import (
 	"go.uber.org/zap"
 
 	"github.com/MicahParks/terseurl/configure"
+	"github.com/MicahParks/terseurl/models"
 	"github.com/MicahParks/terseurl/restapi/operations/api"
 	"github.com/MicahParks/terseurl/storage"
 )
@@ -12,7 +13,7 @@ import (
 // HandleShortenedSummary creates a /api/summary endpoint handler via a closure. It can provide Summary data for the
 // requested shortened URLs.
 func HandleShortenedSummary(logger *zap.SugaredLogger, manager storage.StoreManager) api.ShortenedSummaryHandlerFunc {
-	return func(params api.ShortenedSummaryParams) middleware.Responder {
+	return func(params api.ShortenedSummaryParams, principal *models.Principal) middleware.Responder {
 
 		// Debug info.
 		logger.Debugw("Requested summary data.",

@@ -5,6 +5,7 @@ import (
 	"go.uber.org/zap"
 
 	"github.com/MicahParks/terseurl/configure"
+	"github.com/MicahParks/terseurl/models"
 	"github.com/MicahParks/terseurl/restapi/operations/api"
 	"github.com/MicahParks/terseurl/storage"
 )
@@ -12,7 +13,7 @@ import (
 // HandleExport creates and /api/export endpoint handler via a closure. It can perform exports of all Terse and Visits
 // data.
 func HandleExport(logger *zap.SugaredLogger, manager storage.StoreManager) api.ExportHandlerFunc {
-	return func(params api.ExportParams) middleware.Responder {
+	return func(params api.ExportParams, principal *models.Principal) middleware.Responder {
 
 		// Log the event.
 		logger.Info("Exporting data.")

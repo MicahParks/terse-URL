@@ -457,7 +457,7 @@ definitions:
   # Schema for the auth principal. Unmarshalled from JWT in Authorization header.
   Principal:
     properties:
-      username:
+      sub:
         type: "string"
 
   # Enum for shortened URL redirect types.

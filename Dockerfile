@@ -9,7 +9,7 @@ RUN go mod download
 COPY . .
 
 # Build the code.
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -ldflags "-s -w" -o terseurl cmd/terseurl-server/main.go
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -ldflags "-s -w" -o terseurl -trimpath cmd/terseurl-server/main.go
 
 
 # The actual image being produced.

@@ -639,7 +639,7 @@ func init() {
     },
     "Principal": {
       "properties": {
-        "username": {
+        "sub": {
           "type": "string"
         }
       }
@@ -1412,7 +1412,7 @@ func init() {
     },
     "Principal": {
       "properties": {
-        "username": {
+        "sub": {
           "type": "string"
         }
       }

@@ -15,7 +15,7 @@ import (
 // HandleVisitsRead creates and /api/visits/{shortened} endpoint handler via a closure. It can perform exports of a
 // single shortened URL's Visits data.
 func HandleVisitsRead(logger *zap.SugaredLogger, manager storage.StoreManager) api.VisitsReadHandlerFunc {
-	return func(params api.VisitsReadParams) middleware.Responder {
+	return func(params api.VisitsReadParams, principal *models.Principal) middleware.Responder {
 
 		// Log the event.
 		logger.Debugw("Reading shortened URL Visits data.",

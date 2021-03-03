@@ -5,13 +5,14 @@ import (
 	"go.uber.org/zap"
 
 	"github.com/MicahParks/terseurl/configure"
+	"github.com/MicahParks/terseurl/models"
 	"github.com/MicahParks/terseurl/restapi/operations/api"
 	"github.com/MicahParks/terseurl/storage"
 )
 
 // HandleShortenedDelete TODO
 func HandleShortenedDelete(logger *zap.SugaredLogger, manager storage.StoreManager) api.ShortenedDeleteHandlerFunc {
-	return func(params api.ShortenedDeleteParams) middleware.Responder {
+	return func(params api.ShortenedDeleteParams, principal *models.Principal) middleware.Responder {
 
 		// Debug info.
 		logger.Debugw("Deleting data.",

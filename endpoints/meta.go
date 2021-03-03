@@ -6,13 +6,14 @@ import (
 
 	"github.com/MicahParks/terseurl/configure"
 	"github.com/MicahParks/terseurl/meta"
+	"github.com/MicahParks/terseurl/models"
 	"github.com/MicahParks/terseurl/restapi/operations/api"
 )
 
 // HandleMeta creates and /api/frontend/meta endpoint handler via a closure. It will assist the frontend by gathering
 // relevant HTML meta information for social media link previews.
 func HandleMeta(logger *zap.SugaredLogger) api.FrontendMetaHandlerFunc {
-	return func(params api.FrontendMetaParams) middleware.Responder {
+	return func(params api.FrontendMetaParams, principal *models.Principal) middleware.Responder {
 
 		// Debug info.
 		logger.Infow("Gathering relevant HTML meta information.",

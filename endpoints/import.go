@@ -5,6 +5,7 @@ import (
 	"go.uber.org/zap"
 
 	"github.com/MicahParks/terseurl/configure"
+	"github.com/MicahParks/terseurl/models"
 	"github.com/MicahParks/terseurl/restapi/operations/api"
 	"github.com/MicahParks/terseurl/storage"
 )
@@ -12,7 +13,7 @@ import (
 // HandleImport creates and /api/import endpoint handler via a closure. It can import Terse and or Visits data. It will
 // delete existing data before importing, if told to do so.
 func HandleImport(logger *zap.SugaredLogger, manager storage.StoreManager) api.ImportHandlerFunc {
-	return func(params api.ImportParams) middleware.Responder {
+	return func(params api.ImportParams, principal *models.Principal) middleware.Responder {
 
 		// Log the event.
 		logger.Infow("Importing data.")

@@ -16,7 +16,7 @@ import (
 // HandleWrite creates and /api/write/{operation} endpoint handler via a closure. It can perform write operations on a
 // single shortened URL's Terse data.
 func HandleWrite(logger *zap.SugaredLogger, shortID *shortid.Shortid, manager storage.StoreManager) api.TerseWriteHandlerFunc {
-	return func(params api.TerseWriteParams) middleware.Responder {
+	return func(params api.TerseWriteParams, principal *models.Principal) middleware.Responder {
 
 		// Debug info.
 		logger.Debugw("Terse data",

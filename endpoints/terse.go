@@ -7,6 +7,7 @@ import (
 	"go.uber.org/zap"
 
 	"github.com/MicahParks/terseurl/configure"
+	"github.com/MicahParks/terseurl/models"
 	"github.com/MicahParks/terseurl/restapi/operations/api"
 	"github.com/MicahParks/terseurl/storage"
 )
@@ -14,7 +15,7 @@ import (
 // HandleTerseRead creates and /api/terse/{shortened} endpoint handler via a closure. It can perform exports of a single
 // shortened URL's Terse data.
 func HandleTerseRead(logger *zap.SugaredLogger, manager storage.StoreManager) api.TerseReadHandlerFunc {
-	return func(params api.TerseReadParams) middleware.Responder {
+	return func(params api.TerseReadParams, principal *models.Principal) middleware.Responder {
 
 		// Log the event.
 		logger.Infow("Reading a shortened URL's Terse data.",

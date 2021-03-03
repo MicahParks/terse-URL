@@ -17,8 +17,8 @@ import (
 // swagger:model Principal
 type Principal struct {
 
-	// username
-	Username string `json:"username,omitempty"`
+	// sub
+	Sub string `json:"sub,omitempty"`
 }
 
 // Validate validates this principal

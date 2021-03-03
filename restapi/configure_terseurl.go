@@ -4,14 +4,11 @@ package restapi
 
 import (
 	"crypto/tls"
-	"fmt"
 	"log"
 	"net/http"
 	"os"
-	"strings"
 	"time"
 
-	"github.com/dgrijalva/jwt-go"
 	"github.com/didip/tollbooth"
 	"github.com/didip/tollbooth/limiter"
 	"github.com/go-openapi/errors"
@@ -19,12 +16,12 @@ import (
 
 	"github.com/MicahParks/jwks"
 
+	"github.com/MicahParks/terseurl/auth"
 	"github.com/MicahParks/terseurl/configure"
 	"github.com/MicahParks/terseurl/endpoints"
 	"github.com/MicahParks/terseurl/endpoints/public"
 	"github.com/MicahParks/terseurl/endpoints/system"
 	"github.com/MicahParks/terseurl/middleware"
-	"github.com/MicahParks/terseurl/models"
 	"github.com/MicahParks/terseurl/restapi/operations"
 )
 
@@ -62,20 +59,7 @@ func configureAPI(api *operations.TerseurlAPI) http.Handler {
 			"error", err.Error(),
 		)
 	}
-	api.JWTAuth = func(jwtB64 string) (*models.Principal, error) { // TODO Move to another package.
-
-		// Remove the "Bearer " prefix.
-		jwtB64 = strings.TrimPrefix(jwtB64, "Bearer ")
-
-		token, err := jwt.Parse(jwtB64, func(token *jwt.Token) (interface{}, error) {
-			return ks.RSA(token.Header["kid"].(string)) // TODO
-		})
-		if err != nil {
-			return nil, fmt.Errorf("failed to parse token: %w", err)
-		}
-
-		// TODO Unmarshal into principal.
-	}
+	api.JWTAuth = auth.HandleJWT(ks)
 
 	// Assign the endpoint handlers.
 	api.APIExportHandler = endpoints.HandleExport(logger.Named("POST /api/export"), config.StoreManager)

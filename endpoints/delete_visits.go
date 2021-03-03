@@ -5,13 +5,14 @@ import (
 	"go.uber.org/zap"
 
 	"github.com/MicahParks/terseurl/configure"
+	"github.com/MicahParks/terseurl/models"
 	"github.com/MicahParks/terseurl/restapi/operations/api"
 	"github.com/MicahParks/terseurl/storage"
 )
 
 // HandlerVisitsDelete TODO
 func HandlerVisitsDelete(logger *zap.SugaredLogger, manager storage.StoreManager) api.VisitsDeleteHandlerFunc {
-	return func(params api.VisitsDeleteParams) middleware.Responder {
+	return func(params api.VisitsDeleteParams, principal *models.Principal) middleware.Responder {
 
 		// Debug info.
 		logger.Debugw("Deleting Visits data.",
