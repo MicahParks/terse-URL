@@ -18,16 +18,16 @@ import (
 )
 
 // FrontendMetaHandlerFunc turns a function with the right signature into a frontend meta handler
-type FrontendMetaHandlerFunc func(FrontendMetaParams) middleware.Responder
+type FrontendMetaHandlerFunc func(FrontendMetaParams, *models.Principal) middleware.Responder
 
 // Handle executing the request and returning a response
-func (fn FrontendMetaHandlerFunc) Handle(params FrontendMetaParams) middleware.Responder {
-	return fn(params)
+func (fn FrontendMetaHandlerFunc) Handle(params FrontendMetaParams, principal *models.Principal) middleware.Responder {
+	return fn(params, principal)
 }
 
 // FrontendMetaHandler interface for that can handle valid frontend meta params
 type FrontendMetaHandler interface {
-	Handle(FrontendMetaParams) middleware.Responder
+	Handle(FrontendMetaParams, *models.Principal) middleware.Responder
 }
 
 // NewFrontendMeta creates a new http.Handler for the frontend meta operation
@@ -53,12 +53,25 @@ func (o *FrontendMeta) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 		r = rCtx
 	}
 	var Params = NewFrontendMetaParams()
+	uprinc, aCtx, err := o.Context.Authorize(r, route)
+	if err != nil {
+		o.Context.Respond(rw, r, route.Produces, route, err)
+		return
+	}
+	if aCtx != nil {
+		r = aCtx
+	}
+	var principal *models.Principal
+	if uprinc != nil {
+		principal = uprinc.(*models.Principal) // this is really a models.Principal, I promise
+	}
+
 	if err := o.Context.BindValidRequest(r, route, &Params); err != nil { // bind params
 		o.Context.Respond(rw, r, route.Produces, route, err)
 		return
 	}
 
-	res := o.Handler.Handle(Params) // actually handle the request
+	res := o.Handler.Handle(Params, principal) // actually handle the request
 	o.Context.Respond(rw, r, route.Produces, route, res)
 
 }

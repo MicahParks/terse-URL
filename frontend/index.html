@@ -13,8 +13,23 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"
             integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW"
             crossorigin="anonymous"></script>
+    <script src="http://localhost:8080/auth/js/keycloak.js"></script>
+    <script>
+        let keycloak;
+
+        function initKeycloak() {
+            keycloak = new Keycloak();
+            keycloak.init({
+                onLoad: 'login-required'
+            }).then(function (authenticated) {
+                alert(authenticated ? 'authenticated' : 'not authenticated');
+            }).catch(function () {
+                alert('failed to initialize');
+            });
+        }
+    </script>
 </head>
-<body>
+<body onload="initKeycloak()">
 
 <div class="d-flex" id="wrapper">
     <div class="bg-light border-right" id="sidebar-wrapper">
@@ -316,11 +331,16 @@
             )
     }
 
+    const requestInterceptor = (request) => {
+        request.headers["Authorization"] = 'Bearer ' + keycloak.token;
+        console.log(request);
+        return request;
+    };
 
     let swaggerClient = fetch('/swagger.json').then(response => response.json().then(editedSpec => {
         editedSpec["schemes"] = [location.protocol.slice(0, -1)];
         editedSpec["host"] = location.host;
-        return new SwaggerClient({spec: editedSpec});
+        return new SwaggerClient({spec: editedSpec, requestInterceptor: requestInterceptor});
     }));
     loadPrefix()
 </script>

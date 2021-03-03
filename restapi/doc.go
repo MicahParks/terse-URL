@@ -9,7 +9,7 @@
 //  Host: terseurl.com
 //  BasePath: /
 //  Version: 0.0.3
-//  License: MIT https://opensource.org/licenses/MIT
+//  License: AGPL-3.0 https://opensource.org/licenses/MIT
 //
 //  Consumes:
 //    - application/json

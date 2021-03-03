@@ -70,7 +70,7 @@ func Configure() (config Configuration, err error) {
 		logger.Fatalw("Failed to configure file system for static frontend assets.",
 			"error", err.Error(),
 		)
-	}
+	} // TODO Remove.
 
 	// Set the database timeout.
 	defaultTimeout = rawConfig.DefaultTimeout

@@ -9,19 +9,21 @@ import (
 	"net/http"
 
 	"github.com/go-openapi/runtime/middleware"
+
+	"github.com/MicahParks/terseurl/models"
 )
 
 // ShortenedSummaryHandlerFunc turns a function with the right signature into a shortened summary handler
-type ShortenedSummaryHandlerFunc func(ShortenedSummaryParams) middleware.Responder
+type ShortenedSummaryHandlerFunc func(ShortenedSummaryParams, *models.Principal) middleware.Responder
 
 // Handle executing the request and returning a response
-func (fn ShortenedSummaryHandlerFunc) Handle(params ShortenedSummaryParams) middleware.Responder {
-	return fn(params)
+func (fn ShortenedSummaryHandlerFunc) Handle(params ShortenedSummaryParams, principal *models.Principal) middleware.Responder {
+	return fn(params, principal)
 }
 
 // ShortenedSummaryHandler interface for that can handle valid shortened summary params
 type ShortenedSummaryHandler interface {
-	Handle(ShortenedSummaryParams) middleware.Responder
+	Handle(ShortenedSummaryParams, *models.Principal) middleware.Responder
 }
 
 // NewShortenedSummary creates a new http.Handler for the shortened summary operation
@@ -47,12 +49,25 @@ func (o *ShortenedSummary) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 		r = rCtx
 	}
 	var Params = NewShortenedSummaryParams()
+	uprinc, aCtx, err := o.Context.Authorize(r, route)
+	if err != nil {
+		o.Context.Respond(rw, r, route.Produces, route, err)
+		return
+	}
+	if aCtx != nil {
+		r = aCtx
+	}
+	var principal *models.Principal
+	if uprinc != nil {
+		principal = uprinc.(*models.Principal) // this is really a models.Principal, I promise
+	}
+
 	if err := o.Context.BindValidRequest(r, route, &Params); err != nil { // bind params
 		o.Context.Respond(rw, r, route.Produces, route, err)
 		return
 	}
 
-	res := o.Handler.Handle(Params) // actually handle the request
+	res := o.Handler.Handle(Params, principal) // actually handle the request
 	o.Context.Respond(rw, r, route.Produces, route, res)
 
 }

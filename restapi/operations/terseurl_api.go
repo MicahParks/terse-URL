@@ -20,6 +20,7 @@ import (
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 
+	"github.com/MicahParks/terseurl/models"
 	apiops "github.com/MicahParks/terseurl/restapi/operations/api"
 	"github.com/MicahParks/terseurl/restapi/operations/public"
 	"github.com/MicahParks/terseurl/restapi/operations/system"
@@ -50,42 +51,49 @@ func NewTerseurlAPI(spec *loads.Document) *TerseurlAPI {
 		}),
 		JSONProducer: runtime.JSONProducer(),
 
-		APIExportHandler: apiops.ExportHandlerFunc(func(params apiops.ExportParams) middleware.Responder {
+		APIExportHandler: apiops.ExportHandlerFunc(func(params apiops.ExportParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation api.Export has not yet been implemented")
 		}),
-		APIFrontendMetaHandler: apiops.FrontendMetaHandlerFunc(func(params apiops.FrontendMetaParams) middleware.Responder {
+		APIFrontendMetaHandler: apiops.FrontendMetaHandlerFunc(func(params apiops.FrontendMetaParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation api.FrontendMeta has not yet been implemented")
 		}),
-		APIImportHandler: apiops.ImportHandlerFunc(func(params apiops.ImportParams) middleware.Responder {
+		APIImportHandler: apiops.ImportHandlerFunc(func(params apiops.ImportParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation api.Import has not yet been implemented")
 		}),
 		PublicPublicRedirectHandler: public.PublicRedirectHandlerFunc(func(params public.PublicRedirectParams) middleware.Responder {
 			return middleware.NotImplemented("operation public.PublicRedirect has not yet been implemented")
 		}),
-		APIShortenedDeleteHandler: apiops.ShortenedDeleteHandlerFunc(func(params apiops.ShortenedDeleteParams) middleware.Responder {
+		APIShortenedDeleteHandler: apiops.ShortenedDeleteHandlerFunc(func(params apiops.ShortenedDeleteParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation api.ShortenedDelete has not yet been implemented")
 		}),
-		APIShortenedPrefixHandler: apiops.ShortenedPrefixHandlerFunc(func(params apiops.ShortenedPrefixParams) middleware.Responder {
+		APIShortenedPrefixHandler: apiops.ShortenedPrefixHandlerFunc(func(params apiops.ShortenedPrefixParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation api.ShortenedPrefix has not yet been implemented")
 		}),
-		APIShortenedSummaryHandler: apiops.ShortenedSummaryHandlerFunc(func(params apiops.ShortenedSummaryParams) middleware.Responder {
+		APIShortenedSummaryHandler: apiops.ShortenedSummaryHandlerFunc(func(params apiops.ShortenedSummaryParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation api.ShortenedSummary has not yet been implemented")
 		}),
 		SystemSystemAliveHandler: system.SystemAliveHandlerFunc(func(params system.SystemAliveParams) middleware.Responder {
 			return middleware.NotImplemented("operation system.SystemAlive has not yet been implemented")
 		}),
-		APITerseReadHandler: apiops.TerseReadHandlerFunc(func(params apiops.TerseReadParams) middleware.Responder {
+		APITerseReadHandler: apiops.TerseReadHandlerFunc(func(params apiops.TerseReadParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation api.TerseRead has not yet been implemented")
 		}),
-		APITerseWriteHandler: apiops.TerseWriteHandlerFunc(func(params apiops.TerseWriteParams) middleware.Responder {
+		APITerseWriteHandler: apiops.TerseWriteHandlerFunc(func(params apiops.TerseWriteParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation api.TerseWrite has not yet been implemented")
 		}),
-		APIVisitsDeleteHandler: apiops.VisitsDeleteHandlerFunc(func(params apiops.VisitsDeleteParams) middleware.Responder {
+		APIVisitsDeleteHandler: apiops.VisitsDeleteHandlerFunc(func(params apiops.VisitsDeleteParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation api.VisitsDelete has not yet been implemented")
 		}),
-		APIVisitsReadHandler: apiops.VisitsReadHandlerFunc(func(params apiops.VisitsReadParams) middleware.Responder {
+		APIVisitsReadHandler: apiops.VisitsReadHandlerFunc(func(params apiops.VisitsReadParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation api.VisitsRead has not yet been implemented")
 		}),
+
+		// Applies when the "Authorization" header is set
+		JWTAuth: func(token string) (*models.Principal, error) {
+			return nil, errors.NotImplemented("api key auth (JWT) Authorization from header param [Authorization] has not yet been implemented")
+		},
+		// default authorizer is authorized meaning no requests are blocked
+		APIAuthorizer: security.Authorized(),
 	}
 }
 
@@ -124,6 +132,13 @@ type TerseurlAPI struct {
 	// JSONProducer registers a producer for the following mime types:
 	//   - application/json
 	JSONProducer runtime.Producer
+
+	// JWTAuth registers a function that takes a token and returns a principal
+	// it performs authentication based on an api key Authorization provided in the header
+	JWTAuth func(string) (*models.Principal, error)
+
+	// APIAuthorizer provides access control (ACL/RBAC/ABAC) by providing access to the request and authenticated principal
+	APIAuthorizer runtime.Authorizer
 
 	// APIExportHandler sets the operation handler for the export operation
 	APIExportHandler apiops.ExportHandler
@@ -229,6 +244,10 @@ func (o *TerseurlAPI) Validate() error {
 		unregistered = append(unregistered, "JSONProducer")
 	}
 
+	if o.JWTAuth == nil {
+		unregistered = append(unregistered, "AuthorizationAuth")
+	}
+
 	if o.APIExportHandler == nil {
 		unregistered = append(unregistered, "api.ExportHandler")
 	}
@@ -280,12 +299,23 @@ func (o *TerseurlAPI) ServeErrorFor(operationID string) func(http.ResponseWriter
 
 // AuthenticatorsFor gets the authenticators for the specified security schemes
 func (o *TerseurlAPI) AuthenticatorsFor(schemes map[string]spec.SecurityScheme) map[string]runtime.Authenticator {
-	return nil
+	result := make(map[string]runtime.Authenticator)
+	for name := range schemes {
+		switch name {
+		case "JWT":
+			scheme := schemes[name]
+			result[name] = o.APIKeyAuthenticator(scheme.Name, scheme.In, func(token string) (interface{}, error) {
+				return o.JWTAuth(token)
+			})
+
+		}
+	}
+	return result
 }
 
 // Authorizer returns the registered authorizer
 func (o *TerseurlAPI) Authorizer() runtime.Authorizer {
-	return nil
+	return o.APIAuthorizer
 }
 
 // ConsumersFor gets the consumers for the specified media types.

@@ -12,6 +12,12 @@ info:
   title: "terseurl"
   version: "0.0.3"
 
+securityDefinitions:
+  JWT:
+    type: "apiKey"
+    name: "Authorization"
+    in: "header"
+
 tags:
   - description: "Endpoints to perform operations on Terse data."
     name: "api"
@@ -67,6 +73,8 @@ paths:
           description: "Unexpected error."
           schema:
             $ref: "#/definitions/Error"
+      security:
+        - JWT: [ ]
       tags:
         - "api"
 
@@ -100,6 +108,8 @@ paths:
           description: "Unexpected error."
           schema:
             $ref: "#/definitions/Error"
+      security:
+        - JWT: [ ]
       tags:
         - "api"
 
@@ -129,6 +139,8 @@ paths:
           description: "Unexpected error."
           schema:
             $ref: "#/definitions/Error"
+      security:
+        - JWT: [ ]
       tags:
         - "api"
 
@@ -146,6 +158,8 @@ paths:
           description: "Unexpected error."
           schema:
             $ref: "#/definitions/Error"
+      security:
+        - JWT: [ ]
       tags:
         - "api"
 
@@ -179,6 +193,8 @@ paths:
           description: "Unexpected error."
           schema:
             $ref: "#/definitions/Error"
+      security:
+        - JWT: [ ]
       tags:
         - "api"
 
@@ -208,6 +224,8 @@ paths:
           description: "Unexpected error."
           schema:
             $ref: "#/definitions/Error"
+      security:
+        - JWT: [ ]
       tags:
         - "api"
 
@@ -240,6 +258,8 @@ paths:
           description: "Unexpected error."
           schema:
             $ref: "#/definitions/Error"
+      security:
+        - JWT: [ ]
       tags:
         - "api"
 
@@ -269,6 +289,8 @@ paths:
           description: "Unexpected error."
           schema:
             $ref: "#/definitions/Error"
+      security:
+        - JWT: [ ]
       tags:
         - "api"
     post:
@@ -300,6 +322,8 @@ paths:
           description: "Unexpected error."
           schema:
             $ref: "#/definitions/Error"
+      security:
+        - JWT: [ ]
       tags:
         - "api"
 
@@ -345,6 +369,8 @@ paths:
           description: "Unexpected error."
           schema:
             $ref: "#/definitions/Error"
+      security:
+        - JWT: [ ]
       tags:
         - "api"
 
@@ -427,6 +453,12 @@ definitions:
   OpenGraph:
     additionalProperties:
       type: "string"
+
+  # Schema for the auth principal. Unmarshalled from JWT in Authorization header.
+  Principal:
+    properties:
+      username:
+        type: "string"
 
   # Enum for shortened URL redirect types.
   RedirectType:

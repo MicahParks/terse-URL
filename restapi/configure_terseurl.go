@@ -4,20 +4,27 @@ package restapi
 
 import (
 	"crypto/tls"
+	"fmt"
 	"log"
 	"net/http"
+	"os"
+	"strings"
 	"time"
 
+	"github.com/dgrijalva/jwt-go"
 	"github.com/didip/tollbooth"
 	"github.com/didip/tollbooth/limiter"
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
+
+	"github.com/MicahParks/jwks"
 
 	"github.com/MicahParks/terseurl/configure"
 	"github.com/MicahParks/terseurl/endpoints"
 	"github.com/MicahParks/terseurl/endpoints/public"
 	"github.com/MicahParks/terseurl/endpoints/system"
 	"github.com/MicahParks/terseurl/middleware"
+	"github.com/MicahParks/terseurl/models"
 	"github.com/MicahParks/terseurl/restapi/operations"
 )
 
@@ -45,6 +52,30 @@ func configureAPI(api *operations.TerseurlAPI) http.Handler {
 
 	// Create the HTML producer.
 	api.HTMLProducer = configure.HTMLProducer(logger)
+
+	// Configure the JWT auth.
+	//
+	// TODO Check for configuration if auth is turned off.
+	var ks jwks.Keystore
+	if ks, err = jwks.Get(nil, "http://localhost:8080/auth/realms/master/protocol/openid-connect/certs"); err != nil { // TODO Get from config.
+		logger.Fatalw("failed to get JWKS", // TODO Remove.
+			"error", err.Error(),
+		)
+	}
+	api.JWTAuth = func(jwtB64 string) (*models.Principal, error) { // TODO Move to another package.
+
+		// Remove the "Bearer " prefix.
+		jwtB64 = strings.TrimPrefix(jwtB64, "Bearer ")
+
+		token, err := jwt.Parse(jwtB64, func(token *jwt.Token) (interface{}, error) {
+			return ks.RSA(token.Header["kid"].(string)) // TODO
+		})
+		if err != nil {
+			return nil, fmt.Errorf("failed to parse token: %w", err)
+		}
+
+		// TODO Unmarshal into principal.
+	}
 
 	// Assign the endpoint handlers.
 	api.APIExportHandler = endpoints.HandleExport(logger.Named("POST /api/export"), config.StoreManager)
@@ -117,7 +148,8 @@ func setupGlobalMiddleware(handler http.Handler) http.Handler {
 	// Set up the frontend middleware.
 	//
 	// TODO Add function in configure package for grabbing this string value.
-	frontendMiddleware, err := middleware.FrontendMiddleware("frontend", toll)
+	frontendDir := os.Getenv("FRONTEND_STATIC_DIR")
+	frontendMiddleware, err := middleware.FrontendMiddleware(frontendDir, toll)
 	if err != nil {
 		log.Fatalln(err.Error())
 	}

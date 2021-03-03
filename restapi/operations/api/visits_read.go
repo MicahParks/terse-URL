@@ -9,19 +9,21 @@ import (
 	"net/http"
 
 	"github.com/go-openapi/runtime/middleware"
+
+	"github.com/MicahParks/terseurl/models"
 )
 
 // VisitsReadHandlerFunc turns a function with the right signature into a visits read handler
-type VisitsReadHandlerFunc func(VisitsReadParams) middleware.Responder
+type VisitsReadHandlerFunc func(VisitsReadParams, *models.Principal) middleware.Responder
 
 // Handle executing the request and returning a response
-func (fn VisitsReadHandlerFunc) Handle(params VisitsReadParams) middleware.Responder {
-	return fn(params)
+func (fn VisitsReadHandlerFunc) Handle(params VisitsReadParams, principal *models.Principal) middleware.Responder {
+	return fn(params, principal)
 }
 
 // VisitsReadHandler interface for that can handle valid visits read params
 type VisitsReadHandler interface {
-	Handle(VisitsReadParams) middleware.Responder
+	Handle(VisitsReadParams, *models.Principal) middleware.Responder
 }
 
 // NewVisitsRead creates a new http.Handler for the visits read operation
@@ -47,12 +49,25 @@ func (o *VisitsRead) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 		r = rCtx
 	}
 	var Params = NewVisitsReadParams()
+	uprinc, aCtx, err := o.Context.Authorize(r, route)
+	if err != nil {
+		o.Context.Respond(rw, r, route.Produces, route, err)
+		return
+	}
+	if aCtx != nil {
+		r = aCtx
+	}
+	var principal *models.Principal
+	if uprinc != nil {
+		principal = uprinc.(*models.Principal) // this is really a models.Principal, I promise
+	}
+
 	if err := o.Context.BindValidRequest(r, route, &Params); err != nil { // bind params
 		o.Context.Respond(rw, r, route.Produces, route, err)
 		return
 	}
 
-	res := o.Handler.Handle(Params) // actually handle the request
+	res := o.Handler.Handle(Params, principal) // actually handle the request
 	o.Context.Respond(rw, r, route.Produces, route, res)
 
 }

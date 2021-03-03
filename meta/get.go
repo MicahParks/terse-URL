@@ -21,7 +21,7 @@ func Get(ctx context.Context, u string) (og models.OpenGraph, twitter models.Twi
 
 	// Perform an HTTP get on the URL.
 	var resp *http.Response
-	if resp, err = http.DefaultClient.Do(req); err != nil { // TODO Use a non default HTTP client?
+	if resp, err = http.DefaultClient.Do(req); err != nil { // TODO Use a non default HTTP client? Without following redirects?
 		return nil, nil, err
 	}
 	defer resp.Body.Close() // Ignore any error.

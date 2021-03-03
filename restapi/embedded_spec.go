@@ -27,7 +27,7 @@ func init() {
     "description": "The Terse URL shortener.",
     "title": "terseurl",
     "license": {
-      "name": "MIT",
+      "name": "AGPL-3.0",
       "url": "https://opensource.org/licenses/MIT"
     },
     "version": "0.0.3"
@@ -52,6 +52,11 @@ func init() {
     },
     "/api/export": {
       "post": {
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
         "description": "Export Terse and Visits data for the given shortened URLs. If shortenedURLs is null, then export all shortened URLs.",
         "consumes": [
           "application/json"
@@ -98,6 +103,11 @@ func init() {
     },
     "/api/frontend/meta": {
       "post": {
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
         "description": "This endpoint is intended for use only by the frontend. It will perform an HTTP GET request to the originalURL, extract all meta tag information for social media link previews, then return it.",
         "consumes": [
           "application/json"
@@ -144,6 +154,11 @@ func init() {
     },
     "/api/import": {
       "post": {
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
         "description": "Any imported data will overwrite existing data. Unless deletion information is specified. In that case all Terse or Visits data can be deleted before importing the new data.",
         "consumes": [
           "application/json"
@@ -182,6 +197,11 @@ func init() {
     },
     "/api/prefix": {
       "get": {
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
         "description": "Provides the HTTP prefix all shortened URLs have.",
         "tags": [
           "api"
@@ -206,6 +226,11 @@ func init() {
     },
     "/api/shortened": {
       "delete": {
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
         "description": "Delete all assets for the given shortened URLs. This includes all Terse data, Visits data, and Summary data.",
         "consumes": [
           "application/json"
@@ -247,6 +272,11 @@ func init() {
     },
     "/api/summary": {
       "post": {
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
         "description": "Summary data includes the shortened URL, the original URL, the type of redirect, and the number of visits.",
         "consumes": [
           "application/json"
@@ -293,6 +323,11 @@ func init() {
     },
     "/api/terse": {
       "post": {
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
         "description": "Read the Terse data for the given shortened URL.",
         "consumes": [
           "application/json"
@@ -340,6 +375,11 @@ func init() {
     },
     "/api/visits": {
       "post": {
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
         "description": "Read the Visits data for the given shortened URLs.",
         "consumes": [
           "application/json"
@@ -387,6 +427,11 @@ func init() {
         }
       },
       "delete": {
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
         "description": "Delete all Visits data for the given shortened URLs. This will affect Summary data.",
         "consumes": [
           "application/json"
@@ -428,6 +473,11 @@ func init() {
     },
     "/api/write/{operation}": {
       "post": {
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
         "description": "\"insert\" will fail if the shortened URL already exists. \"update\" will fail if the shortened URL does not already exist. \"upsert\" will only fail if there is a failure interacting with the underlying storage. If no shortened URL is included in the given Terse data, one will be generated randomly and returned in the response.",
         "consumes": [
           "application/json"
@@ -587,6 +637,13 @@ func init() {
         "type": "string"
       }
     },
+    "Principal": {
+      "properties": {
+        "username": {
+          "type": "string"
+        }
+      }
+    },
     "RedirectType": {
       "type": "string",
       "enum": [
@@ -705,6 +762,13 @@ func init() {
           "format": "uint"
         }
       }
+    }
+  },
+  "securityDefinitions": {
+    "JWT": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
     }
   },
   "tags": [
@@ -736,7 +800,7 @@ func init() {
     "description": "The Terse URL shortener.",
     "title": "terseurl",
     "license": {
-      "name": "MIT",
+      "name": "AGPL-3.0",
       "url": "https://opensource.org/licenses/MIT"
     },
     "version": "0.0.3"
@@ -761,6 +825,11 @@ func init() {
     },
     "/api/export": {
       "post": {
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
         "description": "Export Terse and Visits data for the given shortened URLs. If shortenedURLs is null, then export all shortened URLs.",
         "consumes": [
           "application/json"
@@ -807,6 +876,11 @@ func init() {
     },
     "/api/frontend/meta": {
       "post": {
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
         "description": "This endpoint is intended for use only by the frontend. It will perform an HTTP GET request to the originalURL, extract all meta tag information for social media link previews, then return it.",
         "consumes": [
           "application/json"
@@ -853,6 +927,11 @@ func init() {
     },
     "/api/import": {
       "post": {
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
         "description": "Any imported data will overwrite existing data. Unless deletion information is specified. In that case all Terse or Visits data can be deleted before importing the new data.",
         "consumes": [
           "application/json"
@@ -891,6 +970,11 @@ func init() {
     },
     "/api/prefix": {
       "get": {
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
         "description": "Provides the HTTP prefix all shortened URLs have.",
         "tags": [
           "api"
@@ -915,6 +999,11 @@ func init() {
     },
     "/api/shortened": {
       "delete": {
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
         "description": "Delete all assets for the given shortened URLs. This includes all Terse data, Visits data, and Summary data.",
         "consumes": [
           "application/json"
@@ -956,6 +1045,11 @@ func init() {
     },
     "/api/summary": {
       "post": {
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
         "description": "Summary data includes the shortened URL, the original URL, the type of redirect, and the number of visits.",
         "consumes": [
           "application/json"
@@ -1002,6 +1096,11 @@ func init() {
     },
     "/api/terse": {
       "post": {
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
         "description": "Read the Terse data for the given shortened URL.",
         "consumes": [
           "application/json"
@@ -1049,6 +1148,11 @@ func init() {
     },
     "/api/visits": {
       "post": {
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
         "description": "Read the Visits data for the given shortened URLs.",
         "consumes": [
           "application/json"
@@ -1096,6 +1200,11 @@ func init() {
         }
       },
       "delete": {
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
         "description": "Delete all Visits data for the given shortened URLs. This will affect Summary data.",
         "consumes": [
           "application/json"
@@ -1137,6 +1246,11 @@ func init() {
     },
     "/api/write/{operation}": {
       "post": {
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
         "description": "\"insert\" will fail if the shortened URL already exists. \"update\" will fail if the shortened URL does not already exist. \"upsert\" will only fail if there is a failure interacting with the underlying storage. If no shortened URL is included in the given Terse data, one will be generated randomly and returned in the response.",
         "consumes": [
           "application/json"
@@ -1296,6 +1410,13 @@ func init() {
         "type": "string"
       }
     },
+    "Principal": {
+      "properties": {
+        "username": {
+          "type": "string"
+        }
+      }
+    },
     "RedirectType": {
       "type": "string",
       "enum": [
@@ -1414,6 +1535,13 @@ func init() {
           "format": "uint"
         }
       }
+    }
+  },
+  "securityDefinitions": {
+    "JWT": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
     }
   },
   "tags": [

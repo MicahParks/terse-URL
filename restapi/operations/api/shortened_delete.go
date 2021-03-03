@@ -9,19 +9,21 @@ import (
 	"net/http"
 
 	"github.com/go-openapi/runtime/middleware"
+
+	"github.com/MicahParks/terseurl/models"
 )
 
 // ShortenedDeleteHandlerFunc turns a function with the right signature into a shortened delete handler
-type ShortenedDeleteHandlerFunc func(ShortenedDeleteParams) middleware.Responder
+type ShortenedDeleteHandlerFunc func(ShortenedDeleteParams, *models.Principal) middleware.Responder
 
 // Handle executing the request and returning a response
-func (fn ShortenedDeleteHandlerFunc) Handle(params ShortenedDeleteParams) middleware.Responder {
-	return fn(params)
+func (fn ShortenedDeleteHandlerFunc) Handle(params ShortenedDeleteParams, principal *models.Principal) middleware.Responder {
+	return fn(params, principal)
 }
 
 // ShortenedDeleteHandler interface for that can handle valid shortened delete params
 type ShortenedDeleteHandler interface {
-	Handle(ShortenedDeleteParams) middleware.Responder
+	Handle(ShortenedDeleteParams, *models.Principal) middleware.Responder
 }
 
 // NewShortenedDelete creates a new http.Handler for the shortened delete operation
@@ -47,12 +49,25 @@ func (o *ShortenedDelete) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 		r = rCtx
 	}
 	var Params = NewShortenedDeleteParams()
+	uprinc, aCtx, err := o.Context.Authorize(r, route)
+	if err != nil {
+		o.Context.Respond(rw, r, route.Produces, route, err)
+		return
+	}
+	if aCtx != nil {
+		r = aCtx
+	}
+	var principal *models.Principal
+	if uprinc != nil {
+		principal = uprinc.(*models.Principal) // this is really a models.Principal, I promise
+	}
+
 	if err := o.Context.BindValidRequest(r, route, &Params); err != nil { // bind params
 		o.Context.Respond(rw, r, route.Produces, route, err)
 		return
 	}
 
-	res := o.Handler.Handle(Params) // actually handle the request
+	res := o.Handler.Handle(Params, principal) // actually handle the request
 	o.Context.Respond(rw, r, route.Produces, route, res)
 
 }

@@ -9,19 +9,21 @@ import (
 	"net/http"
 
 	"github.com/go-openapi/runtime/middleware"
+
+	"github.com/MicahParks/terseurl/models"
 )
 
 // TerseReadHandlerFunc turns a function with the right signature into a terse read handler
-type TerseReadHandlerFunc func(TerseReadParams) middleware.Responder
+type TerseReadHandlerFunc func(TerseReadParams, *models.Principal) middleware.Responder
 
 // Handle executing the request and returning a response
-func (fn TerseReadHandlerFunc) Handle(params TerseReadParams) middleware.Responder {
-	return fn(params)
+func (fn TerseReadHandlerFunc) Handle(params TerseReadParams, principal *models.Principal) middleware.Responder {
+	return fn(params, principal)
 }
 
 // TerseReadHandler interface for that can handle valid terse read params
 type TerseReadHandler interface {
-	Handle(TerseReadParams) middleware.Responder
+	Handle(TerseReadParams, *models.Principal) middleware.Responder
 }
 
 // NewTerseRead creates a new http.Handler for the terse read operation
@@ -47,12 +49,25 @@ func (o *TerseRead) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 		r = rCtx
 	}
 	var Params = NewTerseReadParams()
+	uprinc, aCtx, err := o.Context.Authorize(r, route)
+	if err != nil {
+		o.Context.Respond(rw, r, route.Produces, route, err)
+		return
+	}
+	if aCtx != nil {
+		r = aCtx
+	}
+	var principal *models.Principal
+	if uprinc != nil {
+		principal = uprinc.(*models.Principal) // this is really a models.Principal, I promise
+	}
+
 	if err := o.Context.BindValidRequest(r, route, &Params); err != nil { // bind params
 		o.Context.Respond(rw, r, route.Produces, route, err)
 		return
 	}
 
-	res := o.Handler.Handle(Params) // actually handle the request
+	res := o.Handler.Handle(Params, principal) // actually handle the request
 	o.Context.Respond(rw, r, route.Produces, route, res)
 
 }
