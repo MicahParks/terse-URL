@@ -4,10 +4,12 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"net/http"
 	"strings"
 
 	"github.com/MicahParks/jwks"
 	"github.com/dgrijalva/jwt-go"
+	"go.uber.org/zap"
 
 	"github.com/MicahParks/terseurl/models"
 )
@@ -27,7 +29,14 @@ type JWTHandler func(jwtB64 string) (principal *models.Principal, err error)
 // HandleJWT creates a JWT auth handler via a closure.
 //
 // TODO Add logging. Error is returned to user. Log error. Generic thing back to user.
-func HandleJWT(ks jwks.Keystore) (authHandler JWTHandler) {
+func HandleJWT(client *http.Client, jwksURL string, logger *zap.SugaredLogger) (authHandler JWTHandler, err error) {
+
+	// Create the JWKS from the asset at the given URL.
+	var ks jwks.Keystore
+	if ks, err = jwks.Get(client, jwksURL); err != nil { // TODO Get from config.
+		return nil, err
+	}
+
 	return func(jwtB64 string) (principal *models.Principal, err error) {
 
 		// Remove the "Bearer " prefix.
@@ -63,5 +72,5 @@ func HandleJWT(ks jwks.Keystore) (authHandler JWTHandler) {
 		}
 
 		return principal, nil
-	}
+	}, nil
 }

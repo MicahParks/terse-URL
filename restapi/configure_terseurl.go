@@ -14,14 +14,13 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 
-	"github.com/MicahParks/jwks"
-
 	"github.com/MicahParks/terseurl/auth"
 	"github.com/MicahParks/terseurl/configure"
 	"github.com/MicahParks/terseurl/endpoints"
 	"github.com/MicahParks/terseurl/endpoints/public"
 	"github.com/MicahParks/terseurl/endpoints/system"
 	"github.com/MicahParks/terseurl/middleware"
+	"github.com/MicahParks/terseurl/models"
 	"github.com/MicahParks/terseurl/restapi/operations"
 )
 
@@ -50,16 +49,23 @@ func configureAPI(api *operations.TerseurlAPI) http.Handler {
 	// Create the HTML producer.
 	api.HTMLProducer = configure.HTMLProducer(logger)
 
-	// Configure the JWT auth.
-	//
-	// TODO Check for configuration if auth is turned off.
-	var ks jwks.Keystore
-	if ks, err = jwks.Get(nil, "http://localhost:8080/auth/realms/master/protocol/openid-connect/certs"); err != nil { // TODO Get from config.
-		logger.Fatalw("failed to get JWKS", // TODO Remove.
-			"error", err.Error(),
-		)
+	// Check to see if auth is turned on.
+	if config.UseAuth {
+
+		// Configure the JWT auth.
+		//
+		// TODO Check for configuration if auth is turned off.
+		api.JWTAuth, err = auth.HandleJWT(nil, config.JWKSURL, logger.Named("JWT Authenticator"))
+		if err != nil {
+			logger.Fatalw("failed to get JWKS", // TODO Remove.
+				"error", err.Error(),
+			)
+		}
+	} else {
+		api.JWTAuth = func(s string) (*models.Principal, error) {
+			return nil, nil
+		}
 	}
-	api.JWTAuth = auth.HandleJWT(ks)
 
 	// Assign the endpoint handlers.
 	api.APIExportHandler = endpoints.HandleExport(logger.Named("POST /api/export"), config.StoreManager)

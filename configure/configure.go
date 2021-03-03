@@ -29,14 +29,16 @@ const (
 // Configuration is the Go structure that contains all needed configurations gathered on startup.
 type Configuration struct {
 	ErrChan         chan error
-	Template        *template.Template
 	Logger          *zap.SugaredLogger
 	InvalidPaths    []string
+	JWKSURL         string
 	Prefix          string
 	ShortID         *shortid.Shortid
 	ShortIDParanoid bool
 	StaticFS        fs.FS
 	StoreManager    storage.StoreManager
+	Template        *template.Template
+	UseAuth         bool
 }
 
 // Configure gathers all startup configurations, formats them, and returns them as a Go struct.
@@ -104,6 +106,8 @@ func Configure() (config Configuration, err error) {
 	config.InvalidPaths = rawConfig.InvalidPaths
 	config.ShortIDParanoid = rawConfig.ShortIDParanoid
 	config.Prefix = rawConfig.Prefix
+	config.JWKSURL = rawConfig.JWKSURL
+	config.UseAuth = rawConfig.UseAuth
 
 	return config, nil
 }

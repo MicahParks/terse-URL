@@ -11,6 +11,9 @@ import (
 
 const (
 
+	// booleanTrue is the string value that evironment variables that represents booleans should have.
+	booleanTrue = "true"
+
 	// defaultPrefix is the default HTTP prefix for all shortened URLs.
 	defaultPrefix = "https://terseurl.com/"
 
@@ -35,10 +38,12 @@ var (
 type configuration struct {
 	DefaultTimeout   time.Duration
 	InvalidPaths     []string
+	JWKSURL          string
 	Prefix           string
 	ShortIDParanoid  bool
 	ShortIDSeed      uint64
 	TemplatePath     string
+	UseAuth          bool
 	StaticFSDirName  string
 	SummaryStoreJSON string
 	TerseStoreJSON   string
@@ -106,17 +111,21 @@ func readEnvVars() (config *configuration, err error) {
 	// Transform the required environment variables to slices.
 	config.InvalidPaths = invalidPathsParse(os.Getenv("INVALID_PATHS"))
 
+	// Assign the boolean value configurations.
+	config.ShortIDParanoid = os.Getenv("SHORTID_PARANOID") == booleanTrue
+	config.UseAuth = os.Getenv("USE_AUTH") == booleanTrue
+
 	// Assign the string value configurations.
 	config.Prefix = os.Getenv("HTTP_PREFIX")
 	if config.Prefix == "" {
 		config.Prefix = defaultPrefix
 	}
-	config.ShortIDParanoid = len(os.Getenv("SHORTID_PARANOID")) != 0
-	config.TemplatePath = os.Getenv("TEMPLATE_PATH")
+	config.JWKSURL = os.Getenv("JWKS_URL")
 	config.StaticFSDirName = os.Getenv("FRONTEND_STATIC_DIR")
+	config.SummaryStoreJSON = os.Getenv("SUMMARY_STORE_JSON")
+	config.TemplatePath = os.Getenv("TEMPLATE_PATH")
 	config.TerseStoreJSON = os.Getenv("TERSE_STORE_JSON")
 	config.VisitsStoreJSON = os.Getenv("VISITS_STORE_JSON")
-	config.SummaryStoreJSON = os.Getenv("SUMMARY_STORE_JSON")
 
 	return config, nil
 }
