@@ -64,7 +64,7 @@ func configureAPI(api *operations.TerseurlAPI) http.Handler {
 		api.JWTAuth = func(s string) (*models.Principal, error) {
 			return nil, nil
 		}
-		logger.Warn("Authentication is turned off.")
+		logger.Info("Authentication is turned off.")
 	}
 
 	// Assign the endpoint handlers.
