@@ -53,18 +53,18 @@ func configureAPI(api *operations.TerseurlAPI) http.Handler {
 	if config.UseAuth {
 
 		// Configure the JWT auth.
-		//
-		// TODO Check for configuration if auth is turned off.
 		api.JWTAuth, err = auth.HandleJWT(nil, config.JWKSURL, logger.Named("JWT Authenticator"))
 		if err != nil {
 			logger.Fatalw("failed to get JWKS", // TODO Remove.
 				"error", err.Error(),
 			)
 		}
+		logger.Info("Authentication with JWKS configured.")
 	} else {
 		api.JWTAuth = func(s string) (*models.Principal, error) {
 			return nil, nil
 		}
+		logger.Warn("Authentication is turned off.")
 	}
 
 	// Assign the endpoint handlers.
