@@ -111,7 +111,7 @@ docker-compose up
 ### Local development
 
 ```bash
-HOST=0.0.0.0 PORT=30000 FRONTEND_STATIC_DIR=frontend TEMPLATE_PATH=redirect.gohtml go run -race cmd/terseurl-server/main.go
+HOST=0.0.0.0 PORT=30000 FRONTEND_STATIC_DIR=frontend TEMPLATE_PATH=redirect.gohtml USE_AUTH=false go run -race cmd/terseurl-server/main.go
 ```
 
 ## TODO
@@ -119,9 +119,9 @@ HOST=0.0.0.0 PORT=30000 FRONTEND_STATIC_DIR=frontend TEMPLATE_PATH=redirect.goht
 - [ ] Address source code TODOs.
 - [ ] Inherit HTML title.
 - [ ] Make write operations atomic?
-- [ ] Implement an IdentityStore (AuthStore?).
+- [ ] Implement an Authorization store.
+- [ ] Update deployment instructions and `docker-compose.yml` for auth.
 - [ ] Completely remove ErrShortenedNotFound? Use zero values to communicate that?
-- [ ] Visits is nil in export when no visits. Should be empty array.
 - [ ] Change bbolt data structure for Visits to something more scalable.
 - [ ] Truncate frontend table data so it doesn't run off the screen.
 - [ ] Add more logic to rate limiter for frontend use case.
@@ -132,17 +132,20 @@ HOST=0.0.0.0 PORT=30000 FRONTEND_STATIC_DIR=frontend TEMPLATE_PATH=redirect.goht
 - [ ] Implement `SHORTID_PARANOID` environment variable.
 - [ ] Implement JavaScript tracking.
 - [ ] Implement JavaScript fingerprinting.
-- [ ] Expand Visits model to include untyped data for custom VisitsStore implementation or middleware.
-- [ ] Create HTML navigation.
-- [ ] Visit data middleware for data purging or whatever before it goes to backend storage.
+  - [ ] Remove things that break on Firefox by default, like canvas extraction?
+  - [ ] Embed into redirect template through variable.
+- [ ] Implement frontend code for `USE_AUTH`. May require endpoint.
+- [ ] Expand Visits model to include untyped data for custom VisitsStore implementation or interceptor.
+- [ ] Create Visits data visualizer.
+- [ ] Create profile viewer.
+- [ ] Move that GitHub button to the collapsable side bar.
+- [ ] Visit data interceptor for data purging or whatever before it goes to backend storage.
 - [ ] Implement `SHORTID_PARANOID`.
-- [ ] Allow for shortened URLs of the form `{owner}/{shortened}` in `/api/write/{operation}` endpoint.
-  - [ ] Only allow for random shortened URLs in top level.
-- [ ] Implement fingerprinting with fingerprintjs, but remove HTML canvas extraction. Embed minified in single HTML
-  template.
+- [ ] Allow for shortened URLs of the form `{shortened}/{extended}` in `/api/write/{operation}` endpoint.
+  - [ ] Only allow random shortened URLs in top level?
 - [ ] Implement Redis storage backend?
-- [ ] Implement pluggable store interface implementations. (Using custom `main`.)
+- [ ] Implement custom data stores, interceptor, and HTTP middlewares modules the same
+  way [Caddy does](https://caddyserver.com/docs/extending-caddy).
 - [ ] Reimplement Mongo storage.
 - [ ] Write tests.
 - [ ] Write a good README.md.
-- [ ] Implement JWT + JWKS authentication?

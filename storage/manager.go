@@ -12,7 +12,7 @@ import (
 
 // StoreManager holds all data stores and coordinates operations on them.
 type StoreManager struct {
-	createCtx    ctxCreator
+	createCtx    CtxCreator
 	group        ctxerrgroup.Group
 	summaryStore SummaryStore
 	terseStore   TerseStore
@@ -20,7 +20,7 @@ type StoreManager struct {
 }
 
 // NewStoreManager creates a new manager for the data stores.
-func NewStoreManager(createCtx ctxCreator, group ctxerrgroup.Group, summaryStore SummaryStore, terseStore TerseStore, visitsStore VisitsStore) (manager StoreManager) {
+func NewStoreManager(createCtx CtxCreator, group ctxerrgroup.Group, summaryStore SummaryStore, terseStore TerseStore, visitsStore VisitsStore) (manager StoreManager) {
 	return StoreManager{
 		createCtx:    createCtx,
 		group:        group,
@@ -139,8 +139,8 @@ func (s StoreManager) Export(ctx context.Context, shortenedURLs []string) (expor
 
 	// Combine the Terse data and Visits data for the export.
 	for shortened, t := range terse {
-		v, ok := visits[shortened]
-		if !ok {
+		v := visits[shortened]
+		if v == nil {
 			v = make([]models.Visit, 0)
 		}
 		export[shortened] = &models.Export{
@@ -204,7 +204,7 @@ func (s StoreManager) InitializeSummaryStore(ctx context.Context) (err error) {
 	for shortened, terse := range terseSummary {
 
 		// Check if there is Visits data.
-		var visits *models.VisitsSummary
+		visits := &models.VisitsSummary{}
 		if haveVisits {
 			visits = visitsSummary[shortened]
 		}
@@ -216,7 +216,7 @@ func (s StoreManager) InitializeSummaryStore(ctx context.Context) (err error) {
 		}
 	}
 
-	// If Visits data is allowed to be present when Terse data is not present for a shortened URL, then it would need to
+	// If Visits data are allowed to be present when Terse data are not present for a shortened URL, then it would need to
 	// be looped through.
 
 	// Delete all existing Summary data and import the most recent summary data.

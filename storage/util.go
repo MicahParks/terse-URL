@@ -45,10 +45,8 @@ type configuration struct {
 	BboltPath string `json:"bboltPath"`
 }
 
-// ctxCreator is a function signature that creates a context and its cancel function. TODO
-type ctxCreator func() (ctx context.Context, cancel context.CancelFunc)
-
-// TODO Create StoreManager and pass that around instead.
+// CtxCreator is a function signature that creates a context and its cancel function.
+type CtxCreator func() (ctx context.Context, cancel context.CancelFunc)
 
 // NewSummaryStore creates a new SummaryStore from the given configJSON. The storeType return value is used for logging.
 func NewSummaryStore(configJSON json.RawMessage) (summaryStore SummaryStore, storeType string, err error) {

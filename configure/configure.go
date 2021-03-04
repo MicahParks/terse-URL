@@ -3,7 +3,6 @@ package configure
 import (
 	"context"
 	"html/template"
-	"io/fs"
 	"io/ioutil"
 
 	"github.com/MicahParks/ctxerrgroup"
@@ -35,7 +34,6 @@ type Configuration struct {
 	Prefix          string
 	ShortID         *shortid.Shortid
 	ShortIDParanoid bool
-	StaticFS        fs.FS
 	StoreManager    storage.StoreManager
 	Template        *template.Template
 	UseAuth         bool
@@ -66,13 +64,6 @@ func Configure() (config Configuration, err error) {
 	if config.Template, err = createTemplate(rawConfig.TemplatePath, ""); err != nil {
 		return Configuration{}, err
 	}
-
-	// Create the file system for the frontend static assets.
-	if config.StaticFS, err = terseurl.FrontendFS(rawConfig.StaticFSDirName); err != nil {
-		logger.Fatalw("Failed to configure file system for static frontend assets.",
-			"error", err.Error(),
-		)
-	} // TODO Remove.
 
 	// Set the database timeout.
 	defaultTimeout = rawConfig.DefaultTimeout

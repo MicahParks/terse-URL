@@ -122,8 +122,8 @@ paths:
       case all Terse or Visits data can be deleted before importing the new data."
       operationId: "import"
       parameters:
-        - description: "A JSON object containing the deletion information. If Terse or Visits data is marked for
-        deletion, it will all be deleted. An object matching shortened URLs to their previously exported data is also
+        - description: "A JSON object containing the deletion information. If Terse or Visits data are marked for
+        deletion, it will all be deleted. An object matching shortened URLs to their previously exported data are also
         required."
           in: "body"
           name: "import"

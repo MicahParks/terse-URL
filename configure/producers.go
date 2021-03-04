@@ -12,7 +12,7 @@ import (
 func HTMLProducer(logger *zap.SugaredLogger) (htmlProducer runtime.ProducerFunc) {
 	return func(writer io.Writer, inter interface{}) (err error) {
 
-		// Assume the data is an io.ReadCloser.
+		// Assume the interface is an io.ReadCloser.
 		readCloser, ok := inter.(io.ReadCloser)
 		if !ok {
 			logger.Warn("Expected HTML data was not io.ReadCloser.")

@@ -15,22 +15,56 @@
             crossorigin="anonymous"></script>
     <script src="https://keycloak.terseurl.com/auth/js/keycloak.js"></script>
     <script>
+
+        // Initialize Keycloak and the Swagger Client in the global scope.
         let keycloak;
+        let swaggerClient;
 
         function initKeycloak() {
+
+            // Set up the Keycloak JavaScript adapter.
             keycloak = new Keycloak();
             keycloak.init({
-                onLoad: 'login-required'
+                onLoad: 'login-required' // TODO A loop in Firefox local development because cookie is not set to secure. Might work fine when site is hosted via https. https://www.keycloak.org/docs/latest/securing_apps/#session-status-iframe
             }).then(function (authenticated) {
-                alert(authenticated ? 'authenticated' : 'not authenticated');
+                console.log(authenticated ? 'authenticated to Keycloak' : 'not authenticated to Keycloak');
             }).catch(function () {
-                alert('failed to initialize');
+                console.log('failed to initialize Keycloak javascript adapter');
             });
+
+            // The swagger client request interceptor that adds the JWT from the Keycloak JavaScript adapter.
+            const requestInterceptor = (request) => {
+                request.headers["Authorization"] = 'Bearer ' + keycloak.token;
+                return request;
+            };
+
+            // Create the Swagger Client.
+            keycloak.onReady = function (authenticated) {
+                if (authenticated === true) {
+                    swaggerClient = fetch('/swagger.json').then(
+                        response => response.json().then(editedSpec => {
+                            editedSpec["schemes"] = [location.protocol.slice(0, -1)];
+                            editedSpec["host"] = location.host;
+                            return new SwaggerClient({spec: editedSpec, requestInterceptor: requestInterceptor});
+                        }),
+                        reason => console.error('failed to get /swagger.json: ' + reason));
+
+                    // Load the initial page assets.
+                    swaggerClient.then(function () {
+                            loadPrefix();
+                            buildTable();
+                        },
+                        reason => console.error('failed to build initial page assets: ' + reason)
+                    );
+                } else {
+                    console.error('client not authenticated')
+                }
+            }
         }
+
     </script>
 </head>
 <body onload="initKeycloak()">
-
 <div class="d-flex" id="wrapper">
     <div class="bg-light border-right" id="sidebar-wrapper">
         <div class="sidebar-heading">terseurl</div>
@@ -60,9 +94,8 @@
                                 type="button">
                             <i class="fas fa-download"></i>
                         </button>
-                        <button class="btn btn-danger" data-bs-target="#deleteModal"
+                        <button class="btn btn-danger" data-bs-target="#deleteCheckedModal"
                                 id="bulkDelete"
-                                onclick="deleteShortened(checkedShortened());"
                                 data-bs-toggle="modal"
                                 type="button">
                             <i class="fas fa-trash"></i>
@@ -129,9 +162,28 @@
                         <div class="modal-body">
                             <div class="d-flex justify-content-end">
                                 <button class="btn-lg btn-danger"
-                                        onclick="deleteRow(currentShortened)"
+                                        onclick="deleteRow([currentShortened])"
                                         type="button">Confirm
                                 </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div aria-hidden="true" aria-labelledby="deleteCheckedModalLabel" class="modal fade" id="deleteCheckedModal"
+                 tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="deleteCheckedModalLabel">Confirm deletion?</h5>
+                            <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="d-flex justify-content-end">
+                                <button class="btn-lg btn-danger"
+                                        onclick="deleteRow(checkedShortened())"
+                                        type="button">Confirm
+                                </button> <!--TODO If all are checked, use null as input param.-->
                             </div>
                         </div>
                     </div>
@@ -307,7 +359,9 @@
 <script src="export.js"></script>
 <script src="form.js"></script>
 <script src="meta.js"></script>
+<script src="prefix.js"></script>
 <script src="summary.js"></script>
+<script src="table.js"></script>
 <script src="terse.js"></script>
 <script src="write.js"></script>
 <script src="main.js"></script>
@@ -316,33 +370,6 @@
         e.preventDefault();
         $("#wrapper").toggleClass("toggled");
     });
-</script>
-<script>
-
-    async function loadPrefix() {
-        swaggerClient
-            .then(
-                client => client.apis.api.shortenedPrefix(),
-                reason => console.error('failed to load the spec: ' + reason)
-            )
-            .then(
-                shortenedPrefixResult => document.getElementById("httpPrefix").textContent = JSON.parse(shortenedPrefixResult.data),
-                reason => console.error('failed on api call: ' + reason)
-            )
-    }
-
-    const requestInterceptor = (request) => {
-        request.headers["Authorization"] = 'Bearer ' + keycloak.token;
-        console.log(request);
-        return request;
-    };
-
-    let swaggerClient = fetch('/swagger.json').then(response => response.json().then(editedSpec => {
-        editedSpec["schemes"] = [location.protocol.slice(0, -1)];
-        editedSpec["host"] = location.host;
-        return new SwaggerClient({spec: editedSpec, requestInterceptor: requestInterceptor});
-    }));
-    loadPrefix()
 </script>
 <script>
 
@@ -413,53 +440,12 @@
     let table = document.getElementById("terseTableBody");
     table.removeChild(originalTemplate);
     template.id = "summaryData";
-
-    buildTable();
-
-    async function buildTable() {
-
-        document.getElementById("checkAll").checked = false;
-        removeAllChildNodes(table);
-
-        let index = 0;
-        return summarize(null).then(function (summaries) {
-            for (const [_, summary] of Object.entries(summaries)) { // TODO Using _ as blank identifier...
-
-                let row = template.cloneNode(true);
-                row.id = summary.terse.shortenedURL;
-                index++;
-
-                let checkbox = document.createElement('input');
-                checkbox.type = 'checkbox';
-                checkbox.value = summary.terse.shortenedURL;
-                checkbox.id = summary.terse.shortenedURL + 'Checkbox';
-                checkbox.onchange = rowChecked();
-                let label = document.createElement('label');
-                label.htmlFor = checkbox.id;
-
-                row.cells[0].appendChild(checkbox);
-                row.cells[0].appendChild(label);
-                row.cells[1].innerHTML = summary.terse.shortenedURL;
-                row.cells[2].innerHTML = summary.terse.originalURL;
-                row.cells[3].innerHTML = summary.terse.redirectType;
-                if (summary.visits === undefined || summary.visits.visitCount === undefined) {
-                    row.cells[4].innerHTML = "0";
-                } else {
-                    row.cells[4].innerHTML = summary.visits.visitCount;
-                }
-
-                table.appendChild(row);
-
-                document.getElementById(checkbox.id).onchange = rowChecked;
-
-                for (let button of $('#' + row.id + ' :button')) {
-                    button.setAttribute('data-bs-shortened', summary.terse.shortenedURL);
-                }
-            }
-        });
-    }
 </script>
 <script>
+    let bulkDownload = $("#bulkDownload");
+    let bulkDelete = $("#bulkDelete");
+    bulkDownload.prop("disabled", true);
+    bulkDelete.prop("disabled", true);
     let checkAllBox = document.getElementById("checkAll");
     checkAllBox.checked = false;
     checkAllBox.onchange = function () {
@@ -481,17 +467,18 @@
     }
 
     function rowChecked() {
-        let bulkDownload = $("#bulkDownload");
-        let bulkDelete = $("#bulkDelete");
+        let allChecked = true;
+        let disabled = true;
         for (let row of $('#terseTableBody > tr')) {
             if ($("#" + row.id + ":first :input").prop('checked')) {
-                bulkDownload.prop("disabled", false);
-                bulkDelete.prop("disabled", false);
-                return;
+                disabled = false;
+            } else {
+                allChecked = false;
             }
         }
-        bulkDownload.prop("disabled", true);
-        bulkDelete.prop("disabled", true);
+        bulkDownload.prop("disabled", disabled);
+        bulkDelete.prop("disabled", disabled);
+        checkAllBox.checked = allChecked;
     }
 </script>
 <script>

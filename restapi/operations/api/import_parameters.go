@@ -35,7 +35,7 @@ type ImportParams struct {
 	// HTTP Request Object
 	HTTPRequest *http.Request `json:"-"`
 
-	/*A JSON object containing the deletion information. If Terse or Visits data is marked for deletion, it will all be deleted. An object matching shortened URLs to their previously exported data is also required.
+	/*A JSON object containing the deletion information. If Terse or Visits data are marked for deletion, it will all be deleted. An object matching shortened URLs to their previously exported data are also required.
 	  Required: true
 	  In: body
 	*/

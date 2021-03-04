@@ -13,9 +13,10 @@ async function deleteShortened(shortenedURLs) {
     return resultPromise;
 }
 
-async function deleteRow(shortenedURL) {
-    deleteShortened([shortenedURL]).then(function () {
+async function deleteRow(shortenedURLs) {
+    deleteShortened(shortenedURLs).then(function () {
         buildTable();
     });
     $('#deleteModal').modal('hide');
+    $('#deleteCheckedModal').modal('hide');
 }

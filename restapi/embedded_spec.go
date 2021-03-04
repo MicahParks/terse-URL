@@ -170,7 +170,7 @@ func init() {
         "operationId": "import",
         "parameters": [
           {
-            "description": "A JSON object containing the deletion information. If Terse or Visits data is marked for deletion, it will all be deleted. An object matching shortened URLs to their previously exported data is also required.",
+            "description": "A JSON object containing the deletion information. If Terse or Visits data are marked for deletion, it will all be deleted. An object matching shortened URLs to their previously exported data are also required.",
             "name": "import",
             "in": "body",
             "required": true,
@@ -943,7 +943,7 @@ func init() {
         "operationId": "import",
         "parameters": [
           {
-            "description": "A JSON object containing the deletion information. If Terse or Visits data is marked for deletion, it will all be deleted. An object matching shortened URLs to their previously exported data is also required.",
+            "description": "A JSON object containing the deletion information. If Terse or Visits data are marked for deletion, it will all be deleted. An object matching shortened URLs to their previously exported data are also required.",
             "name": "import",
             "in": "body",
             "required": true,
