@@ -32,10 +32,26 @@ type JWTHandler func(jwtB64 string) (principal *models.Principal, err error)
 // TODO Add logging. Error is returned to user. Log error. Generic thing back to user.
 func HandleJWT(ctx context.Context, client *http.Client, jwksURL string, logger *zap.SugaredLogger) (authHandler JWTHandler, err error) {
 
-	// Create the JWKS from the asset at the given URL.
+	// Try to get the JWKS until the context expires.
 	var ks jwks.Keystore
-	if ks, err = jwks.Get(ctx, client, jwksURL); err != nil { // TODO Get from config.
-		return nil, err
+	for {
+
+		// Check to see if the context has expired.
+		select {
+		case <-ctx.Done():
+			return nil, ctx.Err()
+		default:
+			break
+		}
+
+		// Create the JWKS from the asset at the given URL.
+		if ks, err = jwks.Get(ctx, client, jwksURL); err != nil {
+			logger.Infow("Failed to get JWKS.",
+				"error", err.Error(),
+			)
+			continue
+		}
+		break
 	}
 
 	return func(jwtB64 string) (principal *models.Principal, err error) {
