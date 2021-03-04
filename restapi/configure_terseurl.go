@@ -3,6 +3,7 @@
 package restapi
 
 import (
+	"context"
 	"crypto/tls"
 	"log"
 	"net/http"
@@ -51,13 +52,17 @@ func configureAPI(api *operations.TerseurlAPI) http.Handler {
 	// Check to see if auth is turned on.
 	if config.UseAuth {
 
+		// Create a context for creating the JWT handler.
+		ctx, cancel := context.WithTimeout(context.TODO(), time.Minute) // TODO Make configurable.
+
 		// Configure the JWT auth.
-		api.JWTAuth, err = auth.HandleJWT(nil, config.JWKSURL, logger.Named("JWT Authenticator"))
+		api.JWTAuth, err = auth.HandleJWT(ctx, nil, config.JWKSURL, logger.Named("JWT Authenticator"))
 		if err != nil {
 			logger.Fatalw("failed to get JWKS", // TODO Remove.
 				"error", err.Error(),
 			)
 		}
+		cancel()
 		logger.Info("Authentication with JWKS configured.")
 	} else {
 		api.JWTAuth = func(s string) (*models.Principal, error) {

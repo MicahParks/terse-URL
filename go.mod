@@ -4,7 +4,7 @@ go 1.16
 
 require (
 	github.com/MicahParks/ctxerrgroup v0.1.1
-	github.com/MicahParks/jwks v0.0.4
+	github.com/MicahParks/jwks v0.0.5
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/didip/tollbooth v4.0.2+incompatible
 	github.com/go-openapi/errors v0.20.0

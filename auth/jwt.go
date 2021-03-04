@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -29,11 +30,11 @@ type JWTHandler func(jwtB64 string) (principal *models.Principal, err error)
 // HandleJWT creates a JWT auth handler via a closure.
 //
 // TODO Add logging. Error is returned to user. Log error. Generic thing back to user.
-func HandleJWT(client *http.Client, jwksURL string, logger *zap.SugaredLogger) (authHandler JWTHandler, err error) {
+func HandleJWT(ctx context.Context, client *http.Client, jwksURL string, logger *zap.SugaredLogger) (authHandler JWTHandler, err error) {
 
 	// Create the JWKS from the asset at the given URL.
 	var ks jwks.Keystore
-	if ks, err = jwks.Get(client, jwksURL); err != nil { // TODO Get from config.
+	if ks, err = jwks.Get(ctx, client, jwksURL); err != nil { // TODO Get from config.
 		return nil, err
 	}
 
