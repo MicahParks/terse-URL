@@ -3,6 +3,7 @@ package middleware
 import (
 	"io/fs"
 	"net/http"
+	"os"
 	"strings"
 
 	"github.com/MicahParks/terseurl"
@@ -15,7 +16,12 @@ const (
 )
 
 // FrontendMiddleware is the middleware used to server frontend assets.
-func FrontendMiddleware(frontendDir string, next http.Handler) (handler http.HandlerFunc, err error) {
+func FrontendMiddleware(next http.Handler) (handler http.HandlerFunc, err error) {
+
+	// Get the file system configuration from the environment.
+	//
+	// TODO Add function in configure package for grabbing this string value.
+	frontendDir := os.Getenv("FRONTEND_STATIC_DIR")
 
 	// Get the appropriate file system for the frontend assets.
 	var fileSystem fs.FS

@@ -6,7 +6,6 @@ import (
 	"crypto/tls"
 	"log"
 	"net/http"
-	"os"
 	"time"
 
 	"github.com/didip/tollbooth"
@@ -136,10 +135,7 @@ func setupGlobalMiddleware(handler http.Handler) http.Handler {
 	toll := tollbooth.LimitHandler(limit, handler) // TODO Logging middleware. Maybe another rate limiter instead.
 
 	// Set up the frontend middleware.
-	//
-	// TODO Add function in configure package for grabbing this string value.
-	frontendDir := os.Getenv("FRONTEND_STATIC_DIR")
-	frontendMiddleware, err := middleware.FrontendMiddleware(frontendDir, toll)
+	frontendMiddleware, err := middleware.FrontendMiddleware(toll)
 	if err != nil {
 		log.Fatalln(err.Error())
 	}
