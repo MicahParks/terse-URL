@@ -54,11 +54,12 @@ func configureAPI(api *operations.TerseurlAPI) http.Handler {
 
 		// Create a context for creating the JWT handler.
 		ctx, cancel := context.WithTimeout(context.TODO(), time.Minute) // TODO Make configurable.
+		sleep := time.Second                                            // TODO Make configurable.
 
 		// Configure the JWT auth.
 		//
 		// TODO Make HTTP client configurable?
-		api.JWTAuth, err = auth.HandleJWT(ctx, nil, config.JWKSURL, logger.Named("JWT Authenticator"))
+		api.JWTAuth, err = auth.HandleJWT(ctx, nil, config.JWKSURL, logger.Named("JWT Authenticator"), sleep)
 		if err != nil {
 			logger.Fatalw("failed to get JWKS", // TODO Remove.
 				"error", err.Error(),

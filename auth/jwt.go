@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/MicahParks/jwks"
 	"github.com/dgrijalva/jwt-go"
@@ -30,7 +31,7 @@ type JWTHandler func(jwtB64 string) (principal *models.Principal, err error)
 // HandleJWT creates a JWT auth handler via a closure.
 //
 // TODO Add logging. Error is returned to user. Log error. Generic thing back to user.
-func HandleJWT(ctx context.Context, client *http.Client, jwksURL string, logger *zap.SugaredLogger) (authHandler JWTHandler, err error) {
+func HandleJWT(ctx context.Context, client *http.Client, jwksURL string, logger *zap.SugaredLogger, sleep time.Duration) (authHandler JWTHandler, err error) {
 
 	// Try to get the JWKS until the context expires.
 	var ks jwks.Keystore
@@ -49,6 +50,7 @@ func HandleJWT(ctx context.Context, client *http.Client, jwksURL string, logger 
 			logger.Infow("Failed to get JWKS.",
 				"error", err.Error(),
 			)
+			time.Sleep(sleep)
 			continue
 		}
 		break
