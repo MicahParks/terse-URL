@@ -17,7 +17,9 @@ FROM alpine
 
 # Set some defaults for the host to bind to and the port to make it easier for people.
 ENV HOST 0.0.0.0
+ENV JWKS_URL "https://keycloak.terseurl.com/auth/realms/terseurl/protocol/openid-connect/certs"
 ENV PORT 30000
+ENV USE_AUTH "true"
 
 # Copy the executable from the builder container.
 WORKDIR /terseurl
