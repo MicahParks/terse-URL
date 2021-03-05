@@ -138,6 +138,8 @@ HOST=0.0.0.0 PORT=30000 FRONTEND_STATIC_DIR=frontend TEMPLATE_PATH=redirect.goht
 - [ ] Expand Visits model to include untyped data for custom VisitsStore implementation or interceptor.
 - [ ] Create Visits data visualizer.
 - [ ] Create profile viewer.
+- [ ] Implement a [Badger](https://github.com/dgraph-io/badger) storage backend?
+- [ ] Implement distributed storage backend with something like Dgraph?
 - [ ] Move that GitHub button to the collapsable side bar.
 - [ ] Visit data interceptor for data purging or whatever before it goes to backend storage.
 - [ ] Implement `SHORTID_PARANOID`.

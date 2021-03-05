@@ -6,21 +6,6 @@ import (
 	"github.com/MicahParks/terseurl/models"
 )
 
-// AuthorizationStore is the Authorization data storage interface. It allows for Authorization data storage operations
-// without needing to know of the Authorization data are stored.
-type AuthorizationStore interface {
-
-	// AuthorizedShortened creates a map of users to the shortened URLs they are authorized for.
-	AuthorizedShortened(ctx context.Context, users []*models.Principal) (map[*models.Principal][]string, error)
-
-	// Close closes the connection to the underlying storage.
-	Close(ctx context.Context) (err error)
-
-	// Delete deletes the authorization information for the given shortened URLs. If shortenedURLs is nil or empty, all
-	// Authorization data are deleted. No error should be returned if a shortened URL is not found.
-	Delete(ctx context.Context, shortenedURLs []string) (err error)
-}
-
 // SummaryStore is the Summary data storage interface. It allows for Summary data storage operations without needing to
 // know how the Summary data are stored. Summary data should not persist through a service restart.
 type SummaryStore interface {

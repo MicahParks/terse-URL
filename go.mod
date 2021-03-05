@@ -24,7 +24,7 @@ require (
 	go.uber.org/zap v1.16.0
 	golang.org/x/mod v0.4.1 // indirect
 	golang.org/x/net v0.0.0-20210226172049-e18ecbb05110
-	golang.org/x/sys v0.0.0-20210303074136-134d130e1a04 // indirect
+	golang.org/x/sys v0.0.0-20210305215415-5cdee2b1b5a0 // indirect
 	golang.org/x/time v0.0.0-20210220033141-f8bda1e9f3ba // indirect
 	golang.org/x/tools v0.0.0-20210114065538-d78b04bdf963 // indirect
 )
