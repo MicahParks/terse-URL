@@ -53,8 +53,8 @@ func configureAPI(api *operations.TerseurlAPI) http.Handler {
 	if config.UseAuth {
 
 		// Create a context for creating the JWT handler.
-		ctx, cancel := context.WithTimeout(context.TODO(), time.Minute) // TODO Make configurable.
-		sleep := time.Second                                            // TODO Make configurable.
+		ctx, cancel := context.WithTimeout(context.TODO(), time.Minute*5) // TODO Make configurable.
+		sleep := time.Second * 5                                          // TODO Make configurable.
 
 		// Configure the JWT auth.
 		//
