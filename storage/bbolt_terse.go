@@ -10,15 +10,15 @@ import (
 
 // BboltTerse is a TerseStore implementation that relies on a bbolt file for the backend storage.
 type BboltTerse struct {
-	db          *bbolt.DB
-	terseBucket []byte
+	db     *bbolt.DB
+	bucket []byte
 }
 
 // NewBboltTerse creates a new BboltTerse given the required assets.
 func NewBboltTerse(db *bbolt.DB, terseBucket []byte) (terseStore TerseStore) {
 	return BboltTerse{
-		db:          db,
-		terseBucket: terseBucket,
+		db:     db,
+		bucket: terseBucket,
 	}
 }
 
@@ -31,7 +31,7 @@ func (b BboltTerse) Close(_ context.Context) (err error) {
 
 // BucketName returns the name of the bbolt bucket.
 func (b BboltTerse) BucketName() (bucketName []byte) {
-	return b.terseBucket
+	return b.bucket
 }
 
 // DB returns the bbolt database.
@@ -118,7 +118,7 @@ func (b BboltTerse) Write(_ context.Context, terseData map[string]*models.Terse,
 
 			// Check to see if the shortened URL is present in the bucket.
 			if operation == Insert || operation == Update {
-				value := tx.Bucket(b.terseBucket).Get([]byte(shortened))
+				value := tx.Bucket(b.bucket).Get([]byte(shortened))
 				if value != nil && operation == Insert {
 					return ErrShortenedExists
 				}
@@ -134,7 +134,7 @@ func (b BboltTerse) Write(_ context.Context, terseData map[string]*models.Terse,
 			}
 
 			// Write the Terse data to the bucket.
-			if err = tx.Bucket(b.terseBucket).Put([]byte(shortened), data); err != nil {
+			if err = tx.Bucket(b.bucket).Put([]byte(shortened), data); err != nil {
 				return err
 			}
 		}

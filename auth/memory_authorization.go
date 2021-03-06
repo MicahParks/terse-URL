@@ -8,71 +8,73 @@ import (
 
 // MemAuthorization implements the AuthorizationStore interface. It's contents will not survive a service restart.
 type MemAuthorization struct {
-	authLookup      map[string]UserData            // Data structure 1.
-	shortenedLookup map[string]map[string]struct{} // Data structure 2.
-	authMux         sync.RWMutex
-	shortenedMux    sync.RWMutex
+	authLookup  map[string]UserData // Data structure 1.
+	shortLookup *shortenedLookup    // Data structure 2.
+	authMux     sync.RWMutex
 }
 
+// TODO
+func NewMemAuthorization() (authStore AuthorizationStore) {
+	return &MemAuthorization{
+		authLookup:  make(map[string]UserData),
+		shortLookup: newShortenedLookup(),
+	}
+}
+
+// TODO
 func (m *MemAuthorization) Append(_ context.Context, usersShortened map[string]UserData) (err error) {
 
 	// Lock both data structure 1 and data structure 2 for async safe use.
 	m.authMux.Lock()
 	defer m.authMux.Unlock()
-	m.shortenedMux.Lock()
-	defer m.shortenedMux.Unlock()
 
 	// Iterate through the users in the given Authorization data.
-	var ok bool
-	for user, userData := range usersShortened {
+	m.shortLookup.lock(func() {
+		var ok bool
+		for user, userData := range usersShortened {
 
-		// Iterate through the shortened URLs in the given Authorization data.
-		for shortened, a := range userData {
+			// Iterate through the shortened URLs in the given Authorization data.
+			for shortened, a := range userData {
 
-			// Confirm there is Authorization data for the given user.
-			_, ok = m.authLookup[user]
-			if !ok {
-				m.authLookup[user] = UserData{}
+				// Confirm there is Authorization data for the given user.
+				_, ok = m.authLookup[user]
+				if !ok {
+					m.authLookup[user] = UserData{}
+				}
+
+				// Update data in structure 1.
+				m.authLookup[user][shortened] = a
+
+				// Update data in structure 2.
+				m.shortLookup.add(shortened, []string{user})
 			}
-
-			// Update data in structure 1.
-			m.authLookup[user][shortened] = a
-
-			// Confirm the shortened URL is in data structure 2.
-			_, ok = m.shortenedLookup[shortened]
-			if !ok {
-				m.shortenedLookup[shortened] = make(map[string]struct{})
-			}
-
-			// Update data in structure 2.
-			m.shortenedLookup[shortened][user] = struct{}{}
 		}
-	}
+	})
 
 	return nil
 }
 
+// TODO
 func (m *MemAuthorization) Close(_ context.Context) (err error) {
 
 	// Lock both data structure 1 and data structure 2 for async safe use.
 	m.authMux.Lock()
 	defer m.authMux.Unlock()
-	m.shortenedMux.Lock()
-	defer m.shortenedMux.Unlock()
 
 	// Delete all Authorization data.
-	m.deleteAll()
+	m.shortLookup.lock(func() {
+		m.deleteAll()
+	})
 
 	return nil
 }
 
+// TODO
 func (m *MemAuthorization) DeleteShortened(_ context.Context, shortenedURLs []string) (err error) {
 
 	// Lock both data structure 1 and data structure 2 for async safe use.
 	m.authMux.Lock()
 	defer m.authMux.Unlock()
-	m.shortenedMux.Lock()
-	defer m.shortenedMux.Unlock()
 
 	// Check for the empty case.
 	if len(shortenedURLs) == 0 {
@@ -81,25 +83,28 @@ func (m *MemAuthorization) DeleteShortened(_ context.Context, shortenedURLs []st
 		m.deleteAll()
 	} else {
 
-		// Iterate through the given shortened URLs.
-		usersAffected := make(map[string][]string)
-		for _, shortened := range shortenedURLs {
+		m.shortLookup.lock(func() {
 
-			// Get the affected users.
-			users, ok := m.shortenedLookup[shortened]
-			if !ok {
-				continue
+			// Iterate through the given shortened URLs.
+			usersAffected := make(map[string][]string)
+			for _, shortened := range shortenedURLs {
+
+				// Get the affected users.
+				users := m.shortLookup.read([]string{shortened})
+				if users[shortened] == nil {
+					continue
+				}
+
+				// Delete the shortened URL from data structure 2.
+				m.shortLookup.delete(map[string][]string{shortened: nil})
+
+				// Create a map of users to affected shortened URLs.
+				affected := addValue(users, shortened)
+
+				// Add the users to the set of affected users.
+				merge(usersAffected, affected)
 			}
-
-			// Delete the shortened URL from data structure 2.
-			delete(m.shortenedLookup, shortened)
-
-			// Create a map of users to affected shortened URLs.
-			affected := addValue(users, shortened)
-
-			// Add the users to the set of affected users.
-			merge(usersAffected, affected)
-		}
+		})
 
 		// Iterate through the affected users.
 		for user, s := range usersAffected {
@@ -120,6 +125,7 @@ func (m *MemAuthorization) DeleteShortened(_ context.Context, shortenedURLs []st
 	return nil
 }
 
+// TODO
 func (m *MemAuthorization) DeleteUsers(_ context.Context, users []string) (err error) {
 
 	// Lock both data structure 1 and data structure 2 for async safe use.
@@ -166,6 +172,7 @@ func (m *MemAuthorization) DeleteUsers(_ context.Context, users []string) (err e
 	return nil
 }
 
+// TODO
 func (m *MemAuthorization) Overwrite(_ context.Context, usersShortened map[string]UserData) (err error) {
 
 	// Lock both data structure 1 and data structure 2 for async safe use.
@@ -199,19 +206,20 @@ func (m *MemAuthorization) Overwrite(_ context.Context, usersShortened map[strin
 		for shortened := range userData {
 
 			// Confirm the shortened URL is in data structure 2.
-			_, ok = m.shortenedLookup[shortened]
+			_, ok = m.shortLookup[shortened]
 			if !ok {
-				m.shortenedLookup[shortened] = make(map[string]struct{})
+				m.shortLookup[shortened] = make(map[string]struct{})
 			}
 
 			// Update data in structure 2.
-			m.shortenedLookup[shortened][user] = struct{}{}
+			m.shortLookup[shortened][user] = struct{}{}
 		}
 	}
 
 	return nil
 }
 
+// TODO
 func (m *MemAuthorization) ReadUsers(_ context.Context, users []string) (usersShortened map[string]UserData, err error) {
 
 	// Create the return map.
@@ -245,6 +253,7 @@ func (m *MemAuthorization) ReadUsers(_ context.Context, users []string) (usersSh
 	return usersShortened, nil
 }
 
+// TODO
 func (m *MemAuthorization) ReadShortened(_ context.Context, shortenedURLs []string) (shortenedUsers map[string]ShortenedData, err error) {
 
 	// Create the return map.
@@ -261,7 +270,7 @@ func (m *MemAuthorization) ReadShortened(_ context.Context, shortenedURLs []stri
 	if len(shortenedURLs) == 0 {
 
 		// Iterate through every shortened URL.
-		for shortened, users := range m.shortenedLookup {
+		for shortened, users := range m.shortLookup {
 
 			// Add the users' Authorization data to the return map.
 			m.addUsers(shortened, shortenedUsers, users)
@@ -273,7 +282,7 @@ func (m *MemAuthorization) ReadShortened(_ context.Context, shortenedURLs []stri
 
 			// Get the users associated with the shortened URLs.
 			var users map[string]struct{}
-			users, ok = m.shortenedLookup[shortened]
+			users, ok = m.shortLookup[shortened]
 			if !ok {
 				// TODO
 			}
@@ -323,7 +332,7 @@ func (m *MemAuthorization) deleteAll() {
 
 	// Reassign the Authorization data so it's take by the garbage collector.
 	m.authLookup = make(map[string]UserData)
-	m.shortenedLookup = make(map[string]map[string]struct{})
+	m.shortLookup = newShortenedLookup()
 }
 
 // deleteFromDataStructure2 TODO
@@ -333,14 +342,14 @@ func (m *MemAuthorization) deleteFromDataStructure2(shortenedURLs, users []strin
 	for _, shortened := range shortenedURLs {
 
 		// Confirm the shortened URL is present in data structure 2.
-		_, ok := m.shortenedLookup[shortened]
+		_, ok := m.shortLookup[shortened]
 		if !ok {
 			return fmt.Errorf("couldn't find shortened URL in authorization data structure 2 when it was present in authorization data structure 1: %w", ErrKeyNotFound)
 		}
 
 		// Delete the users from data structure 2.
 		for _, user := range users {
-			delete(m.shortenedLookup[shortened], user)
+			delete(m.shortLookup[shortened], user)
 		}
 	}
 

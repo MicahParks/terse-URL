@@ -10,15 +10,15 @@ import (
 
 // BboltVisits if a VisitsStore implementation that relies on a bbolt file for the backend storage.
 type BboltVisits struct {
-	db           *bbolt.DB
-	visitsBucket []byte
+	db     *bbolt.DB
+	bucket []byte
 }
 
 // NewBboltVisits creates a new NewBboltVisits given the required assets.
 func NewBboltVisits(db *bbolt.DB, visitsBucket []byte) (visitsStore VisitsStore) {
 	return BboltVisits{
-		db:           db,
-		visitsBucket: visitsBucket,
+		db:     db,
+		bucket: visitsBucket,
 	}
 }
 
@@ -31,7 +31,7 @@ func (b BboltVisits) Close(_ context.Context) (err error) {
 
 // BucketName returns the name of the bbolt bucket.
 func (b BboltVisits) BucketName() (bucketName []byte) {
-	return b.visitsBucket
+	return b.bucket
 }
 
 // DB returns the bbolt database.
@@ -57,7 +57,7 @@ func (b BboltVisits) Insert(_ context.Context, visitsData map[string][]models.Vi
 
 			// Get the existing Visits data.
 			var existingVisits []models.Visit
-			data := tx.Bucket(b.visitsBucket).Get([]byte(shortened))
+			data := tx.Bucket(b.bucket).Get([]byte(shortened))
 
 			// Transform the raw data into Visits data.
 			if data != nil {
@@ -75,7 +75,7 @@ func (b BboltVisits) Insert(_ context.Context, visitsData map[string][]models.Vi
 			}
 
 			// Write the Visits data back to the bucket.
-			if err = tx.Bucket(b.visitsBucket).Put([]byte(shortened), data); err != nil {
+			if err = tx.Bucket(b.bucket).Put([]byte(shortened), data); err != nil {
 				return err
 			}
 		}

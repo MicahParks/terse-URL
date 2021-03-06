@@ -119,6 +119,7 @@ HOST=0.0.0.0 PORT=30000 FRONTEND_STATIC_DIR=frontend TEMPLATE_PATH=redirect.goht
 - [ ] Address source code TODOs.
 - [ ] Inherit HTML title.
 - [ ] Make write operations atomic?
+- [ ] Make Authorization data structures use UUID type.
 - [ ] Implement an Authorization store.
 - [ ] Update deployment instructions and `docker-compose.yml` for auth.
 - [ ] Completely remove ErrShortenedNotFound? Use zero values to communicate that?
