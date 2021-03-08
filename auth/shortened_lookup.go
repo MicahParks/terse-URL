@@ -4,36 +4,42 @@ import (
 	"sync"
 )
 
+type userSet map[string]struct{}
+
 // TODO
-type shortenedLookup struct { // AKA authorization data structure 2.
-	lookup map[string]map[string]struct{}
+type shortenedIndex struct { // AKA authorization data structure 2.
+	lookup map[string]userSet
 	mux    sync.RWMutex
 }
 
-func newShortenedLookup() (shortLookup *shortenedLookup) {
-	return &shortenedLookup{
-		lookup: make(map[string]map[string]struct{}),
+func newShortenedLookup() (shortLookup *shortenedIndex) {
+	return &shortenedIndex{
+		lookup: make(map[string]userSet),
 	}
 }
 
-func (s *shortenedLookup) add(shortened string, users []string) {
+func (s *shortenedIndex) add(shortenedUserSet map[string]userSet) {
 
-	// Confirm the shortened URL exists.
-	_, ok := s.lookup[shortened]
-	if !ok {
-		s.lookup[shortened] = make(map[string]struct{})
-	}
+	// Iterate through the given shortened URL user sets.
+	for shortened, users := range shortenedUserSet {
 
-	// Iterate through the given users and add them to the set.
-	for _, user := range users {
-		s.lookup[shortened][user] = struct{}{}
+		// Confirm the shortened URL exists.
+		_, ok := s.lookup[shortened]
+		if !ok {
+			s.lookup[shortened] = userSet{}
+		}
+
+		// Iterate through the given users and add them to the set.
+		for user := range users {
+			s.lookup[shortened][user] = struct{}{}
+		}
 	}
 }
 
-func (s *shortenedLookup) delete(shortenedUsers map[string][]string) {
+func (s *shortenedIndex) delete(shortenedUserSet map[string]userSet) {
 
 	// Iterate through the given shortened URLs.
-	for shortened, users := range shortenedUsers {
+	for shortened, users := range shortenedUserSet {
 
 		// Check if the shortened URL should be deleted.
 		if len(users) == 0 {
@@ -48,28 +54,28 @@ func (s *shortenedLookup) delete(shortenedUsers map[string][]string) {
 		}
 
 		// Delete the users.
-		for _, user := range users {
+		for user := range users {
 			delete(s.lookup[shortened], user)
 		}
 	}
 }
 
-func (s *shortenedLookup) lock(f func()) {
+func (s *shortenedIndex) lock(f func()) {
 	s.mux.Lock()
 	defer s.mux.Unlock()
 	f()
 }
 
-func (s *shortenedLookup) rlock(f func()) {
+func (s *shortenedIndex) rlock(f func()) {
 	s.mux.RLock()
 	defer s.mux.RUnlock()
 	f()
 }
 
-func (s *shortenedLookup) read(shortenedURLs []string) (shortenedUsers map[string]map[string]struct{}) {
+func (s *shortenedIndex) read(shortenedURLs []string) (shortenedUserSet map[string]userSet) {
 
 	// Create the return map.
-	shortenedUsers = make(map[string]map[string]struct{})
+	shortenedUserSet = make(map[string]userSet)
 
 	// TODO Handle an empty case?
 
@@ -80,8 +86,8 @@ func (s *shortenedLookup) read(shortenedURLs []string) (shortenedUsers map[strin
 		users := s.lookup[shortened]
 
 		// Add the users to the return map.
-		shortenedUsers[shortened] = users
+		shortenedUserSet[shortened] = users
 	}
 
-	return shortenedUsers
+	return shortenedUserSet
 }

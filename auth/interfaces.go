@@ -4,6 +4,8 @@ import (
 	"context"
 )
 
+// TODO Use a user's key as a UUID or string?
+
 // AuthorizationStore is the Authorization data storage interface. It allows for Authorization data storage operations
 // without needing to know of the Authorization data are stored.
 //
@@ -69,5 +71,5 @@ type AuthorizationStore interface {
 	//
 	// This should first interact with data structure 2 for faster lookups, then gather the Authorization data from data
 	// structure 1.
-	ReadShortened(ctx context.Context, shortenedURLs []string) (shortenedUsers map[string]ShortenedData, err error)
+	ReadShortened(ctx context.Context, shortenedURLs []string) (shortenedUserSet map[string]ShortenedData, err error)
 }
