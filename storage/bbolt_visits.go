@@ -96,16 +96,16 @@ func (b BboltVisits) Read(_ context.Context, shortenedURLs []string) (visitsData
 	visitsData = make(map[string][]models.Visit)
 
 	// Create the forEachFunc.
-	var forEach forEachFunc = func(shortened, data []byte) (err error) {
+	var forEach forEachFunc = func(key, value []byte) (err error) {
 
 		// Turn the raw data into Visits data.
-		visits, err := bytesToVisits(data)
+		visits, err := bytesToVisits(value)
 		if err != nil {
 			return err
 		}
 
 		// Add the Visits data to the return map.
-		visitsData[string(shortened)] = visits
+		visitsData[string(key)] = visits
 
 		return nil
 	}

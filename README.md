@@ -128,6 +128,9 @@ HOST=0.0.0.0 PORT=30000 FRONTEND_STATIC_DIR=frontend TEMPLATE_PATH=redirect.goht
 - [ ] Add more logic to rate limiter for frontend use case.
 - [ ] Copy to clipboard button for shortened URL.
 - [ ] Show full shortened URL in table data.
+- [ ] Implement authorization data structure 2 in bbolt.
+- [ ] Write go package docs.
+- [ ] Go back to a bunch of errors and add more detail with `fmt.Errorf`.
 - [ ] Hyperlinks for shortened URL and original URL.
 - [ ] Add referer URL to query parameters?
 - [ ] Implement `SHORTID_PARANOID` environment variable.

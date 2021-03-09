@@ -22,16 +22,16 @@ func NewBboltTerse(db *bbolt.DB, terseBucket []byte) (terseStore TerseStore) {
 	}
 }
 
+// BucketName returns the name of the bbolt bucket.
+func (b BboltTerse) BucketName() (bucketName []byte) {
+	return b.bucket
+}
+
 // Close closes the connection to the underlying storage.
 func (b BboltTerse) Close(_ context.Context) (err error) {
 
 	// Close the bbolt database file.
 	return b.db.Close()
-}
-
-// BucketName returns the name of the bbolt bucket.
-func (b BboltTerse) BucketName() (bucketName []byte) {
-	return b.bucket
 }
 
 // DB returns the bbolt database.
@@ -53,16 +53,16 @@ func (b BboltTerse) Read(_ context.Context, shortenedURLs []string) (terseData m
 	terseData = make(map[string]*models.Terse, len(shortenedURLs))
 
 	// Create the forEachFunc.
-	var forEach forEachFunc = func(shortened, data []byte) (err error) {
+	var forEach forEachFunc = func(key, value []byte) (err error) {
 
 		// Turn the raw data into Terse data.
-		terse, err := bytesToTerse(data)
+		terse, err := bytesToTerse(value)
 		if err != nil {
 			return err
 		}
 
 		// Add the Terse data to the return map.
-		terseData[string(shortened)] = &terse
+		terseData[string(key)] = &terse
 
 		return nil
 	}

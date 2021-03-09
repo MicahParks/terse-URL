@@ -172,6 +172,16 @@ func NewVisitsStore(configJSON json.RawMessage) (visitsStore VisitsStore, storeT
 	return visitsStore, config.Type, nil
 }
 
+// bytesToShortenedAuth transforms bytes to a set of users.
+func bytesToShortenedAuth(data []byte) (shortenedAuth ShortenedAuth, err error) {
+	buf := bytes.NewReader(data)
+	dec := gob.NewDecoder(buf)
+	if err = dec.Decode(&shortenedAuth); err != nil {
+		return nil, err
+	}
+	return shortenedAuth, nil
+}
+
 // bytesToTerse transforms bytes to Terse data.
 func bytesToTerse(data []byte) (terse models.Terse, err error) {
 	buf := bytes.NewReader(data)
@@ -180,6 +190,16 @@ func bytesToTerse(data []byte) (terse models.Terse, err error) {
 		return models.Terse{}, err
 	}
 	return terse, nil
+}
+
+// bytesToUserAuth transforms bytes to a map of shortened URLs to Authorization data.
+func bytesToUserAuth(data []byte) (userAuth UserAuth, err error) {
+	buf := bytes.NewReader(data)
+	dec := gob.NewDecoder(buf)
+	if err = dec.Decode(&userAuth); err != nil {
+		return nil, err
+	}
+	return userAuth, nil
 }
 
 // bytesToVisits transforms bytes to Visits data.
@@ -210,6 +230,16 @@ func openBbolt(filePath string) (db *bbolt.DB, err error) {
 	return bbolt.Open(filePath, 0666, nil)
 }
 
+// shortenedAuthToBytes transforms a set of users to bytes.
+func shortenedAuthToBytes(shortenedAuth ShortenedAuth) (data []byte, err error) {
+	var buf bytes.Buffer
+	enc := gob.NewEncoder(&buf)
+	if err = enc.Encode(&shortenedAuth); err != nil {
+		return nil, err
+	}
+	return buf.Bytes(), nil
+}
+
 // summarizeTerse creates a *models.TerseSummary from a models.Terse.
 func summarizeTerse(terse models.Terse) (summary *models.TerseSummary) {
 	return &models.TerseSummary{
@@ -224,6 +254,16 @@ func terseToBytes(terse models.Terse) (data []byte, err error) {
 	var buf bytes.Buffer
 	enc := gob.NewEncoder(&buf)
 	if err = enc.Encode(&terse); err != nil {
+		return nil, err
+	}
+	return buf.Bytes(), nil
+}
+
+// userAuthToBytes transforms a map of shortened URLs to Authorization data to bytes.
+func userAuthToBytes(userAuth UserAuth) (data []byte, err error) {
+	var buf bytes.Buffer
+	enc := gob.NewEncoder(&buf)
+	if err = enc.Encode(&userAuth); err != nil {
 		return nil, err
 	}
 	return buf.Bytes(), nil
