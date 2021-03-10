@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/MicahParks/jwks"
+	"github.com/MicahParks/keyfunc"
 	"github.com/dgrijalva/jwt-go"
 	"go.uber.org/zap"
 
@@ -34,7 +34,7 @@ type JWTHandler func(jwtB64 string) (principal *models.Principal, err error)
 func HandleJWT(ctx context.Context, client *http.Client, jwksURL string, logger *zap.SugaredLogger, sleep time.Duration) (authHandler JWTHandler, err error) {
 
 	// Try to get the JWKS until the context expires.
-	var ks jwks.Keystore
+	var jwks *keyfunc.JWKS
 	for {
 
 		// Check to see if the context has expired.
@@ -45,8 +45,19 @@ func HandleJWT(ctx context.Context, client *http.Client, jwksURL string, logger 
 			break
 		}
 
+		// Create the JWKS options.
+		options := keyfunc.Options{
+			RefreshInterval: &[]time.Duration{time.Hour}[0],
+			RefreshTimeout:  &[]time.Duration{time.Second * 10}[0],
+			RefreshErrorHandler: func(err error) {
+				logger.Errorw("Failure in jwt.KeyFunc.",
+					"error", err.Error(),
+				)
+			},
+		}
+
 		// Create the JWKS from the asset at the given URL.
-		if ks, err = jwks.Get(ctx, client, jwksURL); err != nil {
+		if jwks, err = keyfunc.Get(jwksURL, options); err != nil {
 			logger.Infow("Failed to get JWKS.",
 				"error", err.Error(),
 			)
@@ -62,7 +73,7 @@ func HandleJWT(ctx context.Context, client *http.Client, jwksURL string, logger 
 		jwtB64 = strings.TrimPrefix(jwtB64, "Bearer ")
 
 		// Parse the JWT.
-		token, err := jwt.Parse(jwtB64, ks.KeyFunc())
+		token, err := jwt.Parse(jwtB64, jwks.KeyFunc())
 		if err != nil {
 			return nil, fmt.Errorf("failed to parse token: %w", err)
 		}
