@@ -73,7 +73,7 @@ func HandleJWT(ctx context.Context, client *http.Client, jwksURL string, logger 
 		jwtB64 = strings.TrimPrefix(jwtB64, "Bearer ")
 
 		// Parse the JWT.
-		token, err := jwt.Parse(jwtB64, jwks.KeyFunc())
+		token, err := jwt.Parse(jwtB64, jwks.KeyFunc)
 		if err != nil {
 			return nil, fmt.Errorf("failed to parse token: %w", err)
 		}

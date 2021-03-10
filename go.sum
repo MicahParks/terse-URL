@@ -2,8 +2,8 @@ github.com/BurntSushi/toml v0.3.1 h1:WXkYYl6Yr3qBf1K79EBnL4mak0OimBfB0XUf9Vl28OQ
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/MicahParks/ctxerrgroup v0.1.1 h1:eSx/VzsPr6GzGF2yxA9amuKu/CD6Wqudx10aO3fQmcE=
 github.com/MicahParks/ctxerrgroup v0.1.1/go.mod h1:fC5YFxVIDIStkUQVvR/azB+q+So0BbSQLlFWmPYUYqo=
-github.com/MicahParks/keyfunc v0.1.2 h1:oCHtJ9CPVbk2Vf+pHErNgLlk99lRb7FF6A5ciVd+jPI=
-github.com/MicahParks/keyfunc v0.1.2/go.mod h1:nJJXPT3GJ0/He+Sa5JpQcY5we0PxNRlPzJQqorDX0P0=
+github.com/MicahParks/keyfunc v0.2.0 h1:XH/IQGdulxD0eXFHW5lRiBBfu3T+8qZTehXeMIdYey0=
+github.com/MicahParks/keyfunc v0.2.0/go.mod h1:nJJXPT3GJ0/He+Sa5JpQcY5we0PxNRlPzJQqorDX0P0=
 github.com/PuerkitoBio/purell v1.1.0/go.mod h1:c11w/QuzBsJSee3cPx9rAFu61PvFxuPbtSwDGJws/X0=
 github.com/PuerkitoBio/purell v1.1.1 h1:WEQqlqaGbrPkxLJWfBwQmfEAE1Z7ONdDLqrN38tNFfI=
 github.com/PuerkitoBio/purell v1.1.1/go.mod h1:c11w/QuzBsJSee3cPx9rAFu61PvFxuPbtSwDGJws/X0=

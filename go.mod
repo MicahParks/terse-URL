@@ -4,7 +4,7 @@ go 1.16
 
 require (
 	github.com/MicahParks/ctxerrgroup v0.1.1
-	github.com/MicahParks/keyfunc v0.1.2
+	github.com/MicahParks/keyfunc v0.2.0
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/didip/tollbooth v4.0.2+incompatible
 	github.com/go-openapi/errors v0.20.0
@@ -14,7 +14,7 @@ require (
 	github.com/go-openapi/strfmt v0.20.0
 	github.com/go-openapi/swag v0.19.14
 	github.com/go-openapi/validate v0.20.2
-	github.com/google/go-cmp v0.5.3 // indirectj
+	github.com/google/go-cmp v0.5.3 // indirect; indirectj
 	github.com/jessevdk/go-flags v1.4.0
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/patrickmn/go-cache v2.1.0+incompatible // indirect
