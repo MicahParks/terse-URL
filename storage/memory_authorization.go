@@ -43,7 +43,7 @@ func (m *MemAuthorization) Append(_ context.Context, usersShortened map[string]U
 		for user, userData := range usersShortened {
 
 			// Iterate through the shortened URLs in the given Authorization data.
-			for shortened, a := range userData {
+			for shortened, authorization := range userData {
 
 				// Confirm there is Authorization data for the given user.
 				_, ok = m.authMap[user]
@@ -52,7 +52,7 @@ func (m *MemAuthorization) Append(_ context.Context, usersShortened map[string]U
 				}
 
 				// Update data in structure 1.
-				m.authMap[user][shortened] = a
+				m.authMap[user][shortened] = authorization
 
 				// Update data in structure 2.
 				m.shortIndex.add(map[string]userSet{shortened: {user: {}}})

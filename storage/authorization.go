@@ -30,8 +30,8 @@ type UserAuth map[string]Authorization
 // MergeOverwrite merges the given UserAuth's data into the current one. If there is a conflict, the existing data will
 // be overwritten in favor of the given data.
 func (u UserAuth) MergeOverwrite(uAuth UserAuth) {
-	for shortened, a := range uAuth {
-		u[shortened] = a
+	for shortened, authorization := range uAuth {
+		u[shortened] = authorization
 	}
 }
 

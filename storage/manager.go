@@ -450,10 +450,10 @@ func makeStringSliceSet(slice []string) (set []string) {
 	set = make([]string, len(m))
 
 	// Turn the map back into a slice.
-	i := 0
+	index := 0
 	for str := range m {
-		set[i] = str
-		i++
+		set[index] = str
+		index++
 	}
 
 	return set
