@@ -98,6 +98,7 @@ func (b BboltAuthorization) DB() (db *bbolt.DB) {
 // This should first interact with data structure 2. During this interaction the affected users should be noted and
 // used to update the underlying data structure, data structure 1, afterwards.
 func (b BboltAuthorization) DeleteShortened(_ context.Context, shortenedURLs []string) (err error) {
+	// TODO
 	panic("implement me")
 }
 
