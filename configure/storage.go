@@ -12,7 +12,7 @@ import (
 	"github.com/MicahParks/terseurl/storage"
 )
 
-// createStores handles the process of creating the SummaryStore, TerseStore, and VisitsStore. TODO
+// createStores handles the process of creating the AuthorizationStore SummaryStore, TerseStore, and VisitsStore.
 func createStores(config *Configuration, group ctxerrgroup.Group, logger *zap.SugaredLogger, rawConfig *configuration) (err error) {
 
 	// Get the AuthorizationStore configuration.
