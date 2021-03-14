@@ -6,7 +6,7 @@ import (
 	"go.etcd.io/bbolt"
 )
 
-// BboltAuthorization TODO
+// BboltAuthorization implements the AuthorizationStore interface.
 type BboltAuthorization struct {
 	bucket     []byte
 	db         *bbolt.DB
