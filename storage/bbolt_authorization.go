@@ -124,19 +124,7 @@ func (b BboltAuthorization) DeleteShortened(_ context.Context, shortenedURLs []s
 	}
 
 	// Turn the map of affected shortened URLs into a map of affected users.
-	affectedUsers := make(map[string]shortenedSet, len(affectedShortened))
-	for shortened, users := range affectedShortened {
-		for user := range users {
-
-			// Confirm the user is already in the map of affected users.
-			if _, ok := affectedUsers[user]; !ok {
-				affectedUsers[user] = shortenedSet{}
-			}
-
-			// Add the users shortened URLs to the map of affected users.
-			affectedUsers[user][shortened] = struct{}{}
-		}
-	}
+	affectedUsers := flipUserSet(affectedShortened) // TODO See if this function can be used elsewhere.
 
 	// Open the bbolt database for writing, batch if possible.
 	if err = b.db.Batch(func(tx *bbolt.Tx) error {
@@ -149,6 +137,7 @@ func (b BboltAuthorization) DeleteShortened(_ context.Context, shortenedURLs []s
 			if value == nil {
 				b.logger.Warnw("User found in authorization data structure 2, but not authorization data structure 1.",
 					"user", user,
+					"function", "delete",
 				)
 				continue
 			}
@@ -185,6 +174,7 @@ func (b BboltAuthorization) DeleteUsers(_ context.Context, users []string) (err 
 
 	// Create the forEachFunc.
 	var forEach forEachFunc = func(key, value []byte) (err error) {
+		var ok bool
 
 		// Turn the raw data into a map of shortened URLs to Authorization data.
 		var userAuth UserAuth
@@ -197,7 +187,7 @@ func (b BboltAuthorization) DeleteUsers(_ context.Context, users []string) (err 
 		for user := range userAuth {
 
 			// Confirm the shortened URL is already present in the map of affected users.
-			if _, ok := affectedShortened[shortened]; !ok {
+			if _, ok = affectedShortened[shortened]; !ok {
 				affectedShortened[shortened] = userSet{}
 			}
 
@@ -237,6 +227,7 @@ func (b BboltAuthorization) Overwrite(_ context.Context, usersShortened map[stri
 	// Open the bbolt database for writing, batch if possible.
 	if err = b.db.Batch(func(tx *bbolt.Tx) error {
 		b.shortIndex.lock(func() {
+			var ok bool
 
 			// Iterate through the given users.
 			for user, uAuth := range usersShortened {
@@ -253,7 +244,7 @@ func (b BboltAuthorization) Overwrite(_ context.Context, usersShortened map[stri
 
 					// Delete users in data structure 2 to that have the shortened URL in the old set, but not the new one.
 					for shortened := range userAuth {
-						if _, ok := uAuth[shortened]; !ok {
+						if _, ok = uAuth[shortened]; !ok {
 							b.shortIndex.delete(map[string]userSet{shortened: {user: {}}})
 						}
 					}
@@ -326,5 +317,83 @@ func (b BboltAuthorization) ReadUsers(_ context.Context, users []string) (usersS
 // This should first interact with data structure 2 for faster lookups, then gather the Authorization data from data
 // structure 1.
 func (b BboltAuthorization) ReadShortened(_ context.Context, shortenedURLs []string) (shortenedUserSet map[string]ShortenedAuth, err error) {
-	panic("implement me")
+
+	// Create the return map.
+	shortenedUserSet = make(map[string]ShortenedAuth, len(shortenedUserSet))
+
+	// Use data structure 2 to find the users authorized for the shortened URLs.
+	var affectedShortened map[string]userSet
+	b.shortIndex.rlock(func() {
+		affectedShortened, err = b.shortIndex.read(shortenedURLs)
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	// Open the bbolt database for reading.
+	var ok bool
+	if err = b.db.View(func(tx *bbolt.Tx) error {
+
+		// Iterate through the relevant users.
+		for user, shortened := range flipUserSet(affectedShortened) {
+
+			// Get the Authorization data.
+			value := tx.Bucket(b.bucket).Get([]byte(user))
+			if value == nil {
+				b.logger.Warnw("User found in authorization data structure 2, but not authorization data structure 1.",
+					"user", user,
+					"function", "delete",
+				)
+				continue
+			}
+
+			// Turn the raw data into Authorization data.
+			var userAuth UserAuth
+			if userAuth, err = bytesToUserAuth(value); err != nil {
+				return err
+			}
+
+			// Iterate through the desired shortened URLs.
+			for short := range shortened {
+
+				// Confirm the shortened URL is in the return map.
+				if _, ok = shortenedUserSet[short]; !ok {
+					shortenedUserSet[short] = ShortenedAuth{}
+				}
+
+				// Add the Authorization data to the return map.
+				shortenedUserSet[short][user] = userAuth[user]
+			}
+		}
+
+		return nil
+	}); err != nil {
+		return nil, err
+	}
+
+	return shortenedUserSet, nil
+}
+
+// flipUserSet turns a map of affected shortened URLs into a map of affected users.
+func flipUserSet(affectedShortened map[string]userSet) (affectedUsers map[string]shortenedSet) {
+
+	// Create the return map.
+	affectedUsers = make(map[string]shortenedSet)
+
+	// Iterate through the affected shortened URLs.
+	var ok bool
+	for shortened, users := range affectedShortened {
+		for user := range users {
+
+			// Confirm the user is already in the map of affected users.
+			if _, ok = affectedUsers[user]; !ok {
+				affectedUsers[user] = shortenedSet{}
+			}
+
+			// Add the users shortened URLs to the map of affected users.
+			affectedUsers[user][shortened] = struct{}{}
+		}
+	}
+
+	return affectedUsers
 }

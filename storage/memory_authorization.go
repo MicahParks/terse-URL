@@ -343,11 +343,11 @@ func (m *MemAuthorization) addUsers(shortened string, shortenedUserSet map[strin
 
 		// Confirm the user is in data structure 1.
 		_, ok = m.authMap[user]
-		var a Authorization
+		var authData Authorization
 		if ok {
 
 			// Get the Authorization data for the associated user.
-			a, ok = m.authMap[user][shortened]
+			authData, ok = m.authMap[user][shortened]
 
 			// Confirm the data in the data structures is behaving as expected.
 			if !ok {
@@ -372,7 +372,7 @@ func (m *MemAuthorization) addUsers(shortened string, shortenedUserSet map[strin
 		}
 
 		// Add the Authorization data to the return map.
-		shortenedUserSet[shortened][user] = a
+		shortenedUserSet[shortened][user] = authData
 	}
 }
 
