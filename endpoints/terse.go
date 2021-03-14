@@ -27,7 +27,7 @@ func HandleTerseRead(logger *zap.SugaredLogger, manager storage.StoreManager) ap
 		defer cancel()
 
 		// Get the Terse.
-		terse, err := manager.Terse(ctx, params.ShortenedURLs)
+		terse, err := manager.Terse(ctx, principal, params.ShortenedURLs)
 		if err != nil {
 
 			// Log at the appropriate level. Assign the response code and message.

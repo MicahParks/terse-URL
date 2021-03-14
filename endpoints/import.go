@@ -23,7 +23,7 @@ func HandleImport(logger *zap.SugaredLogger, manager storage.StoreManager) api.I
 		defer cancel()
 
 		// Import the given data.
-		if err := manager.Import(ctx, params.Import); err != nil {
+		if err := manager.Import(ctx, params.Import, principal); err != nil {
 
 			// Log at the appropriate level.
 			message := "Failed to import data. Clean up may be necessary."

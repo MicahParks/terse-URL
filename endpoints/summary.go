@@ -25,7 +25,7 @@ func HandleShortenedSummary(logger *zap.SugaredLogger, manager storage.StoreMana
 		defer cancel()
 
 		// Gather the summary information for the requested shortened URLs.
-		summaries, err := manager.Summary(ctx, params.ShortenedURLs)
+		summaries, err := manager.Summary(ctx, principal, params.ShortenedURLs)
 		if err != nil {
 
 			// Log at the appropriate level.

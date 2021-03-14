@@ -24,7 +24,7 @@ func HandlerVisitsDelete(logger *zap.SugaredLogger, manager storage.StoreManager
 		defer cancel()
 
 		// Delete Visits data for the requested shortened URLs.
-		if err := manager.DeleteShortened(ctx, params.ShortenedURLs); err != nil {
+		if err := manager.DeleteShortened(ctx, principal, params.ShortenedURLs); err != nil {
 
 			// Log at the appropriate level.
 			message := "Failed to delete Visits data for the requested shortened URLs."

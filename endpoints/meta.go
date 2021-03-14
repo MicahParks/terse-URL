@@ -15,6 +15,8 @@ import (
 func HandleMeta(logger *zap.SugaredLogger) api.FrontendMetaHandlerFunc {
 	return func(params api.FrontendMetaParams, principal *models.Principal) middleware.Responder {
 
+		// TODO Use principal.
+
 		// Debug info.
 		logger.Infow("Gathering relevant HTML meta information.",
 			"originalURL", params.OriginalURL,

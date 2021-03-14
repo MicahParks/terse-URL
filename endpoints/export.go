@@ -25,7 +25,7 @@ func HandleExport(logger *zap.SugaredLogger, manager storage.StoreManager) api.E
 		defer cancel()
 
 		// Get the data dump.
-		dump, err := manager.Export(ctx, params.ShortenedURLs)
+		dump, err := manager.Export(ctx, principal, params.ShortenedURLs)
 		if err != nil {
 
 			// Log at the appropriate level.

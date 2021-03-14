@@ -13,6 +13,8 @@ import (
 func HandleShortenedPrefix(logger *zap.SugaredLogger, prefix string) api.ShortenedPrefixHandlerFunc {
 	return func(params api.ShortenedPrefixParams, principal *models.Principal) middleware.Responder {
 
+		// TODO Use principal.
+
 		// Debug info.
 		logger.Debug("Requested.")
 
