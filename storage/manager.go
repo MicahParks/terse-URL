@@ -449,29 +449,100 @@ func (s StoreManager) VisitsStore(doThis func(store VisitsStore)) {
 // existing.
 func (s StoreManager) WriteTerse(ctx context.Context, principal *models.Principal, terse map[string]*models.Terse, operation WriteOperation) (err error) {
 
-	// Create a slice of affected shortened URLs.
-	shortenedURLs := make([]string, len(terse))
-	index := 0
-	for shortened := range terse {
-		shortenedURLs[index] = shortened
-		index++
-	}
+	// Create a no operation function to defer. Authorization will reassign the function if enabled.
+	deferFunc := func() {}
 
-	// Create the needed authorization.
-	neededAuth := Authorization{
-		WriteTerse: true,
-	}
+	// Perform authorization based on the principal, operation, and shortened URLs.
+	s.AuthStore(func(store AuthorizationStore) {
 
-	// Make sure the principal is authorized.
-	var authorized bool
-	if authorized, err = s.authorize(ctx, principal, shortenedURLs, neededAuth); err != nil {
+		// Create a slice of affected shortened URLs.
+		shortenedURLs := make([]string, len(terse))
+		index := 0
+		for shortened := range terse {
+			shortenedURLs[index] = shortened
+			index++
+		}
+
+		// Create the slices of inserted and updated shortened URLs.
+		inserted := make([]string, 0)
+		updated := make([]string, 0)
+
+		// Decide how to populate the slices based on the operation.
+		switch operation {
+		case Insert:
+			inserted = shortenedURLs
+		case Update:
+			updated = shortenedURLs
+		case Upsert:
+
+			// Iterate through the given shortened URLs.
+			for _, shortened := range shortenedURLs {
+				if _, err = s.terseStore.Read(ctx, []string{shortened}); err != nil {
+
+					// Check if this shortened URL is being inserted.
+					if errors.Is(err, ErrShortenedNotFound) {
+						inserted = append(inserted, shortened)
+						err = nil
+						continue
+					}
+
+					return
+				}
+
+				// The shortened URL is being updated.
+				updated = append(updated, shortened)
+			}
+		}
+
+		// Check the Authorization data for the updated shortened URLs.
+		//
+		// TODO Any user can insert an shortened URL.
+		if len(updated) != 0 {
+
+			// Create the needed authorization.
+			neededAuth := Authorization{
+				WriteTerse: true,
+			}
+
+			// Make sure the principal is authorized.
+			var authorized bool
+			if authorized, err = s.authorize(ctx, principal, updated, neededAuth); err != nil {
+				return
+			}
+
+			// Check if the request is authorized.
+			if !authorized {
+				err = ErrUnauthorized
+				return
+			}
+		}
+
+		// Reassign the deferred function to update the AuthorizationStore.
+		deferFunc = func() { // TODO This doesn't handle the case with the principal is nil. Terse store will contain shortened URLs not in AuthorizationStore.
+
+			// The new Authorization data to write.
+			usersShortened := make(map[string]UserAuth)
+
+			// Iterate through the inserted shortened URLs. Make the principal's user the owner of these shortened URLs.
+			for _, shortened := range inserted {
+				authData := UserAuth{}
+				authData[principal.Sub] = Authorization{
+					Owner: true,
+				}
+				usersShortened[shortened] = authData
+			}
+
+			// Add the new Authorization data to the AuthorizationStore.
+			if err = store.Append(ctx, usersShortened); err != nil {
+				// TODO Log.
+			}
+		}
+	})
+	if err != nil {
 		return err
 	}
 
-	// Check if the request is authorized.
-	if !authorized {
-		return ErrUnauthorized
-	}
+	defer deferFunc()
 
 	// Write the Terse data.
 	if err = s.terseStore.Write(ctx, terse, operation); err != nil {
@@ -556,8 +627,6 @@ func (s StoreManager) WriteTerse(ctx context.Context, principal *models.Principa
 	if err != nil {
 		return err
 	}
-
-	// TODO Add to the AuthStore.
 
 	return nil
 }
