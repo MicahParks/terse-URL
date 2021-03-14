@@ -41,6 +41,9 @@ type shortenedIndex struct { // AKA authorization data structure 2.
 	mux      sync.RWMutex
 }
 
+// shortenedSet represents a set of unique user identifiers.
+type shortenedSet map[string]struct{}
+
 // userSet represents a set of unique user identifiers.
 type userSet map[string]struct{}
 

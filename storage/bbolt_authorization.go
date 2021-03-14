@@ -4,12 +4,14 @@ import (
 	"context"
 
 	"go.etcd.io/bbolt"
+	"go.uber.org/zap"
 )
 
 // BboltAuthorization implements the AuthorizationStore interface.
 type BboltAuthorization struct {
 	bucket     []byte
 	db         *bbolt.DB
+	logger     *zap.SugaredLogger
 	shortIndex *shortenedIndex
 }
 
@@ -70,6 +72,7 @@ func (b BboltAuthorization) Append(_ context.Context, usersShortened map[string]
 					uSet[shortened] = map[string]struct{}{user: {}}
 				}
 
+				// Update data structure 2.
 				b.shortIndex.add(uSet)
 			}
 		})
@@ -105,8 +108,69 @@ func (b BboltAuthorization) DB() (db *bbolt.DB) {
 // This should first interact with data structure 2. During this interaction the affected users should be noted and
 // used to update the underlying data structure, data structure 1, afterwards.
 func (b BboltAuthorization) DeleteShortened(_ context.Context, shortenedURLs []string) (err error) {
-	// TODO
-	panic("implement me")
+
+	// Keep track of the affected users.
+	var affectedShortened map[string]userSet
+
+	// Find the affected users.
+	b.shortIndex.rlock(func() {
+		affectedShortened, err = b.shortIndex.read(shortenedURLs)
+		if err != nil {
+			return
+		}
+	})
+	if err != nil {
+		return err
+	}
+
+	// Turn the map of affected shortened URLs into a map of affected users.
+	affectedUsers := make(map[string]shortenedSet, len(affectedShortened))
+	for shortened, users := range affectedShortened {
+		for user := range users {
+
+			// Confirm the user is already in the map of affected users.
+			if _, ok := affectedUsers[user]; !ok {
+				affectedUsers[user] = shortenedSet{}
+			}
+
+			// Add the users shortened URLs to the map of affected users.
+			affectedUsers[user][shortened] = struct{}{}
+		}
+	}
+
+	// Open the bbolt database for writing, batch if possible.
+	if err = b.db.Batch(func(tx *bbolt.Tx) error {
+
+		// Iterate through the affected users.
+		for user, shortened := range affectedUsers {
+
+			// Get the map of shortened URLs to Authorization data for the user.
+			value := tx.Bucket(b.bucket).Get([]byte(user))
+			if value == nil {
+				b.logger.Warnw("User found in authorization data structure 2, but not authorization data structure 1.",
+					"user", user,
+				)
+				continue
+			}
+
+			// Turn the raw data into Authorization data.
+			var userAuth UserAuth
+			if userAuth, err = bytesToUserAuth(value); err != nil {
+				return err
+			}
+
+			// Delete the required shortened URLs.
+			for short := range shortened {
+				delete(userAuth, short)
+			}
+		}
+
+		return nil
+	}); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // DeleteUsers deletes the Authorization data for the given users. If users is nil or empty, all Authorization data
@@ -116,12 +180,48 @@ func (b BboltAuthorization) DeleteShortened(_ context.Context, shortenedURLs []s
 // the affected shortened URLs should be noted and used to update data structure 2 afterwards.
 func (b BboltAuthorization) DeleteUsers(_ context.Context, users []string) (err error) {
 
+	// Keep track of which shortened URLs are affected.
+	affectedShortened := make(map[string]userSet, len(users))
+
+	// Create the forEachFunc.
+	var forEach forEachFunc = func(key, value []byte) (err error) {
+
+		// Turn the raw data into a map of shortened URLs to Authorization data.
+		var userAuth UserAuth
+		if userAuth, err = bytesToUserAuth(value); err != nil {
+			return err
+		}
+
+		// Add to the map of affected users.
+		shortened := string(key)
+		for user := range userAuth {
+
+			// Confirm the shortened URL is already present in the map of affected users.
+			if _, ok := affectedShortened[shortened]; !ok {
+				affectedShortened[shortened] = userSet{}
+			}
+
+			// Add the user to the set of affected users for this shortened URL.
+			affectedShortened[shortened][user] = struct{}{}
+		}
+
+		return nil
+	}
+
+	// Read the affected shortened URLs.
+	if err = bboltRead(b, forEach, users); err != nil {
+		return err
+	}
+
 	// Delete from data structure 1.
 	if err = bboltDelete(b, users); err != nil {
 		return err
 	}
 
-	// TODO Delete from data structure 2.
+	// Delete from data structure 2.
+	b.shortIndex.lock(func() {
+		b.shortIndex.delete(affectedShortened)
+	})
 
 	return nil
 }
@@ -175,6 +275,7 @@ func (b BboltAuthorization) Overwrite(_ context.Context, usersShortened map[stri
 					uSet[shortened] = map[string]struct{}{user: {}}
 				}
 
+				// Update data structure 2.
 				b.shortIndex.add(uSet)
 			}
 		})
