@@ -115,7 +115,15 @@ func (s StoreManager) DeleteShortened(ctx context.Context, principal *models.Pri
 		return err
 	}
 
-	// TODO Delete from auth store in both places.
+	// Delete the shortened URLs from the AuthorizationStore.
+	s.AuthStore(func(store AuthorizationStore) {
+		if err = store.DeleteShortened(ctx, shortenedURLs); err != nil {
+			return
+		}
+	})
+	if err != nil {
+		return err
+	}
 
 	return nil
 }

@@ -2,6 +2,7 @@ package storage
 
 import (
 	"context"
+	"errors"
 
 	"go.etcd.io/bbolt"
 	"go.uber.org/zap"
@@ -109,54 +110,93 @@ func (b BboltAuthorization) DB() (db *bbolt.DB) {
 // used to update the underlying data structure, data structure 1, afterwards.
 func (b BboltAuthorization) DeleteShortened(_ context.Context, shortenedURLs []string) (err error) {
 
-	// Keep track of the affected users.
-	var affectedShortened map[string]userSet
+	// Check for the empty case.
+	if len(shortenedURLs) == 0 {
 
-	// Find the affected users.
-	b.shortIndex.rlock(func() {
-		affectedShortened, err = b.shortIndex.read(shortenedURLs)
+		// Create a map from the slice of shortened URLs to delete.
+		deleteShortened := make(map[string]userSet)
+		for _, shortened := range shortenedURLs {
+			deleteShortened[shortened] = nil
+		}
+
+		// Delete all Authorization data.
+		if err = bboltDelete(b, nil); err != nil {
+			return err
+		}
+
+		// Delete from data structure 2.
+		b.shortIndex.lock(func() {
+			b.shortIndex.delete(deleteShortened)
+		})
+	} else {
+
+		// Keep track of the affected users.
+		var affectedShortened map[string]userSet
+
+		// Find the affected users.
+		b.shortIndex.rlock(func() {
+			for _, shortened := range shortenedURLs {
+
+				// Read the affected shortened URLs.
+				var affected map[string]userSet
+				affected, err = b.shortIndex.read([]string{shortened})
+				if err != nil {
+
+					// Check for an acceptable error.
+					if errors.Is(err, ErrKeyNotFound) {
+						err = nil
+					}
+
+					return
+				}
+
+				// Add the shortened URL to the map of affected shortened URLs.
+				affectedShortened[shortened] = affected[shortened]
+			}
+		})
 		if err != nil {
-			return
-		}
-	})
-	if err != nil {
-		return err
-	}
-
-	// Turn the map of affected shortened URLs into a map of affected users.
-	affectedUsers := flipUserSet(affectedShortened) // TODO See if this function can be used elsewhere.
-
-	// Open the bbolt database for writing, batch if possible.
-	if err = b.db.Batch(func(tx *bbolt.Tx) error {
-
-		// Iterate through the affected users.
-		for user, shortened := range affectedUsers {
-
-			// Get the map of shortened URLs to Authorization data for the user.
-			value := tx.Bucket(b.bucket).Get([]byte(user))
-			if value == nil {
-				b.logger.Warnw("User found in authorization data structure 2, but not authorization data structure 1.",
-					"user", user,
-					"function", "delete",
-				)
-				continue
-			}
-
-			// Turn the raw data into Authorization data.
-			var userAuth UserAuth
-			if userAuth, err = bytesToUserAuth(value); err != nil {
-				return err
-			}
-
-			// Delete the required shortened URLs.
-			for short := range shortened {
-				delete(userAuth, short)
-			}
+			return err
 		}
 
-		return nil
-	}); err != nil {
-		return err
+		// Turn the map of affected shortened URLs into a map of affected users.
+		affectedUsers := flipUserSet(affectedShortened) // TODO See if this function can be used elsewhere.
+
+		// Open the bbolt database for writing, batch if possible.
+		if err = b.db.Batch(func(tx *bbolt.Tx) error {
+
+			// Iterate through the affected users.
+			for user, shortened := range affectedUsers {
+
+				// Get the map of shortened URLs to Authorization data for the user.
+				value := tx.Bucket(b.bucket).Get([]byte(user))
+				if value == nil {
+					b.logger.Warnw("User found in authorization data structure 2, but not authorization data structure 1.",
+						"user", user,
+						"function", "delete",
+					)
+					continue
+				}
+
+				// Turn the raw data into Authorization data.
+				var userAuth UserAuth
+				if userAuth, err = bytesToUserAuth(value); err != nil {
+					return err
+				}
+
+				// Delete the required shortened URLs.
+				for short := range shortened {
+					delete(userAuth, short)
+				}
+			}
+
+			return nil
+		}); err != nil {
+			return err
+		}
+
+		b.shortIndex.lock(func() {
+			b.shortIndex.delete(affectedShortened)
+		})
 	}
 
 	return nil
