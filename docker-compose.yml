@@ -21,6 +21,7 @@ services:
       TEMPLATE_PATH: "redirect.gohtml"
     image: "micahparks/terseurl"
     volumes:
+      - "./authorization.bbolt:/terseurl/authorization.bbolt"
       - "./terseStore.json:/terseurl/terseStore.json:ro"
       - "./terse.bbolt:/terseurl/terse.bbolt"
       - "./visitsStore.json:/terseurl/visitsStore.json:ro"

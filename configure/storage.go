@@ -15,6 +15,25 @@ import (
 // createStores handles the process of creating the SummaryStore, TerseStore, and VisitsStore. TODO
 func createStores(config *Configuration, group ctxerrgroup.Group, logger *zap.SugaredLogger, rawConfig *configuration) (err error) {
 
+	// Get the AuthorizationStore configuration.
+	var authConfig json.RawMessage
+	if authConfig, err = readStorageConfig(rawConfig.AuthorizationStoreJSON, logger, configPathAuthorizationStore); err != nil {
+		return err
+	}
+
+	// Create the SummaryStore.
+	authorizationStore, authorizationStoreType, err := storage.NewAuthorizationStore(authConfig)
+	if err != nil {
+		logger.Fatalw("Failed to create AuthorizationStore.",
+			"type", authorizationStoreType,
+			"error", err.Error(),
+		)
+		return err
+	}
+	logger.Infow("Created AuthorizationStore.",
+		"type", authorizationStoreType,
+	)
+
 	// Get the SummaryStore configuration.
 	var summaryConfig json.RawMessage
 	if summaryConfig, err = readStorageConfig(rawConfig.SummaryStoreJSON, logger, configPathSummaryStore); err != nil {
@@ -73,7 +92,7 @@ func createStores(config *Configuration, group ctxerrgroup.Group, logger *zap.Su
 	)
 
 	// Create the store manager.
-	config.StoreManager = storage.NewStoreManager(DefaultCtx, group, summaryStore, terseStore, visitsStore)
+	config.StoreManager = storage.NewStoreManager(authorizationStore, DefaultCtx, group, logger, summaryStore, terseStore, visitsStore)
 
 	// Initialize the SummaryStore.
 	ctx, cancel := DefaultCtx()

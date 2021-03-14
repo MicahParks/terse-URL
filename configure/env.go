@@ -36,19 +36,20 @@ var (
 
 // configuration holds all the necessary information for
 type configuration struct {
-	DefaultTimeout   time.Duration
-	InvalidPaths     []string
-	JWKSURL          string
-	Prefix           string
-	ShortIDParanoid  bool
-	ShortIDSeed      uint64
-	TemplatePath     string
-	UseAuth          bool
-	StaticFSDirName  string
-	SummaryStoreJSON string
-	TerseStoreJSON   string
-	VisitsStoreJSON  string
-	WorkerCount      uint
+	DefaultTimeout         time.Duration
+	InvalidPaths           []string
+	JWKSURL                string
+	Prefix                 string
+	ShortIDParanoid        bool
+	ShortIDSeed            uint64
+	TemplatePath           string
+	UseAuth                bool
+	StaticFSDirName        string
+	AuthorizationStoreJSON string // TODO Get this from places.
+	SummaryStoreJSON       string
+	TerseStoreJSON         string
+	VisitsStoreJSON        string
+	WorkerCount            uint
 }
 
 // invalidPathsParse parses a comma separated string into a slice of strings. It adds in paths that are always invalid

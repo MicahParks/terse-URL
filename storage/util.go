@@ -32,11 +32,14 @@ var (
 	// ErrShortenedExists indicates that an attempt was made to add a shortened URL that already existed.
 	ErrShortenedExists = errors.New("the shortened URL already exists")
 
-	// bboltTerseBucket is the bbolt bucket to use for Terse.
+	// bboltAuthorizationBucket is the bbolt bucket to use for Authorization data.
+	bboltAuthorizationBucket = []byte("authorization")
+
+	// bboltTerseBucket is the bbolt bucket to use for Terse data.
 	bboltTerseBucket = []byte("terse")
 
-	// bboltVisitsBucket is the bbolt bucket to use for Visits.
-	bboltVisitsBucket = []byte("terseVisits")
+	// bboltVisitsBucket is the bbolt bucket to use for Visits data.
+	bboltVisitsBucket = []byte("visits")
 )
 
 // configuration represents the configuration data gathered from the user to create a storage backend.
@@ -47,6 +50,53 @@ type configuration struct {
 
 // CtxCreator is a function signature that creates a context and its cancel function.
 type CtxCreator func() (ctx context.Context, cancel context.CancelFunc)
+
+// NewAuthorizationStore creates a new AuthorizationStore from the given configJSON. The storeType return value is used
+// for logging.
+func NewAuthorizationStore(configJSON json.RawMessage) (authorizationStore AuthorizationStore, storeType string, err error) {
+
+	// Create the configuration.
+	config := &configuration{}
+
+	// If no JSON was given, use an in memory implementation.
+	if len(configJSON) == 0 {
+		config.Type = storageMemory
+	} else {
+
+		// Turn the configuration JSON into a Go structure.
+		if err = json.Unmarshal(configJSON, config); err != nil {
+			return nil, "", err
+		}
+	}
+
+	// Create the appropriate SummaryStore.
+	switch config.Type {
+
+	// Open a file as a bbolt database for the TerseStore.
+	case storageBbolt:
+
+		// Open the bbolt database file.
+		var db *bbolt.DB
+		if db, err = openBbolt(config.BboltPath); err != nil {
+			return nil, "", err
+		}
+
+		// Create the bucket.
+		if err = createBucket(db, bboltAuthorizationBucket); err != nil {
+			return nil, "", err
+		}
+
+		// Assign the interface implementation.
+		authorizationStore = NewBboltAuthorization(db, bboltAuthorizationBucket)
+
+	// Use and in memory implementation of the SummaryStore by default.
+	default:
+		config.Type = storageMemory
+		authorizationStore = NewMemAuthorization()
+	}
+
+	return authorizationStore, config.Type, nil
+}
 
 // NewSummaryStore creates a new SummaryStore from the given configJSON. The storeType return value is used for logging.
 func NewSummaryStore(configJSON json.RawMessage) (summaryStore SummaryStore, storeType string, err error) {

@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	"github.com/MicahParks/ctxerrgroup"
+	"go.uber.org/zap"
 
 	"github.com/MicahParks/terseurl/models"
 )
@@ -15,16 +16,19 @@ type StoreManager struct {
 	authStore    AuthorizationStore
 	createCtx    CtxCreator
 	group        ctxerrgroup.Group
+	logger       *zap.SugaredLogger
 	summaryStore SummaryStore
 	terseStore   TerseStore
 	visitsStore  VisitsStore
 }
 
 // NewStoreManager creates a new manager for the data stores.
-func NewStoreManager(createCtx CtxCreator, group ctxerrgroup.Group, summaryStore SummaryStore, terseStore TerseStore, visitsStore VisitsStore) (manager StoreManager) {
+func NewStoreManager(authStore AuthorizationStore, createCtx CtxCreator, group ctxerrgroup.Group, logger *zap.SugaredLogger, summaryStore SummaryStore, terseStore TerseStore, visitsStore VisitsStore) (manager StoreManager) {
 	return StoreManager{
+		authStore:    authStore,
 		createCtx:    createCtx,
 		group:        group,
+		logger:       logger,
 		summaryStore: summaryStore,
 		terseStore:   terseStore,
 		visitsStore:  visitsStore,

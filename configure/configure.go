@@ -15,14 +15,17 @@ import (
 
 const (
 
+	// configPathAuthorizationStore is the location to find the AuthorizationStore JSON configuration file.
+	configPathAuthorizationStore = "authorizationStore.json"
+
+	// configPathSummaryStore is the location to find the SummaryStore JSON configuration file.
+	configPathSummaryStore = "summaryStore.json"
+
 	// configPathTerseStore is the location to find the TerseStore JSON configuration file.
 	configPathTerseStore = "terseStore.json"
 
 	// configPathVisitsStore is the location to find the VisitsStore JSON configuration file.
 	configPathVisitsStore = "visitsStore.json"
-
-	// configPathSummaryStore is the location to find the SummaryStore JSON configuration file.
-	configPathSummaryStore = "summaryStore.json"
 )
 
 // Configuration is the Go structure that contains all needed configurations gathered on startup.
