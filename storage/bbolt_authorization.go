@@ -31,43 +31,50 @@ func (b BboltAuthorization) Append(_ context.Context, usersShortened map[string]
 
 	// Open the bbolt database for writing, batch if possible.
 	if err = b.db.Batch(func(tx *bbolt.Tx) error {
+		b.shortIndex.lock(func() {
 
-		// Iterate through the given users.
-		for user, uAuth := range usersShortened {
+			// Iterate through the given users.
+			for user, uAuth := range usersShortened {
 
-			// Confirm the key exists in the bucket. Grab its value.
-			var userAuth UserAuth
-			value := tx.Bucket(b.bucket).Get([]byte(user))
-			if value != nil {
+				// Confirm the key exists in the bucket. Grab its value.
+				var userAuth UserAuth
+				value := tx.Bucket(b.bucket).Get([]byte(user))
+				if value != nil {
 
-				// Transform the raw data to a map of shortened URLs to Authorization data.
-				if userAuth, err = bytesToUserAuth(value); err != nil {
-					return err
+					// Transform the raw data to a map of shortened URLs to Authorization data.
+					if userAuth, err = bytesToUserAuth(value); err != nil {
+						return
+					}
+
+					// Write the new data to the map of shortened URLs to Authorization data.
+					userAuth.MergeOverwrite(uAuth)
+				} else {
+
+					// Use the given map of shortened URLs to Authorization data since this user was not found.
+					userAuth = uAuth
 				}
 
-				// Write the new data to the map of shortened URLs to Authorization data.
-				userAuth.MergeOverwrite(uAuth)
-			} else {
+				// Transform the map of shortened URLs to Authorization data into bytes.
+				if value, err = userAuthToBytes(userAuth); err != nil {
+					return
+				}
 
-				// Use the given map of shortened URLs to Authorization data since this user was not found.
-				userAuth = uAuth
+				// Write the transformed data back to the database.
+				if err = tx.Bucket(b.bucket).Put([]byte(user), value); err != nil {
+					return
+				}
+
+				// Create the set of users to add.
+				uSet := make(map[string]userSet)
+				for shortened := range uAuth {
+					uSet[shortened] = map[string]struct{}{user: {}}
+				}
+
+				b.shortIndex.add(uSet)
 			}
+		})
 
-			// Transform the map of shortened URLs to Authorization data into bytes.
-			if value, err = userAuthToBytes(userAuth); err != nil {
-				return err
-			}
-
-			// Write the transformed data back to the database.
-			if err = tx.Bucket(b.bucket).Put([]byte(user), value); err != nil {
-				return err
-			}
-
-			// Update data structure 2.
-			b.shortIndex.add(map[string]userSet{}) // TODO Copy from memory implementation. Look at addUsers method.
-		}
-
-		return nil
+		return err // This error may be assigned in inner function.
 	}); err != nil {
 		return err
 	}
@@ -129,26 +136,50 @@ func (b BboltAuthorization) Overwrite(_ context.Context, usersShortened map[stri
 
 	// Open the bbolt database for writing, batch if possible.
 	if err = b.db.Batch(func(tx *bbolt.Tx) error {
+		b.shortIndex.lock(func() {
 
-		// Iterate through the given users.
-		for user, uAuth := range usersShortened {
+			// Iterate through the given users.
+			for user, uAuth := range usersShortened {
 
-			// Transform the map of shortened URLs to Authorization data into bytes.
-			var value []byte
-			if value, err = userAuthToBytes(uAuth); err != nil {
-				return err
+				// Confirm the key exists in the bucket. Grab its value.
+				value := tx.Bucket(b.bucket).Get([]byte(user))
+				if value != nil {
+
+					// Transform the raw data to a map of shortened URLs to Authorization data.
+					var userAuth UserAuth
+					if userAuth, err = bytesToUserAuth(value); err != nil {
+						return
+					}
+
+					// Delete users in data structure 2 to that have the shortened URL in the old set, but not the new one.
+					for shortened := range userAuth {
+						if _, ok := uAuth[shortened]; !ok {
+							b.shortIndex.delete(map[string]userSet{shortened: {user: {}}})
+						}
+					}
+				}
+
+				// Transform the map of shortened URLs to Authorization data into bytes.
+				if value, err = userAuthToBytes(uAuth); err != nil {
+					return
+				}
+
+				// Write the transformed data back to the database.
+				if err = tx.Bucket(b.bucket).Put([]byte(user), value); err != nil {
+					return
+				}
+
+				// Create the set of users to add.
+				uSet := make(map[string]userSet)
+				for shortened := range uAuth {
+					uSet[shortened] = map[string]struct{}{user: {}}
+				}
+
+				b.shortIndex.add(uSet)
 			}
+		})
 
-			// Write the transformed data back to the database.
-			if err = tx.Bucket(b.bucket).Put([]byte(user), value); err != nil {
-				return err
-			}
-
-			// Update data structure 2.
-			b.shortIndex.add(map[string]userSet{}) // TODO Copy from memory implementation. Look at addUsers method.
-		}
-
-		return nil
+		return err // This error may be assigned in inner function.
 	}); err != nil {
 		return err
 	}

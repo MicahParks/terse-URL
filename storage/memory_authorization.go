@@ -213,17 +213,17 @@ func (m *MemAuthorization) Overwrite(_ context.Context, usersShortened map[strin
 	m.shortIndex.lock(func() {
 
 		// Iterate through the users in the given Authorization data.
-		for user, userData := range usersShortened {
+		for user, userAuth := range usersShortened {
 
 			// Update data in structure 1.
-			m.authMap[user] = userData
+			m.authMap[user] = userAuth
 
 			// Get the existing UserAuth.
 			if oldUserData, ok := m.authMap[user]; ok {
 
 				// Delete users in data structure 2 to that have the shortened URL in the old set, but not the new one.
 				for shortened := range oldUserData {
-					if _, ok = userData[shortened]; !ok {
+					if _, ok = userAuth[shortened]; !ok {
 						m.shortIndex.delete(map[string]userSet{shortened: {user: {}}})
 					}
 				}
@@ -231,7 +231,7 @@ func (m *MemAuthorization) Overwrite(_ context.Context, usersShortened map[strin
 
 			// Create the set of users to add.
 			uSet := make(map[string]userSet)
-			for shortened := range userData {
+			for shortened := range userAuth {
 				uSet[shortened] = map[string]struct{}{user: {}}
 			}
 
