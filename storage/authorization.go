@@ -1,8 +1,15 @@
 package storage
 
 import (
+	"errors"
 	"fmt"
 	"sync"
+)
+
+var (
+
+	// ErrUnauthorized indiciates the request is not authorized.
+	ErrUnauthorized = errors.New("the request is not authorized")
 )
 
 // Authorization represents Authorization data.

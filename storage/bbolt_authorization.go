@@ -316,10 +316,10 @@ func (b BboltAuthorization) ReadUsers(_ context.Context, users []string) (usersS
 //
 // This should first interact with data structure 2 for faster lookups, then gather the Authorization data from data
 // structure 1.
-func (b BboltAuthorization) ReadShortened(_ context.Context, shortenedURLs []string) (shortenedUserSet map[string]ShortenedAuth, err error) {
+func (b BboltAuthorization) ReadShortened(_ context.Context, shortenedURLs []string) (shortenedUsers map[string]ShortenedAuth, err error) {
 
 	// Create the return map.
-	shortenedUserSet = make(map[string]ShortenedAuth, len(shortenedUserSet))
+	shortenedUsers = make(map[string]ShortenedAuth, len(shortenedUsers))
 
 	// Use data structure 2 to find the users authorized for the shortened URLs.
 	var affectedShortened map[string]userSet
@@ -357,12 +357,12 @@ func (b BboltAuthorization) ReadShortened(_ context.Context, shortenedURLs []str
 			for short := range shortened {
 
 				// Confirm the shortened URL is in the return map.
-				if _, ok = shortenedUserSet[short]; !ok {
-					shortenedUserSet[short] = ShortenedAuth{}
+				if _, ok = shortenedUsers[short]; !ok {
+					shortenedUsers[short] = ShortenedAuth{}
 				}
 
 				// Add the Authorization data to the return map.
-				shortenedUserSet[short][user] = userAuth[user]
+				shortenedUsers[short][user] = userAuth[user]
 			}
 		}
 
@@ -371,7 +371,7 @@ func (b BboltAuthorization) ReadShortened(_ context.Context, shortenedURLs []str
 		return nil, err
 	}
 
-	return shortenedUserSet, nil
+	return shortenedUsers, nil
 }
 
 // flipUserSet turns a map of affected shortened URLs into a map of affected users.

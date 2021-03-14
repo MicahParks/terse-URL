@@ -285,10 +285,10 @@ func (m *MemAuthorization) ReadUsers(_ context.Context, users []string) (usersSh
 //
 // This should first interact with data structure 2 for faster lookups, then gather the Authorization data from data
 // structure 1.
-func (m *MemAuthorization) ReadShortened(_ context.Context, shortenedURLs []string) (shortenedUserSet map[string]ShortenedAuth, err error) {
+func (m *MemAuthorization) ReadShortened(_ context.Context, shortenedURLs []string) (shortenedUsers map[string]ShortenedAuth, err error) {
 
 	// Create the return map.
-	shortenedUserSet = make(map[string]ShortenedAuth, len(shortenedURLs))
+	shortenedUsers = make(map[string]ShortenedAuth, len(shortenedURLs))
 
 	// Lock both data structure 1 and data structure 2 for async safe use.
 	m.authMux.RLock()
@@ -308,7 +308,7 @@ func (m *MemAuthorization) ReadShortened(_ context.Context, shortenedURLs []stri
 			for shortened, user := range users {
 
 				// Add the users' Authorization data to the return map.
-				m.addUsers(shortened, shortenedUserSet, user)
+				m.addUsers(shortened, shortenedUsers, user)
 			}
 		} else {
 
@@ -322,7 +322,7 @@ func (m *MemAuthorization) ReadShortened(_ context.Context, shortenedURLs []stri
 				}
 
 				// Add the users' Authorization data to the return map.
-				m.addUsers(shortened, shortenedUserSet, users[shortened])
+				m.addUsers(shortened, shortenedUsers, users[shortened])
 			}
 		}
 	})
@@ -330,7 +330,7 @@ func (m *MemAuthorization) ReadShortened(_ context.Context, shortenedURLs []stri
 		return nil, err
 	}
 
-	return shortenedUserSet, nil
+	return shortenedUsers, nil
 }
 
 // addUsers adds the given users' Authorization data to the shortenedUserSet map. This does no locking and is not async

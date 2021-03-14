@@ -80,7 +80,7 @@ type AuthorizationStore interface {
 	//
 	// This should first interact with data structure 2 for faster lookups, then gather the Authorization data from data
 	// structure 1.
-	ReadShortened(ctx context.Context, shortenedURLs []string) (shortenedUserSet map[string]ShortenedAuth, err error)
+	ReadShortened(ctx context.Context, shortenedURLs []string) (shortenedUsers map[string]ShortenedAuth, err error)
 }
 
 // SummaryStore is the Summary data storage interface. It allows for Summary data storage operations without needing to

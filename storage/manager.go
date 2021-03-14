@@ -12,6 +12,7 @@ import (
 
 // StoreManager holds all data stores and coordinates operations on them.
 type StoreManager struct {
+	authStore    AuthorizationStore
 	createCtx    CtxCreator
 	group        ctxerrgroup.Group
 	summaryStore SummaryStore
@@ -27,6 +28,13 @@ func NewStoreManager(createCtx CtxCreator, group ctxerrgroup.Group, summaryStore
 		summaryStore: summaryStore,
 		terseStore:   terseStore,
 		visitsStore:  visitsStore,
+	}
+}
+
+// AuthStore accepts a function to do if the AuthorizationStore is not nil.
+func (s StoreManager) AuthStore(doThis func(store AuthorizationStore)) {
+	if s.authStore != nil {
+		doThis(s.authStore)
 	}
 }
 
@@ -65,7 +73,23 @@ func (s StoreManager) Close(ctx context.Context) (err error) {
 
 // DeleteShortened deletes the all data for the given shortened URLs. If shortenedURLs is nil, all shortened URL data
 // are deleted. There should be no error if a shortened URL is not found.
-func (s StoreManager) DeleteShortened(ctx context.Context, shortenedURLs []string) (err error) {
+func (s StoreManager) DeleteShortened(ctx context.Context, principal *models.Principal, shortenedURLs []string) (err error) {
+
+	// Create the needed authorization.
+	neededAuth := Authorization{
+		Owner: true,
+	}
+
+	// Make sure the principal is authorized.
+	var authorized bool
+	if authorized, err = s.authorize(ctx, principal, shortenedURLs, neededAuth); err != nil {
+		return err
+	}
+
+	// Check if the request is authorized.
+	if !authorized {
+		return ErrUnauthorized
+	}
 
 	// Turn the input slice into a set.
 	shortenedURLs = makeStringSliceSet(shortenedURLs)
@@ -91,12 +115,30 @@ func (s StoreManager) DeleteShortened(ctx context.Context, shortenedURLs []strin
 		return err
 	}
 
+	// TODO Delete from auth store in both places.
+
 	return nil
 }
 
 // DeleteVisits deletes Visits data for the given shortened URLs. If shortenedURLs is nil, then all Visits data are
 // deleted. No error should be given if a shortened URL is not found.
-func (s StoreManager) DeleteVisits(ctx context.Context, shortenedURLs []string) (err error) {
+func (s StoreManager) DeleteVisits(ctx context.Context, principal *models.Principal, shortenedURLs []string) (err error) {
+
+	// Create the needed authorization.
+	neededAuth := Authorization{
+		Owner: true,
+	}
+
+	// Make sure the principal is authorized.
+	var authorized bool
+	if authorized, err = s.authorize(ctx, principal, shortenedURLs, neededAuth); err != nil {
+		return err
+	}
+
+	// Check if the request is authorized.
+	if !authorized {
+		return ErrUnauthorized
+	}
 
 	// Turn the input slice into a set.
 	shortenedURLs = makeStringSliceSet(shortenedURLs)
@@ -114,7 +156,24 @@ func (s StoreManager) DeleteVisits(ctx context.Context, shortenedURLs []string) 
 
 // Export exports the Terse data and Visits data for the given shortened URLs. If shortenedURLs is nil, then all
 // shortened URLs are exported.
-func (s StoreManager) Export(ctx context.Context, shortenedURLs []string) (export map[string]*models.Export, err error) {
+func (s StoreManager) Export(ctx context.Context, principal *models.Principal, shortenedURLs []string) (export map[string]*models.Export, err error) {
+
+	// Create the needed authorization.
+	neededAuth := Authorization{
+		ReadVisits: true,
+		ReadTerse:  true,
+	}
+
+	// Make sure the principal is authorized.
+	var authorized bool
+	if authorized, err = s.authorize(ctx, principal, shortenedURLs, neededAuth); err != nil {
+		return nil, err
+	}
+
+	// Check if the request is authorized.
+	if !authorized {
+		return nil, ErrUnauthorized
+	}
 
 	// Turn the input slice into a set.
 	shortenedURLs = makeStringSliceSet(shortenedURLs)
@@ -154,7 +213,23 @@ func (s StoreManager) Export(ctx context.Context, shortenedURLs []string) (expor
 
 // Import imports the given Terse data and Visits data to the TerseStore and VisitsStore respectively. Terse data will
 // be overwritten, Visits data will be appended.
-func (s StoreManager) Import(ctx context.Context, data map[string]*models.Export) (err error) {
+func (s StoreManager) Import(ctx context.Context, data map[string]*models.Export, principal *models.Principal) (err error) {
+
+	// Create the needed authorization.
+	neededAuth := Authorization{
+		Owner: true,
+	}
+
+	// Make sure the principal is authorized.
+	var authorized bool
+	if authorized, err = s.authorize(ctx, principal, nil, neededAuth); err != nil {
+		return err
+	}
+
+	// Check if the request is authorized.
+	if !authorized {
+		return ErrUnauthorized
+	}
 
 	// Iterate through the given import data and put it in the proper format.
 	terse := make(map[string]*models.Terse)
@@ -236,7 +311,7 @@ func (s StoreManager) Redirect(ctx context.Context, shortened string, visit mode
 
 	// Get the Terse data from the TerseStore.
 	var terseData map[string]*models.Terse
-	if terseData, err = s.Terse(ctx, []string{shortened}); err != nil {
+	if terseData, err = s.Terse(ctx, nil, []string{shortened}); err != nil {
 		return nil, err
 	}
 
@@ -248,7 +323,23 @@ func (s StoreManager) Redirect(ctx context.Context, shortened string, visit mode
 
 // Summary retrieves the Summary data for the given shortened URLs. If shortenedURLs is nil, then all shortened URL
 // summary data will be returned.
-func (s StoreManager) Summary(ctx context.Context, shortenedURLs []string) (summaries map[string]*models.Summary, err error) {
+func (s StoreManager) Summary(ctx context.Context, principal *models.Principal, shortenedURLs []string) (summaries map[string]*models.Summary, err error) {
+
+	// Create the needed authorization.
+	neededAuth := Authorization{
+		ReadSummary: true,
+	}
+
+	// Make sure the principal is authorized.
+	var authorized bool
+	if authorized, err = s.authorize(ctx, principal, shortenedURLs, neededAuth); err != nil {
+		return nil, err
+	}
+
+	// Check if the request is authorized.
+	if !authorized {
+		return nil, ErrUnauthorized
+	}
 
 	// Turn the input slice into a set.
 	shortenedURLs = makeStringSliceSet(shortenedURLs)
@@ -276,7 +367,23 @@ func (s StoreManager) SummaryStore(doThis func(store SummaryStore)) {
 
 // Terse returns a map of shortened URLs to Terse data. If shortenedURLs is nil, all shortened URL Terse data are
 // expected. The error must be storage.ErrShortenedNotFound if a shortened URL is not found.
-func (s StoreManager) Terse(ctx context.Context, shortenedURLs []string) (terse map[string]*models.Terse, err error) {
+func (s StoreManager) Terse(ctx context.Context, principal *models.Principal, shortenedURLs []string) (terse map[string]*models.Terse, err error) {
+
+	// Create the needed authorization.
+	neededAuth := Authorization{
+		ReadTerse: true,
+	}
+
+	// Make sure the principal is authorized.
+	var authorized bool
+	if authorized, err = s.authorize(ctx, principal, shortenedURLs, neededAuth); err != nil {
+		return nil, err
+	}
+
+	// Check if the request is authorized.
+	if !authorized {
+		return nil, ErrUnauthorized
+	}
 
 	// Turn the input slice into a set.
 	shortenedURLs = makeStringSliceSet(shortenedURLs)
@@ -286,7 +393,23 @@ func (s StoreManager) Terse(ctx context.Context, shortenedURLs []string) (terse 
 
 // Visits exports the Visits data for the given shortened URLs. If shortenedURLs is nil, then all shortened URL Visits
 // data are expected. The error must be storage.ErrShortenedNotFound if a shortened URL is not found.
-func (s StoreManager) Visits(ctx context.Context, shortenedURLs []string) (visits map[string][]models.Visit, err error) {
+func (s StoreManager) Visits(ctx context.Context, principal *models.Principal, shortenedURLs []string) (visits map[string][]models.Visit, err error) {
+
+	// Create the needed authorization.
+	neededAuth := Authorization{
+		ReadVisits: true,
+	}
+
+	// Make sure the principal is authorized.
+	var authorized bool
+	if authorized, err = s.authorize(ctx, principal, shortenedURLs, neededAuth); err != nil {
+		return nil, err
+	}
+
+	// Check if the request is authorized.
+	if !authorized {
+		return nil, ErrUnauthorized
+	}
 
 	// Turn the input slice into a set.
 	shortenedURLs = makeStringSliceSet(shortenedURLs)
@@ -316,7 +439,31 @@ func (s StoreManager) VisitsStore(doThis func(store VisitsStore)) {
 // storage.ErrShortenedExists if an Insert operation cannot be performed due to the Terse data already existing. The
 // error must be storage.ErrShortenedNotFound if an Update operation cannot be performed due to the Terse data not
 // existing.
-func (s StoreManager) WriteTerse(ctx context.Context, terse map[string]*models.Terse, operation WriteOperation) (err error) {
+func (s StoreManager) WriteTerse(ctx context.Context, principal *models.Principal, terse map[string]*models.Terse, operation WriteOperation) (err error) {
+
+	// Create a slice of affected shortened URLs.
+	shortenedURLs := make([]string, len(terse))
+	index := 0
+	for shortened := range terse {
+		shortenedURLs[index] = shortened
+		index++
+	}
+
+	// Create the needed authorization.
+	neededAuth := Authorization{
+		WriteTerse: true,
+	}
+
+	// Make sure the principal is authorized.
+	var authorized bool
+	if authorized, err = s.authorize(ctx, principal, shortenedURLs, neededAuth); err != nil {
+		return err
+	}
+
+	// Check if the request is authorized.
+	if !authorized {
+		return ErrUnauthorized
+	}
 
 	// Write the Terse data.
 	if err = s.terseStore.Write(ctx, terse, operation); err != nil {
@@ -402,7 +549,84 @@ func (s StoreManager) WriteTerse(ctx context.Context, terse map[string]*models.T
 		return err
 	}
 
+	// TODO Add to the AuthStore.
+
 	return nil
+}
+
+// authorize authorizes actions on the given shortened URLs based on the needed authorizations and principal. If the
+// principal is nil, the request is authorized.
+func (s StoreManager) authorize(ctx context.Context, principal *models.Principal, shortenedURLs []string, neededAuth Authorization) (authorized bool, err error) {
+	if principal != nil {
+		s.AuthStore(func(store AuthorizationStore) {
+
+			// The user is the subject of the JWT.
+			user := principal.Sub
+
+			// Get the mapping of users to Authorization data.
+			var usersShortened map[string]UserAuth
+			if usersShortened, err = store.ReadUsers(ctx, []string{user}); err != nil {
+				return
+			}
+
+			// If all shortened URLs are supposed to be used, find out which ones.
+			if len(shortenedURLs) == 0 {
+
+				// Turn the map of shortened URLs to Authorization data into a slice of shortened URLs.
+				for shortened := range usersShortened[user] {
+					shortenedURLs = append(shortenedURLs, shortened)
+				}
+			}
+
+			// Confirm the user has the appropriate permissions.
+			for _, shortened := range shortenedURLs {
+				authData, ok := usersShortened[user][shortened]
+				if !ok {
+					// TODO Log.
+				}
+
+				// If the user is the owner of the shortenedURL, they are allowed to perform any action.
+				if authData.Owner {
+					continue
+				}
+
+				// Confirm the user has the required permissions.
+				//
+				// TODO Might be a better way to check this.
+				if neededAuth.ReadSummary {
+					if !authData.ReadSummary {
+						authorized = false
+						return
+					}
+				}
+				if neededAuth.ReadTerse {
+					if !authData.ReadTerse {
+						authorized = false
+						return
+					}
+				}
+				if neededAuth.ReadVisits {
+					if !authData.ReadVisits {
+						authorized = false
+						return
+					}
+				}
+				if neededAuth.WriteTerse {
+					if !authData.WriteTerse {
+						authorized = false
+						return
+					}
+				}
+			}
+		})
+		if err != nil {
+			return false, err
+		}
+	} else {
+		authorized = true
+	}
+
+	return authorized, nil
 }
 
 // handleVisit happens asynchronously when a redirect occurs. It updates the appropriate data stores with the required
