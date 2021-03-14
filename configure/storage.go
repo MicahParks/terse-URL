@@ -111,6 +111,8 @@ func readStorageConfig(envValue string, logger *zap.SugaredLogger, configPath st
 	// Decide if the configPath is valid. Generate a long message from it.
 	var logMessage string
 	switch configPath {
+	case configPathAuthorizationStore:
+		logMessage = "AuthorizationStore"
 	case configPathSummaryStore:
 		logMessage = "SummaryStore"
 	case configPathTerseStore:
