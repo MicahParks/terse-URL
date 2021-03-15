@@ -1,6 +1,6 @@
 {
   "realm": "terseurl",
-  "auth-server-url": "https://keycloak.terseurl.com/auth/",
+  "auth-server-url": "http://localhost:8080/auth/",
   "ssl-required": "external",
   "resource": "frontend",
   "public-client": true,

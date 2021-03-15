@@ -28,7 +28,9 @@ func FrontendMiddleware(next http.Handler) (handler http.HandlerFunc, err error)
 	if fileSystem, err = terseurl.FrontendFS(frontendDir); err != nil {
 		return nil, err
 	}
-	httpFileSystem := http.FS(fileSystem)
+
+	// Create the file server.
+	fileServer := http.FileServer(http.FS(fileSystem))
 
 	// Create the HTTP handler via a closure.
 	return func(writer http.ResponseWriter, request *http.Request) {
@@ -46,7 +48,7 @@ func FrontendMiddleware(next http.Handler) (handler http.HandlerFunc, err error)
 			request.URL.Path = strings.TrimPrefix(request.URL.Path, frontendPrefix)
 
 			// Serve the file system via HTTP.
-			http.FileServer(httpFileSystem).ServeHTTP(writer, request)
+			fileServer.ServeHTTP(writer, request)
 		} else {
 
 			// Follow the HTTP middleware pattern.

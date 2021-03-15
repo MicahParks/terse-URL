@@ -78,16 +78,16 @@ func bboltRead(b bboltStore, forEach forEachFunc, keys []string) (err error) {
 		} else {
 
 			// Iterate through the given keys.
-			for _, shortened := range keys {
+			for _, key := range keys {
 
 				// Get the raw data.
-				data := tx.Bucket(b.BucketName()).Get([]byte(shortened))
+				data := tx.Bucket(b.BucketName()).Get([]byte(key))
 				if data == nil {
 					return ErrShortenedNotFound
 				}
 
 				// Perform the given function on the key and its data.
-				if err = forEach([]byte(shortened), data); err != nil {
+				if err = forEach([]byte(key), data); err != nil {
 					return err
 				}
 			}

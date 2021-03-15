@@ -8,6 +8,7 @@ import (
 	"errors"
 
 	"go.etcd.io/bbolt"
+	"go.uber.org/zap"
 
 	"github.com/MicahParks/terseurl/models"
 )
@@ -53,7 +54,7 @@ type CtxCreator func() (ctx context.Context, cancel context.CancelFunc)
 
 // NewAuthorizationStore creates a new AuthorizationStore from the given configJSON. The storeType return value is used
 // for logging.
-func NewAuthorizationStore(configJSON json.RawMessage) (authorizationStore AuthorizationStore, storeType string, err error) {
+func NewAuthorizationStore(configJSON json.RawMessage, logger *zap.SugaredLogger) (authorizationStore AuthorizationStore, storeType string, err error) {
 
 	// Create the configuration.
 	config := &configuration{}
@@ -87,7 +88,9 @@ func NewAuthorizationStore(configJSON json.RawMessage) (authorizationStore Autho
 		}
 
 		// Assign the interface implementation.
-		authorizationStore = NewBboltAuthorization(db, bboltAuthorizationBucket)
+		if authorizationStore, err = NewBboltAuthorization(db, bboltAuthorizationBucket, logger); err != nil {
+			return nil, "", err
+		}
 
 	// Use and in memory implementation of the SummaryStore by default.
 	default:

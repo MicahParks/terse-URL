@@ -22,7 +22,7 @@ func createStores(config *Configuration, group ctxerrgroup.Group, logger *zap.Su
 	}
 
 	// Create the SummaryStore.
-	authorizationStore, authorizationStoreType, err := storage.NewAuthorizationStore(authConfig)
+	authorizationStore, authorizationStoreType, err := storage.NewAuthorizationStore(authConfig, logger)
 	if err != nil {
 		logger.Fatalw("Failed to create AuthorizationStore.",
 			"type", authorizationStoreType,

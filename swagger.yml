@@ -8,7 +8,7 @@ info:
   description: "The Terse URL shortener."
   license:
     name: "AGPL-3.0"
-    url: "https://opensource.org/licenses/MIT"
+    url: "https://opensource.org/licenses/AGPL-3.0"
   title: "terseurl"
   version: "0.0.3"
 

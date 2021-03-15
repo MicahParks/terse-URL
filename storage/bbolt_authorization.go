@@ -17,11 +17,54 @@ type BboltAuthorization struct {
 }
 
 // NewBboltAuthorization creates a new BboltAuthorization.
-func NewBboltAuthorization(db *bbolt.DB, authorizationBucket []byte) (authStore AuthorizationStore) {
-	return BboltAuthorization{
-		db:     db,
+func NewBboltAuthorization(db *bbolt.DB, authorizationBucket []byte, logger *zap.SugaredLogger) (authStore AuthorizationStore, err error) {
+
+	// Create the AuthorizationStore.
+	bboltAuthStore := BboltAuthorization{
 		bucket: authorizationBucket,
+		db:     db,
+		logger: logger,
 	}
+
+	// Create the asset needed for data structure 2.
+	indexMap := make(map[string]userSet)
+
+	// Create a forEachFunc that will populate data structure 2.
+	var ok bool
+	var forEach forEachFunc = func(key, value []byte) (err error) {
+
+		// The username is the key.
+		user := string(key)
+
+		// Transform the value to a map of shortened URLs to Authorization data.
+		var userAuth UserAuth
+		if userAuth, err = bytesToUserAuth(value); err != nil {
+			return err
+		}
+
+		// Iterate through the shortened URLs.
+		for shortened := range userAuth {
+
+			// Confirm the shortened URL is already in the indexMap.
+			if _, ok = indexMap[shortened]; !ok {
+				indexMap[shortened] = userSet{}
+			}
+
+			// Add the user to the indexMap.
+			indexMap[shortened][user] = struct{}{}
+		}
+
+		return nil
+	}
+
+	if err = bboltRead(bboltAuthStore, forEach, nil); err != nil {
+		return nil, err
+	}
+
+	// Assign data structure 2.
+	bboltAuthStore.shortIndex = newShortenedIndex(indexMap)
+
+	return bboltAuthStore, nil
 }
 
 // Append upserts the given Authorization data. It works in an append first, overwrite second fashion. For example,
