@@ -123,6 +123,11 @@ func (m *MemSummary) Upsert(_ context.Context, summaries map[string]*models.Summ
 
 	// Iterate through the given summary data. Upsert the Summary data.
 	for shortened, summary := range summaries {
+
+		// Prevent a leaky buffer.
+		summary := summary
+
+		// Assign the summary to the Summary data.
 		m.summaries[shortened] = summary
 	}
 

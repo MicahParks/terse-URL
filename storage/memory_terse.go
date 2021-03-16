@@ -152,6 +152,9 @@ func (m *MemTerse) Write(_ context.Context, terseData map[string]*models.Terse, 
 			}
 		}
 
+		// Prevent a leaky buffer.
+		terse := terse
+
 		// Assign the shortened URL the given Terse data.
 		m.terse[shortened] = terse
 	}

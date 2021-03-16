@@ -67,7 +67,7 @@ func (m *MemVisits) Insert(_ context.Context, visitsData map[string][]models.Vis
 
 	// Iterate through the given Visits data and append it to the existing.
 	for shortened, visits := range visitsData {
-		visitsData[shortened] = append(visitsData[shortened], visits...)
+		visitsData[shortened] = append(visitsData[shortened], visits...) // TODO Leaky buffer possibility?
 	}
 
 	return nil
